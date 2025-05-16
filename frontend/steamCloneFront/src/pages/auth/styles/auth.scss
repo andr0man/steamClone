@@ -1,0 +1,623 @@
+@use 'sass:color';
+
+$primary-font: 'Motiva Sans', Arial, sans-serif;
+$bg-gradient-start: #1b2838;
+$bg-gradient-end: #16202d;
+$text-color: #c7d5e0;
+$text-color-light: #ffffff;
+$text-color-medium: #b0b8bf;
+$text-color-dark: #88929b;
+$text-color-placeholder: #6c7883;
+
+$border-color-main: #4b6a88;
+$border-color-input: #3a4f65;
+$border-color-focus: #66c0f4;
+$border-color-verified: rgba(164, 208, 7, 0.3);
+
+$bg-box: rgba(22, 32, 45, 0.95);
+$bg-input: rgba(10, 20, 30, 0.75);
+$bg-input-focus: rgba(20, 30, 40, 0.85);
+$bg-input-register: rgba(42, 63, 90, 0.7);
+$bg-checkbox: #2a3f55;
+$bg-verified-message: rgba(164, 208, 7, 0.1);
+$bg-modal: #16202d;
+$bg-modal-input: rgba(42, 63, 90, 0.8);
+$bg-modal-overlay: rgba(0, 0, 0, 0.7);
+
+$accent-color: #66c0f4;
+$accent-color-hover: #8adeff;
+$accent-color-verified: #a4d007;
+
+$button-login-bg-start: #799905;
+$button-login-bg-end: #536904;
+$button-login-hover-bg-start: #89ac06;
+$button-login-hover-bg-end: #607905;
+$button-login-active-bg-start: #698904;
+$button-login-active-bg-end: #435903;
+$button-login-text-color: #d2ff8c;
+
+$button-action-bg-start: #67c1f5;
+$button-action-bg-end: #3a94d0;
+$button-action-hover-bg-start: #7dc9f7;
+$button-action-hover-bg-end: #4a9ed8;
+
+$button-continue-bg-start: #a4d007;
+$button-continue-bg-end: #536904;
+$button-continue-hover-bg-start: #b6e30b;
+$button-continue-hover-bg-end: #6b8705;
+
+$button-cancel-bg: #4f5b68;
+$button-cancel-hover-bg: #5e6a78;
+
+$box-shadow-main: 0 5px 25px rgba(0, 0, 0, 0.6);
+$box-shadow-register: 0 0 20px rgba(0, 0, 0, 0.5);
+$box-shadow-focus: 0 0 0 2px rgba(102, 192, 244, 0.25);
+$box-shadow-button-hover: 0 2px 8px rgba(0, 0, 0, 0.3);
+$box-shadow-continue-hover: 0 2px 4px rgba(0, 0, 0, 0.15);
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: $primary-font;
+  background: radial-gradient(circle at center, $bg-gradient-start 0%, $bg-gradient-end 100%);
+  color: $text-color;
+  overflow-x: hidden;
+}
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(25px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeInForm {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeInOverlay {
+  to { opacity: 1; pointer-events: auto; }
+}
+
+@keyframes fadeOutOverlay {
+  from { opacity: 1; pointer-events: auto; }
+  to { opacity: 0; pointer-events: none; }
+}
+
+@keyframes scaleInModal {
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes scaleOutModal {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.9); opacity: 0; }
+}
+
+.app-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.app-login-box {
+  background: $bg-box;
+  border: 1px solid $border-color-main;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  box-shadow: $box-shadow-main;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.6s ease-out;
+  margin: 20px auto;
+
+  h2 {
+    text-align: center;
+    margin: 0 0 35px 0;
+    color: $text-color-light;
+    font-size: 26px;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+}
+
+.login-app-logo {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.login-form-group {
+  margin-bottom: 22px;
+
+  label {
+    display: block;
+    margin-bottom: 9px;
+    color: $text-color-medium;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px 16px;
+    background: $bg-input;
+    border: 1px solid $border-color-input;
+    border-radius: 3px;
+    color: #e0e0e0;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: $text-color-placeholder;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $border-color-focus;
+      background-color: $bg-input-focus;
+      box-shadow: $box-shadow-focus;
+    }
+  }
+}
+
+.login-checkbox-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px 0;
+
+  label {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: $text-color-medium;
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    accent-color: $accent-color;
+    background-color: $bg-checkbox;
+    border: 1px solid $border-color-input;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+}
+
+.app-forgot-password {
+  color: $accent-color;
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $accent-color-hover;
+    text-decoration: underline;
+  }
+}
+
+.app-login-button {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(to bottom, $button-login-bg-start, $button-login-bg-end);
+  border: none;
+  border-radius: 3px;
+  color: $button-login-text-color;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.8px;
+
+  &:hover {
+    background: linear-gradient(to bottom, $button-login-hover-bg-start, $button-login-hover-bg-end);
+    box-shadow: $box-shadow-button-hover;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    background: linear-gradient(to bottom, $button-login-active-bg-start, $button-login-active-bg-end);
+  }
+}
+
+.login-switch-form {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 13px;
+  color: $text-color-dark;
+}
+
+.login-switch-button {
+  background: none;
+  border: none;
+  color: $accent-color;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $accent-color-hover;
+  }
+}
+
+.app-register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.app-register-box {
+  background: $bg-box;
+  border: 1px solid $border-color-main;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 500px;
+  padding: 30px 40px;
+  box-shadow: $box-shadow-register;
+  backdrop-filter: blur(5px);
+  animation: fadeInForm 0.5s ease-out;
+  margin: 20px auto;
+  max-height: 95vh;
+  overflow-y: auto;
+
+  h2 {
+    text-align: center;
+    margin: 0 0 25px 0;
+    color: $text-color-light;
+    font-size: 22px;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+.app-form-group {
+  margin-bottom: 18px;
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    color: $text-color;
+    font-size: 13px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  .app-select {
+    width: 100%;
+    padding: 10px 12px;
+    background: $bg-input-register;
+    border: 1px solid $border-color-main;
+    border-radius: 3px;
+    color: $text-color-light;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: $border-color-focus;
+      box-shadow: $box-shadow-focus;
+    }
+  }
+}
+
+.app-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23c7d5e0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.4-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 10px;
+  padding-right: 30px;
+}
+
+.human-verification-status {
+  margin: 20px 0;
+}
+
+.app-verified-message.static {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: $accent-color-verified;
+  font-size: 14px;
+  padding: 10px;
+  background-color: $bg-verified-message;
+  border: 1px solid $border-color-verified;
+  border-radius: 3px;
+}
+
+.verified-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.app-action-button {
+  padding: 10px 18px;
+  background: linear-gradient(to bottom, $button-action-bg-start, $button-action-bg-end);
+  border: none;
+  border-radius: 3px;
+  color: $text-color-light;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  text-align: center;
+
+  &:hover {
+    background: linear-gradient(to bottom, $button-action-hover-bg-start, $button-action-hover-bg-end);
+  }
+}
+
+.app-checkbox-group {
+  margin: 20px 0;
+
+  label {
+    display: flex;
+    align-items: flex-start;
+    font-size: 12px;
+    line-height: 1.4;
+    cursor: pointer;
+    color: #aeb9c2;
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      width: 15px;
+      height: 15px;
+      accent-color: $accent-color;
+    }
+  }
+}
+
+.app-continue-button {
+  width: 100%;
+  padding: 12px 15px;
+  background: linear-gradient(to bottom, $button-continue-bg-start, $button-continue-bg-end);
+  border: none;
+  border-radius: 3px;
+  color: $text-color-light;
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+
+  &:hover {
+    background: linear-gradient(to bottom, $button-continue-hover-bg-start, $button-continue-hover-bg-end);
+    transform: translateY(-1px);
+    box-shadow: $box-shadow-continue-hover;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $bg-modal-overlay;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+
+  &.modal-enter {
+    animation: fadeInOverlay 0.3s forwards;
+  }
+
+  &.modal-exit {
+    animation: fadeOutOverlay 0.3s forwards;
+  }
+}
+
+.modal-content {
+  background: $bg-modal;
+  padding: 25px 30px;
+  border-radius: 5px;
+  border: 1px solid $border-color-main;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  transform: scale(0.9);
+  opacity: 0;
+
+  &.modal-enter {
+    animation: scaleInModal 0.3s 0.1s forwards;
+  }
+
+  &.modal-exit {
+    animation: scaleOutModal 0.3s forwards;
+  }
+
+  h3 {
+    color: $text-color-light;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    text-transform: uppercase;
+  }
+
+  p {
+    color: $text-color;
+    margin-bottom: 20px;
+    font-size: 15px;
+  }
+}
+
+.app-modal-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: $bg-modal-input;
+  border: 1px solid $border-color-main;
+  border-radius: 3px;
+  color: $text-color-light;
+  font-size: 14px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+    border-color: $border-color-focus;
+    box-shadow: $box-shadow-focus;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
+}
+
+.app-cancel-button {
+  padding: 10px 18px;
+  background: $button-cancel-bg;
+  border: none;
+  border-radius: 3px;
+  color: $text-color;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $button-cancel-hover-bg;
+  }
+}
+
+.app-switch-form {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 13px;
+  color: #aeb9c2;
+}
+
+.app-switch-form-button {
+  background: none;
+  border: none;
+  color: $accent-color;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $accent-color-hover;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-login-box,
+  .app-register-box {
+    padding: 25px;
+    margin: 10px auto;
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 25px;
+    }
+  }
+
+  .login-form-group {
+    input {
+      padding: 12px;
+      font-size: 14px;
+    }
+    label {
+      font-size: 13px;
+    }
+  }
+
+  .app-login-button,
+  .app-continue-button {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .app-form-group {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    .app-select {
+      padding: 12px;
+      font-size: 14px;
+    }
+    label {
+      font-size: 13px;
+    }
+  }
+
+  .login-checkbox-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .app-forgot-password {
+    align-self: flex-end;
+    margin-top: 5px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    p {
+      font-size: 14px;
+    }
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .app-action-button,
+  .app-cancel-button {
+    width: 100%;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 601px) {
+  .app-register-container {
+    align-items: flex-start;
+    padding-top: 0px;
+    padding-bottom: 30px;
+  }
+
+  .app-register-box {
+    max-height: calc(100vh - 60px);
+  }
+}

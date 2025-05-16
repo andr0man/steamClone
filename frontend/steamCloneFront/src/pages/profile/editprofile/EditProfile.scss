@@ -1,0 +1,312 @@
+$font-family-edit: 'Inter', 'Segoe UI', Roboto, sans-serif;
+$bg-page-edit: #151a21;
+$bg-container-edit: #1c232c;
+$bg-section-edit: #232b35;
+$bg-input-edit: #171d25;
+$bg-input-focus-edit: #1f2630;
+$bg-elements-active: #2a333d;
+$text-lightest-edit: #f0f4f8;
+$text-primary-edit: #c8d0d8;
+$text-secondary-edit: #9aa6b3;
+$text-placeholder-edit: #5c6a78;
+$border-color-soft-edit: #303946;
+$border-color-input-edit: #384553;
+$border-color-focus-edit: #5fa8f4;
+$button-save-bg-edit: #6ccf8d;
+$button-save-text-edit: #0e1218;
+$button-save-hover-bg-edit: #7bd89c;
+$button-cancel-border-edit: #4b5158;
+$button-cancel-text-edit: #9aa6b3;
+$button-cancel-hover-bg-edit: #2a333d;
+$button-cancel-hover-text-edit: #f0f4f8;
+$radius-base-edit: 10px;
+$radius-input-edit: 6px;
+$border-radius-large: 12px;
+$shadow-card-edit: 0 6px 18px rgba(0,0,0,0.25);
+$focus-ring-edit: 0 0 0 3px rgba(95, 168, 244, 0.4);
+
+@mixin button-base-edit($bg, $text, $hover-bg, $border: none) {
+  padding: 0.8rem 1.6rem;
+  border: $border;
+  border-radius: $radius-input-edit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background-color: $bg;
+  color: $text;
+  line-height: 1.2;
+
+  &:hover:not(:disabled) {
+    background-color: $hover-bg;
+    transform: translateY(-2px);
+  }
+  &:active:not(:disabled) {
+    transform: translateY(0px);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  svg {
+    margin-right: 0.3rem;
+  }
+}
+
+.spinner, .spinner-small-button {
+  border-radius: 50%;
+  animation: spin-edit 0.8s linear infinite;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(200, 208, 216, 0.2);
+  border-top-color: $border-color-focus-edit;
+  margin-bottom: 1rem;
+}
+.spinner-small-button {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(14, 18, 24, 0.3);
+  border-top-color: $button-save-text-edit;
+}
+
+@keyframes spin-edit { to { transform: rotate(360deg); } }
+
+.edit-profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  color: $text-primary-edit;
+  font-size: 1.2rem;
+  font-family: $font-family-edit;
+}
+
+.edit-profile-page-container {
+  max-width: 850px;
+  margin: 2.5rem auto;
+  padding: 2.5rem;
+  font-family: $font-family-edit;
+  color: $text-primary-edit;
+  background-color: $bg-container-edit;
+  border-radius: $border-radius-large;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.edit-profile-main-header {
+  text-align: left;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $border-color-soft-edit;
+
+  h1 {
+    font-size: 2rem;
+    color: $text-lightest-edit;
+    margin: 0 0 0.3rem 0;
+    font-weight: 600;
+  }
+  p {
+    font-size: 1rem;
+    color: $text-secondary-edit;
+    margin: 0;
+  }
+}
+
+.edit-profile-form-content {
+  .edit-form-section {
+    background-color: $bg-section-edit;
+    padding: 1.75rem 2rem;
+    border-radius: $radius-base-edit;
+    margin-bottom: 2rem;
+    border: 1px solid $border-color-soft-edit;
+    box-shadow: $shadow-card-edit;
+
+    .section-title {
+      font-size: 1.3rem;
+      color: $text-lightest-edit;
+      margin: 0 0 1.5rem 0;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid $border-color-soft-edit;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 500;
+      svg { color: $border-color-focus-edit; }
+    }
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    &.visuals-row {
+        align-items: flex-start;
+    }
+  }
+  @media (min-width: 600px) {
+    .form-row {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+       & > .column-full {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+    &:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: $text-secondary-edit;
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background-color: $bg-input-edit;
+      border: 1px solid $border-color-input-edit;
+      border-radius: $radius-input-edit;
+      color: $text-primary-edit;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+      &::placeholder { color: $text-placeholder-edit; }
+      &:focus {
+        outline: none;
+        border-color: $border-color-focus-edit;
+        box-shadow: $focus-ring-edit;
+        background-color: $bg-input-focus-edit;
+      }
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+  }
+}
+
+.custom-select-input-wrapper { 
+  position: relative;
+  select {
+    padding-right: 2.8rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  .input-icon.suffix {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-secondary-edit;
+    pointer-events: none;
+  }
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+
+  input[type="file"] {
+    display: none;
+  }
+  .file-select-button {
+    @include button-base-edit($bg-elements-active, $text-primary-edit, #313b47, 1px solid $border-color-input-edit);
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    svg { margin-right: 0.4rem; }
+  }
+  .file-name-display {
+    font-size: 0.85rem;
+    color: $text-secondary-edit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.field-hint {
+    display: block;
+    font-size: 0.8rem;
+    color: $text-secondary-edit;
+    margin-top: 0.3rem;
+    margin-bottom: 0.75rem;
+}
+
+.image-preview-display {
+  display: block;
+  margin-top: 1rem;
+  border-radius: $radius-input-edit;
+  border: 2px solid $border-color-input-edit;
+  object-fit: cover;
+  background-color: $bg-input-edit;
+  &.avatar-display {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  &.banner-display {
+    width: 100%;
+    max-height: 180px;
+    aspect-ratio: 1000 / 250;
+    border-radius: $radius-input-edit;
+  }
+}
+
+.edit-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $border-color-soft-edit;
+
+  .save-button {
+    @include button-base-edit($button-save-bg-edit, $button-save-text-edit, $button-save-hover-bg-edit);
+  }
+  .cancel-button {
+     @include button-base-edit(transparent, $button-cancel-text-edit, $button-cancel-hover-bg-edit, 1px solid $button-cancel-border-edit);
+     &:hover:not(:disabled) {
+        color: $button-cancel-hover-text-edit;
+        border-color: $button-cancel-hover-bg-edit;
+     }
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-profile-page-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  .edit-profile-main-header {
+    margin-bottom: 2rem;
+    h1 { font-size: 1.8rem; }
+  }
+  .edit-profile-form-content .edit-form-section {
+    padding: 1.25rem;
+    .section-title { font-size: 1.2rem; }
+  }
+  .edit-form-actions {
+    flex-direction: column-reverse;
+    .save-button, .cancel-button {
+      width: 100%;
+    }
+  }
+}

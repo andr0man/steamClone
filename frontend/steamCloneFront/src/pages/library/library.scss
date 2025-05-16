@@ -1,0 +1,659 @@
+$font-primary: 'Motiva Sans', 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+$bg-page-library: #12181f;
+$bg-content-library: #181e25;
+$bg-element-library: #1e252e;
+$bg-element-light-library: #2a333d;
+$bg-element-hover-library: #2c3542;
+$bg-input-library: #131a22;
+$bg-elements-darker: #161c24;
+$bg-main: #0e1218;
+$text-lightest-library: #f0f4f8;
+$text-primary-library: #c8d0d8;
+$text-secondary-library: #9aa6b3;
+$text-muted-library: #7a8b99;
+$text-placeholder-library: #657382;
+$accent-primary-library: #5fa8f4;
+$accent-secondary-library: #4fa1e0;
+$accent-green-library: #6ccf8d;
+$accent-yellow-library: #f0c05a;
+$accent-red-library: #ff6b6b;
+$border-soft-library: #2c3542;
+$border-strong-library: #384553;
+$border-focus-library: #5fa8f4;
+$shadow-sm-library: 0 2px 5px rgba(0,0,0,0.15);
+$shadow-md-library: 0 5px 15px rgba(0,0,0,0.2);
+$shadow-lg-library: 0 10px 30px rgba(0,0,0,0.25);
+$focus-ring-library: 0 0 0 3px rgba(95, 168, 244, 0.35);
+$radius-base-library: 8px;
+$radius-large-library: 12px;
+$radius-card-library: 12px;
+$transition-base: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: all 0.15s ease-out;
+$navbar-height: 60px;
+
+@keyframes spinLib { to { transform: rotate(360deg); } }
+
+.library-loading-page, .library-inline-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: $text-primary-library;
+  font-family: $font-primary;
+  width: 100%;
+
+  .spinner-xl, .spinner-md {
+    border-radius: 50%;
+    animation: spinLib 0.9s linear infinite;
+    border-top-color: $accent-primary-library;
+    border-left-color: $accent-primary-library;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+  }
+}
+
+.library-loading-page {
+  min-height: calc(100vh - 150px);
+  font-size: 1.4rem;
+  font-weight: 500;
+  .spinner-xl {
+    width: 64px;
+    height: 64px;
+    border-width: 5px;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.library-inline-loader {
+  padding: 2rem 0;
+  font-size: 1rem;
+  color: $text-secondary-library;
+  .spinner-md {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+    margin-bottom: 1rem;
+  }
+}
+
+.library-page-container {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "sidebar main";
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 1.5rem 2rem;
+  padding: 2rem;
+  background-color: $bg-content-library;
+  min-height: 100vh;
+  font-family: $font-primary;
+  color: $text-primary-library;
+
+  &.view-mode--list {
+    .fluxi-game-card {
+      flex-direction: row;
+      padding: 0.75rem;
+      gap: 1rem;
+      &:hover {
+        transform: none;
+        background-color: $bg-element-hover-library;
+      }
+    }
+  }
+}
+
+.library-main-header {
+  grid-area: header;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid $border-soft-library;
+  
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 600;
+    color: $text-lightest-library;
+    margin: 0 0 0.75rem 0;
+  }
+}
+
+.library-view-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-input-group {
+  position: relative;
+  flex-grow: 1;
+  max-width: 450px;
+
+  .control-icon {
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-placeholder-library;
+    pointer-events: none;
+  }
+  
+  .control-input.search-library-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    background-color: $bg-input-library;
+    border: 1px solid $border-strong-library;
+    border-radius: $radius-base-library;
+    color: $text-primary-library;
+    font-size: 0.95rem;
+    transition: $transition-base;
+    
+    &:focus {
+      outline: none;
+      border-color: $border-focus-library;
+      box-shadow: $focus-ring-library;
+      background-color: #151d26;
+    }
+    
+    &::placeholder {
+      color: $text-placeholder-library;
+    }
+  }
+}
+
+.view-mode-toggle {
+  display: flex;
+  background-color: $bg-element-light-library;
+  border-radius: $radius-base-library;
+  padding: 0.25rem;
+  border: 1px solid $border-soft-library;
+
+  .toggle-button {
+    background-color: transparent;
+    border: none;
+    color: $text-muted-library;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: $transition-base;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      color: $text-lightest-library;
+    }
+    
+    &.active {
+      background-color: $accent-primary-library;
+      color: $text-lightest-library;
+      box-shadow: $shadow-sm-library;
+    }
+  }
+}
+
+.library-filters-sidebar {
+  grid-area: sidebar;
+  background-color: $bg-element-library;
+  padding: 1.5rem;
+  border-radius: $radius-large-library;
+  border: 1px solid $border-soft-library;
+  align-self: flex-start;
+  position: sticky;
+  top: 80px;
+
+  h2 {
+    font-size: 1.25rem;
+    color: $text-lightest-library;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $border-strong-library;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    svg {
+      color: $accent-primary-library;
+    }
+  }
+}
+
+.filter-section {
+  margin-bottom: 1.5rem;
+  
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: $text-secondary-library;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+}
+
+.custom-select {
+  position: relative;
+  
+  select {
+    width: 100%;
+    padding: 0.7rem 2.5rem 0.7rem 0.8rem;
+    background-color: $bg-input-library;
+    border: 1px solid $border-strong-library;
+    border-radius: $radius-base-library;
+    color: $text-primary-library;
+    font-size: 0.9rem;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: $transition-base;
+    
+    &:focus {
+      outline: none;
+      border-color: $border-focus-library;
+      box-shadow: $focus-ring-library;
+    }
+  }
+  
+  .select-chevron {
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $text-muted-library;
+    pointer-events: none;
+  }
+}
+
+.library-content-main {
+  grid-area: main;
+  min-width: 0;
+}
+
+.games-collection-display {
+  &.grid-view-active {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.75rem;
+  }
+  
+  &.list-view-active {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.fluxi-game-card {
+  background-color: $bg-element-library;
+  border-radius: $radius-card-library;
+  border: 1px solid $border-soft-library;
+  overflow: hidden;
+  transition: $transition-base;
+  display: flex;
+  flex-direction: column;
+  box-shadow: $shadow-sm-library;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-lg-library;
+    border-color: $accent-primary-library;
+  }
+}
+
+.game-card-banner {
+  position: relative;
+  background-color: $bg-input-library;
+  
+  .grid-view-active & {
+    padding-top: 133.33%;
+  }
+  
+  .list-view-active & {
+    width: 80px;
+    height: 106.67px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .game-banner-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease-out;
+    
+    .fluxi-game-card:hover & {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.favorite-toggle-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background-color: rgba($bg-main, 0.6);
+  backdrop-filter: blur(3px);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: $transition-fast;
+  z-index: 2;
+  
+  svg {
+    color: $text-secondary-library;
+    transition: $transition-fast;
+  }
+  
+  &:hover svg {
+    color: $accent-red-library;
+    transform: scale(1.1);
+  }
+  
+  &.is-favorite svg {
+    color: $accent-red-library;
+    fill: $accent-red-library;
+  }
+}
+
+.installed-chip {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  background-color: rgba($accent-green-library, 0.9);
+  color: $bg-main;
+  padding: 0.25rem 0.6rem;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  z-index: 2;
+  
+  svg {
+    margin-right: 0.1rem;
+  }
+}
+
+.game-card-info-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  
+  .list-view-active & {
+    padding: 0.25rem 0;
+    justify-content: center;
+  }
+}
+
+.game-title-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $text-lightest-library;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: calc(1.3em * 2);
+}
+
+.game-category-text {
+  font-size: 0.8rem;
+  color: $text-muted-library;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  
+  svg {
+    margin-right: 0.3rem;
+  }
+}
+
+.game-stats-row {
+  font-size: 0.8rem;
+  color: $text-secondary-library;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  
+  .list-view-active & {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.game-progress-bar-container {
+  height: 6px;
+  background-color: $bg-element-light-library;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: auto;
+  margin-bottom: 0.75rem;
+  
+  .list-view-active & {
+    display: none;
+  }
+}
+
+.game-progress-bar {
+  height: 100%;
+  background-color: $accent-primary-library;
+  border-radius: 3px;
+  width: 60%;
+}
+
+.game-card-action-footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid $border-soft-library;
+  background-color: $bg-elements-darker;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+  
+  .list-view-active & {
+    border-top: none;
+    padding: 0.5rem 0 0 0;
+    background-color: transparent;
+    margin-top: 0.5rem;
+  }
+}
+
+.action-button {
+  flex-grow: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition-base;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  
+  &.play-button {
+    background-color: $accent-green-library;
+    color: $bg-main;
+    
+    &:hover {
+      background-color: #7bd89c;
+    }
+  }
+  
+  &.more-options-button {
+    flex-grow: 0;
+    background-color: $bg-element-light-library;
+    color: $text-secondary-library;
+    
+    &:hover {
+      background-color: #313d49;
+      color: $text-lightest-library;
+    }
+  }
+}
+
+.library-no-results-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: $text-secondary-library;
+  min-height: 50vh;
+
+  svg {
+    color: $accent-primary-library;
+    opacity: 0.5;
+    margin-bottom: 2rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    color: $text-lightest-library;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 500px;
+  }
+  
+  .api-error-message {
+    font-size: 0.9rem;
+    color: $accent-red-library;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .library-page-container {
+    grid-template-columns: 240px 1fr;
+    padding: 1.5rem;
+  }
+  
+  .games-collection-display.grid-view-active {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .library-page-container {
+    grid-template-areas:
+      "header"
+      "sidebar"
+      "main";
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .library-filters-sidebar {
+    position: static;
+    width: 100%;
+    padding: 1.25rem;
+    
+    h2 {
+      margin-bottom: 1rem;
+    }
+    
+    .filter-section {
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .library-main-header {
+    h1 {
+      font-size: 2rem;
+    }
+  }
+  
+  .library-view-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    
+    .search-input-group {
+      max-width: none;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .library-page-container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .library-main-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .library-filters-sidebar {
+    padding: 1rem;
+  }
+  
+  .games-collection-display.grid-view-active {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+  
+  .fluxi-game-card {
+    .game-title-text {
+      font-size: 1rem;
+      min-height: calc(1.3em * 2);
+    }
+    
+    .game-stats-row {
+      font-size: 0.75rem;
+    }
+    
+    .action-button {
+      font-size: 0.85rem;
+      padding: 0.5rem 0.8rem;
+      
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+    
+    .game-card-info-content {
+      padding: 0.75rem;
+    }
+    
+    .game-card-action-footer {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+  
+  .library-no-results-state {
+    svg {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 1rem;
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+    }
+    
+    p {
+      font-size: 1rem;
+    }
+  }
+}
