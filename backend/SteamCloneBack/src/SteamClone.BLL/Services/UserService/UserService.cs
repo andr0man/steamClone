@@ -1,0 +1,120 @@
+﻿using AutoMapper;
+using SteamClone.BLL.Services.ImageService;
+using SteamClone.BLL.Services.PasswordHasher;
+using SteamClone.DAL.Models;
+using SteamClone.DAL.Repositories.UserRepository;
+using SteamClone.DAL.ViewModels;
+using SteamClone.DAL.ViewModels.Users;
+
+namespace SteamClone.BLL.Services.UserService;
+
+public class UserService(
+    IUserRepository userRepository,
+    IImageService imageService,
+    IMapper mapper,
+    IPasswordHasher passwordHasher) : IUserService
+{
+    public async Task<ServiceResponse> GetByIdAsync(string id, CancellationToken token = default)
+    {
+        var user = await userRepository.GetByIdAsync(id, token);
+        if (user == null)
+        {
+            return ServiceResponse.NotFoundResponse("User not found");
+        }
+
+        var userVm = mapper.Map<UserVM>(user);
+        return ServiceResponse.OkResponse("User by id", userVm);
+    }
+
+    public async Task<ServiceResponse> GetByEmailAsync(string email, CancellationToken token = default)
+    {
+        var user = await userRepository.GetByEmailAsync(email, token);
+        if (user == null)
+        {
+            return ServiceResponse.NotFoundResponse("User not found");
+        }
+
+        var userVm = mapper.Map<UserVM>(user);
+        return ServiceResponse.OkResponse("User by email", userVm);
+    }
+
+    public async Task<ServiceResponse> GetByUserNicknameAsync(string userName, CancellationToken token = default)
+    {
+        var user = await userRepository.GetByUserNicknameAsync(userName, token);
+        if (user == null)
+        {
+            return ServiceResponse.NotFoundResponse("User not found");
+        }
+
+        var userVm = mapper.Map<UserVM>(user);
+        return ServiceResponse.OkResponse("User by nickname",userVm);
+    }
+
+    public async Task<ServiceResponse> GetAllAsync(CancellationToken token = default)
+    {
+        var users = await userRepository.GetAllAsync(token);
+        var userVms = mapper.Map<List<UserVM>>(users);
+        return ServiceResponse.OkResponse("All users",userVms);
+    }
+
+    public async Task<ServiceResponse> GetAllAsync(int page, int pageSize, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ServiceResponse> DeleteAsync(string id, CancellationToken token = default)
+    {
+        var user = await userRepository.GetByIdAsync(id, token);
+        if (user == null)
+        {
+            return ServiceResponse.NotFoundResponse("User not found");
+        }
+
+        await userRepository.DeleteAsync(id, token);
+        return ServiceResponse.OkResponse("User deleted successfully");
+    }
+
+    public async Task<ServiceResponse> CreateAsync(CreateUserVM model, CancellationToken token)
+    {
+        if (!await userRepository.IsUniqueNicknameAsync(model.Nickname, token))
+        {
+            return ServiceResponse.BadRequestResponse($"{model.Nickname} already used");
+        }
+
+        if (!await userRepository.IsUniqueEmailAsync(model.Email, token))
+        {
+            return ServiceResponse.BadRequestResponse($"{model.Email} already used");
+        }
+
+        var user = mapper.Map<User>(model);
+        user.Id = Guid.NewGuid().ToString();
+        user.PasswordHash = passwordHasher.HashPassword(model.Password);
+
+        await userRepository.CreateAsync(user, token);
+
+        return ServiceResponse.OkResponse("Користувач успішно створений", mapper.Map<UserVM>(user));
+    }
+
+    public async Task<ServiceResponse> UpdateAsync(UpdateUserVM model, CancellationToken token = default)
+    {
+        var user = await userRepository.GetByIdAsync(model.Id!, token);
+        if (user == null)
+        {
+            return ServiceResponse.NotFoundResponse("User not found");
+        }
+
+        mapper.Map(model, user);
+        await userRepository.UpdateAsync(user, token);
+        return ServiceResponse.OkResponse("User updated successfully", user);
+    }
+
+    public async Task<ServiceResponse> AddImageFromUserAsync(UserImageVM model, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ServiceResponse> GetUsersByRoleAsync(string role, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+}

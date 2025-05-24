@@ -1,4 +1,5 @@
-﻿using SteamClone.DAL.Models.Common.Interfaces;
+﻿using SteamClone.DAL.Models.Common.Abstractions;
+using SteamClone.DAL.Models.Common.Interfaces;
 
 namespace SteamClone.DAL.Models;
 

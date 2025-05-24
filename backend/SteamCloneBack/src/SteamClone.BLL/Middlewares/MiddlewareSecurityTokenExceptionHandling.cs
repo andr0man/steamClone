@@ -5,33 +5,18 @@ using SteamClone.BLL.Services;
 
 namespace SteamClone.BLL.Middlewares
 {
-    public class MiddlewareSecurityTokenExceptionHandling
+    public class MiddlewareSecurityTokenExceptionHandling(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public MiddlewareSecurityTokenExceptionHandling(RequestDelegate next)
-        {
-            _next = next;
-        }
-
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (SecurityTokenException ex)
             {
-                var response = new ServiceResponse
-                {
-                    Message = ex.Message,
-                    Success = false,
-                    Payload = null,
-                    StatusCode = System.Net.HttpStatusCode.UpgradeRequired
-                };
-                context.Response.StatusCode = StatusCodes.Status426UpgradeRequired;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                await context.Response.WriteJsonResponseAsync(StatusCodes.Status426UpgradeRequired,
+                    ServiceResponse.GetResponse(ex.Message, false, null, System.Net.HttpStatusCode.UpgradeRequired));
             }
         }
     }

@@ -1,7 +1,6 @@
-﻿namespace SteamClone.DAL.Models.Common.Interfaces
+﻿namespace SteamClone.DAL.Models.Common.Abstractions;
+
+public abstract class Entity<T>
 {
-    public abstract class Entity<T>
-    {
-        public T Id { get; set; } = default!;
-    }
+    public required T Id { get; set; }
 }

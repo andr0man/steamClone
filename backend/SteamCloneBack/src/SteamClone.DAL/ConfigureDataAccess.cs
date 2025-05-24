@@ -1,11 +1,11 @@
-﻿using DataAccessLayer;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using SteamClone.DAL.Data;
+using SteamClone.DAL.Repositories.Common;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.RoleRepository;
 using SteamClone.DAL.Repositories.UserRepository;
@@ -35,6 +35,9 @@ public static class ConfigureDataAccess
     
     private static void AddRepositories(this IServiceCollection services)
     {
+        services.AddScoped(typeof(IRepository<,>), typeof(RepositoryNotAuditable<,>));
+        services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+        
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();

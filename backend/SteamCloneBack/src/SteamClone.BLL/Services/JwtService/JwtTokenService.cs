@@ -11,7 +11,8 @@ using SteamClone.DAL.ViewModels;
 
 namespace SteamClone.BLL.Services.JwtService;
 
-public class JwtTokenService(IConfiguration configuration, IRefreshTokenRepository refreshTokenRepository) : IJwtTokenService
+public class JwtTokenService(IConfiguration configuration, IRefreshTokenRepository refreshTokenRepository)
+    : IJwtTokenService
 {
     private JwtSecurityToken GenerateAccessToken(User user)
     {
@@ -23,12 +24,12 @@ public class JwtTokenService(IConfiguration configuration, IRefreshTokenReposito
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new("id", user.Id.ToString()),
-            new("email", user.Email!),
-            new("nickName", user.Nickname ?? "N/A"),
+            new("id", user.Id),
+            new("email", user.Email),
+            new("nickName", user.Nickname),
             new("role", user.RoleId)
         };
-            
+
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
@@ -39,7 +40,7 @@ public class JwtTokenService(IConfiguration configuration, IRefreshTokenReposito
 
         return token;
     }
-        
+
     private string GenerateRefreshToken()
     {
         var bytes = new byte[32];
@@ -51,7 +52,8 @@ public class JwtTokenService(IConfiguration configuration, IRefreshTokenReposito
         }
     }
 
-    private async Task<RefreshToken?> SaveRefreshTokenAsync(User userEntity, string refreshToken, string jwtId)
+    private async Task<RefreshToken?> SaveRefreshTokenAsync(User userEntity, string refreshToken, string jwtId,
+        CancellationToken cancellationToken)
     {
         var model = new RefreshToken
         {
@@ -65,7 +67,7 @@ public class JwtTokenService(IConfiguration configuration, IRefreshTokenReposito
 
         try
         {
-            var tokenEntity = await refreshTokenRepository.Create(model);
+            var tokenEntity = await refreshTokenRepository.Create(model, cancellationToken);
             return tokenEntity;
         }
         catch (Exception e)
@@ -73,7 +75,7 @@ public class JwtTokenService(IConfiguration configuration, IRefreshTokenReposito
             return null;
         }
     }
-        
+
     public ClaimsPrincipal GetPrincipals(string accessToken)
     {
         var jwtSecurityKey = configuration["AuthSettings:key"];
@@ -93,22 +95,22 @@ public class JwtTokenService(IConfiguration configuration, IRefreshTokenReposito
 
         var jwtSecurityToken = securityToken as JwtSecurityToken;
 
-        if(jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256))
+        if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256))
         {
             throw new SecurityTokenException("Invalid access token");
         }
 
         return principals;
     }
-        
-    public async Task<JwtModel> GenerateTokensAsync(User user)
+
+    public async Task<JwtModel> GenerateTokensAsync(User user, CancellationToken token)
     {
         var accessToken = GenerateAccessToken(user);
         var refreshToken = GenerateRefreshToken();
 
-        await refreshTokenRepository.MakeAllRefreshTokensExpiredForUser(user.Id);
-            
-        var saveResult = await SaveRefreshTokenAsync(user, refreshToken, accessToken.Id);
+        await refreshTokenRepository.MakeAllRefreshTokensExpiredForUser(user.Id, token);
+
+        var saveResult = await SaveRefreshTokenAsync(user, refreshToken, accessToken.Id, token);
 
         var tokens = new JwtModel
         {
@@ -118,11 +120,11 @@ public class JwtTokenService(IConfiguration configuration, IRefreshTokenReposito
 
         return tokens;
     }
-        
+
     public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(ExternalLoginModel model)
     {
         string clientId = configuration["GoogleAuthSettings:ClientId"]!;
-        var settings = new GoogleJsonWebSignature.ValidationSettings()
+        var settings = new GoogleJsonWebSignature.ValidationSettings
         {
             Audience = new List<string> { clientId }
         };

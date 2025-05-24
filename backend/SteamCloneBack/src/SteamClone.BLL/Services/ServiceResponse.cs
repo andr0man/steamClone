@@ -36,16 +36,9 @@ namespace SteamClone.BLL.Services
             return GetResponse(message, false, payload, HttpStatusCode.InternalServerError);
         }
 
-        public static ServiceResponse ByIdentityResult(IdentityResult result, string successMessage)
+        public static ServiceResponse NotFoundResponse(string message, object? payload = null)
         {
-            if (result.Succeeded)
-            {
-                return ServiceResponse.OkResponse(successMessage);
-            }
-            else
-            {
-                return ServiceResponse.BadRequestResponse(result.Errors.First().Description);
-            }
+            return GetResponse(message, false, payload, HttpStatusCode.NotFound);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace SteamClone.DAL.ViewModels;
+﻿namespace SteamClone.DAL.ViewModels.Users;
 
 public class UserListVM
 {

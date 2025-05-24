@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
 
-namespace DataAccessLayer;
+namespace SteamClone.DAL;
 
 public class ApplicationDbContextInitializer(AppDbContext context)
 {

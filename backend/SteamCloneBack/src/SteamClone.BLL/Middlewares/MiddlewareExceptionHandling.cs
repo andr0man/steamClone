@@ -4,27 +4,18 @@ using SteamClone.BLL.Services;
 
 namespace SteamClone.BLL.Middlewares
 {
-    public class MiddlewareExceptionHandling
+    public class MiddlewareExceptionHandling(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public MiddlewareExceptionHandling(RequestDelegate next)
-        {
-            _next = next;
-        }
-
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (Exception ex)
             {
-                var response = ServiceResponse.InternalServerErrorResponse(ex.Message);
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                await context.Response.WriteJsonResponseAsync(StatusCodes.Status500InternalServerError,
+                    ServiceResponse.InternalServerErrorResponse(ex.Message));
             }
         }
     }

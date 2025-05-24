@@ -12,7 +12,7 @@ using SteamClone.DAL.Data;
 namespace SteamClone.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250512121924_Initial")]
+    [Migration("20250524131906_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
