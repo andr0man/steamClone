@@ -1,0 +1,5 @@
+dotnet ef migrations add --project SteamClone.DAL/SteamClone.DAL.csproj --startup-project SteamClone.API/SteamClone.API.csproj Initial --output-dir Migrations
+
+dotnet ef database update --project SteamClone.DAL/SteamClone.DAL.csproj --startup-project SteamClone.API/SteamClone.API.csproj
+
+docker run --name steam-clone -p 5432:5432 -e POSTGRES_USER=steam-user -e POSTGRES_PASSWORD=4321 -e POSTGRES_DB=steam-clone-db -d postgres

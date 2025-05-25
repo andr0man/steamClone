@@ -1,0 +1,35 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SteamClone.DAL.Models;
+
+namespace SteamClone.DAL.Data.Configurations;
+
+public class UserConfiguration : IEntityTypeConfiguration<User>
+{
+    public void Configure(EntityTypeBuilder<User> builder)
+    {
+        builder.HasKey(p => p.Id);
+
+        builder.Property(p => p.Nickname).HasMaxLength(50);
+        builder.Property(p => p.EmailConfirmed).HasDefaultValue(false);
+        builder.Property(p => p.Country).HasMaxLength(50);
+
+        builder.Property(p => p.Email).IsRequired().HasMaxLength(100);
+        builder.Property(x => x.PasswordHash).IsRequired();
+
+        builder.HasOne(x => x.Role)
+            .WithMany()
+            .HasForeignKey(x => x.RoleId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+       builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(x => x.CreatedBy)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(x => x.ModifiedBy)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}
