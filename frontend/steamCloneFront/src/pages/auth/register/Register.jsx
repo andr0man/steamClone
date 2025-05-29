@@ -1,303 +1,404 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/auth.scss";
-import { ShieldCheck } from 'lucide-react';
+import { Mail, User, ShieldCheck, KeyRound, Eye, EyeOff, UserPlus, ArrowRight } from 'lucide-react';
 
-const Register = () => { 
-  const [formData, setFormData] = useState({
-    login: '',  
-    nickname: '',  
-    email: '',
-    confirmEmail: '',
-    country: 'Ukraine', 
-    humanVerificationAnswer: '',  
-    ageConfirmed: false,
-    isHumanVerified: false
-  });
+const Notification = ({ message, type, duration = 5000, onClose }) => {
+    useEffect(() => {
+        if (message && duration) {
+            const timer = setTimeout(() => {
+                if (onClose) onClose();
+            }, duration);
+            return () => clearTimeout(timer);
+        }
+    }, [message, duration, onClose]);
 
-  const [verificationQuestion, setVerificationQuestion] = useState({ question: '', answer: '' });
-  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
-  const [modalAnimation, setModalAnimation] = useState('');  
-  const navigate = useNavigate(); 
+    if (!message) return null;
 
-  const generateVerificationQuestion = useCallback(() => {
-    const operations = ['+', '-', '*', '/'];
-    const operation = operations[Math.floor(Math.random() * operations.length)];
-    
-    let num1, num2, questionText, answer;
+    return (
+        <div className={`app-notification notification-${type}`}>
+            {message}
+            {onClose && <button onClick={onClose} className="close-notification">&times;</button>}
+        </div>
+    );
+};
 
-    switch(operation) {
-      case '+':  
-        num1 = Math.floor(Math.random() * 10) + 1;
-        num2 = Math.floor(Math.random() * 10) + 1;
-        answer = num1 + num2;
-        questionText = `What is ${num1} + ${num2}?`;
-        break;
-      case '-':  
-        num2 = Math.floor(Math.random() * 9) + 1;
-        num1 = num2 + Math.floor(Math.random() * 10) + 1;
-        answer = num1 - num2;  
-        questionText = `What is ${num1} - ${num2}?`;
-        break;
-      case '*':  
-        num1 = Math.floor(Math.random() * 8) + 2;
-        num2 = Math.floor(Math.random() * 8) + 2;
-        answer = num1 * num2;  
-        questionText = `What is ${num1} * ${num2}?`;
-        break;
-      case '/':
-        const result = Math.floor(Math.random() * 5) + 2;
-        num2 = Math.floor(Math.random() * 5) + 2;
-        num1 = result * num2;                                     
-        answer = result;
-        questionText = `What is ${num1} / ${num2}?`;
-        break;
-      default:  
-        num1 = Math.floor(Math.random() * 10) + 1;
-        num2 = Math.floor(Math.random() * 10) + 1;
-        answer = num1 + num2;
-        questionText = `What is ${num1} + ${num2}?`;
-    }
-    
-    setVerificationQuestion({
-      question: questionText,
-      answer: answer.toString()
+const Register = () => {
+    const [step, setStep] = useState(1);
+    const [formData, setFormData] = useState({
+        login: '',
+        email: '',
+        nickname: '',
+        password: '',
+        confirmPassword: '',
+        humanVerificationAnswer: '',
+        ageConfirmed: false,
+        isHumanVerified: false
     });
-    setFormData(prev => ({ ...prev, humanVerificationAnswer: '' }));
-  }, []);
 
-  useEffect(() => {
-    if (isVerificationModalOpen && !verificationQuestion.question) {
-      generateVerificationQuestion();
-    }
-  }, [isVerificationModalOpen, verificationQuestion.question, generateVerificationQuestion]);
+    const [verificationQuestion, setVerificationQuestion] = useState({ question: '', answer: '' });
+    const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+    const [modalAnimation, setModalAnimation] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSubmittingStep1, setIsSubmittingStep1] = useState(false);
+    const [apiErrorStep1, setApiErrorStep1] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
+    const navigate = useNavigate();
 
-  const handleOpenVerificationModal = () => {
-    if (!formData.isHumanVerified) {
-      generateVerificationQuestion();  
-      setModalAnimation('modal-enter');
-      setIsVerificationModalOpen(true);
-    }
-  };
+    const generateVerificationQuestion = useCallback(() => {
+        const operations = ['+', '-', '×'];
+        const operation = operations[Math.floor(Math.random() * operations.length)];
+        let num1, num2, questionText, answer;
+        
+        switch (operation) {
+            case '+':
+                num1 = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 10) + 1;
+                answer = num1 + num2;
+                questionText = `What is ${num1} + ${num2}?`;
+                break;
+            case '-':
+                num2 = Math.floor(Math.random() * 9) + 1;
+                num1 = num2 + Math.floor(Math.random() * 10) + 1;
+                answer = num1 - num2;
+                questionText = `What is ${num1} - ${num2}?`;
+                break;
+            case '×':
+                num1 = Math.floor(Math.random() * 5) + 1;
+                num2 = Math.floor(Math.random() * 5) + 1;
+                answer = num1 * num2;
+                questionText = `What is ${num1} × ${num2}?`;
+                break;
+            default:
+                num1 = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 10) + 1;
+                answer = num1 + num2;
+                questionText = `What is ${num1} + ${num2}?`;
+        }
+        
+        setVerificationQuestion({ question: questionText, answer: answer.toString() });
+        setFormData(prev => ({ ...prev, humanVerificationAnswer: '' }));
+    }, []);
 
-  const handleCloseVerificationModal = () => {
-    setModalAnimation('modal-exit');
-    setTimeout(() => {
-      setIsVerificationModalOpen(false);
-    }, 300);  
-  };
+    useEffect(() => {
+        if (isVerificationModalOpen && !verificationQuestion.question) {
+            generateVerificationQuestion();
+        }
+    }, [isVerificationModalOpen, verificationQuestion.question, generateVerificationQuestion]);
 
-  const handleVerifyHuman = () => {
-    if (formData.humanVerificationAnswer === verificationQuestion.answer) {
-      setFormData(prev => ({...prev, isHumanVerified: true}));
-      alert('Human verification successful!');
-      handleCloseVerificationModal();
-    } else {
-      alert('Incorrect answer. Please try again.');
-      generateVerificationQuestion();  
-    }
-  };
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prevState => ({ ...prevState, [name]: type === 'checkbox' ? checked : value }));
+    };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!formData.isHumanVerified) {
-      alert('Please complete the human verification.');
-      handleOpenVerificationModal();  
-      return;
-    }
-    
-    if (formData.email !== formData.confirmEmail) {
-      alert('Email addresses do not match!');
-      return;
-    }
+    const handleOpenVerificationModal = () => {
+        if (!formData.isHumanVerified) {
+            generateVerificationQuestion();
+            setModalAnimation('modal-enter');
+            setIsVerificationModalOpen(true);
+        }
+    };
 
-    if (!formData.login.trim()) {  
-      alert('Please enter your login.');
-      return;
-    }
+    const handleCloseVerificationModal = () => {
+        setModalAnimation('modal-exit');
+        setTimeout(() => setIsVerificationModalOpen(false), 300);
+    };
 
-    if (!formData.nickname.trim()) {  
-      alert('Please enter your nickname.');
-      return;
-    }
-    
-    if (!formData.ageConfirmed) {
-      alert('You must confirm your age to continue!');
-      return;
-    }
-    
-    console.log('Form submitted for registration:', formData);
-    alert('Account creation successful! (Check console for data)');
-    navigate('/login'); 
-  };
+    const handleVerifyHuman = () => {
+        if (formData.humanVerificationAnswer === verificationQuestion.answer) {
+            setFormData(prev => ({ ...prev, isHumanVerified: true }));
+            alert('Human verification successful!');
+            handleCloseVerificationModal();
+        } else {
+            alert('Incorrect answer. Please try again.');
+            generateVerificationQuestion();
+        }
+    };
 
-  const countries = [
-    'Ukraine', 'United States', 'Canada', 'United Kingdom', 'Germany',
-    'France', 'Poland', 'Australia', 'Japan', 'South Korea', 'Brazil',
-    'Mexico', 'Spain', 'Italy', 'Netherlands', 'Sweden', 'Norway',
-    'Finland', 'Denmark', 'Switzerland', 'Austria', 'Portugal', 'Other'
-  ];
+    const handleNextStep = async (e) => {
+        e.preventDefault();
+        setApiErrorStep1(null);
 
-  return (
-    <div className="app-register-container">
-      <div className="app-register-box">
-        <div className="login-app-logo">
-          <ShieldCheck size={40} color="#66c0f4" strokeWidth={1.5} />
-        </div>
-        <h2>CREATE ACCOUNT</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="app-form-group">
-            <label htmlFor="register-login">Login</label>  
-            <input
-              type="text"
-              id="register-login"  
-              name="login"
-              value={formData.login}
-              onChange={handleChange}
-              required
-              placeholder="Choose your login"
-            />
-          </div>
+        if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email)) {
+            setApiErrorStep1('Please enter a valid email address.');
+            return;
+        }
+        if (!formData.login.trim()) {
+            setApiErrorStep1('Please enter your desired login.');
+            return;
+        }
+        if (!formData.isHumanVerified) {
+            setApiErrorStep1('Please complete the human verification.');
+            handleOpenVerificationModal();
+            return;
+        }
 
-          <div className="app-form-group">
-            <label htmlFor="register-nickname">Nickname</label>
-            <input
-              type="text"
-              id="register-nickname"  
-              name="nickname"
-              value={formData.nickname}
-              onChange={handleChange}
-              required
-              placeholder="Please enter your nickname"
-            />
-          </div>
+        setIsSubmittingStep1(true);
+        console.log('Step 1 Data (for potential pre-validation by connector):', {
+            email: formData.email,
+            login: formData.login,
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        setStep(2);
+        setIsSubmittingStep1(false);
+    };
 
-          <div className="app-form-group">
-            <label htmlFor="register-email">Email Address</label>
-            <input
-              type="email"
-              id="register-email"  
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          
-          <div className="app-form-group">
-            <label htmlFor="register-confirmEmail">Confirm Email Address</label>
-            <input
-              type="email"
-              id="register-confirmEmail"  
-              name="confirmEmail"
-              value={formData.confirmEmail}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          
-          <div className="app-form-group">
-            <label htmlFor="register-country">Country of Residence</label>
-            <select  
-              id="register-country"  
-              name="country"  
-              value={formData.country}
-              onChange={handleChange}
-              className="app-select"
-            >
-              {countries.map(country => (
-                <option key={country} value={country}>{country}</option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="app-form-group human-verification-status">
-            <label>Human Verification</label>
-            {formData.isHumanVerified ? (
-              <div className="app-verified-message static">
-                <span className="verified-icon">✓</span> Human verification complete
-              </div>
-            ) : (
-              <button  
-                type="button"  
-                className="app-action-button"  
-                onClick={handleOpenVerificationModal}
-              >
-                I'm not a robot - Click to verify
-              </button>
-            )}
-          </div>
-          
-          <div className="app-checkbox-group">
-            <label htmlFor="register-ageConfirmed">
-              <input
-                type="checkbox"
-                id="register-ageConfirmed"  
-                name="ageConfirmed"
-                checked={formData.ageConfirmed}
-                onChange={handleChange}
-                required
-              />
-              <span>I confirm that I am 13 years of age or older and agree to the Subscriber Agreement and Privacy Policy.</span>
-            </label>
-          </div>
-          
-          <button type="submit" className="app-continue-button">Continue</button>
-        </form>
-        <div className="app-switch-form">
-          Already have an account?{' '}
-          {/* Заміна Link */}
-          <Link to="/login" className="app-switch-form-button">
-            Sign In
-          </Link>
-        </div>
-      </div>
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-      {isVerificationModalOpen && (
-        <div className={`modal-overlay ${modalAnimation}`}>
-          <div className={`modal-content ${modalAnimation}`}>
-            <h3>Human Verification</h3>
-            <p>{verificationQuestion.question}</p>
-            <input
-              type="text"
-              name="humanVerificationAnswer"
-              value={formData.humanVerificationAnswer}
-              onChange={handleChange}
-              placeholder="Your answer"
-              className="app-modal-input"
-              autoFocus
-            />
-            <div className="modal-actions">
-              <button  
-                type="button"  
-                className="app-action-button"
-                onClick={handleVerifyHuman}
-              >
-                Submit Answer
-              </button>
-              <button  
-                type="button"  
-                className="app-cancel-button"
-                onClick={handleCloseVerificationModal}
-              >
-                Cancel
-              </button>
+        if (!formData.isHumanVerified) {
+            alert('Please complete the human verification.');
+            handleOpenVerificationModal();
+            return;
+        }
+        if (!formData.nickname.trim()) { 
+            alert('Please enter your nickname.'); 
+            return; 
+        }
+        if (formData.password.length < 8) { 
+            alert('Password must be at least 8 characters long.'); 
+            return; 
+        }
+        if (formData.password !== formData.confirmPassword) { 
+            alert('Passwords do not match.'); 
+            return; 
+        }
+        if (!formData.ageConfirmed) { 
+            alert('You must confirm you are 13 or older.'); 
+            return; 
+        }
+        
+        const registrationDataForConnector = {
+            login: formData.login,
+            email: formData.email,
+            nickname: formData.nickname,
+            password: formData.password, 
+            ageConfirmed: formData.ageConfirmed,
+            isHumanVerified: formData.isHumanVerified,
+        };
+
+        console.log('Form submitted for registration:', registrationDataForConnector);
+        alert('Account creation successful! (Check console for data)');
+        navigate('/login');
+    };
+
+    return (
+        <div className="app-auth-container">
+            {apiErrorStep1 && <Notification message={apiErrorStep1} type="error" duration={7000} onClose={() => setApiErrorStep1(null)} />}
+            
+            <div className="app-auth-box">
+                <div className="auth-header">
+                    <UserPlus size={40} />
+                    <h2>{step === 1 ? 'Create Your Account' : 'Final Details'}</h2>
+                    <p className="step-indicator">Step {step} of 2</p>
+                </div>
+                
+                {step === 1 && (
+                    <form onSubmit={handleNextStep} noValidate>
+                        <div className="bubble-form-group">
+                            <label htmlFor="register-email">Email Address</label>
+                            <div className="bubble-input-wrapper">
+                                <Mail />
+                                <input 
+                                    type="email" 
+                                    id="register-email" 
+                                    name="email" 
+                                    value={formData.email} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="your.email@example.com" 
+                                    autoComplete="email"
+                                />
+                            </div>
+                        </div>
+                        
+                        <div className="bubble-form-group">
+                            <label htmlFor="register-login">Login</label>
+                            <div className="bubble-input-wrapper">
+                                <User />
+                                <input 
+                                    type="text" 
+                                    id="register-login" 
+                                    name="login" 
+                                    value={formData.login} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="Choose a unique login" 
+                                    autoComplete="username"
+                                />
+                            </div>
+                        </div>
+                        
+                        <div className="bubble-form-group">
+                            <label>Human Verification</label>
+                            {formData.isHumanVerified ? (
+                                <div className="bubble-verified-message">
+                                    <ShieldCheck size={20} /> Verification Complete
+                                </div>
+                            ) : (
+                                <button 
+                                    type="button" 
+                                    className="bubble-action-button" 
+                                    onClick={handleOpenVerificationModal}
+                                >
+                                    I'm not a robot
+                                </button>
+                            )}
+                        </div>
+                        
+                        <button 
+                            type="submit" 
+                            className="bubble-continue-button" 
+                            disabled={isSubmittingStep1 || !formData.isHumanVerified}
+                        >
+                            {isSubmittingStep1 ? 'Verifying...' : 'Continue'}
+                            <ArrowRight size={20} />
+                        </button>
+                    </form>
+                )}
+
+                {step === 2 && (
+                    <form onSubmit={handleSubmit} noValidate>
+                        <div className="bubble-form-group">
+                            <label htmlFor="register-nickname">Nickname</label>
+                            <div className="bubble-input-wrapper">
+                                <User />
+                                <input 
+                                    type="text" 
+                                    id="register-nickname" 
+                                    name="nickname" 
+                                    value={formData.nickname} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="How you'll appear to others" 
+                                    autoComplete="nickname"
+                                />
+                            </div>
+                        </div>
+                        
+                        <div className="bubble-form-group">
+                            <label htmlFor="register-password">Password</label>
+                            <div className="bubble-input-wrapper bubble-password-input">
+                                <KeyRound />
+                                <input 
+                                    type={showPassword ? "text" : "password"} 
+                                    id="register-password" 
+                                    name="password" 
+                                    value={formData.password} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="Min. 8 characters" 
+                                    autoComplete="new-password"
+                                />
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowPassword(!showPassword)} 
+                                    className="toggle-password-visibility"
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                >
+                                    {showPassword ? <EyeOff /> : <Eye />}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="bubble-form-group">
+                            <label htmlFor="register-confirmPassword">Confirm Password</label>
+                            <div className="bubble-input-wrapper bubble-password-input">
+                                <KeyRound />
+                                <input 
+                                    type={showConfirmPassword ? "text" : "password"} 
+                                    id="register-confirmPassword" 
+                                    name="confirmPassword" 
+                                    value={formData.confirmPassword} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="Re-enter password" 
+                                    autoComplete="new-password"
+                                />
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
+                                    className="toggle-password-visibility"
+                                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                                >
+                                    {showConfirmPassword ? <EyeOff /> : <Eye />}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="bubble-checkbox-group">
+                            <input 
+                                type="checkbox" 
+                                id="register-ageConfirmed" 
+                                name="ageConfirmed" 
+                                checked={formData.ageConfirmed} 
+                                onChange={handleChange} 
+                                required 
+                            />
+                            <label htmlFor="register-ageConfirmed">
+                                I am 13+ and agree to the <Link to="/terms" target="_blank" rel="noopener noreferrer">Subscriber Agreement</Link>.
+                            </label>
+                        </div>
+                        
+                        <button 
+                            type="submit" 
+                            className="bubble-continue-button"
+                        >
+                            Create Account
+                        </button>
+                    </form>
+                )}
+                
+                <div className="bubble-switch-form">
+                    {step === 1 ? 'Already have an account?' : 'Need to change email/login?'}
+                    <Link 
+                        to={step === 1 ? "/login" : '#'} 
+                        onClick={step === 2 ? (e) => { e.preventDefault(); setStep(1); } : undefined} 
+                        className="bubble-switch-form-button"
+                    >
+                        {step === 1 ? 'Sign In' : 'Go Back'}
+                    </Link>
+                </div>
             </div>
-          </div>
+
+            {isVerificationModalOpen && (
+                <div className={`bubble-modal-overlay ${modalAnimation}`}>
+                    <div className={`bubble-modal-content ${modalAnimation}`}>
+                        <h3>Human Verification</h3>
+                        <p>{verificationQuestion.question}</p>
+                        <input 
+                            type="text" 
+                            name="humanVerificationAnswer" 
+                            value={formData.humanVerificationAnswer} 
+                            onChange={handleChange} 
+                            placeholder="Your answer" 
+                            className="bubble-modal-input" 
+                            autoFocus 
+                        />
+                        <div className="bubble-modal-actions">
+                            <button 
+                                type="button" 
+                                className="bubble-continue-button" 
+                                onClick={handleVerifyHuman}
+                            >
+                                Verify
+                            </button>
+                            <button 
+                                type="button" 
+                                className="bubble-cancel-button" 
+                                onClick={handleCloseVerificationModal}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 };
 
 export default Register;

@@ -1,84 +1,122 @@
 @use 'sass:color';
 
-$primary-font: 'Motiva Sans', 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-$bg-main: #12181f;
-$bg-content-area: #181e25;
-$bg-elements: #1e252e;
-$bg-elements-lighter: #2a333d;
+$bubble-primary-hue: 265;
+$bubble-secondary-hue: 220; 
+$bubble-success-hue: 145; 
+$bubble-error-hue: 0;
 
-$text-color-light: #eceff4;
-$text-color-primary: #c7d5e0;
-$text-color-secondary: #a6adc8;
-$text-color-muted: #88929b;
+$bubble-bg-deep: hsl($bubble-secondary-hue, 15%, 8%); 
+$bubble-bg-primary: hsl($bubble-secondary-hue, 15%, 12%); 
+$bubble-bg-card: hsl($bubble-secondary-hue, 15%, 18%); 
+$bubble-bg-elements-lighter: hsl($bubble-secondary-hue, 15%, 22%);
+$bubble-bg-input: hsl($bubble-secondary-hue, 20%, 10%);
+$bubble-bg-input-focus: hsl($bubble-secondary-hue, 20%, 14%);
 
-$accent-color-primary: #66c0f4;
-$accent-color-secondary: #89b4fa;
-$accent-color-green: #a4d007;
-$accent-color-green-darker: #536904;
+$bubble-text-bright: hsl($bubble-secondary-hue, 20%, 95%);
+$bubble-text-primary: hsl($bubble-secondary-hue, 15%, 85%);
+$bubble-text-secondary: hsl($bubble-secondary-hue, 10%, 65%);
+$bubble-text-muted: hsl($bubble-secondary-hue, 10%, 50%);
+$bubble-text-placeholder: hsl($bubble-secondary-hue, 10%, 40%);
 
-$border-color: #2a333d;
-$border-color-strong: #4b6a88;
-$border-color-focus: $accent-color-primary;
 
-$box-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.2);
-$box-shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.3);
-$box-shadow-focus: 0 0 0 2px rgba($accent-color-primary, 0.25);
+$bubble-accent-home-primary: hsl($bubble-secondary-hue, 85%, 65%); 
+$bubble-accent-home-secondary: hsl($bubble-secondary-hue, 75%, 75%); 
+$bubble-accent-success: hsl($bubble-success-hue, 65%, 55%);
+$bubble-accent-success-darker: hsl($bubble-success-hue, 60%, 35%); 
 
-$border-radius-small: 4px;
-$border-radius-medium: 8px;
-$border-radius-large: 12px;
+$bubble-border-soft: hsla($bubble-secondary-hue, 15%, 50%, 0.2);
+$bubble-border-medium: hsla($bubble-secondary-hue, 15%, 50%, 0.4);
+$bubble-border-focus: $bubble-accent-home-primary;
 
-@mixin button-base {
-  padding: 10px 20px;
+$bubble-font-primary: 'Motiva Sans', 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+$bubble-radius-sm: 10px;
+$bubble-radius-md: 16px;
+$bubble-radius-lg: 24px;
+$bubble-radius-pill: 50px;
+
+$bubble-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+$bubble-shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.2), 0 3px 8px rgba(0, 0, 0, 0.15);
+$bubble-shadow-glow-accent: 0 0 20px hsla($bubble-secondary-hue, 85%, 65%, 0.25);
+$bubble-shadow-focus: 0 0 0 2px hsla($bubble-secondary-hue, 85%, 65%, 0.25);
+
+
+$bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+$bubble-transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+$bubble-blur: 10px; 
+
+@mixin bubble-button-base {
+  padding: 12px 24px;
   border: none;
-  border-radius: $border-radius-small;
-  font-family: $primary-font;
+  border-radius: $bubble-radius-pill;
+  font-family: $bubble-font-primary;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all $bubble-transition-fast;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-decoration: none;
+  line-height: 1.2;
 
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: $box-shadow-soft;
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: $bubble-shadow-medium;
   }
 
-  &:active {
+  &:active:not(:disabled) {
     transform: translateY(0);
+    box-shadow: $bubble-shadow-soft;
+  }
+   &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
-@mixin button-primary {
-  @include button-base;
-  background: linear-gradient(to right, $accent-color-primary, color.adjust($accent-color-primary, $lightness: -10%));
-  color: $text-color-light;
+@mixin bubble-button-primary {
+  @include bubble-button-base;
+  background: linear-gradient(135deg, $bubble-accent-home-primary, $bubble-accent-home-secondary);
+  color: $bubble-text-bright;
 
-  &:hover {
-    background: linear-gradient(to right, color.adjust($accent-color-primary, $lightness: 5%), $accent-color-primary);
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, lighten($bubble-accent-home-primary, 5%), lighten($bubble-accent-home-secondary, 5%));
+    box-shadow: $bubble-shadow-medium, 0 0 15px hsla($bubble-secondary-hue, 85%, 65%, 0.3);
   }
 }
 
-@mixin button-secondary {
-  @include button-base;
-  background-color: $bg-elements-lighter;
-  color: $text-color-primary;
-  border: 1px solid $border-color;
+@mixin bubble-button-secondary {
+  @include bubble-button-base;
+  background-color: hsla($bubble-secondary-hue, 20%, 25%, 0.7);
+  color: $bubble-text-primary;
+  border: 1px solid $bubble-border-soft;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 
-  &:hover {
-    background-color: color.adjust($bg-elements-lighter, $lightness: 5%);
-    border-color: $accent-color-secondary;
+
+  &:hover:not(:disabled) {
+    background-color: hsla($bubble-secondary-hue, 20%, 30%, 0.9);
+    border-color: $bubble-border-medium;
+    color: $bubble-text-bright;
+  }
+}
+
+@mixin bubble-button-success { 
+  @include bubble-button-base;
+  background: linear-gradient(135deg, $bubble-accent-success, lighten($bubble-accent-success, 10%));
+  color: hsl($bubble-success-hue, 80%, 95%);
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, lighten($bubble-accent-success, 5%), lighten($bubble-accent-success, 15%));
+     box-shadow: $bubble-shadow-medium, 0 0 15px hsla($bubble-success-hue, 65%, 55%, 0.3);
   }
 }
 
 .home-container {
-  background-color: $bg-content-area;
-  color: $text-color-primary;
-  font-family: $primary-font;
+  background-color: $bubble-bg-primary;
+  color: $bubble-text-primary;
+  font-family: $bubble-font-primary;
   min-height: 100vh;
   padding-top: 0;
 }
@@ -90,15 +128,15 @@ $border-radius-large: 12px;
   align-items: center;
   min-height: 100vh;
   font-size: 1.5rem;
-  color: $text-color-light;
-  background-color: $bg-main;
+  color: $bubble-text-bright;
+  background-color: $bubble-bg-deep;
 
   .spinner {
     margin-top: 20px;
     width: 50px;
     height: 50px;
-    border: 5px solid rgba($text-color-light, 0.2);
-    border-top-color: $accent-color-primary;
+    border: 5px solid hsla($bubble-secondary-hue, 20%, 95%, 0.2);
+    border-top-color: $bubble-accent-home-primary;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -109,14 +147,22 @@ $border-radius-large: 12px;
 }
 
 .hero-section {
-  height: 450px;
+  height: 450px; 
   background-size: cover;
   background-position: center center;
   display: flex;
   align-items: flex-end;
   padding: 3rem 4rem;
   position: relative;
-  color: $text-color-light;
+  color: $bubble-text-bright;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, hsla($bubble-secondary-hue, 15%, 8%, 0.8) 0%, hsla($bubble-secondary-hue, 15%, 8%, 0) 70%);
+    z-index: 0;
+  }
+
 
   .hero-content {
     max-width: 700px;
@@ -127,7 +173,8 @@ $border-radius-large: 12px;
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5); // Тінь для тексту
+    color: $bubble-text-bright;
   }
 
   .hero-description {
@@ -135,14 +182,15 @@ $border-radius-large: 12px;
     line-height: 1.6;
     margin-bottom: 1.5rem;
     max-width: 90%;
-    text-shadow: 0 1px 5px rgba(0,0,0,0.6);
+    text-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    color: $bubble-text-primary;
   }
   
   .hero-meta {
     display: flex;
     gap: 1.5rem;
     font-size: 0.9rem;
-    color: $text-color-secondary;
+    color: $bubble-text-secondary;
     margin-bottom: 2rem;
     align-items: center;
     
@@ -150,7 +198,7 @@ $border-radius-large: 12px;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      svg { color: $accent-color-secondary; }
+      svg { color: $bubble-accent-home-secondary; }
     }
   }
 
@@ -161,11 +209,11 @@ $border-radius-large: 12px;
 
   .hero-button {
     padding: 12px 28px;
-    font-size: 1.1rem;
+    font-size: 1rem; 
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    &.primary { @include button-primary; background: $accent-color-green; &:hover { background: color.adjust($accent-color-green, $lightness: 5%);}}
-    &.secondary { @include button-secondary; }
+    &.primary { @include bubble-button-success; } 
+    &.secondary { @include bubble-button-secondary; }
   }
 }
 
@@ -180,23 +228,27 @@ $border-radius-large: 12px;
 .home-sidebar {
   width: 300px;
   flex-shrink: 0;
-  background-color: $bg-elements;
-  padding: 1.5rem;
-  border-radius: $border-radius-large;
-  border: 1px solid $border-color;
+  background-color: hsla($bubble-secondary-hue, 15%, 18%, 0.8);
+  backdrop-filter: blur($bubble-blur);
+  -webkit-backdrop-filter: blur($bubble-blur);
+  padding: 1.75rem;
+  border-radius: $bubble-radius-lg;
+  border: 1px solid $bubble-border-medium;
   align-self: flex-start;
   position: sticky;
   top: 20px;
+  box-shadow: $bubble-shadow-medium;
 
   h2, h3 {
-    color: $text-color-light;
+    color: $bubble-text-bright;
     margin-top: 0;
     margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid $border-color;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $bubble-border-soft;
+    font-weight: 600;
   }
   h3 {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     margin-top: 1.5rem;
   }
 
@@ -205,23 +257,31 @@ $border-radius-large: 12px;
     margin-bottom: 1.5rem;
     .search-icon {
       position: absolute;
-      left: 12px;
+      left: 18px;
       top: 50%;
       transform: translateY(-50%);
-      color: $text-color-muted;
+      color: $bubble-text-muted;
+      transition: color $bubble-transition-fast;
+      width: 18px; height: 18px;
     }
     .search-input {
       width: 100%;
-      padding: 10px 12px 10px 40px;
-      background-color: $bg-elements-lighter;
-      border: 1px solid $border-color;
-      border-radius: $border-radius-small;
-      color: $text-color-primary;
+      padding: 0.9rem 1rem 0.9rem 3rem; 
+      background-color: $bubble-bg-input;
+      border: 1px solid $bubble-border-medium;
+      border-radius: $bubble-radius-md; 
+      color: $bubble-text-primary;
       font-size: 0.95rem;
+      transition: all $bubble-transition-fast;
+      &::placeholder { color: $bubble-text-placeholder; }
       &:focus {
         outline: none;
-        border-color: $border-color-focus;
-        box-shadow: $box-shadow-focus;
+        border-color: $bubble-border-focus;
+        background-color: $bubble-bg-input-focus;
+        box-shadow: $bubble-shadow-focus, $bubble-shadow-glow-accent;
+        & ~ .search-icon {
+          color: $bubble-accent-home-primary;
+        }
       }
     }
   }
@@ -233,16 +293,22 @@ $border-radius-large: 12px;
       margin: 0;
       li a {
         display: block;
-        padding: 0.6rem 0.8rem;
-        color: $text-color-secondary;
+        padding: 0.75rem 1rem;
+        color: $bubble-text-secondary;
         text-decoration: none;
-        border-radius: $border-radius-small;
+        border-radius: $bubble-radius-sm;
         font-size: 0.95rem;
-        transition: all 0.2s ease;
+        transition: all $bubble-transition-fast;
+        font-weight: 500;
         &:hover {
-          background-color: rgba($accent-color-secondary, 0.1);
-          color: $text-color-light;
-          transform: translateX(3px);
+          background-color: rgba($bubble-accent-home-secondary, 0.15);
+          color: $bubble-text-bright;
+          transform: translateX(4px);
+        }
+         &.active { // Якщо є активна категорія
+          background-color: rgba($bubble-accent-home-secondary, 0.15);
+            color: $bubble-accent-home-primary;
+            font-weight: 600;
         }
       }
     }
@@ -250,30 +316,34 @@ $border-radius-large: 12px;
   
   .sidebar-promo {
     margin-top: 2rem;
-    padding: 1rem;
-    background-color: color.adjust($bg-elements, $lightness: -3%);
-    border-radius: $border-radius-medium;
-    border: 1px solid $border-color;
+    padding: 1.5rem;
+    background-color: hsla($bubble-success-hue, 65%, 55%, 0.1);
+    border-radius: $bubble-radius-md;
+    border: 1px solid hsla($bubble-success-hue, 65%, 55%, 0.2);
     text-align: center;
     h4 {
-      color: $accent-color-green;
+      color: $bubble-accent-success;
       margin-top: 0;
       margin-bottom: 0.5rem;
+      font-weight: 700;
     }
     p {
       font-size: 0.9rem;
+      color: $bubble-text-primary;
       margin-bottom: 1rem;
     }
     button {
-      @include button-secondary;
-      background-color: $accent-color-green-darker;
-      border-color: $accent-color-green;
-      color: color.adjust($accent-color-green, $lightness: 40%);
-      padding: 8px 15px;
+      @include bubble-button-success;
+      background: $bubble-accent-success-darker;
+      border: 1px solid $bubble-accent-success;
+      color: lighten($bubble-accent-success, 30%);
+      padding: 8px 18px;
       font-size: 0.9rem;
-      &:hover {
-        background-color: $accent-color-green;
-        color: $text-color-light;
+      border-radius: $bubble-radius-pill;
+      &:hover:not(:disabled) {
+        background: $bubble-accent-success;
+        color: hsl($bubble-success-hue, 100%, 95%);
+        border-color: lighten($bubble-accent-success, 10%);
       }
     }
   }
@@ -285,33 +355,37 @@ $border-radius-large: 12px;
 
   .tabs-navigation {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.5rem; // Зменшимо gap для більш щільного вигляду табів
     margin-bottom: 2rem;
-    border-bottom: 2px solid $border-color;
+    border-bottom: 1px solid $bubble-border-medium; // Тонша лінія
 
     .tab-button {
-      @include button-base;
-      padding: 12px 20px;
+      @include bubble-button-base; // Використовуємо базу, але кастомізуємо
+      padding: 0.8rem 1.25rem; // Адаптовані падінги
       background-color: transparent;
-      color: $text-color-secondary;
-      border-radius: $border-radius-small $border-radius-small 0 0;
+      color: $bubble-text-secondary;
+      border-radius: $bubble-radius-md $bubble-radius-md 0 0; // Закруглення тільки зверху
       border: none;
       border-bottom: 3px solid transparent;
       position: relative;
-      top: 2px;
+      top: 1px; // Для візуального ефекту "приклеювання"
+      font-weight: 500;
 
-      svg { color: $text-color-muted; margin-right: 8px; }
+      svg { color: $bubble-text-muted; margin-right: 8px; transition: color $bubble-transition-fast; }
 
-      &:hover {
-        color: $text-color-light;
-        background-color: rgba($accent-color-secondary, 0.05);
-        svg { color: $accent-color-secondary; }
+      &:hover:not(.active) {
+        color: $bubble-text-bright;
+        background-color: rgba($bubble-accent-home-secondary, 0.15);
+        transform: none; // Забираємо hover ефект з базової кнопки для табів
+        box-shadow: none;
+        svg { color: $bubble-accent-home-secondary; }
       }
       &.active {
-        color: $accent-color-primary;
-        border-bottom-color: $accent-color-primary;
+        color: $bubble-accent-home-primary;
+        border-bottom-color: $bubble-accent-home-primary;
         font-weight: 700;
-        svg { color: $accent-color-primary; }
+        background-color: hsla($bubble-secondary-hue, 15%, 18%, 0.5); // Легкий фон для активного табу
+        svg { color: $bubble-accent-home-primary; }
       }
     }
   }
@@ -321,10 +395,10 @@ $border-radius-large: 12px;
   margin-bottom: 3rem;
   .section-title {
     font-size: 1.8rem;
-    color: $text-color-light;
+    color: $bubble-text-bright;
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $bubble-border-soft;
     font-weight: 600;
   }
 }
@@ -332,32 +406,33 @@ $border-radius-large: 12px;
 .game-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.8rem;
+  gap: 2rem; // Трохи більший gap для "повітря"
 }
 
 .game-card {
-  background-color: $bg-elements;
-  border-radius: $border-radius-medium;
+  background-color: $bubble-bg-card;
+  border-radius: $bubble-radius-lg; // Більш заокруглені кути
   overflow: hidden;
-  border: 1px solid $border-color;
-  box-shadow: $box-shadow-soft;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid $bubble-border-medium;
+  box-shadow: $bubble-shadow-medium;
+  transition: transform $bubble-transition-fast, box-shadow $bubble-transition-fast;
   display: flex;
   flex-direction: column;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    transform: translateY(-6px) scale(1.02); // Ефект підйому та легкого збільшення
+    box-shadow: $bubble-shadow-medium, $bubble-shadow-glow-accent; // Додамо світіння
     .game-card-image-container .game-card-hover-overlay {
       opacity: 1;
       visibility: visible;
+      backdrop-filter: blur(4px); // Блюр для оверлея
     }
   }
 
   .game-card-image-container {
     position: relative;
     width: 100%;
-    padding-top: 150%;
+    aspect-ratio: 2 / 3; 
     
     .game-card-image {
       position: absolute;
@@ -371,11 +446,8 @@ $border-radius-large: 12px;
 
     .game-card-hover-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(18, 24, 31, 0.85);
+      inset: 0;
+      background-color: hsla($bubble-secondary-hue, 15%, 10%, 0.75);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -383,29 +455,46 @@ $border-radius-large: 12px;
       gap: 1rem;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.25s ease, visibility 0.25s ease;
+      transition: opacity $bubble-transition-fast, visibility $bubble-transition-fast, backdrop-filter $bubble-transition-fast;
 
       .game-card-button {
+        @include bubble-button-base;
         padding: 10px 20px;
         font-size: 0.9rem;
         width: 80%;
-        &.primary { @include button-primary; }
-        &.secondary { @include button-secondary; background-color: rgba($bg-elements-lighter, 0.8); }
+        border-radius: $bubble-radius-pill;
+        &.primary { 
+          @include bubble-button-primary; 
+          background: linear-gradient(135deg, $bubble-accent-success, lighten($bubble-accent-success, 10%));
+          color: hsl($bubble-success-hue, 80%, 95%);
+          &:hover {
+             background: linear-gradient(135deg, lighten($bubble-accent-success, 5%), lighten($bubble-accent-success, 15%));
+          }
+        }
+        &.secondary { 
+          @include bubble-button-secondary; 
+          background-color: hsla($bubble-secondary-hue, 15%, 25%, 0.8); 
+          border-color: $bubble-border-soft;
+          &:hover {
+            background-color: hsla($bubble-secondary-hue, 15%, 30%, 0.9);
+            border-color: $bubble-border-medium;
+          }
+        }
       }
     }
   }
 
   .game-card-info {
-    padding: 1rem;
+    padding: 1.25rem; 
     display: flex;
     flex-direction: column;
     flex-grow: 1;
   }
 
   .game-card-title {
-    font-size: 1.2rem;
-    color: $text-color-light;
-    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    color: $bubble-text-bright;
+    margin: 0 0 0.6rem 0;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
@@ -415,53 +504,56 @@ $border-radius-large: 12px;
   .game-card-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-bottom: 0.75rem;
+    gap: 0.5rem; 
+    margin-bottom: 0.85rem;
     .game-tag {
-      background-color: rgba($accent-color-secondary, 0.1);
-      color: $accent-color-secondary;
-      padding: 0.2rem 0.5rem;
-      border-radius: $border-radius-small;
+      background-color: rgba($bubble-accent-home-secondary, 0.15);
+      color: $bubble-accent-home-secondary;
+      padding: 0.3rem 0.6rem;
+      border-radius: $bubble-radius-sm;
       font-size: 0.75rem;
-      font-weight: 500;
+      font-weight: 600; 
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      svg { flex-shrink: 0; }
+      svg { flex-shrink: 0; width: 12px; height: 12px; }
     }
   }
 
   .game-card-price {
     margin-top: auto;
-    padding-top: 0.75rem;
-    border-top: 1px solid $border-color;
+    padding-top: 0.85rem;
+    border-top: 1px solid $bubble-border-soft; // М'якша лінія
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1.1rem;
-    font-weight: bold;
+    gap: 0.6rem;
+    font-size: 1.15rem;
+    font-weight: 700; 
 
     .game-price-original {
-      color: $text-color-muted;
+      color: $bubble-text-muted;
       text-decoration: line-through;
       font-size: 0.9rem;
+      font-weight: 500;
     }
     .game-price-discounted {
-      color: $accent-color-green;
+      color: $bubble-accent-success;
     }
     .game-price-current {
-      color: $text-color-primary;
+      color: $bubble-text-primary;
     }
     .game-price-badge {
-      background-color: $accent-color-green;
-      color: $text-color-light;
+      background-color: $bubble-accent-success;
+      color: hsl($bubble-success-hue, 100%, 95%);
       font-size: 0.8rem;
-      padding: 3px 8px;
-      border-radius: $border-radius-small;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: $bubble-radius-sm;
       display: inline-flex;
       align-items: center;
       gap: 4px;
       margin-left: auto;
+      box-shadow: 0 2px 5px hsla($bubble-success-hue, 65%, 55%, 0.3);
     }
   }
 }
@@ -473,14 +565,16 @@ $border-radius-large: 12px;
   justify-content: center;
   text-align: center;
   padding: 3rem 1rem;
-  background-color: $bg-elements;
-  border-radius: $border-radius-large;
-  color: $text-color-secondary;
+  background-color: $bubble-bg-card;
+  border-radius: $bubble-radius-lg;
+  color: $bubble-text-secondary;
   margin-top: 2rem;
+  border: 1px solid $bubble-border-medium;
 
   svg {
-    color: $accent-color-primary;
+    color: $bubble-accent-home-primary;
     margin-bottom: 1.5rem;
+    width: 48px; height: 48px; // Збільшимо іконку
   }
 
   p {
@@ -488,25 +582,37 @@ $border-radius-large: 12px;
     line-height: 1.6;
     margin-bottom: 0.5rem;
     &:first-of-type {
-      color: $text-color-light;
+      color: $bubble-text-bright;
       font-weight: 600;
+      font-size: 1.3rem;
     }
   }
 }
 
 .home-footer {
-  background-color: color.adjust($bg-main, $lightness: -2%);
-  padding: 2rem;
+  background-color: $bubble-bg-deep; 
+  padding: 2.5rem 2rem; 
   text-align: center;
-  color: $text-color-muted;
-  font-size: 0.85rem;
+  color: $bubble-text-muted;
+  font-size: 0.9rem;
   margin-top: 3rem;
-  border-top: 1px solid $border-color;
+  border-top: 1px solid $bubble-border-soft;
   p {
     margin: 0.5rem 0;
-    line-height: 1.5;
+    line-height: 1.6;
+  }
+   a { 
+    color: $bubble-text-secondary;
+    text-decoration: none;
+    transition: color $bubble-transition-fast;
+    &:hover {
+      color: $bubble-accent-home-primary;
+      text-decoration: underline;
+    }
   }
 }
+
+
 
 @media (max-width: 1200px) {
   .home-main-content {
@@ -535,6 +641,7 @@ $border-radius-large: 12px;
     width: 100%;
     position: static;
     margin-bottom: 2rem;
+    padding: 1.5rem; // Узгоджуємо падінги
   }
   .hero-section {
     height: 350px;
@@ -560,39 +667,56 @@ $border-radius-large: 12px;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1.2rem;
   }
-   .home-main-content {
+  .home-main-content {
     padding: 1.5rem;
   }
-  .game-card .game-card-title { font-size: 1.1rem; }
-  .game-card .game-card-price { font-size: 1rem; }
+  .game-card .game-card-title { font-size: 1.15rem; } // Змінив
+  .game-card .game-card-price { font-size: 1.05rem; } // Змінив
   .section-title { font-size: 1.6rem; }
 
   .hero-section {
     height: auto;
     min-height: 300px;
+    padding: 1.5rem; // Зменшено
     .hero-content { max-width: 100%; }
     .hero-title { font-size: 2rem; }
-    .hero-actions { flex-direction: column; align-items: stretch; .hero-button { width: 100%; }}
+    .hero-actions { 
+        flex-direction: column; 
+        align-items: stretch; 
+        .hero-button { 
+            width: 100%; 
+            padding: 1rem; // Збільшив для мобільних
+            font-size: 0.95rem;
+        }
+    }
   }
-  .tabs-navigation {
+  .tabs-navigation { 
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 5px;
-    &::-webkit-scrollbar { height: 4px; }
-    &::-webkit-scrollbar-thumb { background: $border-color; border-radius: 2px;}
+    padding-bottom: 8px; 
+    scrollbar-width: thin;
+    scrollbar-color: $bubble-border-medium $bubble-bg-card; // Firefox
+    &::-webkit-scrollbar { height: 6px; }
+    &::-webkit-scrollbar-track { background: $bubble-bg-card; border-radius: 3px;}
+    &::-webkit-scrollbar-thumb { background: $bubble-border-medium; border-radius: 3px;}
+    &::-webkit-scrollbar-thumb:hover { background: $bubble-accent-home-primary; }
   }
 }
 
 @media (max-width: 480px) {
   .home-main-content { padding: 1rem; }
-  .home-sidebar { padding: 1rem; }
+  .home-sidebar { padding: 1.25rem; } // Узгоджуємо
   .game-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  .hero-title { font-size: 1.8rem; }
-  .hero-description { display: none; }
-  .hero-meta { flex-direction: column; align-items: flex-start; gap: 0.5rem;}
-  .tabs-navigation .tab-button { padding: 8px 10px; font-size: 0.85rem; }
+  .hero-section {
+    padding: 1.5rem 1rem;
+     .hero-title { font-size: 1.8rem; }
+     .hero-description { display: none; }
+     .hero-meta { flex-direction: column; align-items: flex-start; gap: 0.5rem;}
+  }
+  .tabs-navigation .tab-button { padding: 8px 12px; font-size: 0.85rem; } 
   .home-footer { padding: 1.5rem 1rem; font-size: 0.8rem;}
+  .game-card .game-card-info { padding: 1rem; }
 }

@@ -1,0 +1,369 @@
+@use 'sass:color';
+
+$font-discover: 'Inter', 'Segoe UI', Roboto, sans-serif;
+$bg-page-discover: #151a21; 
+$bg-element-discover: #1c232c; 
+$bg-card-discover: #232b35;
+$bg-card-hover-discover: #2a333d;
+
+$text-lightest-discover: #f0f4f8;
+$text-primary-discover: #c8d0d8;
+$text-secondary-discover: #9aa6b3;
+$text-muted-discover: #7a8b99;
+
+$accent-primary-discover: #5fa8f4; 
+$accent-secondary-discover: #4fa1e0;
+$accent-green-discover: #6ccf8d;
+$accent-red-discover: #e76c6c; 
+
+$border-soft-discover: #2c3542;
+$border-strong-discover: #384553;
+$radius-base-discover: 8px;
+$radius-large-discover: 12px;
+$shadow-discover: 0 6px 18px rgba(0,0,0,0.2);
+$transition-discover: all 0.25s ease-out;
+$transition-base: all 0.2s ease;
+$transition-fast: all 0.1s ease;
+$shadow-sm-library: 0 2px 8px rgba(0,0,0,0.1);
+$shadow-md-library: 0 4px 12px rgba(0,0,0,0.15);
+$bg-element-light-library: rgba(255,255,255,0.05);
+$bg-element-hover-library: rgba(255,255,255,0.1);
+$bg-input-library: #2a333d;
+
+@keyframes spinDiscover { to { transform: rotate(360deg); } }
+
+.discover-loading-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: $text-secondary-discover;
+  min-height: 200px;
+  .spinner-discover {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba($text-secondary-discover, 0.2);
+    border-top-color: $accent-primary-discover;
+    border-radius: 50%;
+    animation: spinDiscover 0.8s linear infinite;
+    margin-right: 1rem;
+  }
+}
+
+.discover-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: $font-discover;
+  color: $text-primary-discover;
+}
+
+.discover-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid $border-soft-discover;
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: $text-lightest-discover;
+    margin: 0 0 0.5rem 0;
+  }
+  p {
+    font-size: 1.1rem;
+    color: $text-secondary-discover;
+  }
+}
+
+.discovery-queue-section {
+  margin-bottom: 3rem;
+  h2 {
+    font-size: 1.75rem;
+    color: $text-lightest-discover;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid $border-soft-discover;
+    padding-bottom: 0.75rem;
+  }
+}
+
+.discovery-queue-card {
+  background-color: $bg-card-discover;
+  border-radius: $radius-large-discover;
+  box-shadow: $shadow-discover;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: $transition-discover;
+
+  @media (min-width: 992px) {
+    flex-direction: row;
+    max-height: 450px;
+  }
+  
+  &:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+}
+
+.dq-image-container {
+  position: relative;
+  background-color: $bg-element-discover;
+  @media (min-width: 992px) {
+    width: 60%;
+    flex-shrink: 0;
+  }
+  @media (max-width: 991px) {
+    padding-top: 56.25%;
+  }
+
+  .dq-main-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    @media (max-width: 991px) {
+        position: absolute;
+        top: 0; left: 0;
+    }
+  }
+}
+
+.dq-screenshots-preview {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    background-color: rgba($bg-element-discover, 0.5);
+    padding: 0.5rem;
+    border-radius: $radius-base-discover;
+    backdrop-filter: blur(4px);
+
+    img {
+        width: 80px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: $radius-base-discover - 2px;
+        border: 1px solid $border-soft-discover;
+        opacity: 0.8;
+        transition: $transition-fast;
+        &:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+    }
+     @media (max-width: 576px) {
+        display: none;
+    }
+}
+
+.dq-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+
+  h3 {
+    font-size: 1.75rem;
+    color: $text-lightest-discover;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.2;
+  }
+  .dq-description {
+    font-size: 0.95rem;
+    color: $text-secondary-discover;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+  }
+}
+
+.dq-tags {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: $radius-base-discover * 2;
+    font-weight: 500;
+    &.genre-tag {
+      background-color: rgba($accent-primary-discover, 0.15);
+      color: $accent-primary-discover;
+    }
+    &.misc-tag {
+      background-color: rgba($text-secondary-discover, 0.1);
+      color: $text-secondary-discover;
+    }
+  }
+}
+
+.dq-price {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $text-lightest-discover;
+    margin-bottom: 1.25rem;
+    .original {
+        color: $text-muted-discover;
+        text-decoration: line-through;
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
+    }
+    span:not(.original) {
+        color: $accent-green-discover;
+    }
+}
+
+.dq-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: auto;
+
+  .action-btn {
+    padding: 0.6rem 1rem;
+    border: 1px solid $border-strong-discover;
+    border-radius: $radius-base-discover;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: $transition-base;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: $bg-element-light-library;
+    color: $text-primary-discover;
+
+    &:hover {
+      background-color: $bg-element-hover-library;
+      color: $text-lightest-discover;
+      border-color: $accent-secondary-discover;
+    }
+    &.primary {
+      background-color: $accent-primary-discover;
+      color: $text-lightest-discover;
+      border-color: $accent-primary-discover;
+      &:hover {
+        background-color: color.adjust($accent-primary-discover, $lightness: 8%);
+      }
+    }
+    &.wishlist:hover svg { color: $accent-red-discover; }
+    &.ignore:hover svg { color: $text-muted-discover; }
+  }
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+
+  @media (min-width: 768px) {
+    // grid-template-columns: 1fr 1fr;
+  }
+}
+
+.reco-category-section {
+  background-color: $bg-element-discover;
+  padding: 1.5rem;
+  border-radius: $radius-large-discover;
+  border: 1px solid $border-soft-discover;
+
+  h2 {
+    font-size: 1.5rem;
+    color: $text-lightest-discover;
+    margin: 0 0 1.25rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $border-strong-discover;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    svg { color: $accent-secondary-discover; }
+  }
+}
+
+.reco-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.reco-game-card {
+  background-color: $bg-card-discover;
+  border-radius: $radius-base-discover;
+  overflow: hidden;
+  transition: $transition-base;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  box-shadow: $shadow-sm-library;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-md-library;
+    background-color: $bg-card-hover-discover;
+  }
+
+  .reco-game-image {
+    width: 100%;
+    padding-top: 133.33%;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    background-color: $bg-input-library;
+    border-bottom: 2px solid $accent-primary-discover;
+  }
+  .reco-game-info {
+    padding: 0.75rem;
+    h4 {
+      font-size: 1rem;
+      color: $text-lightest-discover;
+      margin: 0 0 0.4rem 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .reco-price {
+    font-size: 0.9rem;
+    color: $accent-green-discover;
+    font-weight: 500;
+    .reco-original-price {
+      color: $text-muted-discover;
+      text-decoration: line-through;
+      font-size: 0.8rem;
+      margin-right: 0.4rem;
+    }
+  }
+}
+
+.discover-empty-text {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.1rem;
+    color: $text-secondary-discover;
+}
+
+@media (max-width: 768px) {
+    .discover-header {
+        h1 { font-size: 2rem; }
+        p { font-size: 1rem; }
+    }
+    .discovery-queue-card {
+        flex-direction: column;
+    }
+    .dq-image-container {
+        width: 100%;
+        padding-top: 56.25%;
+    }
+    .dq-info h3 { font-size: 1.5rem; }
+    .reco-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}

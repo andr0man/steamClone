@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './EditProfile.scss';
 import Notification from '../../../components/Notification';
-import { User, ImageIcon, Globe, Save, XCircle, UploadCloud, Link as LinkIcon } from 'lucide-react';
+import { User, ImageIcon, Globe, Save, XCircle, UploadCloud, Link as LinkIcon, Mail, Lock } from 'lucide-react'; // Added Mail and Lock
 
 const API_BASE_URL = ''; 
 const COUNTRIES_LIST = [
@@ -18,6 +18,11 @@ const EditProfile = ({ currentProfileData }) => {
     bio: '',
     country: COUNTRIES_LIST[0],
     favoriteGameTitle: '',
+    currentEmail: '', // New field
+    newEmail: '',     // New field
+    currentPassword: '', // New field
+    newPassword: '',     // New field
+    confirmPassword: '' // New field
   });
   
   const [avatarFile, setAvatarFile] = useState(null);
@@ -42,6 +47,11 @@ const EditProfile = ({ currentProfileData }) => {
       bio: data?.bio || 'This is a sample bio.',
       country: data?.country || COUNTRIES_LIST[0],
       favoriteGameTitle: data?.favoriteGame?.title || data?.favoriteGameTitle || '',
+      currentEmail: data?.email || '', // Populate current email
+      newEmail: '',                   // New email always starts empty
+      currentPassword: '',            // Passwords always start empty for security
+      newPassword: '',
+      confirmPassword: '',
     });
     setAvatarPreview(data?.avatarUrl || 'https://via.placeholder.com/150/2a333d/cdd6f4?Text=Avatar');
     setBannerPreview(data?.bannerImageUrl || 'https://via.placeholder.com/1000x200/1e252e/5e81ac?Text=Profile+Banner');
@@ -56,27 +66,23 @@ const EditProfile = ({ currentProfileData }) => {
         if (currentProfileData && currentProfileData.username !== 'User') {
             populateFormWithData(currentProfileData);
         } else {
-            // Інакше, робимо запит (наприклад, якщо користувач оновив сторінку напряму)
-            // const response = await fetch(`${API_BASE_URL}/api/user/profile`); 
-            // if (!response.ok) { /* ... */ }
-            // const data = await response.json();
-            // populateFormWithData(data);
-
+            // Fallback to mock data or a direct fetch if currentProfileData is not sufficient
             await new Promise(resolve => setTimeout(resolve, 500));
-             const mockData = {
-                username: '',
-                avatarUrl: '',
-                bannerImageUrl: '',
-                bio: '',
-                country: '',
-                favoriteGameTitle: '',
+            const mockData = {
+                username: 'FluxiUser',
+                avatarUrl: 'https://via.placeholder.com/150/2a333d/cdd6f4?Text=Avatar',
+                bannerImageUrl: 'https://via.placeholder.com/1000x200/1e252e/5e81ac?Text=Profile+Banner',
+                bio: 'Welcome to my Fluxi profile! Exploring new games and connecting with players.',
+                country: COUNTRIES_LIST[0], // Ukraine
+                favoriteGameTitle: 'Cyberpunk 2077',
+                email: 'user@example.com' // Mock current email
             };
             populateFormWithData(mockData);
         }
       } catch (err) {
         console.error("Failed to fetch initial profile data:", err);
         setApiError(err.message || 'Could not load profile data to edit.');
-        populateFormWithData({});
+        populateFormWithData({}); // Populate with defaults on error
       } finally {
         setPageLoading(false);
       }
@@ -117,8 +123,14 @@ const EditProfile = ({ currentProfileData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError(null); // Clear previous errors
+
+    if (formData.newPassword && formData.newPassword !== formData.confirmPassword) {
+      setApiError("New passwords do not match.");
+      return;
+    }
+
     setIsSubmitting(true);
-    setApiError(null);
     setSuccessMessage(null);
 
     const submissionData = new FormData();
@@ -138,25 +150,73 @@ const EditProfile = ({ currentProfileData }) => {
       submissionData.append('bannerImageUrl', formData.bannerImageUrl);
     }
 
+    // Add email change fields if newEmail is provided and different
+    if (formData.newEmail && formData.newEmail.trim() !== '' && formData.newEmail !== formData.currentEmail) {
+      submissionData.append('newEmail', formData.newEmail.trim());
+      // The backend might require currentEmail for verification, or infer it from the session.
+      // submissionData.append('currentEmailForVerification', formData.currentEmail);
+    }
+
+    // Add password change fields if newPassword is provided
+    if (formData.newPassword && formData.newPassword.trim() !== '') {
+      if (!formData.currentPassword || formData.currentPassword.trim() === '') {
+        setApiError("Current password is required to set a new password.");
+        setIsSubmitting(false);
+        return;
+      }
+      submissionData.append('currentPassword', formData.currentPassword);
+      submissionData.append('newPassword', formData.newPassword);
+      submissionData.append('confirmPassword', formData.confirmPassword); // For server re-validation
+    } else if (formData.currentPassword && formData.currentPassword.trim() !== '' && 
+               formData.newEmail && formData.newEmail.trim() !== '' && formData.newEmail !== formData.currentEmail) {
+      // If ONLY email is being changed (no new password) AND current password was supplied,
+      // send currentPassword as it's likely for authorizing the email change.
+      submissionData.append('currentPassword', formData.currentPassword);
+    }
+
+
     try {
-      // console.log("Submitting FormData:");
+      // console.log("Submitting FormData (raw):");
       // for (let [key, value] of submissionData.entries()) {
-      //   console.log(key, value);
+      //   console.log(key, value instanceof File ? `${value.name} (File)` : value);
       // }
+      console.log("Submitting FormData (as object for easier logging):", Object.fromEntries(submissionData.entries()));
+
       // const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
-      //   method: 'PUT', // або PATCH
-      //   // headers: { 'Content-Type': 'multipart/form-data' }, 
+      //   method: 'PUT', 
       //   body: submissionData,
+      //   // Headers for FormData are usually set automatically by the browser,
+      //   // including 'Content-Type': 'multipart/form-data; boundary=...'
+      //   // Do not set 'Content-Type': 'application/json' when sending FormData.
       // });
-      // if (!response.ok) { /* ... */ }
+      // if (!response.ok) { 
+      //   const errorData = await response.json().catch(() => ({ message: response.statusText }));
+      //   throw new Error(errorData.message || `Server responded with ${response.status}`);
+      // }
       // const result = await response.json();
       
       await new Promise(resolve => setTimeout(resolve, 1500)); 
-      console.log("Profile update submitted (FormData would be sent):", formData, {avatarFile, bannerFile});
-
+      // console.log("Profile update submitted (mock API):", formData, {avatarFile, bannerFile});
+      
       setSuccessMessage('Profile updated successfully!');
-      // setFormData(prev => ({...prev, avatarUrl: result.newAvatarUrl, bannerImageUrl: result.newBannerUrl}));
-      // setAvatarFile(null); setBannerFile(null);
+      // const newEmailAfterUpdate = result?.newEmail || (formData.newEmail && formData.newEmail.trim() !== '' ? formData.newEmail.trim() : formData.currentEmail);
+
+      setFormData(prev => ({
+        ...prev,
+        // currentEmail: newEmailAfterUpdate, // Update currentEmail if changed
+        newEmail: '', // Clear new email input
+        currentPassword: '', // Always clear password fields after submission
+        newPassword: '',
+        confirmPassword: '',
+        // If backend returns new URLs for avatar/banner after upload:
+        // avatarUrl: result.newAvatarUrl || prev.avatarUrl,
+        // bannerImageUrl: result.newBannerUrl || prev.bannerImageUrl,
+      }));
+      // If email was successfully changed, you might want to update `formData.currentEmail` based on API response
+      // For now, keeping it simple as the mock doesn't return a new email.
+
+      // setAvatarFile(null); 
+      // setBannerFile(null);
 
       setTimeout(() => navigate('/profile'), 2000);
 
@@ -179,7 +239,7 @@ const EditProfile = ({ currentProfileData }) => {
 
       <header className="edit-profile-main-header">
         <h1>Edit Your Profile</h1>
-        <p>Make changes to your public presence on Fluxi.</p>
+        <p>Make changes to your public presence and account settings on Fluxi.</p>
       </header>
 
       <form onSubmit={handleSubmit} className="edit-profile-form-content">
@@ -220,14 +280,14 @@ const EditProfile = ({ currentProfileData }) => {
 
             <div className="form-group file-upload-group column-half">
               <label htmlFor="bannerFile">Banner Image</label>
-               <div className="file-input-wrapper">
+                <div className="file-input-wrapper">
                 <button type="button" className="file-select-button" onClick={() => bannerInputRef.current?.click()}>
                   <UploadCloud size={18} /> Choose Banner
                 </button>
                 <input type="file" id="bannerFile" name="bannerFile" ref={bannerInputRef} onChange={(e) => handleFileChange(e, 'banner')} accept="image/png, image/jpeg, image/gif" />
                 {bannerFile && <span className="file-name-display">{bannerFile.name}</span>}
               </div>
-              <small className="field-hint">Recommended: 1200x300px or wider (e.g., 1600x400px). (PNG, JPG, GIF)</small>
+              <small className="field-hint">Recommended: 1200x300px or wider. (PNG, JPG, GIF)</small>
               {bannerPreview && <img src={bannerPreview} alt="Banner Preview" className="image-preview-display banner-display"/>}
             </div>
           </div>
@@ -244,6 +304,87 @@ const EditProfile = ({ currentProfileData }) => {
             <input type="text" id="favoriteGameTitle" name="favoriteGameTitle" value={formData.favoriteGameTitle} onChange={handleTextChange} placeholder="E.g., The Witcher 3, Portal 2" />
           </div>
         </section>
+
+        {/* New Account Security Section */}
+        <section className="edit-form-section">
+            <h2 className="section-title"><Lock size={22}/> Account Security</h2>
+            
+            <div className="form-row">
+                <div className="form-group column-half">
+                    <label htmlFor="currentEmail">Current Email Address</label>
+                    <input 
+                        type="email" 
+                        id="currentEmail" 
+                        name="currentEmail" 
+                        value={formData.currentEmail} 
+                        onChange={handleTextChange} // Or make readOnly if it's just for display
+                        placeholder="your.email@example.com" 
+                        autoComplete="email"
+                        readOnly // Often, current email is not directly editable here but shown as reference
+                    />
+                     <small className="field-hint">Your registered email address. To change it, use the 'New Email' field.</small>
+                </div>
+                <div className="form-group column-half">
+                    <label htmlFor="newEmail">New Email Address (Optional)</label>
+                    <input 
+                        type="email" 
+                        id="newEmail" 
+                        name="newEmail" 
+                        value={formData.newEmail} 
+                        onChange={handleTextChange} 
+                        placeholder="Enter new email" 
+                        autoComplete="email"
+                    />
+                    <small className="field-hint">Leave blank if you don't want to change your email.</small>
+                </div>
+            </div>
+
+            <div className="form-row">
+                <div className="form-group column-full">
+                    <label htmlFor="currentPassword">Current Password</label>
+                    <input 
+                        type="password" 
+                        id="currentPassword" 
+                        name="currentPassword" 
+                        value={formData.currentPassword} 
+                        onChange={handleTextChange} 
+                        placeholder="Enter current password to update email or password" 
+                        autoComplete="current-password"
+                    />
+                    <small className="field-hint">Required if changing email or setting a new password.</small>
+                </div>
+            </div>
+
+            <div className="form-row">
+                <div className="form-group column-half">
+                    <label htmlFor="newPassword">New Password (Optional)</label>
+                    <input 
+                        type="password" 
+                        id="newPassword" 
+                        name="newPassword" 
+                        value={formData.newPassword} 
+                        onChange={handleTextChange} 
+                        placeholder="Enter new password" 
+                        autoComplete="new-password"
+                    />
+                     <small className="field-hint">Min. 8 characters. Leave blank to keep current password.</small>
+                </div>
+                <div className="form-group column-half">
+                    <label htmlFor="confirmPassword">Confirm New Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        value={formData.confirmPassword} 
+                        onChange={handleTextChange} 
+                        placeholder="Confirm new password" 
+                        autoComplete="new-password"
+                    />
+                    <small className="field-hint">Required if new password is entered.</small>
+                </div>
+            </div>
+        </section>
+
 
         <div className="edit-form-actions">
           <button type="button" className="action-button cancel-button" onClick={() => navigate('/profile')} disabled={isSubmitting}>

@@ -1,101 +1,145 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/auth.scss";
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, User, KeyRound, LogIn, Eye, EyeOff } from 'lucide-react';
 
-const Login = ({ onLoginSuccess }) => { 
-  const [formData, setFormData] = useState({
-    identity: '',
-    password: '',
-    rememberMe: false
-  });
-  const navigate = useNavigate(); 
+const Notification = ({ message, type, duration = 5000, onClose }) => {
+    useEffect(() => {
+        if (message && duration) {
+            const timer = setTimeout(() => {
+                if (onClose) onClose();
+            }, duration);
+            return () => clearTimeout(timer);
+        }
+    }, [message, duration, onClose]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
+    if (!message) return null;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.identity.trim()) {
-      alert('Please enter your account name or email address.');
-      return;
-    }
-    if (!formData.password) {
-      alert('Please enter your password.');
-      return;
-    }
-    console.log('Form submitted for login:', formData);
-    
-    onLoginSuccess(formData); 
-    navigate('/store');
-  };
-
-  return (
-    <div className="app-login-container">
-      <div className="app-login-box">
-        <div className="login-app-logo">
-          <ShieldCheck size={40} color="#66c0f4" strokeWidth={1.5} />
+    return (
+        <div className={`app-notification notification-${type}`}>
+            {message}
+            {onClose && <button onClick={onClose} className="close-notification">&times;</button>}
         </div>
-        <h2>SIGN IN</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="login-form-group">
-            <label htmlFor="login-identity">Account name or Email address</label>
-            <input
-              type="text"
-              id="login-identity"
-              name="identity"
-              value={formData.identity}
-              onChange={handleChange}
-              required
-              placeholder="Enter your login or email"
-            />
-          </div>
-          
-          <div className="login-form-group">
-            <label htmlFor="login-password">Password</label>
-            <input
-              type="password"
-              id="login-password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Enter your password"
-            />
-          </div>
-          
-          <div className="login-checkbox-group">
-            <label htmlFor="login-remember">
-              <input
-                type="checkbox"
-                id="login-remember"
-                name="rememberMe"
-                checked={formData.rememberMe}
-                onChange={handleChange}
-              />
-              <span>Remember me</span>
-            </label>
-            {/* Замість <a> можна також використати <Link>, якщо це внутрішній маршрут */}
-            <a href="#forgot" className="app-forgot-password">Forgot your password?</a>
-          </div>
-          
-          <button type="submit" className="app-login-button">Sign In</button>
-        </form>
-        <div className="login-switch-form">
-          Don't have an account?{' '}
-          {/* Заміна Link */}
-          <Link to="/register" className="login-switch-button">
-            Create one
-          </Link>
+    );
+};
+
+const Login = ({ onLoginSuccess }) => {
+    const [formData, setFormData] = useState({
+        identity: '',
+        password: '',
+        rememberMe: false
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!formData.identity.trim()) {
+            alert('Please enter both your login/email and password.');
+            return;
+        }
+        if (!formData.password) {
+            alert('Please enter your password.');
+            return;
+        }
+        
+        console.log('Form submitted for login:', formData);
+        
+        if (typeof onLoginSuccess === 'function') {
+            onLoginSuccess(formData);
+        }
+        navigate('/store');
+    };
+
+    return (
+        <div className="app-auth-container">
+            <div className="app-auth-box">
+                <div className="auth-header">
+                    <ShieldCheck size={40} />
+                    <h2>Welcome Back</h2>
+                </div>
+                
+                <form onSubmit={handleSubmit} noValidate>
+                    <div className="bubble-form-group">
+                        <label htmlFor="login-identity">Login or Email</label>
+                        <div className="bubble-input-wrapper">
+                            <User />
+                            <input
+                                type="text"
+                                id="login-identity"
+                                name="identity"
+                                value={formData.identity}
+                                onChange={handleChange}
+                                required
+                                placeholder="Enter your login or email"
+                                autoComplete="username"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="bubble-form-group">
+                        <label htmlFor="login-password">Password</label>
+                         <div className="bubble-input-wrapper bubble-password-input">
+                            <KeyRound />
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="login-password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                                placeholder="Enter your password"
+                                autoComplete="current-password"
+                            />
+                            <button 
+                                type="button" 
+                                onClick={() => setShowPassword(!showPassword)} 
+                                className="toggle-password-visibility"
+                                aria-label={showPassword ? "Hide password" : "Show password"}
+                            >
+                                {showPassword ? <EyeOff /> : <Eye />}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="auth-options-group">
+                        <div className="bubble-checkbox-group">
+                             <input
+                                type="checkbox"
+                                id="login-remember"
+                                name="rememberMe"
+                                checked={formData.rememberMe}
+                                onChange={handleChange}
+                            />
+                            <label htmlFor="login-remember">Remember me</label>
+                        </div>
+                        <Link to="/forgot-password" className="bubble-forgot-password">Forgot password?</Link>
+                    </div>
+
+                    <button type="submit" className="bubble-continue-button">
+                        Sign In
+                        <LogIn size={20} />
+                    </button>
+                </form>
+                
+                <div className="bubble-switch-form">
+                    Don't have an account?{' '}
+                    <Link to="/register" className="bubble-switch-form-button">
+                        Create one
+                    </Link>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Login;
