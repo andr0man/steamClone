@@ -5,6 +5,7 @@ using SteamClone.BLL.Services.ImageService;
 using SteamClone.BLL.Services.JwtService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.BLL.Services.UserService;
+using SteamClone.BLL.Services.MailService;
 
 namespace SteamClone.BLL;
 
@@ -20,6 +21,7 @@ public static class ConfigureBusinessLogic
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IMailService, MailService>();
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
     }

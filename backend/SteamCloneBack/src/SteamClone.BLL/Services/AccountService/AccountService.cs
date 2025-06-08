@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using AutoMapper;
+using MailKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
 using SteamClone.BLL.Common.Interfaces;
@@ -20,7 +21,8 @@ public class AccountService(
     IMapper mapper,
     IJwtTokenService jwtService,
     IPasswordHasher passwordHasher,
-    IRefreshTokenRepository refreshTokenRepository) : IAccountService
+    IRefreshTokenRepository refreshTokenRepository,
+    SteamClone.BLL.Services.MailService.IMailService mailService) : IAccountService
 {
     public async Task<ServiceResponse> SignInAsync(SignInVM model, CancellationToken token = default)
     {
@@ -30,7 +32,12 @@ public class AccountService(
         {
             return ServiceResponse.BadRequestResponse($"Користувача з поштою {model.Email} не знайдено");
         }
-        
+
+        if (!user.EmailConfirmed)
+        {
+            return ServiceResponse.ForbiddenResponse("Підтвердіть email перед входом");
+        }
+
         var result = passwordHasher.Verify(model.Password, user.PasswordHash);
         
         if (!result)
@@ -40,19 +47,19 @@ public class AccountService(
         
         var tokens = await jwtService.GenerateTokensAsync(user);
         
-        return ServiceResponse.OkResponse("Успіший вхід", tokens);
+        return ServiceResponse.OkResponse("Успішний вхід", tokens);
     }
 
     public async Task<ServiceResponse> SignUpAsync(SignUpVM model, CancellationToken token = default)
     {
         if (!await userRepository.IsUniqueNicknameAsync(model.Nickname, token))
         {
-            return ServiceResponse.BadRequestResponse($"{model.Nickname} вже викорстовується");
+            return ServiceResponse.BadRequestResponse($"{model.Nickname} вже використовується");
         }
 
         if (!await userRepository.IsUniqueEmailAsync(model.Email, token))
         {
-            return ServiceResponse.BadRequestResponse($"{model.Email} вже викорстовується");
+            return ServiceResponse.BadRequestResponse($"{model.Email} вже використовується");
         }
 
         var user = mapper.Map<User>(model);
@@ -70,6 +77,10 @@ public class AccountService(
         {
             return ServiceResponse.InternalServerErrorResponse(e.Message, e.InnerException?.Message);
         }
+
+        var confirmToken = jwtService.GenerateEmailConfirmationToken(user);
+        await mailService.SendConfirmEmailAsync(user, confirmToken);
+
 
         var tokens = await jwtService.GenerateTokensAsync(user);
 
@@ -129,4 +140,35 @@ public class AccountService(
 
         return ServiceResponse.NotFoundResponse($"User under id: {existingRefreshToken.UserId} was not found!");
     }
+
+    public async Task<ServiceResponse> ConfirmEmailAsync(string token)
+    {
+        try
+        {
+            var principal = jwtService.GetPrincipals(token);
+
+            var userId = principal.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            var type = principal.Claims.FirstOrDefault(c => c.Type == "type")?.Value;
+
+            if (type != "email-confirm")    
+                return ServiceResponse.ForbiddenResponse("Недійсний тип токена");
+
+            var user = await userRepository.GetByIdAsync(userId, CancellationToken.None);
+            if (user == null)
+                return ServiceResponse.NotFoundResponse("Користувача не знайдено");
+
+            if (user.EmailConfirmed)
+                return ServiceResponse.BadRequestResponse("Email вже підтверджено");
+
+            user.EmailConfirmed = true;
+            await userRepository.UpdateAsync(user, CancellationToken.None);
+
+            return ServiceResponse.OkResponse("Email підтверджено успішно!");
+        }
+        catch
+        {
+            return ServiceResponse.BadRequestResponse("Недійсний або прострочений токен");
+        }
+    }
+
 }

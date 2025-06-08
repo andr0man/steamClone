@@ -22,19 +22,16 @@ namespace SteamClone.BLL.Services.MailService
 
         public async Task SendConfirmEmailAsync(User user, string token)
         {
-            var bytes = Encoding.UTF8.GetBytes(token);
-            var validToken = WebEncoders.Base64UrlEncode(bytes);
             var address = _configuration["Host:Address"];
+            var confirmationUrl = $"{address}/account/emailconfirm?t={token}";
 
-            const string URL_PARAM = "emailConfirmUrl";
-            string confirmationUrl = $"{address}/api/account/emailconfrim?u={user.Id}&t={validToken}";
+            string messageText = $"Привіт, {user.Nickname}!\n" +
+                         $"Перейдіть за посиланням, щоб підтвердити вашу пошту:\n\n" +
+                         $"{confirmationUrl}\n\n" +
+                         $"Якщо ви не реєструвались — просто ігноруйте цей лист.";
 
-            string rootPath = _webHostEnvironment.WebRootPath;
-            string templatePath = Path.Combine(rootPath, Settings.HtmlPagesPath, "emailconfirmation.html");
-            string messageText = File.ReadAllText(templatePath);
-            messageText = messageText.Replace(URL_PARAM, confirmationUrl);
+            await SendEmailAsync(user.Email, "Підтвердження пошти", messageText, isHtml: false);
 
-            await SendEmailAsync(user.Email, "Підтвердження пошти", messageText, true);
         }
 
         public async Task SendEmailAsync(IEnumerable<string> to, string subject, string text, bool isHtml = false)
@@ -77,7 +74,7 @@ namespace SteamClone.BLL.Services.MailService
 
                 using (var client = new SmtpClient())
                 {
-                    await client.ConnectAsync(smtp, port, true);
+                    await client.ConnectAsync(smtp, port, false);
                     await client.AuthenticateAsync(email, password);
                     await client.SendAsync(message);
                 }

@@ -10,5 +10,6 @@ namespace SteamClone.BLL.Services.JwtService
         Task<JwtModel> GenerateTokensAsync(User user, CancellationToken token = default);
         ClaimsPrincipal GetPrincipals(string accessToken);
         Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(ExternalLoginModel model);
+        string GenerateEmailConfirmationToken(User user, int minutes = 30);
     }
 }

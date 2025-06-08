@@ -54,5 +54,13 @@ namespace SteamClone.API.Controllers
             var response = await accountService.RefreshTokensAsync(model, cancellationToken);
             return GetResult(response);
         }
+
+        [HttpGet("emailconfirm")]
+        public async Task<IActionResult> ConfirmEmailAsync([FromQuery] string t)
+        {
+            var response = await accountService.ConfirmEmailAsync(t);
+            return GetResult(response);
+        }
+
     }
 }
