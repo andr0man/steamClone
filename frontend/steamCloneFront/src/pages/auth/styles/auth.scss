@@ -255,7 +255,7 @@ $bubble-blur: 12px;
       transition: all $bubble-transition-fast;
       &:hover { 
         text-decoration: underline;
-        color: lighten($bubble-accent-primary, 10%);
+        color: color.adjust($bubble-accent-primary, $lightness: 10%);
       }
     }
   }
@@ -276,7 +276,7 @@ $bubble-blur: 12px;
   font-weight: 500;
   transition: color $bubble-transition-fast;
   &:hover { 
-    color: lighten($bubble-accent-primary, 10%);
+    color: color.adjust($bubble-accent-primary, $lightness: 10%);
     text-decoration: underline;
   }
 }
@@ -347,7 +347,7 @@ $bubble-blur: 12px;
   margin-left: 0.5rem;
   transition: all $bubble-transition-fast;
   &:hover { 
-    color: lighten($bubble-accent-primary, 10%);
+    color: color.adjust($bubble-accent-primary, $lightness: 10%);
     text-decoration: underline;
   }
 }

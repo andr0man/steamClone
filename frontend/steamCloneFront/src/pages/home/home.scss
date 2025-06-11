@@ -81,7 +81,7 @@ $bubble-blur: 10px;
   color: $bubble-text-bright;
 
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, lighten($bubble-accent-home-primary, 5%), lighten($bubble-accent-home-secondary, 5%));
+    background: linear-gradient(135deg, color.adjust($bubble-accent-home-primary, $lightness: 5%), color.adjust($bubble-accent-home-secondary, $lightness: 5%));
     box-shadow: $bubble-shadow-medium, 0 0 15px hsla($bubble-secondary-hue, 85%, 65%, 0.3);
   }
 }
@@ -104,11 +104,11 @@ $bubble-blur: 10px;
 
 @mixin bubble-button-success { 
   @include bubble-button-base;
-  background: linear-gradient(135deg, $bubble-accent-success, lighten($bubble-accent-success, 10%));
+  background: linear-gradient(135deg, $bubble-accent-success, color.adjust($bubble-accent-success, $lightness: 10%));
   color: hsl($bubble-success-hue, 80%, 95%);
 
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, lighten($bubble-accent-success, 5%), lighten($bubble-accent-success, 15%));
+    background: linear-gradient(135deg, color.adjust($bubble-accent-success, $lightness: 5%), color.adjust($bubble-accent-success, $lightness: 15%));
      box-shadow: $bubble-shadow-medium, 0 0 15px hsla($bubble-success-hue, 65%, 55%, 0.3);
   }
 }
@@ -173,7 +173,7 @@ $bubble-blur: 10px;
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5); // Тінь для тексту
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     color: $bubble-text-bright;
   }
 
@@ -305,7 +305,7 @@ $bubble-blur: 10px;
           color: $bubble-text-bright;
           transform: translateX(4px);
         }
-         &.active { // Якщо є активна категорія
+         &.active {
           background-color: rgba($bubble-accent-home-secondary, 0.15);
             color: $bubble-accent-home-primary;
             font-weight: 600;
@@ -336,14 +336,14 @@ $bubble-blur: 10px;
       @include bubble-button-success;
       background: $bubble-accent-success-darker;
       border: 1px solid $bubble-accent-success;
-      color: lighten($bubble-accent-success, 30%);
+      color: color.adjust($bubble-accent-success, $lightness: 30%);
       padding: 8px 18px;
       font-size: 0.9rem;
       border-radius: $bubble-radius-pill;
       &:hover:not(:disabled) {
         background: $bubble-accent-success;
         color: hsl($bubble-success-hue, 100%, 95%);
-        border-color: lighten($bubble-accent-success, 10%);
+        border-color: color.adjust($bubble-accent-success, $lightness: 10%);
       }
     }
   }
@@ -355,20 +355,20 @@ $bubble-blur: 10px;
 
   .tabs-navigation {
     display: flex;
-    gap: 0.5rem; // Зменшимо gap для більш щільного вигляду табів
+    gap: 0.5rem;
     margin-bottom: 2rem;
-    border-bottom: 1px solid $bubble-border-medium; // Тонша лінія
+    border-bottom: 1px solid $bubble-border-medium;
 
     .tab-button {
-      @include bubble-button-base; // Використовуємо базу, але кастомізуємо
-      padding: 0.8rem 1.25rem; // Адаптовані падінги
+      @include bubble-button-base;
+      padding: 0.8rem 1.25rem;
       background-color: transparent;
       color: $bubble-text-secondary;
-      border-radius: $bubble-radius-md $bubble-radius-md 0 0; // Закруглення тільки зверху
+      border-radius: $bubble-radius-md $bubble-radius-md 0 0;
       border: none;
       border-bottom: 3px solid transparent;
       position: relative;
-      top: 1px; // Для візуального ефекту "приклеювання"
+      top: 1px;
       font-weight: 500;
 
       svg { color: $bubble-text-muted; margin-right: 8px; transition: color $bubble-transition-fast; }
@@ -376,7 +376,7 @@ $bubble-blur: 10px;
       &:hover:not(.active) {
         color: $bubble-text-bright;
         background-color: rgba($bubble-accent-home-secondary, 0.15);
-        transform: none; // Забираємо hover ефект з базової кнопки для табів
+        transform: none;
         box-shadow: none;
         svg { color: $bubble-accent-home-secondary; }
       }
@@ -384,7 +384,7 @@ $bubble-blur: 10px;
         color: $bubble-accent-home-primary;
         border-bottom-color: $bubble-accent-home-primary;
         font-weight: 700;
-        background-color: hsla($bubble-secondary-hue, 15%, 18%, 0.5); // Легкий фон для активного табу
+        background-color: hsla($bubble-secondary-hue, 15%, 18%, 0.5);
         svg { color: $bubble-accent-home-primary; }
       }
     }
@@ -406,12 +406,12 @@ $bubble-blur: 10px;
 .game-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 2rem; // Трохи більший gap для "повітря"
+  gap: 2rem;
 }
 
 .game-card {
   background-color: $bubble-bg-card;
-  border-radius: $bubble-radius-lg; // Більш заокруглені кути
+  border-radius: $bubble-radius-lg;
   overflow: hidden;
   border: 1px solid $bubble-border-medium;
   box-shadow: $bubble-shadow-medium;
@@ -420,12 +420,12 @@ $bubble-blur: 10px;
   flex-direction: column;
 
   &:hover {
-    transform: translateY(-6px) scale(1.02); // Ефект підйому та легкого збільшення
-    box-shadow: $bubble-shadow-medium, $bubble-shadow-glow-accent; // Додамо світіння
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: $bubble-shadow-medium, $bubble-shadow-glow-accent;
     .game-card-image-container .game-card-hover-overlay {
       opacity: 1;
       visibility: visible;
-      backdrop-filter: blur(4px); // Блюр для оверлея
+      backdrop-filter: blur(4px);
     }
   }
 
@@ -465,10 +465,10 @@ $bubble-blur: 10px;
         border-radius: $bubble-radius-pill;
         &.primary { 
           @include bubble-button-primary; 
-          background: linear-gradient(135deg, $bubble-accent-success, lighten($bubble-accent-success, 10%));
+          background: linear-gradient(135deg, $bubble-accent-success, color.adjust($bubble-accent-success, $lightness: 10%));
           color: hsl($bubble-success-hue, 80%, 95%);
           &:hover {
-             background: linear-gradient(135deg, lighten($bubble-accent-success, 5%), lighten($bubble-accent-success, 15%));
+             background: linear-gradient(135deg, color.adjust($bubble-accent-success, $lightness: 5%), color.adjust($bubble-accent-success, $lightness: 15%));
           }
         }
         &.secondary { 
@@ -523,7 +523,7 @@ $bubble-blur: 10px;
   .game-card-price {
     margin-top: auto;
     padding-top: 0.85rem;
-    border-top: 1px solid $bubble-border-soft; // М'якша лінія
+    border-top: 1px solid $bubble-border-soft;
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -574,7 +574,7 @@ $bubble-blur: 10px;
   svg {
     color: $bubble-accent-home-primary;
     margin-bottom: 1.5rem;
-    width: 48px; height: 48px; // Збільшимо іконку
+    width: 48px; height: 48px;
   }
 
   p {
@@ -612,8 +612,6 @@ $bubble-blur: 10px;
   }
 }
 
-
-
 @media (max-width: 1200px) {
   .home-main-content {
     padding: 2rem;
@@ -641,7 +639,7 @@ $bubble-blur: 10px;
     width: 100%;
     position: static;
     margin-bottom: 2rem;
-    padding: 1.5rem; // Узгоджуємо падінги
+    padding: 1.5rem;
   }
   .hero-section {
     height: 350px;
@@ -670,14 +668,14 @@ $bubble-blur: 10px;
   .home-main-content {
     padding: 1.5rem;
   }
-  .game-card .game-card-title { font-size: 1.15rem; } // Змінив
-  .game-card .game-card-price { font-size: 1.05rem; } // Змінив
+  .game-card .game-card-title { font-size: 1.15rem; }
+  .game-card .game-card-price { font-size: 1.05rem; }
   .section-title { font-size: 1.6rem; }
 
   .hero-section {
     height: auto;
     min-height: 300px;
-    padding: 1.5rem; // Зменшено
+    padding: 1.5rem;
     .hero-content { max-width: 100%; }
     .hero-title { font-size: 2rem; }
     .hero-actions { 
@@ -685,7 +683,7 @@ $bubble-blur: 10px;
         align-items: stretch; 
         .hero-button { 
             width: 100%; 
-            padding: 1rem; // Збільшив для мобільних
+            padding: 1rem;
             font-size: 0.95rem;
         }
     }
@@ -695,7 +693,7 @@ $bubble-blur: 10px;
     white-space: nowrap;
     padding-bottom: 8px; 
     scrollbar-width: thin;
-    scrollbar-color: $bubble-border-medium $bubble-bg-card; // Firefox
+    scrollbar-color: $bubble-border-medium $bubble-bg-card;
     &::-webkit-scrollbar { height: 6px; }
     &::-webkit-scrollbar-track { background: $bubble-bg-card; border-radius: 3px;}
     &::-webkit-scrollbar-thumb { background: $bubble-border-medium; border-radius: 3px;}
@@ -705,7 +703,7 @@ $bubble-blur: 10px;
 
 @media (max-width: 480px) {
   .home-main-content { padding: 1rem; }
-  .home-sidebar { padding: 1.25rem; } // Узгоджуємо
+  .home-sidebar { padding: 1.25rem; }
   .game-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
