@@ -24,4 +24,8 @@
       <ProjectReference Include="..\SteamClone.DAL\SteamClone.DAL.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\countries\countries.json" />
+    </ItemGroup>
+
 </Project>

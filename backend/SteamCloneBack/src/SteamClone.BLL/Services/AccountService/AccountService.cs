@@ -59,7 +59,7 @@ public class AccountService(
         user.Id = Guid.NewGuid().ToString();
         user.PasswordHash = passwordHasher.HashPassword(model.Password);
         user.CreatedBy = user.Id;
-        user.Country = "Ukraine";
+        user.CountryId = user.CountryId;
         user.RoleId = Settings.UserRole;
 
         try
@@ -71,7 +71,7 @@ public class AccountService(
             return ServiceResponse.InternalServerErrorResponse(e.Message, e.InnerException?.Message);
         }
 
-        var tokens = await jwtService.GenerateTokensAsync(user);
+        var tokens = await jwtService.GenerateTokensAsync(user, token);
 
         return ServiceResponse.OkResponse($"Користувач {model.Email} успішно зареєстрований", tokens);
     }

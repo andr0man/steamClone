@@ -12,7 +12,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(p => p.Nickname).HasMaxLength(50);
         builder.Property(p => p.EmailConfirmed).HasDefaultValue(false);
-        builder.Property(p => p.Country).HasMaxLength(50);
 
         builder.Property(p => p.Email).IsRequired().HasMaxLength(100);
         builder.Property(x => x.PasswordHash).IsRequired();
@@ -20,6 +19,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasOne(x => x.Role)
             .WithMany()
             .HasForeignKey(x => x.RoleId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasOne(x => x.Country)
+            .WithMany()
+            .HasForeignKey(x => x.CountryId)
             .OnDelete(DeleteBehavior.Restrict);
         
        builder.HasOne<User>()

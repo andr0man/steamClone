@@ -38,8 +38,13 @@ public class Repository<TEntity, TKey>(AppDbContext appDbContext) : IRepository<
         return entity;
     }
 
-    public virtual async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken token)
+    public virtual async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken token, bool asNoTracking = false)
     {
+        if (asNoTracking)
+        {
+            return await appDbContext.Set<TEntity>().AsNoTracking().FirstOrDefaultAsync(entity => entity.Id!.Equals(id), token);
+        }
+        
         return await appDbContext.Set<TEntity>().FirstOrDefaultAsync(entity => entity.Id!.Equals(id), token);
     }
 
