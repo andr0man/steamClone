@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using SteamClone.BLL.Services.AccountService;
+using SteamClone.BLL.Services.CountryService;
 using SteamClone.BLL.Services.ImageService;
 using SteamClone.BLL.Services.JwtService;
 using SteamClone.BLL.Services.PasswordHasher;
@@ -22,5 +23,6 @@ public static class ConfigureBusinessLogic
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<ICountryService, CountryService>();
     }
 }

@@ -33,6 +33,7 @@ public class UserRepository(AppDbContext appDbContext)
         {
             return await _appDbContext.Users
                 .Include(ur => ur.Role)
+                .Include(uc => uc.Country)
                 .FirstOrDefaultAsync(predicate, token);
         }
 

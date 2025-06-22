@@ -8,7 +8,7 @@ public class RepositoryNotAuditable<TEntity, TKey>(AppDbContext appDbContext) : 
     where TEntity : Entity<TKey>
 {
 
-    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken token) => await appDbContext.Set<TEntity>().ToListAsync(token);
+    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken token) => await appDbContext.Set<TEntity>().AsNoTracking().ToListAsync(token);
 
     public virtual async Task<TEntity?> CreateAsync(TEntity entity, CancellationToken token)
     {
@@ -33,8 +33,13 @@ public class RepositoryNotAuditable<TEntity, TKey>(AppDbContext appDbContext) : 
 
         return entity;
     }
-    public virtual async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken token)
+    public virtual async Task<TEntity?> GetByIdAsync(TKey id, CancellationToken token, bool asNoTracking = false)
     {
+        if (asNoTracking)
+        {
+            return await appDbContext.Set<TEntity>().AsNoTracking().FirstOrDefaultAsync(entity => entity.Id!.Equals(id), token);
+        }
+        
         return await appDbContext.Set<TEntity>().FirstOrDefaultAsync(entity => entity.Id!.Equals(id), token);
     }
 
