@@ -69,10 +69,10 @@ const EditProfile = ({ currentProfileData }) => {
             // Fallback to mock data or a direct fetch if currentProfileData is not sufficient
             await new Promise(resolve => setTimeout(resolve, 500));
             const mockData = {
-                username: 'FluxiUser',
+                username: 'FluxUser',
                 avatarUrl: 'https://via.placeholder.com/150/2a333d/cdd6f4?Text=Avatar',
                 bannerImageUrl: 'https://via.placeholder.com/1000x200/1e252e/5e81ac?Text=Profile+Banner',
-                bio: 'Welcome to my Fluxi profile! Exploring new games and connecting with players.',
+                bio: 'Welcome to my Flux profile! Exploring new games and connecting with players.',
                 country: COUNTRIES_LIST[0], // Ukraine
                 favoriteGameTitle: 'Cyberpunk 2077',
                 email: 'user@example.com' // Mock current email
@@ -297,7 +297,7 @@ const EditProfile = ({ currentProfileData }) => {
           <h2 className="section-title"><LinkIcon size={22}/> About You</h2>
           <div className="form-group">
             <label htmlFor="bio">Bio / About Me</label>
-            <textarea id="bio" name="bio" value={formData.bio} onChange={handleTextChange} placeholder="Tell the Fluxi community something about yourself..." rows={6}></textarea>
+            <textarea id="bio" name="bio" value={formData.bio} onChange={handleTextChange} placeholder="Tell the Flux community something about yourself..." rows={6}></textarea>
           </div>
           <div className="form-group">
             <label htmlFor="favoriteGameTitle">Favorite Game Title</label>

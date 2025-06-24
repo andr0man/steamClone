@@ -94,7 +94,7 @@ const Market = () => {
       
       <header className="market-main-header">
         <h1>Community Market</h1>
-        <p>Trade, buy, and sell unique in-game items with the Fluxi community.</p>
+        <p>Trade, buy, and sell unique in-game items with the Flux community.</p>
       </header>
 
       <div className="market-controls-panel">

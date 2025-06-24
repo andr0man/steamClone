@@ -154,7 +154,7 @@ const Home = () => {
   );
 
   if (loadingPage) {
-    return <div className="home-loading">Loading Fluxi... <div className="spinner"></div></div>;
+    return <div className="home-loading">Loading Flux... <div className="spinner"></div></div>;
   }
 
   return (
@@ -164,7 +164,7 @@ const Home = () => {
       {featuredGame && !searchTerm && (
          <section className="hero-section" style={{ backgroundImage: `linear-gradient(to top, rgba(24,30,37,1) 0%, rgba(24,30,37,0.7) 40%, rgba(24,30,37,0.1) 70%, transparent 100%), url(${featuredGame.bannerUrl || featuredGame.imageUrl || 'https://via.placeholder.com/1200x400/1A2838/66c0f4?text=Featured+Game'})` }}>
           <div className="hero-content">
-            <h1 className="hero-title">{featuredGame.title || 'Fluxi Welcomes You!'}</h1>
+            <h1 className="hero-title">{featuredGame.title || 'Flux Welcomes You!'}</h1>
             <p className="hero-description">{(featuredGame.description || 'The best games are waiting for you. Discover new worlds!').substring(0,150)}...</p>
             {featuredGame.title && (
                 <div className="hero-meta">
@@ -184,7 +184,7 @@ const Home = () => {
       {!featuredGame && !searchTerm && !loadingPage && (
          <section className="hero-section hero-section-placeholder" >
           <div className="hero-content">
-            <h1 className="hero-title">Welcome to Fluxi!</h1>
+            <h1 className="hero-title">Welcome to Flux!</h1>
             <p className="hero-description">Your new gaming platform. Discover amazing worlds and adventures.</p>
              <div className="hero-actions">
               <button className="hero-button primary" onClick={() => handleTabChange('new')}><Gamepad2 size={20} /> Browse New Releases</button>
@@ -270,8 +270,8 @@ const Home = () => {
         </main>
       </div>
        <footer className="home-footer">
-        <p>&copy; {new Date().getFullYear()} Fluxi. All rights reserved.</p>
-        <p>Fluxi and the Fluxi logo are trademarks or registered trademarks of Fluxi Inc. in Ukraine and/or other countries.</p>
+        <p>&copy; {new Date().getFullYear()} Flux. All rights reserved.</p>
+        <p>Flux and the Flux logo are trademarks or registered trademarks of Flux Inc. in Ukraine and/or other countries.</p>
       </footer>
     </div>
   );
