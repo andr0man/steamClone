@@ -42,25 +42,26 @@ $accent-red: #e76c6c;
 
 $transition-duration: 0.2s;
 $transition-timing-function: ease-out;
+$bubble-transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
 @mixin nav-item-base {
   background: none;
   border: none;
   color: $nav-item-text-color;
-  padding: 0 15px; 
+  padding: 0 15px;
   cursor: pointer;
-  font-size: $nav-item-font-size; 
+  font-size: $nav-item-font-size;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transition: all $transition-duration $transition-timing-function;
+  transition: color $transition-duration $transition-timing-function;
   display: flex;
   align-items: center;
   height: 100%;
   text-decoration: none;
   white-space: nowrap;
 
-  &:hover, &.active {
+  &:hover {
     color: $nav-item-text-hover-color;
   }
 }
@@ -88,6 +89,23 @@ $transition-timing-function: ease-out;
   height: 100%;
 }
 
+.fluxi-navbar-left {
+  position: relative;
+}
+
+.fluxi-navbar-bubble {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: calc(100% - 24px);
+  background-color: $nav-item-active-bg-color;
+  border-radius: 50px;
+  z-index: 1;
+  transition: all $bubble-transition;
+  box-shadow: 0 2px 8px rgba(color.adjust($nav-item-active-bg-color, $alpha: -0.7), 0.4);
+  opacity: 0;
+}
+
 .fluxi-navbar-item-container {
   position: relative;
   height: 100%;
@@ -98,7 +116,7 @@ $transition-timing-function: ease-out;
   &:hover .fluxi-navbar-dropdown {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0) scaleY(1);
+    transform: translateY(0);
   }
 
   &.user-menu-container {
@@ -107,27 +125,26 @@ $transition-timing-function: ease-out;
       left: auto;
       right: 0;
       transform-origin: top right;
-      &.user-dropdown { 
-        animation: fadeInDropdownRight $transition-duration $transition-timing-function forwards;
-      }
+      animation: fadeInDropdownRight $transition-duration $transition-timing-function forwards;
     }
   }
 }
 
-.fluxi-navbar-item, .fluxi-navbar-user-button {
+.fluxi-navbar-item,
+.fluxi-navbar-user-button {
   @include nav-item-base;
+  position: relative;
+  z-index: 2;
 }
 
 .fluxi-navbar-item.active {
-  background-color: $nav-item-active-bg-color;
   color: $nav-item-active-text-color;
-  box-shadow: inset 0 -2px 0 0 color.adjust($nav-item-active-bg-color, $lightness: -15%); 
 }
 
 .fluxi-navbar-user-button {
-  &.active { 
-     background-color: color.adjust($navbar-bg, $lightness: 5%); 
-     color: $nav-item-text-hover-color;
+  &.active {
+    background-color: color.adjust($navbar-bg, $lightness: 5%);
+    color: $nav-item-text-hover-color;
   }
 }
 
@@ -135,48 +152,43 @@ $transition-timing-function: ease-out;
   margin-left: 6px;
   opacity: 0.7;
   transition: transform $transition-duration $transition-timing-function;
-  
+
   .fluxi-navbar-item-container:hover &,
-  .fluxi-navbar-user-button.active & 
-  { 
-     transform: rotate(180deg);
+  .fluxi-navbar-user-button.active & {
+    transform: rotate(180deg);
   }
 }
 
 .fluxi-navbar-dropdown {
   position: absolute;
-  top: calc(100% - 1px); 
-  left: 0; 
+  top: 100%;
+  left: 0;
   background-color: $dropdown-bg;
   border: 1px solid $dropdown-border-color;
   box-shadow: $dropdown-shadow;
-  z-index: 1050; 
+  z-index: 1050;
   min-width: $dropdown-min-width;
-  max-width: $dropdown-max-width; 
-  max-height: $dropdown-max-height; 
-  overflow-y: auto; 
-  overflow-x: hidden; 
+  max-width: $dropdown-max-width;
+  max-height: $dropdown-max-height;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: $dropdown-padding;
   border-radius: 0 0 $nav-item-border-radius $nav-item-border-radius;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px) scaleY(0.95); 
-  transform-origin: top left; 
-  animation: fadeInDropdownLeft $transition-duration $transition-timing-function forwards;
-  margin-top: 0; 
+  transform: translateY(-10px);
+  transform-origin: top left;
+  transition: opacity $transition-duration $transition-timing-function,
+              visibility $transition-duration $transition-timing-function,
+              transform $transition-duration $transition-timing-function;
 
-  &.store-dropdown { 
-    min-width: 260px; 
+  &.store-dropdown {
+    min-width: 260px;
   }
-}
 
-@keyframes fadeInDropdownLeft {
-  0% { opacity: 0; transform: translateY(-10px) scaleY(0.95); }
-  100% { opacity: 1; transform: translateY(0) scaleY(1); }
-}
-@keyframes fadeInDropdownRight { 
-  0% { opacity: 0; transform: translateY(-10px) scaleY(0.95); }
-  100% { opacity: 1; transform: translateY(0) scaleY(1); }
+  .fluxi-navbar-item-container:hover & {
+      transform: translateY(0);
+  }
 }
 
 .fluxi-navbar-dropdown-item {
@@ -191,33 +203,33 @@ $transition-timing-function: ease-out;
   font-weight: 400;
   text-transform: none;
   transition: color $transition-duration $transition-timing-function, background-color $transition-duration $transition-timing-function;
-  display: flex; 
+  display: flex;
   align-items: center;
-  gap: 10px; 
+  gap: 10px;
   text-decoration: none;
   box-sizing: border-box;
   line-height: 1.3;
-  border-radius: $nav-item-border-radius; 
+  border-radius: $nav-item-border-radius;
 
-  &:hover, &.active-dropdown-item { 
+  &:hover, &.active-dropdown-item {
     color: $dropdown-item-hover-text-color;
     background-color: $dropdown-item-hover-bg-color;
-    .dropdown-item-icon { 
-        color: $dropdown-item-hover-text-color;
+    .dropdown-item-icon {
+      color: $dropdown-item-hover-text-color;
     }
   }
-  
+
   .dropdown-item-icon {
-    color: $nav-item-text-color; 
+    color: $nav-item-text-color;
     opacity: 0.8;
-    display: inline-flex; 
+    display: inline-flex;
     transition: color $transition-duration $transition-timing-function;
   }
 
   &.logout-item {
     color: color.adjust($accent-red, $lightness: 15%);
     .dropdown-item-icon {
-        color: color.adjust($accent-red, $lightness: 15%);
+      color: color.adjust($accent-red, $lightness: 15%);
     }
     &:hover {
       background-color: $accent-red;
@@ -229,18 +241,18 @@ $transition-timing-function: ease-out;
   }
 }
 .fluxi-navbar-dropdown-separator {
-    height: 1px;
-    background-color: $dropdown-border-color;
-    margin: 8px 10px; 
+  height: 1px;
+  background-color: $dropdown-border-color;
+  margin: 8px 10px;
 }
 
 .fluxi-navbar-right {
-  .fluxi-navbar-icon-button { 
+  .fluxi-navbar-icon-button {
     @include nav-item-base;
-    padding: 0 10px; 
+    padding: 0 10px;
     &:hover {
-        background-color: rgba($nav-item-active-bg-color, 0.15);
-        color: $nav-item-text-hover-color;
+      background-color: rgba($nav-item-active-bg-color, 0.15);
+      color: $nav-item-text-hover-color;
     }
   }
 }
@@ -260,14 +272,14 @@ $transition-timing-function: ease-out;
 
 @media (max-width: 768px) {
   .fluxi-navbar-left {
-    .fluxi-navbar-item-container:nth-child(n+4) { 
-        display: none; 
+    .fluxi-navbar-item-container:nth-child(n+4) {
+      display: none;
     }
   }
-   .fluxi-navbar-user-button {
-     span { 
-     }
-   }
+  .fluxi-navbar-user-button {
+    span {
+    }
+  }
 }
 
 @media (max-width: 576px) {
@@ -276,10 +288,10 @@ $transition-timing-function: ease-out;
     font-size: 12px;
   }
   .fluxi-navbar-item-arrow {
-    display: none; 
+    display: none;
   }
   .fluxi-navbar-dropdown {
-    min-width: 180px; 
+    min-width: 180px;
     max-width: 220px;
   }
   .fluxi-navbar-dropdown-item {

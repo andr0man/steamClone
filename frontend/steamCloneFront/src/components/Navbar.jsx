@@ -1,12 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import './Navbar.scss'; 
-import { ChevronDown, LogOut, UserCircle } from 'lucide-react'; 
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import './Navbar.scss';
+import { ChevronDown, LogOut, UserCircle } from 'lucide-react';
 
 const Navbar = ({ onLogout, username = "User" }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [bubbleStyle, setBubbleStyle] = useState({});
   const navigate = useNavigate();
   const navbarRef = useRef(null);
+  const itemRefs = useRef({});
+  const leftNavRef = useRef(null);
+  const location = useLocation();
 
   const navItems = [
     {
@@ -45,16 +49,37 @@ const Navbar = ({ onLogout, username = "User" }) => {
     }
   ];
 
-  const userNavItems = [ 
-      { id: 'profile-view', label: 'View My Profile', path: '/profile', icon: <UserCircle size={18}/> },
+  const userNavItems = [
+    { id: 'profile-view', label: 'View My Profile', path: '/profile', icon: <UserCircle size={18}/> },
   ];
 
-  const toggleDropdown = (itemId) => {
-    if (activeDropdown === itemId) {
-      setActiveDropdown(null);
+  const updateBubblePosition = useCallback(() => {
+    const currentBasePath = '/' + location.pathname.split('/')[1];
+    const activeItemConfig = navItems.find(item => item.path === currentBasePath);
+
+    if (activeItemConfig && itemRefs.current[activeItemConfig.id] && leftNavRef.current) {
+      const activeItem = itemRefs.current[activeItemConfig.id];
+      const navRect = leftNavRef.current.getBoundingClientRect();
+      const itemRect = activeItem.getBoundingClientRect();
+
+      setBubbleStyle({
+        width: `${itemRect.width}px`,
+        left: `${itemRect.left - navRect.left}px`,
+        opacity: 1,
+      });
     } else {
-      setActiveDropdown(itemId);
+      setBubbleStyle({ opacity: 0 });
     }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    setTimeout(updateBubblePosition, 50);
+    window.addEventListener('resize', updateBubblePosition);
+    return () => window.removeEventListener('resize', updateBubblePosition);
+  }, [updateBubblePosition]);
+
+  const toggleDropdown = (itemId) => {
+    setActiveDropdown(prev => (prev === itemId ? null : itemId));
   };
 
   const handleLogoutClick = () => {
@@ -75,24 +100,25 @@ const Navbar = ({ onLogout, username = "User" }) => {
     };
   }, [navbarRef]);
 
-
   return (
     <nav className="fluxi-navbar" ref={navbarRef}>
-      <div className="fluxi-navbar-left">
+      <div className="fluxi-navbar-left" ref={leftNavRef}>
+        <div className="fluxi-navbar-bubble" style={bubbleStyle} />
         {navItems.map(item => (
           <div
             key={item.id}
             className="fluxi-navbar-item-container"
-            onMouseEnter={() => item.subItems && setActiveDropdown(item.id)} 
-            onMouseLeave={() => item.subItems && setActiveDropdown(null)}   
+            onMouseEnter={() => item.subItems && setActiveDropdown(item.id)}
+            onMouseLeave={() => item.subItems && setActiveDropdown(null)}
           >
             <NavLink
+              ref={el => (itemRefs.current[item.id] = el)}
               to={item.path}
-              className={({ isActive }) =>
-                `fluxi-navbar-item ${isActive || (item.id === 'store' && location.pathname.startsWith('/store')) || (item.id === 'library' && location.pathname.startsWith('/library')) || (item.id === 'community' && location.pathname.startsWith('/community')) ? 'active' : ''}`
-              }
-              end={item.path === "/store" || item.path === "/library" || item.path === "/community"} 
-              onClick={() => setActiveDropdown(null)} 
+              className={() => {
+                const isBasePathActive = location.pathname.startsWith(item.path);
+                return `fluxi-navbar-item ${isBasePathActive ? 'active' : ''}`;
+              }}
+              onClick={() => setActiveDropdown(null)}
             >
               {item.label}
               {item.subItems && <ChevronDown size={16} className="fluxi-navbar-item-arrow" />}
@@ -116,16 +142,16 @@ const Navbar = ({ onLogout, username = "User" }) => {
       </div>
 
       <div className="fluxi-navbar-right">
-        <div 
-            className="fluxi-navbar-item-container user-menu-container"
-            onMouseEnter={() => setActiveDropdown('user-menu')}
-            onMouseLeave={() => setActiveDropdown(null)}
+        <div
+          className="fluxi-navbar-item-container user-menu-container"
+          onMouseEnter={() => setActiveDropdown('user-menu')}
+          onMouseLeave={() => setActiveDropdown(null)}
         >
-          <button 
+          <button
             className={`fluxi-navbar-user-button ${activeDropdown === 'user-menu' ? 'active' : ''}`}
             onClick={() => toggleDropdown('user-menu')}
           >
-            {username}
+            <span>{username}</span>
             <ChevronDown size={16} className="fluxi-navbar-item-arrow" />
           </button>
           {activeDropdown === 'user-menu' && (
@@ -138,7 +164,7 @@ const Navbar = ({ onLogout, username = "User" }) => {
                   onClick={() => setActiveDropdown(null)}
                 >
                   {userItem.icon && <span className="dropdown-item-icon">{userItem.icon}</span>}
-                  {userItem.label}
+                  <span>{userItem.label}</span>
                 </NavLink>
               ))}
               <div className="fluxi-navbar-dropdown-separator"></div>
@@ -146,8 +172,8 @@ const Navbar = ({ onLogout, username = "User" }) => {
                 onClick={handleLogoutClick}
                 className="fluxi-navbar-dropdown-item logout-item"
               >
-                <LogOut size={18} className="dropdown-item-icon"/>
-                Logout
+                <span className="dropdown-item-icon"><LogOut size={18}/></span>
+                <span>Logout</span>
               </button>
             </div>
           )}
