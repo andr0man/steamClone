@@ -11,6 +11,11 @@ import EditProfile from '../pages/profile/editprofile/EditProfile.jsx';
 import GameInfo from '../pages/library/gameinfo/GameInfo.jsx';
 import Discover from '../pages/store/discover/Discover.jsx';
 import Navbar from '../components/Navbar.jsx';
+import Featured from '../pages/store/featured/Featured.jsx';
+import Stats from '../pages/store/stats/Stats.jsx';
+import Wishlist from '../pages/store/wishlist/Wishlist.jsx';
+import PointsShop from '../pages/store/points-shop/PointsShop.jsx';
+import News from '../pages/store/news/News.jsx';
 
 const ProtectedRoute = ({ isLoggedIn, children }) => {
   if (!isLoggedIn) {
@@ -49,10 +54,30 @@ const BasicRoutes = ({ isLoggedIn, currentUser, handleLoginSuccess, handleLogout
               element={isLoggedIn ? <Navigate to="/store" replace /> : <Register />} 
             />
             
-            {/* <Route 
+            <Route 
+              path="/store/featured" 
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><Featured /></ProtectedRoute>} 
+            />
+            <Route 
               path="/store/discover" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><Discover /></ProtectedRoute>} 
-            /> */}
+            />
+            <Route 
+              path="/store/stats" 
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><Stats /></ProtectedRoute>} 
+            />
+            <Route 
+              path="/store/wishlist" 
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><Wishlist /></ProtectedRoute>} 
+            />
+            <Route 
+              path="/store/points-shop" 
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><PointsShop /></ProtectedRoute>} 
+            />
+            <Route 
+              path="/store/news" 
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><News /></ProtectedRoute>} 
+            />
             <Route 
               path="/store/:subpage" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><Home /></ProtectedRoute>} 
