@@ -5,6 +5,7 @@ import Login from '../pages/auth/login/Login.jsx';
 import Register from '../pages/auth/register/Register.jsx';
 import Home from '../pages/home/home.jsx';
 import Library from '../pages/library/library.jsx';
+import Collections from '../pages/library/collections/Collections.jsx';
 import Market from '../pages/market/market.jsx';
 import Profile from '../pages/profile/Profile.jsx';
 import EditProfile from '../pages/profile/editprofile/EditProfile.jsx';
@@ -90,6 +91,10 @@ const BasicRoutes = ({ isLoggedIn, currentUser, handleLoginSuccess, handleLogout
             <Route 
               path="/library" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><Library /></ProtectedRoute>} 
+            />
+            <Route 
+              path="/library/collections" 
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><Collections /></ProtectedRoute>} 
             />
             <Route 
               path="/library/game/:gameId" 
