@@ -132,4 +132,30 @@ public class JwtTokenService(IConfiguration configuration, IRefreshTokenReposito
         var payload = await GoogleJsonWebSignature.ValidateAsync(model.Token, settings);
         return payload;
     }
+
+    public string GenerateEmailConfirmationToken(User user, int minutes = 30)
+    {
+        var issuer = configuration["AuthSettings:issuer"];
+        var audience = configuration["AuthSettings:audience"];
+        var keyString = configuration["AuthSettings:key"];
+        var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString!));
+
+        var claims = new List<Claim>
+    {
+            new("id", user.Id),
+            new("email", user.Email),
+            new("type", "email-confirm")
+    };
+
+        var token = new JwtSecurityToken(
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(minutes),
+            signingCredentials: new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256)
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
 }
