@@ -24,7 +24,7 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .HasDefaultValueSql("timezone('utc', now())");
         
         builder.HasOne<User>()
-            .WithMany(x=>x.RefreshTokens)
+            .WithMany()
             .HasForeignKey(x=>x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
