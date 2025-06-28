@@ -50,7 +50,13 @@ const Login = ({ onLoginSuccess }) => {
         }
 
         try {
-            const response = await login(formData);
+
+            const preparedData = {
+                email: formData.identity, 
+                password: formData.password
+            };
+
+            const response = await login(preparedData);
             const { accessToken, refreshToken } = response.payload;
 
             
