@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/auth.scss";
+import { register } from '../../../services/authService';
 import { Mail, User, ShieldCheck, KeyRound, Eye, EyeOff, UserPlus, ArrowRight } from 'lucide-react';
 
 const Notification = ({ message, type, duration = 5000, onClose }) => {
@@ -146,7 +147,7 @@ const Register = () => {
         setIsSubmittingStep1(false);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!formData.isHumanVerified) {
@@ -171,18 +172,22 @@ const Register = () => {
             return; 
         }
         
-        const registrationDataForConnector = {
+        const registrationData = {
             login: formData.login,
             email: formData.email,
             nickname: formData.nickname,
-            password: formData.password, 
-            ageConfirmed: formData.ageConfirmed,
-            isHumanVerified: formData.isHumanVerified,
+            password: formData.password
         };
 
-        console.log('Form submitted for registration:', registrationDataForConnector);
-        alert('Account creation successful! (Check console for data)');
-        navigate('/login');
+        try {
+            await register(registrationData);
+
+            alert("Registration successful! Please check your email to confirm.");
+            navigate('/login');
+        } catch (error) {
+            console.error("Registration error:", error);
+            alert("Registration failed. Please try again.");
+        }
     };
 
     return (

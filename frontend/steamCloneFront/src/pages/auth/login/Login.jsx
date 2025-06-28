@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/auth.scss";
+import { login } from '../../../services/authService';
 import { ShieldCheck, User, KeyRound, LogIn, Eye, EyeOff } from 'lucide-react';
 
 const Notification = ({ message, type, duration = 5000, onClose }) => {
@@ -40,24 +41,32 @@ const Login = ({ onLoginSuccess }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.identity.trim()) {
-            alert('Please enter both your login/email and password.');
+        if (!formData.identity.trim() || !formData.password) {
+            alert('Please enter your login/email and password.');
             return;
         }
-        if (!formData.password) {
-            alert('Please enter your password.');
-            return;
+
+        try {
+            const response = await login(formData);
+            const { accessToken, refreshToken } = response.payload;
+
+            
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+
+            
+            if (typeof onLoginSuccess === 'function') {
+                onLoginSuccess(response.payload);
+            }
+
+            navigate('/store');
+        } catch (error) {
+            console.error("Login error:", error);
+            alert("Login failed. Please check your credentials.");
         }
-        
-        console.log('Form submitted for login:', formData);
-        
-        if (typeof onLoginSuccess === 'function') {
-            onLoginSuccess(formData);
-        }
-        navigate('/store');
     };
 
     return (
