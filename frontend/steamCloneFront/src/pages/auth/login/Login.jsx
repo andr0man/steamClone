@@ -70,8 +70,27 @@ const Login = ({ onLoginSuccess }) => {
 
             navigate('/store');
         } catch (error) {
-            console.error("Login error:", error);
-            alert("Login failed. Please check your credentials.");
+            let errorMsg = 'Login failed. Please try again.';
+
+            if (error.response && error.response.data) {
+                const data = error.response.data;
+
+                if (typeof data === 'string') {
+                    errorMsg = data;
+
+                } else if (data.message) {
+                    errorMsg = data.message;
+
+                } else if (data.errors) {
+                    const errors = Object.values(data.errors).flat();
+                    if (errors.length > 0) {
+                        errorMsg = errors[0];
+                    }
+                }
+            }
+
+            alert(errorMsg);
+            
         }
     };
 

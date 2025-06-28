@@ -173,10 +173,11 @@ const Register = () => {
         }
         
         const registrationData = {
-            login: formData.login,
             email: formData.email,
+            login: formData.login,
             nickname: formData.nickname,
-            password: formData.password
+            password: formData.password,
+            confirmPassword: formData.confirmPassword
         };
 
         try {
