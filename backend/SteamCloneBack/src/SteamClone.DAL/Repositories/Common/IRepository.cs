@@ -10,5 +10,4 @@ public interface IRepository<TEntity, in TKey>
     Task<TEntity?> CreateAsync(TEntity entity, CancellationToken token);
     Task<TEntity?> UpdateAsync(TEntity entity, CancellationToken token);
     Task<TEntity?> DeleteAsync(TKey id, CancellationToken token);
-    Task SaveAsync(CancellationToken token);
 }

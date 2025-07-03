@@ -2,7 +2,7 @@
 
 namespace SteamClone.Domain.Models.Games;
 
-public class Tag : AuditableEntity<string>
+public class Genre : AuditableEntity<int>
 {
     public required string Name { get; set; }
     public string? Description { get; set; }

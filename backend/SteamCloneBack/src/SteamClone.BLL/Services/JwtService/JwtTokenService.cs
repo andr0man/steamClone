@@ -68,7 +68,7 @@ public class JwtTokenService(IConfiguration configuration, IRefreshTokenReposito
 
         try
         {
-            var tokenEntity = await refreshTokenRepository.Create(model, cancellationToken);
+            var tokenEntity = await refreshTokenRepository.CreateAsync(model, cancellationToken);
             return tokenEntity;
         }
         catch (Exception e)

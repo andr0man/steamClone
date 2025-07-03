@@ -3,11 +3,12 @@ using SteamClone.DAL.Data;
 using SteamClone.DAL.Repositories.Common;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Common.Interfaces;
 
 namespace SteamClone.DAL.Repositories.CountryRepository;
 
-public class CountryRepository(AppDbContext appDbContext)
-    : RepositoryNotAuditable<Country, int>(appDbContext), ICountryRepository
+public class CountryRepository(AppDbContext appDbContext, IUserProvider userProvider)
+    : Repository<Country, int>(appDbContext, userProvider), ICountryRepository
 {
     private readonly AppDbContext _appDbContext = appDbContext;
 

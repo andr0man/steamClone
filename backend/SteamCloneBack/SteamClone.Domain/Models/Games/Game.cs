@@ -4,9 +4,9 @@ namespace SteamClone.Domain.Models.Games;
 
 public class Game : AuditableEntity<string>
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public List<Tag> Tags { get; set; } = new();
+    public required string Name { get; set; }
+    public required string Description { get; set; }
+    public List<Genre> Genres { get; set; } = new();
     public decimal Price { get; set; }
     public DateTime ReleaseDate { get; set; }
     public string Publisher { get; set; }

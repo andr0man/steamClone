@@ -4,11 +4,12 @@ using SteamClone.DAL.Data;
 using SteamClone.DAL.Repositories.Common;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Common.Interfaces;
 
 namespace SteamClone.DAL.Repositories.UserRepository;
 
-public class UserRepository(AppDbContext appDbContext)
-    : Repository<User, string>(appDbContext), IUserRepository
+public class UserRepository(AppDbContext appDbContext, IUserProvider userProvider)
+    : Repository<User, string>(appDbContext, userProvider), IUserRepository
 {
     private readonly AppDbContext _appDbContext = appDbContext;
 
