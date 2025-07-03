@@ -1,4 +1,4 @@
-﻿namespace SteamClone.DAL.ViewModels.Auth;
+﻿namespace SteamClone.Domain.ViewModels.Auth;
 
 public class SignUpVM
 {

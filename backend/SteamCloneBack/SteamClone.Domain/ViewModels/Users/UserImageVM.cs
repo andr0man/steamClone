@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace SteamClone.DAL.ViewModels.Users;
+namespace SteamClone.Domain.ViewModels.Users;
 
 public class UserImageVM
 {

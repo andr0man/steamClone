@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
-using SteamClone.DAL.Models;
 using SteamClone.DAL.Repositories.Common;
+using SteamClone.Domain.Models;
 
 namespace SteamClone.DAL.Repositories.UserRepository;
 

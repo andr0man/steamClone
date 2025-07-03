@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Google.Apis.Auth;
-using SteamClone.DAL.Models;
-using SteamClone.DAL.ViewModels;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.ViewModels;
 
 namespace SteamClone.BLL.Services.JwtService
 {

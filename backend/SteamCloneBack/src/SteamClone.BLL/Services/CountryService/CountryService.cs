@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using SteamClone.DAL.Models;
 using SteamClone.DAL.Repositories.CountryRepository;
-using SteamClone.DAL.ViewModels.Countries;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.ViewModels.Countries;
 
 namespace SteamClone.BLL.Services.CountryService;
 

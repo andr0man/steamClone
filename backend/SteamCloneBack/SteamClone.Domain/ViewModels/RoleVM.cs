@@ -1,4 +1,4 @@
-﻿namespace SteamClone.DAL.ViewModels;
+﻿namespace SteamClone.Domain.ViewModels;
 
 public class RoleVM
 {

@@ -1,4 +1,4 @@
-﻿namespace SteamClone.DAL.Models.Common.Abstractions;
+﻿namespace SteamClone.Domain.Models.Common.Abstractions;
 
 public abstract class Entity<T>
 {

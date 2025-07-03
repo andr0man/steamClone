@@ -1,5 +1,5 @@
-﻿using SteamClone.DAL.Models;
-using SteamClone.DAL.Repositories.Common;
+﻿using SteamClone.DAL.Repositories.Common;
+using SteamClone.Domain.Models;
 
 namespace SteamClone.DAL.Repositories.CountryRepository;
 

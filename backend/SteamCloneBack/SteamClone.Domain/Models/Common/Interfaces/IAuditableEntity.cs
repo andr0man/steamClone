@@ -1,4 +1,4 @@
-﻿namespace SteamClone.DAL.Models.Common.Interfaces;
+﻿namespace SteamClone.Domain.Models.Common.Interfaces;
 
 public interface IAuditableEntity<T>
 {

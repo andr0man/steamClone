@@ -1,7 +1,6 @@
-﻿using SteamClone.DAL.Models.Common.Abstractions;
-using SteamClone.DAL.Models.Common.Interfaces;
+﻿using SteamClone.Domain.Models.Common.Abstractions;
 
-namespace SteamClone.DAL.Models;
+namespace SteamClone.Domain.Models;
 
 public class RefreshToken : Entity<string>
 {

@@ -1,4 +1,4 @@
-﻿namespace SteamClone.DAL.ViewModels.Countries;
+﻿namespace SteamClone.Domain.ViewModels.Countries;
 
 public class CreateUpdateCountryVM
 {

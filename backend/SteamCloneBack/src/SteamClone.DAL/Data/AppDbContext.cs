@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data.Initializer;
-using SteamClone.DAL.Models;
+using SteamClone.Domain.Models;
 
 namespace SteamClone.DAL.Data;
 

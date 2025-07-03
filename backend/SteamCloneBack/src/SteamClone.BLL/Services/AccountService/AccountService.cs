@@ -8,11 +8,11 @@ using SteamClone.BLL.Common.Interfaces;
 using SteamClone.BLL.Services.JwtService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.DAL;
-using SteamClone.DAL.Models;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.UserRepository;
-using SteamClone.DAL.ViewModels;
-using SteamClone.DAL.ViewModels.Auth;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.ViewModels;
+using SteamClone.Domain.ViewModels.Auth;
 
 namespace SteamClone.BLL.Services.AccountService;
 

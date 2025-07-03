@@ -5,9 +5,9 @@ using System.Text;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SteamClone.DAL.Models;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
-using SteamClone.DAL.ViewModels;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.ViewModels;
 
 namespace SteamClone.BLL.Services.JwtService;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SteamClone.DAL.Models;
+using SteamClone.Domain.Models;
 
 namespace SteamClone.DAL.Data.Configurations;
 

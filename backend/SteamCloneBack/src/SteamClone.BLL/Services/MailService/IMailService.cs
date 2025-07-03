@@ -1,5 +1,5 @@
 ﻿using MimeKit;
-using SteamClone.DAL.Models;
+using SteamClone.Domain.Models;
 
 namespace SteamClone.BLL.Services.MailService
 {

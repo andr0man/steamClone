@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.AspNetCore.Identity;
-using SteamClone.DAL.Models;
+using SteamClone.Domain.Models;
 
 namespace SteamClone.DAL.Repositories.RoleRepository
 {

@@ -1,4 +1,4 @@
-﻿using SteamClone.DAL.Models;
+﻿using SteamClone.Domain.Models;
 
 namespace SteamClone.DAL.Repositories.RefreshTokenRepository;
 

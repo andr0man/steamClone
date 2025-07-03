@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using SteamClone.BLL.Services.ImageService;
 using SteamClone.BLL.Services.PasswordHasher;
-using SteamClone.DAL.Models;
 using SteamClone.DAL.Repositories.UserRepository;
-using SteamClone.DAL.ViewModels;
-using SteamClone.DAL.ViewModels.Users;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.ViewModels.Users;
 
 namespace SteamClone.BLL.Services.UserService;
 

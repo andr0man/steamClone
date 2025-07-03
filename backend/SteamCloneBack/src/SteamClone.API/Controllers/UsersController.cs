@@ -13,5 +13,4 @@ namespace SteamClone.API.Controllers;
 // [Authorize(Roles = $"{Settings.AdminRole}, {Settings.UserRole}")]
 public class UsersController(IUserService userService) : BaseController
 {
-    
-}
+} 
