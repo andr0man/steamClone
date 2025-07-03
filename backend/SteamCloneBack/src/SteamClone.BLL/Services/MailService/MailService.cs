@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using MimeKit;
 using SteamClone.DAL;
 using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
 
 namespace SteamClone.BLL.Services.MailService
 {

@@ -1,6 +1,6 @@
 ﻿using SteamClone.Domain.Models.Common.Abstractions;
 
-namespace SteamClone.Domain.Models;
+namespace SteamClone.Domain.Models.Auth;
 
 public class User : AuditableEntity<string>
 {

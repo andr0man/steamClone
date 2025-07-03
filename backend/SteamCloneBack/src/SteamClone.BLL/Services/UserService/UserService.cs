@@ -3,6 +3,7 @@ using SteamClone.BLL.Services.ImageService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
 using SteamClone.Domain.ViewModels.Users;
 
 namespace SteamClone.BLL.Services.UserService;

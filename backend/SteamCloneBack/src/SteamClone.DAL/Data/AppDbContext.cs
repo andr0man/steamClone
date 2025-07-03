@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data.Initializer;
 using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
 
 namespace SteamClone.DAL.Data;
 

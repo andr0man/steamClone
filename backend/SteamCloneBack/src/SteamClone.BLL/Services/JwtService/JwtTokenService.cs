@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
 using SteamClone.Domain.ViewModels;
 
 namespace SteamClone.BLL.Services.JwtService;

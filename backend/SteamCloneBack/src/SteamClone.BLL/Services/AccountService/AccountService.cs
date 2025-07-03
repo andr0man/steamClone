@@ -11,6 +11,7 @@ using SteamClone.DAL;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
 using SteamClone.Domain.ViewModels;
 using SteamClone.Domain.ViewModels.Auth;
 

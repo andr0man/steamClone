@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
 using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
 
 namespace SteamClone.DAL.Repositories.RefreshTokenRepository;
 

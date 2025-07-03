@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
 using SteamClone.DAL.Repositories.Common;
 using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
 
 namespace SteamClone.DAL.Repositories.UserRepository;
 
@@ -16,7 +17,7 @@ public class UserRepository(AppDbContext appDbContext)
         return await GetUserAsync(u => u.Email == email, token, includes);
     }
 
-    public async Task<User?> GetByIdAsync(string id, CancellationToken token, bool includes = false)
+    public new async Task<User?> GetByIdAsync(string id, CancellationToken token, bool includes = false)
     {
         return await GetUserAsync(u => u.Id == id, token, includes);
     }
