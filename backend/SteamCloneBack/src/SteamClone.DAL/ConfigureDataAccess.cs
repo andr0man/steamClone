@@ -7,6 +7,7 @@ using Npgsql;
 using SteamClone.DAL.Data;
 using SteamClone.DAL.Repositories.Common;
 using SteamClone.DAL.Repositories.CountryRepository;
+using SteamClone.DAL.Repositories.GameRepository;
 using SteamClone.DAL.Repositories.GenreRepository;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.RoleRepository;
@@ -44,6 +45,6 @@ public static class ConfigureDataAccess
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<ICountryRepository, CountryRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
-        
+        services.AddScoped<IGameRepository, GameRepository>();
     }
 }

@@ -1,12 +1,9 @@
-﻿using SteamClone.Domain.ViewModels.Countries;
+﻿using SteamClone.BLL.Services.Common;
+using SteamClone.Domain.ViewModels.Countries;
 
 namespace SteamClone.BLL.Services.CountryService;
 
-public interface ICountryService
+public interface ICountryService : IServiceCRUD<int, CreateUpdateCountryVM, CreateUpdateCountryVM>
 {
-    Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<ServiceResponse> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-    Task<ServiceResponse> CreateAsync(CreateUpdateCountryVM model, CancellationToken cancellationToken = default);
-    Task<ServiceResponse> UpdateAsync(int id, CreateUpdateCountryVM model, CancellationToken cancellationToken = default);
-    Task<ServiceResponse> DeleteAsync(int id, CancellationToken cancellationToken = default);
+    
 }

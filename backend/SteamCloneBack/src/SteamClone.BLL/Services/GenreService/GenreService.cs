@@ -29,15 +29,23 @@ public class GenreService(IGenreRepository genreRepository, IMapper mapper) : IG
     public async Task<ServiceResponse> CreateAsync(CreateUpdateGenreVM model, CancellationToken cancellationToken = default)
     {
         var genre = mapper.Map<Genre>(model);
-        
-        var createdGenre = await genreRepository.CreateAsync(genre, cancellationToken);
-        
-        if (createdGenre == null)
+
+        if (!await genreRepository.IsUniqueNameAsync(model.Name, cancellationToken))
         {
-            return ServiceResponse.BadRequestResponse("Failed to create genre");
+            return ServiceResponse.BadRequestResponse($"Name '{model.Name}' already used");
         }
 
-        return ServiceResponse.OkResponse("Genre created successfully", createdGenre);
+        try
+        {
+            var createdGenre = await genreRepository.CreateAsync(genre, cancellationToken);
+
+            return ServiceResponse.OkResponse("Genre created successfully", createdGenre);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+        
     }
 
     public async Task<ServiceResponse> UpdateAsync(int id, CreateUpdateGenreVM model, CancellationToken cancellationToken = default)
