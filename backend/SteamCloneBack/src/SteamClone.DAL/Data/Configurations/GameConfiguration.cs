@@ -29,9 +29,6 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
         builder.HasMany(e => e.Genres)
             .WithMany();
         
-        builder.HasMany(e => e.SystemRequirements)
-            .WithOne();
-        
         builder.ConfigureAudit();
     }
 }

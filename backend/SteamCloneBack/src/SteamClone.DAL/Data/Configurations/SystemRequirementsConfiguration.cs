@@ -9,6 +9,11 @@ public class SystemRequirementsConfiguration : IEntityTypeConfiguration<SystemRe
     public void Configure(EntityTypeBuilder<SystemRequirements> builder)
     {
         builder.HasKey(sr => sr.Id);
+        
+        builder.HasOne<Game>()
+            .WithMany(g => g.SystemRequirements)
+            .HasForeignKey(sr => sr.GameId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(sr => sr.RequirementType)
             .HasConversion(

@@ -1,4 +1,4 @@
-﻿namespace SteamClone.Domain.ViewModels.Games;
+﻿namespace SteamClone.Domain.ViewModels.Games.Genre;
 
 public class CreateUpdateGenreVM
 {
