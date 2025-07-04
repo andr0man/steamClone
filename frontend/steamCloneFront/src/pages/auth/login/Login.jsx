@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/auth.scss";
-import { login } from '../../../services/authService';
+import { useLoginMutation } from '../../../services/auth/authApi';
 import { ShieldCheck, User, KeyRound, LogIn, Eye, EyeOff } from 'lucide-react';
 
 const Notification = ({ message, type, duration = 5000, onClose }) => {
@@ -31,6 +31,7 @@ const Login = ({ onLoginSuccess }) => {
         rememberMe: false
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [login] = useLoginMutation();
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -56,24 +57,26 @@ const Login = ({ onLoginSuccess }) => {
                 password: formData.password
             };
 
-            const response = await login(preparedData);
+            const response = await login(preparedData).unwrap();
+            console.log('Login success:', response);
+
             const { accessToken, refreshToken } = response.payload;
 
-            
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
 
-            
             if (typeof onLoginSuccess === 'function') {
                 onLoginSuccess(response.payload);
             }
 
+
             navigate('/store');
+
         } catch (error) {
             let errorMsg = 'Login failed. Please try again.';
 
-            if (error.response && error.response.data) {
-                const data = error.response.data;
+            if (error?.data) {
+                const data = error.data;
 
                 if (typeof data === 'string') {
                     errorMsg = data;

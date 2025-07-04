@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useRegisterMutation } from "../../../services/auth/authApi";
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/auth.scss";
-import { register } from '../../../services/authService';
 import { Mail, User, ShieldCheck, KeyRound, Eye, EyeOff, UserPlus, ArrowRight } from 'lucide-react';
 
 const Notification = ({ message, type, duration = 5000, onClose }) => {
@@ -45,6 +45,7 @@ const Register = () => {
     const [isSubmittingStep1, setIsSubmittingStep1] = useState(false);
     const [apiErrorStep1, setApiErrorStep1] = useState(null);
 
+    const [register] = useRegisterMutation();
     const navigate = useNavigate();
 
     const generateVerificationQuestion = useCallback(() => {
@@ -181,13 +182,13 @@ const Register = () => {
         };
 
         try {
-            await register(registrationData);
-
-            alert("Registration successful! Please check your email to confirm.");
+            const response = await register(registrationData).unwrap();
+            console.log('Registration success:', response);
+            alert('Registration successful!');
             navigate('/login');
         } catch (error) {
             console.error("Registration error:", error);
-            alert("Registration failed. Please try again.");
+            alert(error?.data?.message || 'Registration error');
         }
     };
 
