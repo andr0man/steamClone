@@ -4,7 +4,7 @@ using SteamClone.API.Services.UserProvider;
 using SteamClone.BLL;
 using SteamClone.BLL.Middlewares;
 using SteamClone.DAL;
-using SteamClone.Domain.Models.Common.Interfaces;
+using SteamClone.Domain.Common.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

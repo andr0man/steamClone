@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
 using SteamClone.DAL.Repositories.Common;
+using SteamClone.Domain.Common.Interfaces;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
-using SteamClone.Domain.Models.Common.Interfaces;
 
 namespace SteamClone.DAL.Repositories.CountryRepository;
 

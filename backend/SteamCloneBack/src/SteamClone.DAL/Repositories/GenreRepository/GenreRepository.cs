@@ -1,6 +1,6 @@
 ﻿using SteamClone.DAL.Data;
 using SteamClone.DAL.Repositories.Common;
-using SteamClone.Domain.Models.Common.Interfaces;
+using SteamClone.Domain.Common.Interfaces;
 using SteamClone.Domain.Models.Games;
 
 namespace SteamClone.DAL.Repositories.GenreRepository;

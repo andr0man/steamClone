@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SteamClone.DAL.Extensions;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
 
@@ -27,14 +28,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(x => x.CountryId)
             .OnDelete(DeleteBehavior.Restrict);
         
-       builder.HasOne<User>()
-            .WithMany()
-            .HasForeignKey(x => x.CreatedBy)
-            .OnDelete(DeleteBehavior.Restrict);
-        
-        builder.HasOne<User>()
-            .WithMany()
-            .HasForeignKey(x => x.ModifiedBy)
-            .OnDelete(DeleteBehavior.Restrict);
+       builder.ConfigureAudit();
     }
 }

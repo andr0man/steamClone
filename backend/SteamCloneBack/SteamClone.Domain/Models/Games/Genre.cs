@@ -1,4 +1,4 @@
-﻿using SteamClone.Domain.Models.Common.Abstractions;
+﻿using SteamClone.Domain.Common.Abstractions;
 
 namespace SteamClone.Domain.Models.Games;
 

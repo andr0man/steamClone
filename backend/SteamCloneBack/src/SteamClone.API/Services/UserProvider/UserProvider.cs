@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
 using SteamClone.DAL.Repositories.UserRepository;
-using SteamClone.Domain.Models.Common.Interfaces;
+using SteamClone.Domain.Common.Interfaces;
 
 namespace SteamClone.API.Services.UserProvider;
 

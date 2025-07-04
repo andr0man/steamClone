@@ -1,6 +1,6 @@
-﻿using SteamClone.Domain.Models.Common.Interfaces;
+﻿using SteamClone.Domain.Common.Interfaces;
 
-namespace SteamClone.Domain.Models.Common.Abstractions;
+namespace SteamClone.Domain.Common.Abstractions;
 
 public class AuditableEntity<T> : Entity<T>, IAuditableEntity<string>
 {
