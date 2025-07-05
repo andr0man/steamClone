@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SteamClone.BLL.Services.GenreService;
 using SteamClone.DAL;
-using SteamClone.Domain.ViewModels.Games;
 using SteamClone.Domain.ViewModels.Games.Genre;
 
 namespace SteamClone.API.Controllers;

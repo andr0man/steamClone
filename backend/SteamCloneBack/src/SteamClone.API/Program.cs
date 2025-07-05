@@ -38,10 +38,20 @@ app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
 
-await app.InitialiseDb();
+
+if (!app.Environment.IsEnvironment("Test"))
+{
+    await app.InitialiseDb();
+}
+
 app.MapControllers();
 
 app.UseMiddleware<MiddlewareSecurityTokenExceptionHandling>();
 app.UseMiddleware<MiddlewareExceptionHandling>();
 
 app.Run();
+
+namespace SteamClone.API
+{
+    public partial class Program;
+}

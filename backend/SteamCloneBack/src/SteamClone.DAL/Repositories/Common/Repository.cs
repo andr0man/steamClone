@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
+using SteamClone.DAL.Extensions;
 using SteamClone.Domain.Common.Abstractions;
 using SteamClone.Domain.Common.Interfaces;
 
@@ -18,11 +19,7 @@ public class Repository<TEntity, TKey>(AppDbContext appDbContext, IUserProvider 
         {
             auditable.CreatedBy ??= await userProvider.GetUserId();
 
-            auditable.CreatedAt = DateTime.UtcNow;
-            auditable.ModifiedBy = auditable.CreatedBy;
-            auditable.ModifiedAt = DateTime.UtcNow;
-
-            await appDbContext.AddAsync(entity, token);
+            await appDbContext.AddAuditableAsync(auditable, token);
         }
         else
         {
@@ -38,9 +35,8 @@ public class Repository<TEntity, TKey>(AppDbContext appDbContext, IUserProvider 
         if (entity is AuditableEntity<TKey> auditable)
         {
             auditable.ModifiedBy = await userProvider.GetUserId();
-            auditable.ModifiedAt = DateTime.UtcNow;
 
-            appDbContext.Update(entity);
+            appDbContext.UpdateAuditable(auditable);
         }
         else
         {
