@@ -39,6 +39,12 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         foreach (var genreId in model.GenresIds)
         {
             var genre = await genreRepository.GetByIdAsync(genreId, cancellationToken);
+            
+            if (genre == null)
+            {
+                return ServiceResponse.NotFoundResponse($"Genre with id '{genreId}' not found");
+            }
+            
             game.Genres.Add(genre);
         }
 
@@ -103,19 +109,19 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
 
         if (Enum.GetValues<RequirementType>().All(x => x != model.RequirementType))
         {
-            return ServiceResponse.BadRequestResponse($"Invalid requirement type {model.RequirementType}");
+            return ServiceResponse.BadRequestResponse($"Invalid requirement type '{model.RequirementType}'");
         }
 
         if (Enum.GetValues<RequirementPlatform>().All(x => x != model.Platform))
         {
-            return ServiceResponse.BadRequestResponse($"Invalid platform {model.Platform}");
+            return ServiceResponse.BadRequestResponse($"Invalid platform '{model.Platform}'");
         }
 
         if (game.SystemRequirements.Any(x =>
                 x.RequirementType == model.RequirementType && x.Platform == model.Platform))
         {
             return ServiceResponse.BadRequestResponse(
-                $"System requirements with type {model.RequirementType} and platform {model.Platform} already exists");
+                $"System requirements with type '{model.RequirementType}' and platform '{model.Platform}' already exists");
         }
 
         var systemRequirements = mapper.Map<SystemRequirements>(model);
@@ -173,19 +179,19 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
 
         if (Enum.GetValues<RequirementType>().All(x => x != model.RequirementType))
         {
-            return ServiceResponse.BadRequestResponse($"Invalid requirement type {model.RequirementType}");
+            return ServiceResponse.BadRequestResponse($"Invalid requirement type '{model.RequirementType}'");
         }
 
         if (Enum.GetValues<RequirementPlatform>().All(x => x != model.Platform))
         {
-            return ServiceResponse.BadRequestResponse($"Invalid platform {model.Platform}");
+            return ServiceResponse.BadRequestResponse($"Invalid platform '{model.Platform}'");
         }
 
         if (game.SystemRequirements.Any(x =>
                 x.RequirementType == model.RequirementType && x.Platform == model.Platform && x.Id != systemRequirementId))
         {
             return ServiceResponse.BadRequestResponse(
-                $"System requirements with type {model.RequirementType} and platform {model.Platform} already exists");
+                $"System requirements with type '{model.RequirementType}' and platform '{model.Platform}' already exists");
         }
 
         game.SystemRequirements.RemoveAll(x => x.Id == systemRequirementId);

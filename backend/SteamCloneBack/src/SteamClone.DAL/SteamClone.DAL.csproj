@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SteamClone.Domain\SteamClone.Domain.csproj" />
+    <ProjectReference Include="..\SteamClone.Domain\SteamClone.Domain.csproj" />
   </ItemGroup>
 
 </Project>
