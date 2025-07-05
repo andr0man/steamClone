@@ -38,7 +38,12 @@ app.UseSwaggerUI();
 app.UseAuthentication();
 app.UseAuthorization();
 
-await app.InitialiseDb();
+
+if (!app.Environment.IsEnvironment("Test"))
+{
+    await app.InitialiseDb();
+}
+
 app.MapControllers();
 
 app.UseMiddleware<MiddlewareSecurityTokenExceptionHandling>();

@@ -15,7 +15,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
     : BaseIntegrationTest(factory, useJwtToken), IAsyncLifetime
 {
     private readonly Genre _gameGenre = GameGenreData.MainGenre;
-    
+
     [Fact]
     public async Task ShouldCreateGameGenre()
     {
@@ -23,18 +23,18 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
         var genreName = "TestGenre";
         var genreDescription = "TestGenreDescription";
         var request = new CreateUpdateGenreVM { Name = genreName, Description = genreDescription };
-        
+
         // Act
         var response = await Client.PostAsJsonAsync("GameGenre", request);
-        
+
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
-        
+
         var genreFromResponse = await JsonHelper.GetPayloadAsync<Genre>(response);
         var genreId = genreFromResponse.Id;
-        
+
         var genreFromDb = await Context.Genres.FirstOrDefaultAsync(x => x.Id == genreId);
-        
+
         genreFromDb.Should().NotBeNull();
         genreFromDb.Name.Should().Be(genreName);
         genreFromDb.Description.Should().Be(genreDescription);
@@ -44,10 +44,14 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
     {
         await Context.Users.AddAsync(new User
         {
-            Id = UserId.ToString(), Email = "qwerty@gmail.com", PasswordHash = "fdsafdsafsad",
-            RoleId = Settings.AdminRole, Nickname = "qwerty", CountryId = 1
+            Id = UserId.ToString(),
+            Email = "qwerty@gmail.com",
+            PasswordHash = "fdsafdsafsad",
+            RoleId = Settings.AdminRole,
+            Nickname = "qwerty",
+            CountryId = 1
         });
-        
+
         _gameGenre.CreatedBy = UserId.ToString();
         await Context.AddAuditableAsync(_gameGenre);
         await SaveChangesAsync();

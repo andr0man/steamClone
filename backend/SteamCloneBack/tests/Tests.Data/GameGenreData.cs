@@ -8,6 +8,6 @@ public class GameGenreData
     {
         Name = "Main Genre",
         Description = "Main Genre Description",
-        Id = int.MaxValue
+        Id = 0
     };
 }
