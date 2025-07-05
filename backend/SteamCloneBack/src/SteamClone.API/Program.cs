@@ -45,3 +45,8 @@ app.UseMiddleware<MiddlewareSecurityTokenExceptionHandling>();
 app.UseMiddleware<MiddlewareExceptionHandling>();
 
 app.Run();
+
+namespace SteamClone.API
+{
+    public partial class Program;
+}
