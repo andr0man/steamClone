@@ -52,11 +52,10 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebFact
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
-    protected async Task<int> SaveChangesAsync()
+    protected async Task SaveChangesAsync()
     {
-        var result = await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync();
         Context.ChangeTracker.Clear();
-        return result;
     }
 
     protected string GenerateJwtToken()

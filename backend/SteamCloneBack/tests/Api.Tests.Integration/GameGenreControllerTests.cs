@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL;
@@ -38,6 +39,83 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
         genreFromDb.Should().NotBeNull();
         genreFromDb.Name.Should().Be(genreName);
         genreFromDb.Description.Should().Be(genreDescription);
+    }
+    
+    [Fact]
+    public async Task ShouldUpdateGameGenre()
+    {
+        // Arrange
+        var genreName = "TestGenre";
+        var genreDescription = "TestGenreDescription";
+        var request = new CreateUpdateGenreVM { Name = genreName, Description = genreDescription };
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"GameGenre/{_gameGenre.Id}", request);
+        
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        
+        var genreFromResponse = await JsonHelper.GetPayloadAsync<Genre>(response);
+        var genreId = genreFromResponse.Id;
+        
+        var genreFromDb = await Context.Genres.FirstOrDefaultAsync(x => x.Id == genreId);
+        
+        genreFromDb.Should().NotBeNull();
+        genreFromDb.Name.Should().Be(genreName);
+        genreFromDb.Description.Should().Be(genreDescription);
+    }
+    
+    [Fact]
+    public async Task ShouldDeleteGameGenre()
+    {
+        // Act
+        var response = await Client.DeleteAsync($"GameGenre/{_gameGenre.Id}");
+        
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        
+        var genreFromDb = await Context.Genres.FirstOrDefaultAsync(x => x.Id == _gameGenre.Id);
+        
+        genreFromDb.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ShouldNotUpdateBecauseNotFound()
+    {
+        // Arrange
+        var request = new CreateUpdateGenreVM { Name = "TestGenre", Description = "TestGenreDescription" };
+        
+        // Act
+        var response = await Client.PutAsJsonAsync($"GameGenre/{Guid.NewGuid()}", request);
+        
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+    
+    [Fact]
+    public async Task ShouldNotDeleteBecauseNotFound()
+    {
+        // Act
+        var response = await Client.DeleteAsync($"GameGenre/{Guid.NewGuid()}");
+        
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+    
+    [Fact]
+    public async Task ShouldGetAllGenres()
+    {
+        // Act
+        var response = await Client.GetAsync("GameGenre");
+        
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+        
+        var genres = await JsonHelper.GetPayloadAsync<List<Genre>>(response);
+        
+        genres.Should().NotBeEmpty();
     }
 
     public async Task InitializeAsync()
