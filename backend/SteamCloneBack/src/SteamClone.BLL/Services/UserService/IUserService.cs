@@ -1,5 +1,4 @@
-﻿using SteamClone.DAL.ViewModels;
-using SteamClone.DAL.ViewModels.Users;
+﻿using SteamClone.Domain.ViewModels.Users;
 
 namespace SteamClone.BLL.Services.UserService;
 

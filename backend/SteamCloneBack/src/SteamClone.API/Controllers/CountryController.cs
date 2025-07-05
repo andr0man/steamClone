@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SteamClone.BLL.Services.CountryService;
-using SteamClone.DAL.ViewModels.Countries;
+using SteamClone.Domain.ViewModels.Countries;
 
 namespace SteamClone.API.Controllers;
 

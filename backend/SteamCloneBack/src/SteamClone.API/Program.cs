@@ -2,9 +2,9 @@ using Serilog;
 using SteamClone.API.Modules;
 using SteamClone.API.Services.UserProvider;
 using SteamClone.BLL;
-using SteamClone.BLL.Common.Interfaces;
 using SteamClone.BLL.Middlewares;
 using SteamClone.DAL;
+using SteamClone.Domain.Common.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +16,10 @@ builder.Services.AddControllers();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IUserProvider, UserProvider>();
-
 builder.Services.AddDataAccess(builder);
 builder.Services.AddBusinessLogic(builder);
+
+builder.Services.AddScoped<IUserProvider, UserProvider>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
