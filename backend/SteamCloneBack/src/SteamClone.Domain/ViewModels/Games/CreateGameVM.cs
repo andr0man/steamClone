@@ -5,5 +5,6 @@ public class CreateGameVM
     public required string Name { get; set; }
     public required string Description { get; set; }
     public decimal Price { get; set; } = 10;
+    public DateTime? ReleaseDate { get; set; }
     public List<int> GenresIds { get; set; } = new();
 }

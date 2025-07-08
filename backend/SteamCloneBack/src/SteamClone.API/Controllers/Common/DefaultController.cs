@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SteamClone.API.Controllers;
+namespace SteamClone.API.Controllers.Common;
 
 [ApiExplorerSettings(IgnoreApi = true)]
 [Route("")]

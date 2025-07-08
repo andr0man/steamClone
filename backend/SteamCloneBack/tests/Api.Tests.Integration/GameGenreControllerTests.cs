@@ -86,7 +86,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
         var request = new CreateUpdateGenreVM { Name = "TestGenre", Description = "TestGenreDescription" };
         
         // Act
-        var response = await Client.PutAsJsonAsync($"GameGenre/{Guid.NewGuid()}", request);
+        var response = await Client.PutAsJsonAsync($"GameGenre/{int.MaxValue}", request);
         
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();
@@ -97,7 +97,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
     public async Task ShouldNotDeleteBecauseNotFound()
     {
         // Act
-        var response = await Client.DeleteAsync($"GameGenre/{Guid.NewGuid()}");
+        var response = await Client.DeleteAsync($"GameGenre/{int.MaxValue}");
         
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();

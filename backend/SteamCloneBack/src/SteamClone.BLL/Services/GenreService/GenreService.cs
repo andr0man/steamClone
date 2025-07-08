@@ -72,13 +72,19 @@ public class GenreService(IGenreRepository genreRepository, IMapper mapper) : IG
 
     public async Task<ServiceResponse> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var genre = await genreRepository.DeleteAsync(id, cancellationToken);
-        
-        if (genre == null)
+        try
         {
-            return ServiceResponse.NotFoundResponse("Genre not found");
+            var genre = await genreRepository.GetByIdAsync(id, cancellationToken);
+            if (genre == null)
+            {
+                return ServiceResponse.NotFoundResponse("Genre not found");
+            }
+            await genreRepository.DeleteAsync(id, cancellationToken);
+            return ServiceResponse.OkResponse("Genre deleted successfully");
         }
-
-        return ServiceResponse.OkResponse("Genre deleted successfully", genre);
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 }

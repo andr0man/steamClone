@@ -1,6 +1,6 @@
 ﻿namespace SteamClone.Domain.ViewModels.Developers;
 
-public class DeveloperUpdateVM
+public class UpdateDeveloperVM
 {
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }

@@ -26,7 +26,7 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
             return ServiceResponse.NotFoundResponse("Game not found");
         }
 
-        return ServiceResponse.OkResponse("Game retrieved successfully", game);
+        return ServiceResponse.OkResponse("Game retrieved successfully", mapper.Map<GameVM>(game));
     }
 
     public async Task<ServiceResponse> CreateAsync(CreateGameVM model, CancellationToken cancellationToken = default)
@@ -34,9 +34,9 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         var game = mapper.Map<Game>(model);
 
         game.Id = Guid.NewGuid().ToString();
-        game.ReleaseDate = DateTime.UtcNow;
+        game.ReleaseDate = model.ReleaseDate ?? DateTime.UtcNow;
 
-        foreach (var genreId in model.GenresIds)
+        foreach (var genreId in model.GenresIds.Distinct())
         {
             var genre = await genreRepository.GetByIdAsync(genreId, cancellationToken);
             
@@ -68,28 +68,34 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         {
             return ServiceResponse.NotFoundResponse("Game not found");
         }
+        
+        existingGame.Genres.Clear();
+        foreach (var genreId in model.GenresIds.Distinct())
+        {
+            var genre = await genreRepository.GetByIdAsync(genreId, cancellationToken);
+            if (genre == null)
+            {
+                return ServiceResponse.NotFoundResponse($"Genre with id '{genreId}' not found");
+            }
+            existingGame.Genres.Add(genre);
+        }
 
         var updatedGame = mapper.Map(model, existingGame);
-
-        try
-        {
-            var result = await gameRepository.UpdateAsync(updatedGame, cancellationToken);
-
-            return ServiceResponse.OkResponse("Game updated successfully", result);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
+        
+        return await UpdateGameAsync(updatedGame, "Game updated successfully", cancellationToken);
     }
 
     public async Task<ServiceResponse> DeleteAsync(string id, CancellationToken cancellationToken = default)
     {
         try
         {
-            var game = await gameRepository.DeleteAsync(id, cancellationToken);
-
-            return ServiceResponse.OkResponse("Game deleted successfully", game);
+            var game = await gameRepository.GetByIdAsync(id, cancellationToken);
+            if (game == null)
+            {
+                return ServiceResponse.NotFoundResponse("Game not found");
+            }
+            await gameRepository.DeleteAsync(id, cancellationToken);
+            return ServiceResponse.OkResponse("Game deleted successfully");
         }
         catch (Exception e)
         {
@@ -107,14 +113,9 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
             return ServiceResponse.NotFoundResponse("Game not found");
         }
 
-        if (Enum.GetValues<RequirementType>().All(x => x != model.RequirementType))
+        if (ValidateRequirementModel(model) != null)
         {
-            return ServiceResponse.BadRequestResponse($"Invalid requirement type '{model.RequirementType}'");
-        }
-
-        if (Enum.GetValues<RequirementPlatform>().All(x => x != model.Platform))
-        {
-            return ServiceResponse.BadRequestResponse($"Invalid platform '{model.Platform}'");
+            return ValidateRequirementModel(model)!;
         }
 
         if (game.SystemRequirements.Any(x =>
@@ -129,17 +130,8 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         systemRequirements.Id = Guid.NewGuid().ToString();
 
         game.SystemRequirements.Add(systemRequirements);
-
-        try
-        {
-            var result = await gameRepository.UpdateAsync(game, cancellationToken);
-
-            return ServiceResponse.OkResponse("System requirements added successfully", result);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
+        
+        return await UpdateGameAsync(game, "System requirements added successfully", cancellationToken);
     }
 
     public async Task<ServiceResponse> DeleteSystemRequirementsAsync(string gameId, string systemRequirementId,
@@ -153,17 +145,8 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         }
 
         game.SystemRequirements.RemoveAll(x => x.Id == systemRequirementId);
-
-        try
-        {
-            var result = await gameRepository.UpdateAsync(game, cancellationToken);
-
-            return ServiceResponse.OkResponse("System requirements added successfully", result);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
+        
+        return await UpdateGameAsync(game, "System requirements deleted successfully", cancellationToken);
     }
 
     public async Task<ServiceResponse> UpdateSystemRequirementsAsync(string gameId, string systemRequirementId,
@@ -177,14 +160,9 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
             return ServiceResponse.NotFoundResponse("Game not found");
         }
 
-        if (Enum.GetValues<RequirementType>().All(x => x != model.RequirementType))
+        if (ValidateRequirementModel(model) != null)
         {
-            return ServiceResponse.BadRequestResponse($"Invalid requirement type '{model.RequirementType}'");
-        }
-
-        if (Enum.GetValues<RequirementPlatform>().All(x => x != model.Platform))
-        {
-            return ServiceResponse.BadRequestResponse($"Invalid platform '{model.Platform}'");
+            return ValidateRequirementModel(model)!;
         }
 
         if (game.SystemRequirements.Any(x =>
@@ -200,15 +178,28 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         systemRequirements.Id = systemRequirementId;
         game.SystemRequirements.Add(systemRequirements);
         
+        return await UpdateGameAsync(game, "System requirements updated successfully", cancellationToken);
+    }
+    
+    private async Task<ServiceResponse> UpdateGameAsync(Game game, string successMessage, CancellationToken cancellationToken)
+    {
         try
         {
             var result = await gameRepository.UpdateAsync(game, cancellationToken);
-
-            return ServiceResponse.OkResponse("System requirements added successfully", result);
+            return ServiceResponse.OkResponse(successMessage, result);
         }
         catch (Exception e)
         {
             throw new Exception(e.Message);
         }
+    }
+    
+    private ServiceResponse? ValidateRequirementModel(SystemReqCreateUpdateVM model)
+    {
+        if (Enum.GetValues<RequirementType>().All(x => x != model.RequirementType))
+            return ServiceResponse.BadRequestResponse($"Invalid requirement type '{model.RequirementType}'");
+        if (Enum.GetValues<RequirementPlatform>().All(x => x != model.Platform))
+            return ServiceResponse.BadRequestResponse($"Invalid platform '{model.Platform}'");
+        return null;
     }
 }

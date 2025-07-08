@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SteamClone.BLL.Services.AccountService;
 using SteamClone.BLL.Services.CountryService;
+using SteamClone.BLL.Services.DeveloperService;
 using SteamClone.BLL.Services.GameService;
 using SteamClone.BLL.Services.GenreService;
 using SteamClone.BLL.Services.ImageService;
@@ -37,6 +38,7 @@ public static class ConfigureBusinessLogic
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IGenreService, GenreService>();
         services.AddScoped<IGameService, GameService>();
+        services.AddScoped<IDeveloperService, DeveloperService>();
     }
     
     private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)
