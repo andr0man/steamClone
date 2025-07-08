@@ -29,7 +29,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasOne(x => x.Country)
             .WithMany()
             .HasForeignKey(x => x.CountryId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.SetNull);
         
        builder.ConfigureAudit();
     }

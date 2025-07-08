@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SteamClone.DAL.Converters;
 using SteamClone.Domain.Common.Interfaces;
 using SteamClone.Domain.Models.Auth;
 
@@ -19,5 +20,13 @@ public static class AuditableConfigurationExtension
             .WithMany()
             .HasForeignKey(x => x.ModifiedBy)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Property(x => x.CreatedAt)
+            .HasConversion(new DateTimeUtcConverter())
+            .HasDefaultValueSql("timezone('utc', now())");
+        
+        builder.Property(x => x.ModifiedAt)
+            .HasConversion(new DateTimeUtcConverter())
+            .HasDefaultValueSql("timezone('utc', now())");
     }
 }

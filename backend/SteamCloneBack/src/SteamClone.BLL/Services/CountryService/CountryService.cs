@@ -2,6 +2,7 @@
 using SteamClone.DAL.Repositories.CountryRepository;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Countries;
 using SteamClone.Domain.ViewModels.Countries;
 
 namespace SteamClone.BLL.Services.CountryService;

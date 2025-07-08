@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Countries;
 
 namespace SteamClone.DAL.Data.Initializer;
 

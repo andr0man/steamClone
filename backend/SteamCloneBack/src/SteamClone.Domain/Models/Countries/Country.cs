@@ -1,6 +1,6 @@
 ﻿using SteamClone.Domain.Common.Abstractions;
 
-namespace SteamClone.Domain.Models.Auth;
+namespace SteamClone.Domain.Models.Countries;
 
 public class Country : Entity<int>
 {
