@@ -12,6 +12,8 @@ namespace Tests.Common;
 
 public class IntegrationTestWebFactory : WebApplicationFactory<Program>
 {
+    private readonly string _databaseName = $"InMemoryTestDb_{Guid.NewGuid()}";
+    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -33,7 +35,7 @@ public class IntegrationTestWebFactory : WebApplicationFactory<Program>
         // Реєструємо in-memory базу даних
         services.AddDbContext<AppDbContext>(
             options => options
-                .UseInMemoryDatabase("InMemoryTestDb")
+                .UseInMemoryDatabase(_databaseName)
                 .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
     }
 }
