@@ -33,8 +33,7 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebFact
             {
                 builder.ConfigureTestServices(services =>
                 {
-                    services.AddAuthentication("TestScheme")
-                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", _ => { });
+                    services.AddAuthentication();
                 });
             })
             .CreateClient(new WebApplicationFactoryClientOptions
@@ -76,26 +75,5 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebFact
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-}
-
-public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
-{
-    public TestAuthHandler(
-        IOptionsMonitor<AuthenticationSchemeOptions> options,
-        ILoggerFactory logger,
-        UrlEncoder encoder)
-        : base(options, logger, encoder)
-    {
-    }
-
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-    {
-        var claims = new[] { new Claim(ClaimTypes.Role, Settings.AdminRole), new Claim("userId", "admin") };
-        var identity = new ClaimsIdentity(claims, "Test");
-        var principal = new ClaimsPrincipal(identity);
-        var ticket = new AuthenticationTicket(principal, "TestScheme");
-
-        return Task.FromResult(AuthenticateResult.Success(ticket));
     }
 }
