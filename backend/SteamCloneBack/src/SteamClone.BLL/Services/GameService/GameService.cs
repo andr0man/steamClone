@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using SteamClone.BLL.Services.DeveloperAndPublisherService;
+using SteamClone.BLL.Services.ImageService;
+using SteamClone.DAL;
 using SteamClone.DAL.Repositories.DeveloperAndPublisherRepository;
 using SteamClone.DAL.Repositories.GameRepository;
 using SteamClone.DAL.Repositories.GenreRepository;
@@ -9,7 +12,13 @@ using SteamClone.Domain.ViewModels.Games.SystemReq;
 
 namespace SteamClone.BLL.Services.GameService;
 
-public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreRepository genreRepository, IDeveloperAndPublisherRepository developerAndPublisherRepository)
+public class GameService(
+    IGameRepository gameRepository,
+    IMapper mapper,
+    IGenreRepository genreRepository,
+    IDeveloperAndPublisherRepository developerAndPublisherRepository,
+    IImageService imageService,
+    IHttpContextAccessor httpContextAccessor)
     : IGameService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
@@ -41,12 +50,12 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         foreach (var genreId in model.GenresIds.Distinct())
         {
             var genre = await genreRepository.GetByIdAsync(genreId, cancellationToken);
-            
+
             if (genre == null)
             {
                 return ServiceResponse.NotFoundResponse($"Genre with id '{genreId}' not found");
             }
-            
+
             game.Genres.Add(genre);
         }
 
@@ -83,7 +92,7 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         {
             return ServiceResponse.NotFoundResponse("Game not found");
         }
-        
+
         existingGame.Genres.Clear();
         foreach (var genreId in model.GenresIds.Distinct())
         {
@@ -92,13 +101,27 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
             {
                 return ServiceResponse.NotFoundResponse($"Genre with id '{genreId}' not found");
             }
+
             existingGame.Genres.Add(genre);
         }
 
         var updatedGame = mapper.Map(model, existingGame);
         updatedGame.ReleaseDate = model.ReleaseDate ?? DateTime.UtcNow;
-        
-        
+
+        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken) == null)
+        {
+            return ServiceResponse.NotFoundResponse($"Developer with id '{model.DeveloperId}' not found");
+        }
+
+        if (model.PublisherId != null && await developerAndPublisherRepository.GetByIdAsync(model.PublisherId,
+                cancellationToken) == null)
+        {
+            return ServiceResponse.NotFoundResponse($"Publisher with id '{model.PublisherId}' not found");
+        }
+
+        updatedGame.PublisherId = model.PublisherId ?? updatedGame.DeveloperId;
+
+
         return await UpdateGameAsync(updatedGame, "Game updated successfully", cancellationToken);
     }
 
@@ -111,6 +134,7 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
             {
                 return ServiceResponse.NotFoundResponse("Game not found");
             }
+
             await gameRepository.DeleteAsync(id, cancellationToken);
             return ServiceResponse.OkResponse("Game deleted successfully");
         }
@@ -147,7 +171,7 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         systemRequirements.Id = Guid.NewGuid().ToString();
 
         game.SystemRequirements.Add(systemRequirements);
-        
+
         return await UpdateGameAsync(game, "System requirements added successfully", cancellationToken);
     }
 
@@ -162,7 +186,7 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         }
 
         game.SystemRequirements.RemoveAll(x => x.Id == systemRequirementId);
-        
+
         return await UpdateGameAsync(game, "System requirements deleted successfully", cancellationToken);
     }
 
@@ -183,22 +207,53 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         }
 
         if (game.SystemRequirements.Any(x =>
-                x.RequirementType == model.RequirementType && x.Platform == model.Platform && x.Id != systemRequirementId))
+                x.RequirementType == model.RequirementType && x.Platform == model.Platform &&
+                x.Id != systemRequirementId))
         {
             return ServiceResponse.BadRequestResponse(
                 $"System requirements with type '{model.RequirementType}' and platform '{model.Platform}' already exists");
         }
 
         game.SystemRequirements.RemoveAll(x => x.Id == systemRequirementId);
-        
+
         var systemRequirements = mapper.Map<SystemRequirements>(model);
         systemRequirements.Id = systemRequirementId;
         game.SystemRequirements.Add(systemRequirements);
-        
+
         return await UpdateGameAsync(game, "System requirements updated successfully", cancellationToken);
     }
-    
-    private async Task<ServiceResponse> UpdateGameAsync(Game game, string successMessage, CancellationToken cancellationToken)
+
+    public async Task<ServiceResponse> UpdateCoverImageAsync(string gameId, IFormFile coverImage,
+        CancellationToken cancellationToken)
+    {
+        var game = await gameRepository.GetByIdAsync(gameId, cancellationToken);
+
+        if (game == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        var imageName = game.CoverImageUrl?.Split('/').LastOrDefault();
+
+        var newImageName =
+            await imageService.SaveImageFromFileAsync(Settings.ImagesPathSettings.GameCoverImagePath, coverImage,
+                imageName);
+
+        if (newImageName == null)
+        {
+            return ServiceResponse.BadRequestResponse("No image uploaded");
+        }
+
+        var baseUrl =
+            $"{httpContextAccessor.HttpContext!.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}/";
+
+        game.CoverImageUrl = $"{baseUrl}{Settings.ImagesPathSettings.GameCoverImagePathForUrl}/{newImageName}";
+        
+        return await UpdateGameAsync(game, "Cover image updated successfully", cancellationToken);
+    }
+
+    private async Task<ServiceResponse> UpdateGameAsync(Game game, string successMessage,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -210,7 +265,7 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
             throw new Exception(e.Message);
         }
     }
-    
+
     private ServiceResponse? ValidateRequirementModel(SystemReqCreateUpdateVM model)
     {
         if (Enum.GetValues<RequirementType>().All(x => x != model.RequirementType))

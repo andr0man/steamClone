@@ -1,3 +1,4 @@
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 using SteamClone.API.Modules;
 using SteamClone.API.Services.UserProvider;
@@ -48,6 +49,28 @@ app.MapControllers();
 
 app.UseMiddleware<MiddlewareSecurityTokenExceptionHandling>();
 app.UseMiddleware<MiddlewareExceptionHandling>();
+
+var imagesPath = Path.Combine(builder.Environment.ContentRootPath, Settings.ImagesPathSettings.ImagesPath);
+
+if (!Directory.Exists(imagesPath))
+{
+    Directory.CreateDirectory(imagesPath);
+
+    foreach (var file in Settings.ImagesPathSettings.ListOfDirectoriesNames)
+    {
+        var containersPath = Path.Combine(imagesPath, file);
+        if (!Directory.Exists(containersPath))
+        {
+            Directory.CreateDirectory(containersPath);
+        }
+    }
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(imagesPath),
+    RequestPath = $"/{Settings.ImagesPathSettings.StaticFileRequestPath}"
+});
 
 app.Run();
 
