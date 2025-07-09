@@ -120,15 +120,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
 
     public async Task InitializeAsync()
     {
-        await Context.Users.AddAsync(new User
-        {
-            Id = UserId.ToString(),
-            Email = "qwerty@gmail.com",
-            PasswordHash = "fdsafdsafsad",
-            RoleId = Settings.AdminRole,
-            Nickname = "qwerty",
-            CountryId = 1
-        });
+        await Context.Users.AddAsync(UserData.UserForAuth(UserId.ToString(), 1));
 
         _gameGenre.CreatedBy = UserId.ToString();
         await Context.AddAuditableAsync(_gameGenre);

@@ -177,23 +177,11 @@ public class DeveloperAndPublisherControllerTests
 
     public async Task InitializeAsync()
     {
-        await Context.Countries.AddAsync(_country);
-        
-        await Context.Users.AddAsync(new User
-        {
-            Id = UserId.ToString(),
-            Email = "qwerty@gmail.com",
-            PasswordHash = "fdsafdsafsad",
-            RoleId = Settings.AdminRole,
-            Nickname = "qwerty",
-            CountryId = _country.Id
-        });
-
+        await Context.AddAsync(_country);
+        await Context.Users.AddAsync(UserData.UserForAuth(UserId.ToString(), _country.Id));
         _developerAndPublisher.CreatedBy = UserId.ToString();
         await Context.AddAuditableAsync(_developerAndPublisher);
         await SaveChangesAsync();
-        
-        _country.Id = (await Context.Countries.FirstAsync()).Id;
     }
 
     public async Task DisposeAsync()

@@ -86,7 +86,7 @@ public class GameService(
     public async Task<ServiceResponse> UpdateAsync(string id, UpdateGameVM model,
         CancellationToken cancellationToken = default)
     {
-        var existingGame = await gameRepository.GetByIdAsync(id, cancellationToken);
+        var existingGame = await gameRepository.GetByIdAsync(id, cancellationToken, asNoTracking: true);
 
         if (existingGame == null)
         {
