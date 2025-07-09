@@ -1,13 +1,10 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data.Initializer;
-using SteamClone.Domain.Common.Abstractions;
-using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
 using SteamClone.Domain.Models.Countries;
+using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
-using Developer = SteamClone.Domain.Models.Developers.Developer;
-using Publisher = SteamClone.Domain.Models.Publishers.Publisher;
 
 namespace SteamClone.DAL.Data;
 
@@ -20,8 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Country> Countries { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Game> Games { get; set; }
-    public DbSet<Developer> Developers { get; set; }
-    public DbSet<Publisher> Publishers { get; set; }
+    public DbSet<DeveloperAndPublisher> DevelopersAndPublishers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

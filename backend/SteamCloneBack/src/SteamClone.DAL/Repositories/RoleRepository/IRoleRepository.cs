@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Microsoft.AspNetCore.Identity;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
 

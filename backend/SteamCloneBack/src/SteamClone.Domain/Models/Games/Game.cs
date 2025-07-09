@@ -1,6 +1,5 @@
 using SteamClone.Domain.Common.Abstractions;
-using SteamClone.Domain.Models.Developers;
-using SteamClone.Domain.Models.Publishers;
+using SteamClone.Domain.Models.DevelopersAndPublishers;
 
 namespace SteamClone.Domain.Models.Games;
 
@@ -11,11 +10,10 @@ public class Game : AuditableEntity<string>
     public List<Genre> Genres { get; set; } = new();
     public decimal Price { get; set; }
     public DateTime ReleaseDate { get; set; }
-    public string? DeveloperId { get; set; }
-    public virtual Developer? Developer { get; set; }
-    
-    public string? PublisherId { get; set; }
-    public virtual Publisher? Publisher { get; set; }
+    public string DeveloperId { get; set; } = null!;
+    public virtual DeveloperAndPublisher? Developer { get; set; }
+    public string? PublisherId { get; set; } = null!;
+    public virtual DeveloperAndPublisher? Publisher { get; set; }
     
     // public double? Rating { get; set; }
     // public int NumberOfReviews { get; set; }

@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using SteamClone.DAL;

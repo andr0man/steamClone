@@ -1,6 +1,6 @@
-﻿namespace SteamClone.Domain.ViewModels.Developers;
+﻿namespace SteamClone.Domain.ViewModels.DevelopersAndPublishers;
 
-public class CreateDeveloperVM
+public class CreateDeveloperAndPublisherVM
 {
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }

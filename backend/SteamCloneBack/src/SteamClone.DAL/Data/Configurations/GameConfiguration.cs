@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SteamClone.DAL.Extensions;
-using SteamClone.Domain.Models.Developers;
 using SteamClone.Domain.Models.Games;
-using SteamClone.Domain.Models.Publishers;
 
 namespace SteamClone.DAL.Data.Configurations;
 
@@ -31,16 +29,14 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
         builder.HasMany(e => e.Genres)
             .WithMany();
             
-        builder.HasOne(g => g.Developer)
+        builder.HasOne(e => e.Developer)
             .WithMany()
-            .HasForeignKey(g => g.DeveloperId)
-            .IsRequired()
+            .HasForeignKey(e => e.DeveloperId)
             .OnDelete(DeleteBehavior.Restrict);
-            
-        builder.HasOne(g => g.Publisher)
+        
+        builder.HasOne(e => e.Publisher)
             .WithMany()
-            .HasForeignKey(g => g.PublisherId)
-            .IsRequired()
+            .HasForeignKey(e => e.PublisherId)
             .OnDelete(DeleteBehavior.Restrict);
         
         builder.ConfigureAudit();

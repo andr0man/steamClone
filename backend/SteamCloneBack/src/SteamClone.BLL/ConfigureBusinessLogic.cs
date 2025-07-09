@@ -6,15 +6,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SteamClone.BLL.Services.AccountService;
 using SteamClone.BLL.Services.CountryService;
-using SteamClone.BLL.Services.DeveloperService;
+using SteamClone.BLL.Services.DeveloperAndPublisherService;
 using SteamClone.BLL.Services.GameService;
 using SteamClone.BLL.Services.GenreService;
 using SteamClone.BLL.Services.ImageService;
 using SteamClone.BLL.Services.JwtService;
+using SteamClone.BLL.Services.MailService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.BLL.Services.UserService;
-using SteamClone.BLL.Services.MailService;
-using SteamClone.BLL.Services.PublisherService;
 
 namespace SteamClone.BLL;
 
@@ -39,8 +38,7 @@ public static class ConfigureBusinessLogic
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IGenreService, GenreService>();
         services.AddScoped<IGameService, GameService>();
-        services.AddScoped<IDeveloperService, DeveloperService>();
-        services.AddScoped<IPublisherService, PublisherService>();
+        services.AddScoped<IDeveloperAndPublisherService, DeveloperAndPublisherService>();
     }
     
     private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)

@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using AutoMapper;
 using MailKit;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
 using SteamClone.BLL.Services.JwtService;
 using SteamClone.BLL.Services.PasswordHasher;

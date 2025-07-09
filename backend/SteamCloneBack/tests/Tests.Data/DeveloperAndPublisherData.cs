@@ -1,10 +1,10 @@
-﻿using SteamClone.Domain.Models.Developers;
+﻿using SteamClone.Domain.Models.DevelopersAndPublishers;
 
 namespace Tests.Data;
 
-public class DeveloperData
+public class DeveloperAndPublisherData
 {
-    public static Developer MainDeveloper => new()
+    public static DeveloperAndPublisher MainDeveloperAndPublisher => new()
     {
         Id = Guid.NewGuid().ToString(),
         Name = "Test Developer",

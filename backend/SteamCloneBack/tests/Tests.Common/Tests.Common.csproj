@@ -28,7 +28,6 @@
       <ProjectReference Include="..\..\src\SteamClone.API\SteamClone.API.csproj" />
       <ProjectReference Include="..\..\src\SteamClone.BLL\SteamClone.BLL.csproj" />
       <ProjectReference Include="..\..\src\SteamClone.DAL\SteamClone.DAL.csproj" />
-      <ProjectReference Include="..\..\src\SteamClone.Domain\SteamClone.Domain.csproj" />
     </ItemGroup>
 
 </Project>

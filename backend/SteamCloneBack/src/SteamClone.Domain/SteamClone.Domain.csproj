@@ -11,8 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Models\Developers\" />
-      <Folder Include="Models\Publishers\" />
+      <Folder Include="Models\DevelopersAndPublishers\" />
     </ItemGroup>
 
 </Project>

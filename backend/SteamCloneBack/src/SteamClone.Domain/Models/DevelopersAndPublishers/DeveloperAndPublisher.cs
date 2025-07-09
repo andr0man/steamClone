@@ -1,12 +1,15 @@
-﻿namespace SteamClone.Domain.ViewModels.Developers;
+using SteamClone.Domain.Common.Abstractions;
+using SteamClone.Domain.Models.Countries;
 
-public class DeveloperVM
+namespace SteamClone.Domain.Models.DevelopersAndPublishers;
+
+public class DeveloperAndPublisher : AuditableEntity<string>
 {
-    public string Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public string? LogoUrl { get; set; }
     public string? Website { get; set; }
     public DateTime? FoundedDate { get; set; }
     public int? CountryId { get; set; }
+    public Country? Country { get; set; }
 }

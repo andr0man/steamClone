@@ -3,12 +3,12 @@ using SteamClone.BLL.Services.Common;
 
 namespace SteamClone.API.Controllers.Common;
 
-public class GenericController<TKey, TCreateVM, TUpdateVM>(IServiceCRUD<TKey, TCreateVM, TUpdateVM> service)
+public class GenericController<TKey, TCreateVM, TUpdateVM>(IServiceCRUD<TKey, TCreateVM, TUpdateVM> andPublisherService)
     : BaseController
     where TCreateVM : class
     where TUpdateVM : class
 {
-    private readonly IServiceCRUD<TKey, TCreateVM, TUpdateVM> _service = service ?? throw new ArgumentNullException(nameof(service));
+    private readonly IServiceCRUD<TKey, TCreateVM, TUpdateVM> _service = andPublisherService ?? throw new ArgumentNullException(nameof(andPublisherService));
 
     [HttpGet]
     public virtual async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)

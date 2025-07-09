@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SteamClone.API.Controllers.Common;
-using SteamClone.BLL.Services.DeveloperService;
+using SteamClone.BLL.Services.DeveloperAndPublisherService;
 using SteamClone.DAL;
-using SteamClone.Domain.ViewModels.Developers;
+using SteamClone.Domain.ViewModels.DevelopersAndPublishers;
 
 namespace SteamClone.API.Controllers;
 
@@ -12,8 +12,8 @@ namespace SteamClone.API.Controllers;
 [Route("[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Authorize(Roles = Settings.AdminRole)]
-public class DeveloperController(IDeveloperService developerService)
-    : GenericController<string, CreateDeveloperVM, UpdateDeveloperVM>(developerService)
+public class DeveloperAndPublisherController(IDeveloperAndPublisherService developerAndPublisherService)
+    : GenericController<string, CreateDeveloperAndPublisherVM, UpdateDeveloperAndPublisherVM>(developerAndPublisherService)
 {
     
 }

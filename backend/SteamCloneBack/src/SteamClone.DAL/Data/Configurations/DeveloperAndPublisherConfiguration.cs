@@ -2,27 +2,27 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SteamClone.DAL.Converters;
 using SteamClone.DAL.Extensions;
-using SteamClone.Domain.Models.Publishers;
+using SteamClone.Domain.Models.DevelopersAndPublishers;
 
 namespace SteamClone.DAL.Data.Configurations;
 
-public class PublisherConfiguration : IEntityTypeConfiguration<Publisher>
+public class DeveloperAndPublisherConfiguration : IEntityTypeConfiguration<DeveloperAndPublisher>
 {
-    public void Configure(EntityTypeBuilder<Publisher> builder)
+    public void Configure(EntityTypeBuilder<DeveloperAndPublisher> builder)
     {
-        builder.HasKey(p => p.Id);
+        builder.HasKey(d => d.Id);
         
-        builder.Property(p => p.Name)
+        builder.Property(d => d.Name)
             .IsRequired()
             .HasMaxLength(200);
             
-        builder.Property(p => p.Description)
+        builder.Property(d => d.Description)
             .HasMaxLength(2000);
             
-        builder.Property(p => p.LogoUrl)
+        builder.Property(d => d.LogoUrl)
             .HasMaxLength(500);
             
-        builder.Property(p => p.Website)
+        builder.Property(d => d.Website)
             .HasMaxLength(200);
         
         builder.Property(x => x.FoundedDate)
