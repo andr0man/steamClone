@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using SteamClone.BLL.Services.DeveloperAndPublisherService;
+using SteamClone.DAL.Repositories.DeveloperAndPublisherRepository;
 using SteamClone.DAL.Repositories.GameRepository;
 using SteamClone.DAL.Repositories.GenreRepository;
 using SteamClone.Domain.Models.Games;
@@ -7,7 +9,7 @@ using SteamClone.Domain.ViewModels.Games.SystemReq;
 
 namespace SteamClone.BLL.Services.GameService;
 
-public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreRepository genreRepository)
+public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreRepository genreRepository, IDeveloperAndPublisherRepository developerAndPublisherRepository)
     : IGameService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
@@ -48,6 +50,19 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
             game.Genres.Add(genre);
         }
 
+        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken) == null)
+        {
+            return ServiceResponse.NotFoundResponse($"Developer with id '{model.DeveloperId}' not found");
+        }
+
+        if (model.PublisherId != null && await developerAndPublisherRepository.GetByIdAsync(model.PublisherId,
+                cancellationToken) == null)
+        {
+            return ServiceResponse.NotFoundResponse($"Publisher with id '{model.PublisherId}' not found");
+        }
+
+        game.PublisherId = model.PublisherId ?? game.DeveloperId;
+
         try
         {
             var createdGame = await gameRepository.CreateAsync(game, cancellationToken);
@@ -81,6 +96,8 @@ public class GameService(IGameRepository gameRepository, IMapper mapper, IGenreR
         }
 
         var updatedGame = mapper.Map(model, existingGame);
+        updatedGame.ReleaseDate = model.ReleaseDate ?? DateTime.UtcNow;
+        
         
         return await UpdateGameAsync(updatedGame, "Game updated successfully", cancellationToken);
     }

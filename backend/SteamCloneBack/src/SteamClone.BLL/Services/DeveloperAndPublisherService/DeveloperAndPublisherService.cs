@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using SteamClone.DAL.Repositories.CountryRepository;
 using SteamClone.DAL.Repositories.DeveloperAndPublisherRepository;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.ViewModels.DevelopersAndPublishers;
 
 namespace SteamClone.BLL.Services.DeveloperAndPublisherService;
 
-public class DeveloperAndPublisherService(IDeveloperAndPublisherRepository developerAndPublisherRepository, IMapper mapper) : IDeveloperAndPublisherService
+public class DeveloperAndPublisherService(IDeveloperAndPublisherRepository developerAndPublisherRepository, IMapper mapper, ICountryRepository countryRepository) : IDeveloperAndPublisherService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -33,6 +34,11 @@ public class DeveloperAndPublisherService(IDeveloperAndPublisherRepository devel
         var developerAndPublisher = mapper.Map<DeveloperAndPublisher>(model);
 
         developerAndPublisher.Id = Guid.NewGuid().ToString();
+        
+        if (await countryRepository.GetByIdAsync(model.CountryId, cancellationToken) == null)
+        {
+            return ServiceResponse.NotFoundResponse($"Country with id '{model.CountryId}' not found");
+        }
 
         try
         {

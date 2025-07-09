@@ -13,5 +13,7 @@ public class GameVM
     public DateTime ReleaseDate { get; set; }
     public string? CoverImageUrl { get; set; }
     public List<string> ScreenshotUrls { get; set; } = new();
+    public string DeveloperId { get; set; } = string.Empty;
+    public string PublisherId { get; set; } = string.Empty;
     public List<SystemRequirementsVM> SystemRequirements { get; set; } = new();
 }

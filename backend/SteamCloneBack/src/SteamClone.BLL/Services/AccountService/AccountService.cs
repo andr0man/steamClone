@@ -26,7 +26,7 @@ public class AccountService(
     public async Task<ServiceResponse> SignInAsync(SignInVM model, CancellationToken token = default)
     {
         var user = await userRepository.GetByEmailAsync(model.Email, token);
-        
+
         if (user == null)
         {
             return ServiceResponse.BadRequestResponse($"Користувача з поштою {model.Email} не знайдено");
@@ -38,14 +38,14 @@ public class AccountService(
         }
 
         var result = passwordHasher.Verify(model.Password, user.PasswordHash);
-        
+
         if (!result)
         {
             return ServiceResponse.BadRequestResponse($"Пароль вказано невірно");
         }
-        
+
         var tokens = await jwtService.GenerateTokensAsync(user);
-        
+
         return ServiceResponse.OkResponse("Успішний вхід", tokens);
     }
 
@@ -61,12 +61,16 @@ public class AccountService(
             return ServiceResponse.BadRequestResponse($"{model.Email} вже використовується");
         }
 
+        var isDbHasUsers = (await userRepository.GetAllAsync(token)).Count()! != 0;
+
         var user = mapper.Map<User>(model);
         user.Id = Guid.NewGuid().ToString();
         user.PasswordHash = passwordHasher.HashPassword(model.Password);
         user.CreatedBy = user.Id;
         user.CountryId = user.CountryId;
-        user.RoleId = Settings.UserRole;
+        user.RoleId = isDbHasUsers ? Settings.UserRole : Settings.AdminRole;
+        user.EmailConfirmed = !isDbHasUsers;
+
 
         try
         {
@@ -89,7 +93,7 @@ public class AccountService(
     {
         var existingRefreshToken =
             await refreshTokenRepository.GetRefreshTokenAsync(model.RefreshToken, cancellationToken);
-        
+
         if (existingRefreshToken == null)
         {
             return ServiceResponse.BadRequestResponse("Invalid refresh token");
@@ -97,9 +101,9 @@ public class AccountService(
 
         if (existingRefreshToken.IsUsed)
         {
-            return ServiceResponse.BadRequestResponse("Refresh token is used"); 
+            return ServiceResponse.BadRequestResponse("Refresh token is used");
         }
-        
+
         if (existingRefreshToken.ExpiredDate < DateTime.UtcNow)
         {
             return await Task.FromResult(ServiceResponse.GetResponse("Token has expired!", false, null,
@@ -107,7 +111,7 @@ public class AccountService(
         }
 
         ClaimsPrincipal principals;
-        
+
         try
         {
             principals = jwtService.GetPrincipals(model.AccessToken);
@@ -117,7 +121,7 @@ public class AccountService(
             return await Task.FromResult(ServiceResponse.GetResponse("Invalid token", false, null,
                 HttpStatusCode.UpgradeRequired));
         }
-        
+
 
         var accessTokenId = principals.Claims
             .Single(c => c.Type == JwtRegisteredClaimNames.Jti).Value;
@@ -148,7 +152,7 @@ public class AccountService(
             var userId = principal.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
             var type = principal.Claims.FirstOrDefault(c => c.Type == "type")?.Value;
 
-            if (type != "email-confirm")    
+            if (type != "email-confirm")
                 return ServiceResponse.ForbiddenResponse("Недійсний тип токена");
 
             var user = await userRepository.GetByIdAsync(userId, CancellationToken.None);
@@ -168,5 +172,4 @@ public class AccountService(
             return ServiceResponse.BadRequestResponse("Недійсний або прострочений токен");
         }
     }
-
 }
