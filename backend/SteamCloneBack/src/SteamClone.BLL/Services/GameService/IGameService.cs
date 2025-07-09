@@ -15,6 +15,10 @@ public interface IGameService : IServiceCRUD<string, CreateGameVM, UpdateGameVM>
 
     Task<ServiceResponse> UpdateSystemRequirementsAsync(string gameId, string systemRequirementId,
         SystemReqCreateUpdateVM model, CancellationToken cancellationToken);
-    
-    Task<ServiceResponse> UpdateCoverImageAsync(string gameId, IFormFile coverImage, CancellationToken cancellationToken);
+
+    Task<ServiceResponse> UpdateCoverImageAsync(string gameId, IFormFile coverImage,
+        CancellationToken cancellationToken);
+
+    Task<ServiceResponse> UpdateScreenshotsImagesAsync(string gameId, IFormFileCollection newScreenshots,
+        List<string> screenshotsToDelete, CancellationToken cancellationToken);
 }

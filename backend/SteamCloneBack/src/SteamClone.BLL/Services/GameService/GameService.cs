@@ -252,6 +252,41 @@ public class GameService(
         return await UpdateGameAsync(game, "Cover image updated successfully", cancellationToken);
     }
 
+    public async Task<ServiceResponse> UpdateScreenshotsImagesAsync(string gameId, IFormFileCollection newScreenshots, List<string> screenshotsToDelete,
+        CancellationToken cancellationToken)
+    {
+        var game = await gameRepository.GetByIdAsync(gameId, cancellationToken);
+
+        if (game == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+        
+        foreach (var id in screenshotsToDelete)
+        {
+            var image = game.ScreenshotUrls.FirstOrDefault(x => x.Contains(id));
+            if (image != null)
+            {
+                var imageName = image.Split('/').LastOrDefault();
+                imageService.DeleteImage(Settings.ImagesPathSettings.GameScreenshotImagePath, imageName!);
+                game.ScreenshotUrls.Remove(image);
+            }
+        }
+        
+        var savedImages =
+            await imageService.SaveImagesFromFilesAsync(Settings.ImagesPathSettings.GameScreenshotImagePath, newScreenshots);
+
+        var baseUrl =
+            $"{httpContextAccessor.HttpContext!.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}/";
+        
+        foreach (var fileName in savedImages)
+        {
+            game.ScreenshotUrls.Add($"{baseUrl}{Settings.ImagesPathSettings.GameScreenshotImagePathForUrl}/{fileName}");
+        }
+        
+        return await UpdateGameAsync(game, "Screenshots updated successfully", cancellationToken);
+    }
+
     private async Task<ServiceResponse> UpdateGameAsync(Game game, string successMessage,
         CancellationToken cancellationToken)
     {

@@ -70,4 +70,14 @@ public class GameController(IGameService gameService)
         var response = await gameService.UpdateCoverImageAsync(gameId, coverImage, cancellationToken);
         return GetResult(response);
     }
+    
+    [HttpPatch("update-screenshots-images/{gameId}")]
+    public async Task<IActionResult> UpdateImages([FromRoute] string gameId,
+        [FromForm] IFormFileCollection newImages,
+        [FromForm] List<string> imagesToDelete,
+        CancellationToken cancellationToken)
+    {
+        var response = await gameService.UpdateScreenshotsImagesAsync(gameId, newImages, imagesToDelete, cancellationToken);
+        return GetResult(response);
+    }
 }
