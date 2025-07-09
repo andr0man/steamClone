@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL;
 using SteamClone.DAL.Extensions;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Countries;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.ViewModels.DevelopersAndPublishers;
 using Tests.Common;
@@ -12,24 +13,30 @@ using Tests.Data;
 
 namespace Api.Tests.Integration;
 
-public class DeveloperAndPublisherControllerTests(IntegrationTestWebFactory factory, bool useJwtToken = true)
-    : BaseIntegrationTest(factory, useJwtToken), IAsyncLifetime
+public class DeveloperAndPublisherControllerTests
+    : BaseIntegrationTest, IAsyncLifetime
 {
-    private readonly DeveloperAndPublisher _developerAndPublisher = DeveloperAndPublisherData.MainDeveloperAndPublisher;
+    private readonly Country _country = CountryData.MainCountry;
+    private readonly DeveloperAndPublisher _developerAndPublisher;
+
+    public DeveloperAndPublisherControllerTests(IntegrationTestWebFactory factory) : base(factory)
+    {
+        _developerAndPublisher = DeveloperAndPublisherData.MainDeveloperAndPublisher(_country.Id);
+    }
 
     [Fact]
-    public async Task ShouldCreateDeveloper()
+    public async Task ShouldCreateDeveloperAndPublisher()
     {
         // Arrange
-        var developerAndPublisherName = "TestDeveloper";
-        var developerAndPublisherDescription = "TestDeveloperAndPublisherDescription";
+        var developerAndPublisherName = "Test developer and publisher for create";
+        var developerAndPublisherDescription = "Test developer and publisher description";
         var foundedDate = DateTime.UtcNow;
-        var countryId = 1;
         var website = "https://test.com";
+        
         var request = new CreateDeveloperAndPublisherVM
         {
             Name = developerAndPublisherName, Description = developerAndPublisherDescription, FoundedDate = foundedDate,
-            CountryId = countryId,
+            CountryId = _country.Id,
             Website = website
         };
 
@@ -49,23 +56,23 @@ public class DeveloperAndPublisherControllerTests(IntegrationTestWebFactory fact
         developerAndPublisherFromDb.Name.Should().Be(developerAndPublisherName);
         developerAndPublisherFromDb.Description.Should().Be(developerAndPublisherDescription);
         developerAndPublisherFromDb.FoundedDate.Should().Be(foundedDate);
-        developerAndPublisherFromDb.CountryId.Should().Be(countryId);
+        developerAndPublisherFromDb.CountryId.Should().Be(_country.Id);
         developerAndPublisherFromDb.Website.Should().Be(website);
     }
 
     [Fact]
-    public async Task ShouldUpdateDeveloper()
+    public async Task ShouldUpdateDeveloperAndPublisher()
     {
         // Arrange
         var developerAndPublisherName = "TestDeveloper";
         var developerAndPublisherDescription = "TestDeveloperAndPublisherDescription";
         var foundedDate = DateTime.UtcNow;
-        var countryId = 1;
         var website = "https://test.com";
+        
         var request = new UpdateDeveloperAndPublisherVM
         {
             Name = developerAndPublisherName, Description = developerAndPublisherDescription, FoundedDate = foundedDate,
-            CountryId = countryId,
+            CountryId = _country.Id,
             Website = website
         };
 
@@ -85,12 +92,12 @@ public class DeveloperAndPublisherControllerTests(IntegrationTestWebFactory fact
         developerAndPublisherFromDb.Name.Should().Be(developerAndPublisherName);
         developerAndPublisherFromDb.Description.Should().Be(developerAndPublisherDescription);
         developerAndPublisherFromDb.FoundedDate.Should().Be(foundedDate);
-        developerAndPublisherFromDb.CountryId.Should().Be(countryId);
+        developerAndPublisherFromDb.CountryId.Should().Be(_country.Id);
         developerAndPublisherFromDb.Website.Should().Be(website);
     }
 
     [Fact]
-    public async Task ShouldDeleteDeveloper()
+    public async Task ShouldDeleteDeveloperAndPublisher()
     {
         // Act
         var response = await Client.DeleteAsync($"DeveloperAndPublisher/{_developerAndPublisher.Id}");
@@ -144,8 +151,34 @@ public class DeveloperAndPublisherControllerTests(IntegrationTestWebFactory fact
         developersAndPublishers.Should().NotBeEmpty();
     }
 
+    [Fact]
+    public async Task ShouldNotCreateBecauseNameExists()
+    {
+        // Arrange
+        var developerAndPublisherName = _developerAndPublisher.Name;
+        var developerAndPublisherDescription = "Test developer and publisher description";
+        var foundedDate = DateTime.UtcNow;
+        var website = "https://test.com";
+        
+        var request = new CreateDeveloperAndPublisherVM
+        {
+            Name = developerAndPublisherName, Description = developerAndPublisherDescription, FoundedDate = foundedDate,
+            CountryId = _country.Id,
+            Website = website
+        };
+
+        // Act
+        var response = await Client.PostAsJsonAsync("DeveloperAndPublisher", request);
+
+        // Assert
+        response.IsSuccessStatusCode.Should().BeFalse();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
     public async Task InitializeAsync()
     {
+        await Context.Countries.AddAsync(_country);
+        
         await Context.Users.AddAsync(new User
         {
             Id = UserId.ToString(),
@@ -153,18 +186,21 @@ public class DeveloperAndPublisherControllerTests(IntegrationTestWebFactory fact
             PasswordHash = "fdsafdsafsad",
             RoleId = Settings.AdminRole,
             Nickname = "qwerty",
-            CountryId = 1
+            CountryId = _country.Id
         });
 
         _developerAndPublisher.CreatedBy = UserId.ToString();
         await Context.AddAuditableAsync(_developerAndPublisher);
         await SaveChangesAsync();
+        
+        _country.Id = (await Context.Countries.FirstAsync()).Id;
     }
 
     public async Task DisposeAsync()
     {
         Context.DevelopersAndPublishers.RemoveRange(Context.DevelopersAndPublishers);
         Context.Users.RemoveRange(Context.Users);
+        Context.Countries.RemoveRange(Context.Countries);
         await SaveChangesAsync();
     }
 }

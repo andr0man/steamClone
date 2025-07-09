@@ -4,12 +4,12 @@ namespace Tests.Data;
 
 public class DeveloperAndPublisherData
 {
-    public static DeveloperAndPublisher MainDeveloperAndPublisher => new()
+    public static DeveloperAndPublisher MainDeveloperAndPublisher(int countryId) => new()
     {
         Id = Guid.NewGuid().ToString(),
-        Name = "Test Developer",
-        CountryId = 1,
-        Description = "Test Developer Description",
+        Name = "Main Test Developer and Publisher Name",
+        CountryId = countryId,
+        Description = "Main Test Developer Description",
         FoundedDate = DateTime.UtcNow
     };
 }

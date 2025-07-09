@@ -40,6 +40,11 @@ public class DeveloperAndPublisherService(IDeveloperAndPublisherRepository devel
             return ServiceResponse.NotFoundResponse($"Country with id '{model.CountryId}' not found");
         }
 
+        if (!await developerAndPublisherRepository.IsUniqueNameAsync(model.Name, cancellationToken))
+        {
+            return ServiceResponse.BadRequestResponse($"Developer Or Publisher with name '{model.Name}' already exists");
+        }
+
         try
         {
             var createdDeveloper = await developerAndPublisherRepository.CreateAsync(developerAndPublisher, cancellationToken);
@@ -59,6 +64,16 @@ public class DeveloperAndPublisherService(IDeveloperAndPublisherRepository devel
         if (existingDeveloper == null)
         {
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
+        }
+        
+        if (await countryRepository.GetByIdAsync(model.CountryId, cancellationToken) == null)
+        {
+            return ServiceResponse.NotFoundResponse($"Country with id '{model.CountryId}' not found");
+        }
+        
+        if (!await developerAndPublisherRepository.IsUniqueNameAsync(model.Name, cancellationToken))
+        {
+            return ServiceResponse.BadRequestResponse($"Developer Or Publisher with name '{model.Name}' already exists");
         }
 
         var updatedDeveloper = mapper.Map(model, existingDeveloper);

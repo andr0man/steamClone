@@ -12,7 +12,8 @@ namespace Tests.Common;
 
 public class IntegrationTestWebFactory : WebApplicationFactory<Program>
 {
-    private readonly string _databaseName = $"InMemoryTestDb_{Guid.NewGuid()}";
+    private static int _counter = 0;
+    private readonly string _databaseName = $"InMemoryTestDb_{_counter++}";
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
