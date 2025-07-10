@@ -18,6 +18,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Game> Games { get; set; }
     public DbSet<DeveloperAndPublisher> DevelopersAndPublishers { get; set; }
+    public DbSet<Review> Reviews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

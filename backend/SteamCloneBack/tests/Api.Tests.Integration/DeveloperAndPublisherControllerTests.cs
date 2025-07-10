@@ -17,11 +17,13 @@ public class DeveloperAndPublisherControllerTests
     : BaseIntegrationTest, IAsyncLifetime
 {
     private readonly Country _country = CountryData.MainCountry;
+    private readonly User _user;
     private readonly DeveloperAndPublisher _developerAndPublisher;
 
     public DeveloperAndPublisherControllerTests(IntegrationTestWebFactory factory) : base(factory)
     {
-        _developerAndPublisher = DeveloperAndPublisherData.MainDeveloperAndPublisher(_country.Id);
+        _user = UserData.UserForAuth(UserId.ToString(), _country.Id);
+        _developerAndPublisher = DeveloperAndPublisherData.MainDeveloperAndPublisher(_country.Id, _user.Id);
     }
 
     [Fact]
@@ -178,8 +180,7 @@ public class DeveloperAndPublisherControllerTests
     public async Task InitializeAsync()
     {
         await Context.AddAsync(_country);
-        await Context.Users.AddAsync(UserData.UserForAuth(UserId.ToString(), _country.Id));
-        _developerAndPublisher.CreatedBy = UserId.ToString();
+        await Context.Users.AddAsync(_user);
         await Context.AddAuditableAsync(_developerAndPublisher);
         await SaveChangesAsync();
     }

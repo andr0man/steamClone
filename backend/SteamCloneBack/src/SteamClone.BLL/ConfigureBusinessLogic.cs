@@ -13,6 +13,7 @@ using SteamClone.BLL.Services.ImageService;
 using SteamClone.BLL.Services.JwtService;
 using SteamClone.BLL.Services.MailService;
 using SteamClone.BLL.Services.PasswordHasher;
+using SteamClone.BLL.Services.ReviewService;
 using SteamClone.BLL.Services.UserService;
 
 namespace SteamClone.BLL;
@@ -29,16 +30,18 @@ public static class ConfigureBusinessLogic
     
     private static void AddServices(this IServiceCollection services)
     {
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
+        
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IGenreService, GenreService>();
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<IDeveloperAndPublisherService, DeveloperAndPublisherService>();
+        services.AddScoped<IReviewService, ReviewService>();
     }
     
     private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)

@@ -1,6 +1,9 @@
 ﻿namespace SteamClone.BLL.Services.Common;
 
 public interface IServiceCRUD<in TKey, TCreateVM, TUpdateVM>
+    where TCreateVM : class
+    where TUpdateVM : class
+    where TKey : IEquatable<TKey>
 {
     Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default);
     Task<ServiceResponse> GetByIdAsync(TKey id, CancellationToken cancellationToken = default);

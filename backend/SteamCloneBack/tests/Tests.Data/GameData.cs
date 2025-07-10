@@ -4,7 +4,7 @@ namespace Tests.Data;
 
 public class GameData
 {
-    public static Game MainGame(string developerId) => new()
+    public static Game MainGame(string developerId, string userId) => new()
     {
         Id = Guid.NewGuid().ToString(),
         Name = "Main Game Name",
@@ -13,6 +13,6 @@ public class GameData
         ReleaseDate = DateTime.UtcNow,
         DeveloperId = developerId,
         PublisherId = developerId,
-        CreatedBy = null
+        CreatedBy = userId
     };
 }

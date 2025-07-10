@@ -17,13 +17,15 @@ namespace Api.Tests.Integration;
 public class GameControllerTests : BaseIntegrationTest, IAsyncLifetime
 {
     private readonly Country _country = CountryData.MainCountry;
+    private readonly User _user;
     private readonly DeveloperAndPublisher _developerAndPublisher;
     private readonly Game _game;
 
     public GameControllerTests(IntegrationTestWebFactory factory) : base(factory)
     {
-        _developerAndPublisher = DeveloperAndPublisherData.MainDeveloperAndPublisher(_country.Id);
-        _game = GameData.MainGame(_developerAndPublisher.Id);
+        _user = UserData.UserForAuth(UserId.ToString(), _country.Id);
+        _developerAndPublisher = DeveloperAndPublisherData.MainDeveloperAndPublisher(_country.Id, _user.Id);
+        _game = GameData.MainGame(_developerAndPublisher.Id, _user.Id);
     }
 
     [Fact]
@@ -171,11 +173,8 @@ public class GameControllerTests : BaseIntegrationTest, IAsyncLifetime
     public async Task InitializeAsync()
     {
         await Context.AddAsync(_country);
-        await Context.Users.AddAsync(UserData.UserForAuth(UserId.ToString(), _country.Id));
-        _developerAndPublisher.CountryId = _country.Id;
-        _developerAndPublisher.CreatedBy = UserId.ToString();
+        await Context.Users.AddAsync(_user);
         await Context.AddAuditableAsync(_developerAndPublisher);
-        _game.CreatedBy = UserId.ToString();
         await Context.AddAuditableAsync(_game);
         await Context.SaveChangesAsync();
     }
