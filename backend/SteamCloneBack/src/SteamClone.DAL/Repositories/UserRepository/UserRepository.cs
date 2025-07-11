@@ -57,6 +57,14 @@ public class UserRepository(AppDbContext appDbContext)
 
         return (users, totalCount);
     }
+    public async Task<List<User>> GetUsersByRoleAsync(string roleName, CancellationToken token = default)
+    {
+        return await _appDbContext.Users
+            .Include(u => u.Role)
+            .Include(u => u.Country)
+            .Where(u => u.Role != null && u.Role.Name == roleName)
+            .ToListAsync(token);
+    }
     public async Task<bool> IsUniqueEmailAsync(string email, CancellationToken token)
     {
         return await _appDbContext.Users.FirstOrDefaultAsync(u => u.Email == email, token) == null;

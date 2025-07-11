@@ -126,6 +126,14 @@ public class UserService(
 
     public async Task<ServiceResponse> GetUsersByRoleAsync(string role, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var users = await userRepository.GetUsersByRoleAsync(role, token);
+
+        if (users == null || !users.Any())
+        {
+            return ServiceResponse.NotFoundResponse("No users with this role found");
+        }
+
+        var userVms = mapper.Map<List<UserVM>>(users);
+        return ServiceResponse.OkResponse("Users by role", userVms);
     }
 }

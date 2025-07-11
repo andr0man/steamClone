@@ -19,4 +19,11 @@ public class UsersController(IUserService userService) : BaseController
         var response = await userService.GetAllAsync(page, pageSize, token);
         return GetResult(response);
     }
+
+    [HttpGet("role/{roleName}")]
+    public async Task<IActionResult> GetUsersByRoleAsync(string roleName, CancellationToken token)
+    {
+        var response = await userService.GetUsersByRoleAsync(roleName, token);
+        return GetResult(response);
+    }
 }
