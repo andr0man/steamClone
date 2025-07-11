@@ -40,7 +40,23 @@ public class UserRepository(AppDbContext appDbContext)
         return await _appDbContext.Users
             .FirstOrDefaultAsync(predicate, token);
     }
+    public async Task<(List<User> Users, int TotalCount)> GetPagedAsync(int page, int pageSize, CancellationToken token = default)
+    {
+        var query = _appDbContext.Users
+            .Include(u => u.Country)
+            .Include(u => u.Role)
+            .AsQueryable();
 
+        var totalCount = await query.CountAsync(token);
+
+        var users = await query
+            .OrderBy(u => u.Nickname)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
+
+        return (users, totalCount);
+    }
     public async Task<bool> IsUniqueEmailAsync(string email, CancellationToken token)
     {
         return await _appDbContext.Users.FirstOrDefaultAsync(u => u.Email == email, token) == null;

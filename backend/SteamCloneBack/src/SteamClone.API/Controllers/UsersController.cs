@@ -13,5 +13,10 @@ namespace SteamClone.API.Controllers;
 // [Authorize(Roles = $"{Settings.AdminRole}, {Settings.UserRole}")]
 public class UsersController(IUserService userService) : BaseController
 {
-    
+    [HttpGet("paged")]
+    public async Task<IActionResult> GetPagedUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken token = default)
+    {
+        var response = await userService.GetAllAsync(page, pageSize, token);
+        return GetResult(response);
+    }
 }

@@ -59,7 +59,18 @@ public class UserService(
 
     public async Task<ServiceResponse> GetAllAsync(int page, int pageSize, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var (users, totalCount) = await userRepository.GetPagedAsync(page, pageSize, token);
+
+        var userVms = mapper.Map<List<UserVM>>(users);
+        var result = new UserListVM
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            PageCount = (int)Math.Ceiling((double)totalCount / pageSize),
+            Users = userVms
+        };
+        return ServiceResponse.OkResponse("Paged users", result);
     }
 
     public async Task<ServiceResponse> DeleteAsync(string id, CancellationToken token = default)
