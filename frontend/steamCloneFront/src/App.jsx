@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import {userApi} from '../src/services/user/userApi'
 import { BrowserRouter } from 'react-router-dom';
 import BasicRoutes from './routes/BasicRoutes'; // Імпортуємо новий компонент маршрутів
 import './App.css';
@@ -7,6 +9,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const storedUserData = localStorage.getItem('steamCloneUser');
@@ -33,12 +36,16 @@ function App() {
     setCurrentUser(userData);
     setIsLoggedIn(true);
     localStorage.setItem('steamCloneUser', JSON.stringify(userData));
+
+    dispatch(userApi.util.resetApiState());
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentUser(null);
     localStorage.removeItem('steamCloneUser');
+
+    dispatch(userApi.util.resetApiState());
   };
   
   if (isLoadingAuth) {

@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import './profile.scss'; 
 import Notification from '../../components/Notification';
 import { User, Shield, BarChart3, Users, Gift, Edit3 } from 'lucide-react';
+import { useGetProfileQuery } from '../../services/user/userApi';
 
-const API_BASE_URL = ''; 
+
 
 const initialProfileState = {
-  username: 'Username',
+  nickname: 'Username',
   avatarUrl: 'https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User',
   level: 0,
   country: 'Country',
@@ -21,87 +22,68 @@ const initialProfileState = {
 };
 
 
-const Profile = ({ userData }) => { 
-  const [profileData, setProfileData] = useState(initialProfileState);
-  const [loading, setLoading] = useState(true); 
-  const [apiError, setApiError] = useState(null);
-  const navigate = useNavigate(); 
+const Profile = () => { 
 
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      setLoading(true);
-      setApiError(null);
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/user/profile`); //токен авторизації
+  const navigate = useNavigate();
+  const { data, isLoading, error } = useGetProfileQuery(); 
 
-        if (!response.ok) {
-          let errorData;
-          try {
-            errorData = await response.json();
-          } catch (e) { /* ігнор якщо не JSON */ }
-          throw new Error(`HTTP error! Status: ${response.status}. ${errorData?.message || response.statusText}`);
-        }
-        const data = await response.json();
-        
-        setProfileData(prevData => ({
-          ...prevData, 
-          ...data,
-          recentActivity: data.recentActivity || prevData.recentActivity || [],
-          badges: data.badges || prevData.badges || [],
-          bannerImageUrl: data.bannerImageUrl || data.favoriteGame?.imageUrl || prevData.bannerImageUrl,
-          friendsCount: data.friendsCount !== undefined ? data.friendsCount : (prevData.friendsCount || 0),
-        }));
-
-      } catch (err) {
-        console.error("Failed to fetch profile data:", err);
-        setApiError(err.message || 'Could not load profile data from server.');
-        // Якщо помилка, залишаємо initialProfileState або дані з userData, якщо вони є
-        if(userData) setProfileData(prev => ({...prev, ...userData, ...initialProfileState, ...userData}));
-
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfileData();
-  }, [userData]);
-
-  
-  const displayData = loading && !profileData.username ? initialProfileState : profileData;
-
-  const handleEditProfileClick = () => {
-    navigate('/profile/edit');
+  const payload = data?.payload;
+  const profileData = {
+    ...initialProfileState,
+    ...payload,
+    bannerImageUrl: payload?.bannerImageUrl || payload?.favoriteGame?.imageUrl || initialProfileState.bannerImageUrl,
+    recentActivity: payload?.recentActivity || [],
+    badges: payload?.badges || [],
+    friendsCount: payload?.friendsCount ?? 0,
   };
 
   const {
-    username,
+    nickname,
     avatarUrl,
     level,
-    country,
-    memberSince,
+    countryName,
     bio,
     recentActivity,
     favoriteGame,
     badges,
     friendsCount,
     bannerImageUrl
-  } = displayData; 
+  } = profileData; 
+
+  const handleEditProfileClick = () => {
+    navigate('/profile/edit');
+  };
+
+
 
   return (
     <div className="profile-page-container">
-      <Notification message={apiError} type="error" onClose={() => setApiError(null)} />
+      {error && (
+        <Notification
+          message={error?.data?.message || 'Failed to load profile.'}
+          type="error"
+          onClose={() => {}}
+        />
+      )}
 
-      {loading && <div className="profile-loading-overlay visible">Loading data...</div>}
+      {isLoading && <div className="profile-loading-overlay visible">Loading data...</div>}
 
       <div className="profile-header-banner" style={{ backgroundImage: `url(${bannerImageUrl})` }}>
       </div>
       <div className="profile-main-content">
         <div className="profile-sidebar">
-          <img src={avatarUrl} alt={`${username}'s avatar`} className="profile-avatar" />
-          <h1 className="profile-username">{username}</h1>
+          <img src={avatarUrl} alt={`${nickname}'s avatar`} className="profile-avatar" />
+          <h1 className="profile-username">{nickname}</h1>
           <p className="profile-level">Level <span className="level-badge">{level}</span></p>
-          <p className="profile-country">{country}</p>
-          <p className="profile-member-since">Member since: {memberSince}</p>
+          <p className="profile-country">{countryName}</p>
+          <p className="profile-member-since">
+            Member since: {new Date(profileData.createdAt).toLocaleDateString('en-US', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </p>
+
           
           <button className="profile-edit-button" onClick={handleEditProfileClick}> {/* onClick */}
             <Edit3 size={18} /> Edit Profile
