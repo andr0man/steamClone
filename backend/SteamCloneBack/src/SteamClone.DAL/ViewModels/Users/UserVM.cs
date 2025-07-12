@@ -8,5 +8,6 @@ public class UserVM
     public string? CountryName { get; set; }
     public string? RoleName { get; set; }
     public bool EmailConfirmed { get; set; }
+    public DateTime CreatedAt { get; set; }
     //public string? Image { get; set; }
 }

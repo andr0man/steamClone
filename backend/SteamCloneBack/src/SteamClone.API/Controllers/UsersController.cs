@@ -77,4 +77,19 @@ public class UsersController(IUserService userService) : BaseController
         var response = await userService.DeleteAsync(id, token);
         return GetResult(response);
     }
+
+    [Authorize] 
+    [HttpGet("profile")]
+    
+    public async Task<IActionResult> GetCurrentUserAsync(CancellationToken token)
+    {
+        var userId = User.FindFirst("id")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized("User ID not found in token.");
+
+        var result = await userService.GetByIdAsync(userId, token);
+        return GetResult(result);
+    }
+
 }
