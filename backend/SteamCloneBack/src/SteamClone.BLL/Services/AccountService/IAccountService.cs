@@ -1,5 +1,5 @@
-﻿using SteamClone.DAL.ViewModels;
-using SteamClone.DAL.ViewModels.Auth;
+﻿using SteamClone.Domain.ViewModels;
+using SteamClone.Domain.ViewModels.Auth;
 
 namespace SteamClone.BLL.Services.AccountService;
 

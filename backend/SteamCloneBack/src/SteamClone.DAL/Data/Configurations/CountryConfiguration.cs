@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SteamClone.DAL.Models;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Countries;
 
 namespace SteamClone.DAL.Data.Configurations;
 

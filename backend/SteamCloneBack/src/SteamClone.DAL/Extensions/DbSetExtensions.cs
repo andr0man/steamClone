@@ -1,32 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SteamClone.DAL.Models.Common.Abstractions;
-using SteamClone.DAL.Models.Common.Interfaces;
+﻿using SteamClone.DAL.Data;
+using SteamClone.Domain.Common.Abstractions;
 
 namespace SteamClone.DAL.Extensions;
 
 public static class DbSetExtensions
 {
-    public static async Task AddAuditableAsync<TEntity, TKey>(
-        this DbSet<TEntity> dbSet,
-        TEntity entity,
-        CancellationToken cancellationToken)
-        where TEntity : AuditableEntity<TKey>
+    public static async Task AddAuditableAsync<TKey>(
+        this AppDbContext dbContext,
+        AuditableEntity<TKey> entity,
+        CancellationToken cancellationToken = default)
     {
         entity.CreatedAt = DateTime.UtcNow;
         entity.ModifiedBy = entity.CreatedBy;
         entity.ModifiedAt = DateTime.UtcNow;
 
-        await dbSet.AddAsync(entity, cancellationToken);
+        await dbContext.AddAsync(entity, cancellationToken);
     }
-    
-    public static void UpdateAuditable<TEntity, TKey>(
-        this DbSet<TEntity> dbSet,
-        TEntity entity)
-        where TEntity : AuditableEntity<TKey>
+
+    public static void UpdateAuditable<TKey>(
+        this AppDbContext dbContext,
+        AuditableEntity<TKey> entity)
     {
-        entity.ModifiedBy = entity.ModifiedBy;
         entity.ModifiedAt = DateTime.UtcNow;
 
-        dbSet.Update(entity);
+        dbContext.Update(entity);
     }
 }

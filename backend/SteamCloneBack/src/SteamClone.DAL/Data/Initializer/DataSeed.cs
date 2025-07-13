@@ -1,6 +1,8 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using SteamClone.DAL.Models;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Countries;
 
 namespace SteamClone.DAL.Data.Initializer;
 
@@ -26,14 +28,14 @@ public static class DataSeed
         modelBuilder.Entity<Role>().HasData(roles);
     }
 
-    
+
     private static void SeedCountries(ModelBuilder modelBuilder)
     {
         try
         {
             var json = File.ReadAllText(CountriesJsonPath);
             var countryDtos = JsonSerializer.Deserialize<List<CountryDto>>(json);
-            
+
             if (countryDtos == null || !countryDtos.Any())
             {
                 Console.WriteLine("Warning: No countries found in the JSON file or the file is empty.");
@@ -41,7 +43,8 @@ public static class DataSeed
             }
 
             var countries = countryDtos
-                .Where(c => !string.IsNullOrWhiteSpace(c.alpha2) && !string.IsNullOrWhiteSpace(c.name) && !string.IsNullOrWhiteSpace(c.alpha3))
+                .Where(c => !string.IsNullOrWhiteSpace(c.alpha2) && !string.IsNullOrWhiteSpace(c.name) &&
+                            !string.IsNullOrWhiteSpace(c.alpha3))
                 .Select((c, index) => new Country
                 {
                     Id = index + 1,

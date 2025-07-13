@@ -7,7 +7,11 @@ using Npgsql;
 using SteamClone.DAL.Data;
 using SteamClone.DAL.Repositories.Common;
 using SteamClone.DAL.Repositories.CountryRepository;
+using SteamClone.DAL.Repositories.DeveloperAndPublisherRepository;
+using SteamClone.DAL.Repositories.GameRepository;
+using SteamClone.DAL.Repositories.GenreRepository;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
+using SteamClone.DAL.Repositories.ReviewRepository;
 using SteamClone.DAL.Repositories.RoleRepository;
 using SteamClone.DAL.Repositories.UserRepository;
 
@@ -36,12 +40,15 @@ public static class ConfigureDataAccess
     
     private static void AddRepositories(this IServiceCollection services)
     {
-        services.AddScoped(typeof(IRepository<,>), typeof(RepositoryNotAuditable<,>));
         services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<ICountryRepository, CountryRepository>();
+        services.AddScoped<IGenreRepository, GenreRepository>();
+        services.AddScoped<IGameRepository, GameRepository>();
+        services.AddScoped<IDeveloperAndPublisherRepository, DeveloperAndPublisherRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
     }
 }

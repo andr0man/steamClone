@@ -1,7 +1,6 @@
 ﻿using SteamClone.DAL;
-using SteamClone.DAL.ViewModels;
 using FluentValidation;
-using SteamClone.DAL.ViewModels.Users;
+using SteamClone.Domain.ViewModels.Users;
 
 namespace SteamClone.BLL.Validators
 {

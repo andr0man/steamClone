@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using SteamClone.DAL.Models;
-using SteamClone.DAL.ViewModels.Countries;
+using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Countries;
+using SteamClone.Domain.ViewModels.Countries;
 
 namespace SteamClone.BLL.MappingProfiles;
 

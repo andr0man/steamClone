@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
-using SteamClone.DAL.Models;
 using SteamClone.DAL.Repositories.CountryRepository;
-using SteamClone.DAL.ViewModels.Countries;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Countries;
+using SteamClone.Domain.ViewModels.Countries;
 
 namespace SteamClone.BLL.Services.CountryService;
 
@@ -77,13 +79,19 @@ public class CountryService(ICountryRepository countryRepository, IMapper mapper
 
     public async Task<ServiceResponse> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var country = await countryRepository.DeleteAsync(id, cancellationToken);
-        
-        if (country == null)
+        try
         {
-            return ServiceResponse.NotFoundResponse("Country not found");
+            var country = await countryRepository.GetByIdAsync(id, cancellationToken);
+            if (country == null)
+            {
+                return ServiceResponse.NotFoundResponse("Country not found");
+            }
+            await countryRepository.DeleteAsync(id, cancellationToken);
+            return ServiceResponse.OkResponse("Country deleted successfully");
         }
-
-        return ServiceResponse.OkResponse("Country deleted successfully", country);
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 }
