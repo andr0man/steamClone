@@ -15,9 +15,9 @@ public class Game : AuditableEntity<string>
     public string? PublisherId { get; set; } = null!;
     public virtual DeveloperAndPublisher? Publisher { get; set; }
     
-    // public double? Rating { get; set; }
-    // public int NumberOfReviews { get; set; }
+    public int? PercentageOfPositiveReviews { get; set; }
     public string? CoverImageUrl { get; set; }
     public List<string> ScreenshotUrls { get; set; } = new();
     public List<SystemRequirements> SystemRequirements { get; set; } = new();
+    public List<Review> Reviews { get; set; } = new();
 }

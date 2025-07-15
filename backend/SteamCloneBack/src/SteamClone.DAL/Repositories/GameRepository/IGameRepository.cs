@@ -5,5 +5,5 @@ namespace SteamClone.DAL.Repositories.GameRepository;
 
 public interface IGameRepository : IRepository<Game, string>
 {
-    
+    Task CalculateRatingAsync(string id, CancellationToken token);
 }

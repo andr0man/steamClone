@@ -15,5 +15,6 @@ public class GameVM
     public List<string> ScreenshotUrls { get; set; } = new();
     public string DeveloperId { get; set; } = string.Empty;
     public string PublisherId { get; set; } = string.Empty;
+    public int? PercentageOfPositiveReviews { get; set; }
     public List<SystemRequirementsVM> SystemRequirements { get; set; } = new();
 }

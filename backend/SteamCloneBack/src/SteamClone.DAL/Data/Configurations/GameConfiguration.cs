@@ -22,23 +22,26 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
         builder.Property(e => e.ReleaseDate)
             .IsRequired();
 
+        builder.Property(e => e.PercentageOfPositiveReviews)
+            .IsRequired(false);
+
         builder.Property(e => e.Price)
             .IsRequired()
             .HasColumnType("decimal(18,2)");
 
         builder.HasMany(e => e.Genres)
             .WithMany();
-            
+
         builder.HasOne(e => e.Developer)
             .WithMany()
             .HasForeignKey(e => e.DeveloperId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         builder.HasOne(e => e.Publisher)
             .WithMany()
             .HasForeignKey(e => e.PublisherId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         builder.ConfigureAudit();
     }
 }

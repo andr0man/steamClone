@@ -13,9 +13,9 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.Property(r => r.Text);
 
         builder.Property(r => r.IsPositive);
-        
+
         builder.HasOne<Game>()
-            .WithMany()
+            .WithMany(r => r.Reviews)
             .HasForeignKey(sr => sr.GameId)
             .OnDelete(DeleteBehavior.Cascade);
     }
