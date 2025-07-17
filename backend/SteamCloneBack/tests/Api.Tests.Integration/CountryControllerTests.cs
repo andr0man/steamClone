@@ -13,7 +13,7 @@ using Tests.Data;
 namespace Api.Tests.Integration;
 
 public class CountryControllerTests(IntegrationTestWebFactory factory)
-    : BaseIntegrationTest(factory, false), IAsyncLifetime
+    : BaseIntegrationTest(factory), IAsyncLifetime
 {
     private readonly Country _country = CountryData.MainCountry;
 

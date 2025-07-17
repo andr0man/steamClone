@@ -13,7 +13,7 @@ public class CountryService(ICountryRepository countryRepository, IMapper mapper
     {
         var countries = await countryRepository.GetAllAsync(cancellationToken);
         
-        return ServiceResponse.OkResponse("Countries retrieved successfully", countries);
+        return ServiceResponse.OkResponse("Countries retrieved successfully", mapper.Map<List<CountryVM>>(countries));
     }
 
     public async Task<ServiceResponse> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -25,7 +25,7 @@ public class CountryService(ICountryRepository countryRepository, IMapper mapper
             return ServiceResponse.NotFoundResponse("Country not found");
         }
 
-        return ServiceResponse.OkResponse("Country retrieved successfully", country);
+        return ServiceResponse.OkResponse("Country retrieved successfully", mapper.Map<CountryVM>(country));
     }
 
     public async Task<ServiceResponse> CreateAsync(CreateUpdateCountryVM model, CancellationToken cancellationToken = default)
@@ -46,7 +46,7 @@ public class CountryService(ICountryRepository countryRepository, IMapper mapper
             return ServiceResponse.BadRequestResponse("Failed to create country");
         }
 
-        return ServiceResponse.OkResponse("Country created successfully", createdCountry);
+        return ServiceResponse.OkResponse("Country created successfully", mapper.Map<CountryVM>(createdCountry));
     }
 
     public async Task<ServiceResponse> UpdateAsync(int id, CreateUpdateCountryVM model, CancellationToken cancellationToken = default)
@@ -74,7 +74,7 @@ public class CountryService(ICountryRepository countryRepository, IMapper mapper
             return ServiceResponse.BadRequestResponse("Failed to update country");
         }
 
-        return ServiceResponse.OkResponse("Country updated successfully", result);
+        return ServiceResponse.OkResponse("Country updated successfully", mapper.Map<CountryVM>(result));
     }
 
     public async Task<ServiceResponse> DeleteAsync(int id, CancellationToken cancellationToken = default)

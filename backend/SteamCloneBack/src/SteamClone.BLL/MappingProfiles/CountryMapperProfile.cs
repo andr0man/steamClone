@@ -11,5 +11,8 @@ public class CountryMapperProfile : Profile
     {
         CreateMap<Country, CreateUpdateCountryVM>()
             .ReverseMap();
+        
+        CreateMap<Country, CountryVM>()
+            .ReverseMap();
     }
 }

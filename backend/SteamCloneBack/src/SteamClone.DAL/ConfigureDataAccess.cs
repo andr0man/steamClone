@@ -10,6 +10,7 @@ using SteamClone.DAL.Repositories.CountryRepository;
 using SteamClone.DAL.Repositories.DeveloperAndPublisherRepository;
 using SteamClone.DAL.Repositories.GameRepository;
 using SteamClone.DAL.Repositories.GenreRepository;
+using SteamClone.DAL.Repositories.LanguageRepository;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.ReviewRepository;
 using SteamClone.DAL.Repositories.RoleRepository;
@@ -50,5 +51,6 @@ public static class ConfigureDataAccess
         services.AddScoped<IGameRepository, GameRepository>();
         services.AddScoped<IDeveloperAndPublisherRepository, DeveloperAndPublisherRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<ILanguageRepository, LanguageRepository>();
     }
 }

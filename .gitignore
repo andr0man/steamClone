@@ -256,4 +256,6 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sw?
-backend/SteamCloneBack/src/SteamClone.API/data/images/
+
+
+backend/SteamCloneBack/src/SteamClone.API/wwwroot/images/
