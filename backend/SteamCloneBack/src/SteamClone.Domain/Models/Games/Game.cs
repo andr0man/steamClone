@@ -19,5 +19,6 @@ public class Game : AuditableEntity<string>
     public string? CoverImageUrl { get; set; }
     public List<string> ScreenshotUrls { get; set; } = new();
     public List<SystemRequirements> SystemRequirements { get; set; } = new();
+    public List<Localization> Localizations { get; set; } = new();
     public List<Review> Reviews { get; set; } = new();
 }

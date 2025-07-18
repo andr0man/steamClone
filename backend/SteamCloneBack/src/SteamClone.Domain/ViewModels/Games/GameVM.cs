@@ -1,4 +1,5 @@
 ﻿using SteamClone.Domain.ViewModels.Games.Genre;
+using SteamClone.Domain.ViewModels.Games.Localizations;
 using SteamClone.Domain.ViewModels.Games.SystemReq;
 
 namespace SteamClone.Domain.ViewModels.Games;
@@ -17,4 +18,5 @@ public class GameVM
     public string PublisherId { get; set; } = string.Empty;
     public int? PercentageOfPositiveReviews { get; set; }
     public List<SystemRequirementsVM> SystemRequirements { get; set; } = new();
+    public List<LocalizationVM> Localizations { get; set; } = new();
 }

@@ -18,6 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Country> Countries { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Game> Games { get; set; }
+    public DbSet<Localization> Localizations { get; set; }
+    public DbSet<SystemRequirements> SystemRequirements { get; set; }
     public DbSet<DeveloperAndPublisher> DevelopersAndPublishers { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Language> Languages { get; set; }
