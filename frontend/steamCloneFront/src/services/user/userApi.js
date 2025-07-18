@@ -1,22 +1,79 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi} from "@reduxjs/toolkit/query/react";
+import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
 export const userApi = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_APP_API_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithRefresh,
+  tagTypes: ["User"],
   endpoints: (builder) => ({
     getProfile: builder.query({
       query: () => "/users/profile",
+      providesTags: ["User"],
+    }),
+
+    getUserById: builder.query({
+      query: (id) => `/users/${id}`,
+      providesTags: ["User"],
+    }),
+
+    getUserByEmail: builder.query({
+      query: (email) => `/users/by-email/${email}`,
+    }),
+
+    getUserByNickname: builder.query({
+      query: (nickname) => `/users/by-nickname/${nickname}`,
+    }),
+
+    getAllUsers: builder.query({
+      query: () => `/users`,
+      providesTags: ["User"],
+    }),
+
+    getPagedUsers: builder.query({
+      query: ({ page = 1, pageSize = 10 }) => `/users/paged?page=${page}&pageSize=${pageSize}`,
+    }),
+
+    getUsersByRole: builder.query({
+      query: (role) => `/users/role/${role}`,
+    }),
+
+    createUser: builder.mutation({
+      query: (userData) => ({
+        url: "/users",
+        method: "POST",
+        body: userData,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    updateUser: builder.mutation({
+      query: (userData) => ({
+        url: "/users",
+        method: "PUT",
+        body: userData,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `/users/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
     }),
   }),
 });
 
-export const { useGetProfileQuery } = userApi;
+export const { 
+  useGetProfileQuery,
+  useGetUserByIdQuery,
+  useGetUserByEmailQuery,
+  useGetUserByNicknameQuery,
+  useGetAllUsersQuery,
+  useGetPagedUsersQuery,
+  useGetUsersByRoleQuery,
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation
+} = userApi;
