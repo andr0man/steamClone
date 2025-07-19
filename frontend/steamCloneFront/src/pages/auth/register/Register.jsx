@@ -1,34 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/auth.scss";
-import { Mail, User, ShieldCheck, KeyRound, Eye, EyeOff, UserPlus, ArrowRight } from 'lucide-react';
-
-const Notification = ({ message, type, duration = 5000, onClose }) => {
-    useEffect(() => {
-        if (message && duration) {
-            const timer = setTimeout(() => {
-                if (onClose) onClose();
-            }, duration);
-            return () => clearTimeout(timer);
-        }
-    }, [message, duration, onClose]);
-
-    if (!message) return null;
-
-    return (
-        <div className={`app-notification notification-${type}`}>
-            {message}
-            {onClose && <button onClick={onClose} className="close-notification">&times;</button>}
-        </div>
-    );
-};
 
 const Register = () => {
-    const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
-        login: '',
         email: '',
-        nickname: '',
+        login: '',
         password: '',
         confirmPassword: '',
         humanVerificationAnswer: '',
@@ -41,43 +18,15 @@ const Register = () => {
     const [modalAnimation, setModalAnimation] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [isSubmittingStep1, setIsSubmittingStep1] = useState(false);
-    const [apiErrorStep1, setApiErrorStep1] = useState(null);
-
     const navigate = useNavigate();
 
     const generateVerificationQuestion = useCallback(() => {
-        const operations = ['+', '-', '×'];
-        const operation = operations[Math.floor(Math.random() * operations.length)];
-        let num1, num2, questionText, answer;
-        
-        switch (operation) {
-            case '+':
-                num1 = Math.floor(Math.random() * 10) + 1;
-                num2 = Math.floor(Math.random() * 10) + 1;
-                answer = num1 + num2;
-                questionText = `What is ${num1} + ${num2}?`;
-                break;
-            case '-':
-                num2 = Math.floor(Math.random() * 9) + 1;
-                num1 = num2 + Math.floor(Math.random() * 10) + 1;
-                answer = num1 - num2;
-                questionText = `What is ${num1} - ${num2}?`;
-                break;
-            case '×':
-                num1 = Math.floor(Math.random() * 5) + 1;
-                num2 = Math.floor(Math.random() * 5) + 1;
-                answer = num1 * num2;
-                questionText = `What is ${num1} × ${num2}?`;
-                break;
-            default:
-                num1 = Math.floor(Math.random() * 10) + 1;
-                num2 = Math.floor(Math.random() * 10) + 1;
-                answer = num1 + num2;
-                questionText = `What is ${num1} + ${num2}?`;
-        }
-        
-        setVerificationQuestion({ question: questionText, answer: answer.toString() });
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        setVerificationQuestion({
+            question: `What is ${num1} + ${num2}?`,
+            answer: (num1 + num2).toString()
+        });
         setFormData(prev => ({ ...prev, humanVerificationAnswer: '' }));
     }, []);
 
@@ -106,9 +55,8 @@ const Register = () => {
     };
 
     const handleVerifyHuman = () => {
-        if (formData.humanVerificationAnswer === verificationQuestion.answer) {
+        if (formData.humanVerificationAnswer.trim() === verificationQuestion.answer) {
             setFormData(prev => ({ ...prev, isHumanVerified: true }));
-            alert('Human verification successful!');
             handleCloseVerificationModal();
         } else {
             alert('Incorrect answer. Please try again.');
@@ -116,257 +64,95 @@ const Register = () => {
         }
     };
 
-    const handleNextStep = async (e) => {
-        e.preventDefault();
-        setApiErrorStep1(null);
-
-        if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email)) {
-            setApiErrorStep1('Please enter a valid email address.');
-            return;
-        }
-        if (!formData.login.trim()) {
-            setApiErrorStep1('Please enter your desired login.');
-            return;
-        }
-        if (!formData.isHumanVerified) {
-            setApiErrorStep1('Please complete the human verification.');
-            handleOpenVerificationModal();
-            return;
-        }
-
-        setIsSubmittingStep1(true);
-        console.log('Step 1 Data (for potential pre-validation by connector):', {
-            email: formData.email,
-            login: formData.login,
-        });
-        
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        setStep(2);
-        setIsSubmittingStep1(false);
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email)) {
+            return alert('Please enter a valid email address.');
+        }
+        if (!formData.login.trim()) {
+            return alert('Please enter your desired login name.');
+        }
+        if (formData.password.length < 8) {
+            return alert('Password must be at least 8 characters long.');
+        }
+        if (formData.password !== formData.confirmPassword) {
+            return alert('Passwords do not match.');
+        }
         if (!formData.isHumanVerified) {
-            alert('Please complete the human verification.');
-            handleOpenVerificationModal();
-            return;
+            return alert('Please complete the human verification.');
         }
-        if (!formData.nickname.trim()) { 
-            alert('Please enter your nickname.'); 
-            return; 
+        if (!formData.ageConfirmed) {
+            return alert('You must confirm you are 13 or older and agree to the terms.');
         }
-        if (formData.password.length < 8) { 
-            alert('Password must be at least 8 characters long.'); 
-            return; 
-        }
-        if (formData.password !== formData.confirmPassword) { 
-            alert('Passwords do not match.'); 
-            return; 
-        }
-        if (!formData.ageConfirmed) { 
-            alert('You must confirm you are 13 or older.'); 
-            return; 
-        }
-        
-        const registrationDataForConnector = {
-            login: formData.login,
-            email: formData.email,
-            nickname: formData.nickname,
-            password: formData.password, 
-            ageConfirmed: formData.ageConfirmed,
-            isHumanVerified: formData.isHumanVerified,
-        };
 
-        console.log('Form submitted for registration:', registrationDataForConnector);
+        console.log('Form submitted for registration:', formData);
         alert('Account creation successful! (Check console for data)');
         navigate('/login');
     };
 
     return (
-        <div className="app-auth-container">
-            {apiErrorStep1 && <Notification message={apiErrorStep1} type="error" duration={7000} onClose={() => setApiErrorStep1(null)} />}
-            
-            <div className="app-auth-box">
-                <div className="auth-header">
-                    <UserPlus size={40} />
-                    <h2>{step === 1 ? 'Create Your Account' : 'Final Details'}</h2>
-                    <p className="step-indicator">Step {step} of 2</p>
+        <div className="flux-auth-container">
+            <div className="flux-auth-box">
+                <div className="flux-header">
+                    <h2>Create an Account</h2>
                 </div>
                 
-                {step === 1 && (
-                    <form onSubmit={handleNextStep} noValidate>
-                        <div className="bubble-form-group">
-                            <label htmlFor="register-email">Email Address</label>
-                            <div className="bubble-input-wrapper">
-                                <Mail />
-                                <input 
-                                    type="email" 
-                                    id="register-email" 
-                                    name="email" 
-                                    value={formData.email} 
-                                    onChange={handleChange} 
-                                    required 
-                                    placeholder="your.email@example.com" 
-                                    autoComplete="email"
-                                />
-                            </div>
+                <form onSubmit={handleSubmit} noValidate>
+                    <div className="flux-form-group">
+                        <div className="flux-input-wrapper">
+                            <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="your.email@example.com" autoComplete="email" />
                         </div>
-                        
-                        <div className="bubble-form-group">
-                            <label htmlFor="register-login">Login</label>
-                            <div className="bubble-input-wrapper">
-                                <User />
-                                <input 
-                                    type="text" 
-                                    id="register-login" 
-                                    name="login" 
-                                    value={formData.login} 
-                                    onChange={handleChange} 
-                                    required 
-                                    placeholder="Choose a unique login" 
-                                    autoComplete="username"
-                                />
-                            </div>
+                    </div>
+                    <div className="flux-form-group">
+                        <div className="flux-input-wrapper">
+                            <input type="text" name="login" value={formData.login} onChange={handleChange} required placeholder="Your unique login name" autoComplete="username" />
                         </div>
-                        
-                        <div className="bubble-form-group">
-                            <label>Human Verification</label>
-                            {formData.isHumanVerified ? (
-                                <div className="bubble-verified-message">
-                                    <ShieldCheck size={20} /> Verification Complete
-                                </div>
-                            ) : (
-                                <button 
-                                    type="button" 
-                                    className="bubble-action-button" 
-                                    onClick={handleOpenVerificationModal}
-                                >
-                                    I'm not a robot
-                                </button>
-                            )}
+                    </div>
+                    <div className="flux-form-group">
+                        <div className="flux-input-wrapper">
+                            <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} required placeholder="Your password" autoComplete="new-password" />
+                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="toggle-password-visibility">
+                                <img src={showPassword ? '/authbc/eyeClosed.svg' : '/authbc/EyeOpen.svg'} alt="Toggle password visibility" />
+                            </button>
                         </div>
-                        
-                        <button 
-                            type="submit" 
-                            className="bubble-continue-button" 
-                            disabled={isSubmittingStep1 || !formData.isHumanVerified}
-                        >
-                            {isSubmittingStep1 ? 'Verifying...' : 'Continue'}
-                            <ArrowRight size={20} />
-                        </button>
-                    </form>
-                )}
+                    </div>
+                    <div className="flux-form-group">
+                        <div className="flux-input-wrapper">
+                            <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required placeholder="Confirm password" autoComplete="new-password" />
+                            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="toggle-password-visibility">
+                                <img src={showConfirmPassword ? '/authbc/eyeClosed.svg' : '/authbc/EyeOpen.svg'} alt="Toggle password visibility" />
+                            </button>
+                        </div>
+                    </div>
 
-                {step === 2 && (
-                    <form onSubmit={handleSubmit} noValidate>
-                        <div className="bubble-form-group">
-                            <label htmlFor="register-nickname">Nickname</label>
-                            <div className="bubble-input-wrapper">
-                                <User />
-                                <input 
-                                    type="text" 
-                                    id="register-nickname" 
-                                    name="nickname" 
-                                    value={formData.nickname} 
-                                    onChange={handleChange} 
-                                    required 
-                                    placeholder="How you'll appear to others" 
-                                    autoComplete="nickname"
-                                />
-                            </div>
-                        </div>
-                        
-                        <div className="bubble-form-group">
-                            <label htmlFor="register-password">Password</label>
-                            <div className="bubble-input-wrapper bubble-password-input">
-                                <KeyRound />
-                                <input 
-                                    type={showPassword ? "text" : "password"} 
-                                    id="register-password" 
-                                    name="password" 
-                                    value={formData.password} 
-                                    onChange={handleChange} 
-                                    required 
-                                    placeholder="Min. 8 characters" 
-                                    autoComplete="new-password"
-                                />
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowPassword(!showPassword)} 
-                                    className="toggle-password-visibility"
-                                    aria-label={showPassword ? "Hide password" : "Show password"}
-                                >
-                                    {showPassword ? <EyeOff /> : <Eye />}
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div className="bubble-form-group">
-                            <label htmlFor="register-confirmPassword">Confirm Password</label>
-                            <div className="bubble-input-wrapper bubble-password-input">
-                                <KeyRound />
-                                <input 
-                                    type={showConfirmPassword ? "text" : "password"} 
-                                    id="register-confirmPassword" 
-                                    name="confirmPassword" 
-                                    value={formData.confirmPassword} 
-                                    onChange={handleChange} 
-                                    required 
-                                    placeholder="Re-enter password" 
-                                    autoComplete="new-password"
-                                />
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
-                                    className="toggle-password-visibility"
-                                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                                >
-                                    {showConfirmPassword ? <EyeOff /> : <Eye />}
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div className="bubble-checkbox-group">
-                            <input 
-                                type="checkbox" 
-                                id="register-ageConfirmed" 
-                                name="ageConfirmed" 
-                                checked={formData.ageConfirmed} 
-                                onChange={handleChange} 
-                                required 
-                            />
-                            <label htmlFor="register-ageConfirmed">
-                                I am 13+ and agree to the <Link to="/terms" target="_blank" rel="noopener noreferrer">Subscriber Agreement</Link>.
-                            </label>
-                        </div>
-                        
-                        <button 
-                            type="submit" 
-                            className="bubble-continue-button"
-                        >
-                            Create Account
-                        </button>
-                    </form>
-                )}
+                    <div className={`flux-captcha-box ${formData.isHumanVerified ? 'verified' : ''}`} onClick={handleOpenVerificationModal}>
+                        <div className="flux-captcha-checkbox"></div>
+                        <span className="flux-captcha-label">
+                            {formData.isHumanVerified ? 'Verification Complete' : "I'm not a robot"}
+                        </span>
+                    </div>
+
+                    <div className="flux-legal-text">
+                        <input type="checkbox" id="ageConfirmed" name="ageConfirmed" checked={formData.ageConfirmed} onChange={handleChange} required />
+                        <label htmlFor="ageConfirmed">
+                            By pressing the button below you confirm that you're 13 years of age or older and agree to the terms of the Flux <Link to="/terms" className="flux-link">Subscriber Agreement</Link> and the <Link to="/privacy" className="flux-link">Privacy Policy</Link>.
+                        </label>
+                    </div>
+                    
+                    <button type="submit" className="flux-continue-button" aria-label="Continue"></button>
+                </form>
                 
-                <div className="bubble-switch-form">
-                    {step === 1 ? 'Already have an account?' : 'Need to change email/login?'}
-                    <Link 
-                        to={step === 1 ? "/login" : '#'} 
-                        onClick={step === 2 ? (e) => { e.preventDefault(); setStep(1); } : undefined} 
-                        className="bubble-switch-form-button"
-                    >
-                        {step === 1 ? 'Sign In' : 'Go Back'}
+                <div className="flux-switch-form">
+                    Already have an account?
+                    <Link to="/login" className="flux-link">
+                        Sign In
                     </Link>
                 </div>
             </div>
 
             {isVerificationModalOpen && (
-                <div className={`bubble-modal-overlay ${modalAnimation}`}>
-                    <div className={`bubble-modal-content ${modalAnimation}`}>
+                <div className={`flux-modal-overlay ${modalAnimation}`}>
+                    <div className={`flux-modal-content ${modalAnimation}`}>
                         <h3>Human Verification</h3>
                         <p>{verificationQuestion.question}</p>
                         <input 
@@ -375,24 +161,22 @@ const Register = () => {
                             value={formData.humanVerificationAnswer} 
                             onChange={handleChange} 
                             placeholder="Your answer" 
-                            className="bubble-modal-input" 
+                            className="flux-modal-input" 
                             autoFocus 
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    handleVerifyHuman();
+                                }
+                            }}
                         />
-                        <div className="bubble-modal-actions">
+                        <div className="flux-modal-actions">
                             <button 
                                 type="button" 
-                                className="bubble-continue-button" 
+                                className="flux-modal-verify-button" 
+                                aria-label="Verify"
                                 onClick={handleVerifyHuman}
-                            >
-                                Verify
-                            </button>
-                            <button 
-                                type="button" 
-                                className="bubble-cancel-button" 
-                                onClick={handleCloseVerificationModal}
-                            >
-                                Cancel
-                            </button>
+                            ></button>
                         </div>
                     </div>
                 </div>

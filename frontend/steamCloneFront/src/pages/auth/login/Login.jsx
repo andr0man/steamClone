@@ -1,27 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/auth.scss";
-import { ShieldCheck, User, KeyRound, LogIn, Eye, EyeOff } from 'lucide-react';
-
-const Notification = ({ message, type, duration = 5000, onClose }) => {
-    useEffect(() => {
-        if (message && duration) {
-            const timer = setTimeout(() => {
-                if (onClose) onClose();
-            }, duration);
-            return () => clearTimeout(timer);
-        }
-    }, [message, duration, onClose]);
-
-    if (!message) return null;
-
-    return (
-        <div className={`app-notification notification-${type}`}>
-            {message}
-            {onClose && <button onClick={onClose} className="close-notification">&times;</button>}
-        </div>
-    );
-};
 
 const Login = ({ onLoginSuccess }) => {
     const [formData, setFormData] = useState({
@@ -42,37 +21,24 @@ const Login = ({ onLoginSuccess }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (!formData.identity.trim()) {
-            alert('Please enter both your login/email and password.');
-            return;
-        }
-        if (!formData.password) {
-            alert('Please enter your password.');
-            return;
-        }
-        
         console.log('Form submitted for login:', formData);
-        
         if (typeof onLoginSuccess === 'function') {
             onLoginSuccess(formData);
         }
-        navigate('/store');
+        // navigate('/store');
     };
 
     return (
-        <div className="app-auth-container">
-            <div className="app-auth-box">
-                <div className="auth-header">
-                    <ShieldCheck size={40} />
+        <div className="flux-auth-container">
+            <div className="flux-auth-box">
+                <div className="flux-header">
                     <h2>Welcome Back</h2>
                 </div>
                 
                 <form onSubmit={handleSubmit} noValidate>
-                    <div className="bubble-form-group">
+                    <div className="flux-form-group">
                         <label htmlFor="login-identity">Login or Email</label>
-                        <div className="bubble-input-wrapper">
-                            <User />
+                        <div className="flux-input-wrapper">
                             <input
                                 type="text"
                                 id="login-identity"
@@ -80,16 +46,14 @@ const Login = ({ onLoginSuccess }) => {
                                 value={formData.identity}
                                 onChange={handleChange}
                                 required
-                                placeholder="Enter your login or email"
                                 autoComplete="username"
                             />
                         </div>
                     </div>
 
-                    <div className="bubble-form-group">
-                        <label htmlFor="login-password">Password</label>
-                         <div className="bubble-input-wrapper bubble-password-input">
-                            <KeyRound />
+                    <div className="flux-form-group">
+                        <label htmlFor="login-password">Your password</label>
+                         <div className="flux-input-wrapper">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 id="login-password"
@@ -97,7 +61,6 @@ const Login = ({ onLoginSuccess }) => {
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
-                                placeholder="Enter your password"
                                 autoComplete="current-password"
                             />
                             <button 
@@ -106,13 +69,13 @@ const Login = ({ onLoginSuccess }) => {
                                 className="toggle-password-visibility"
                                 aria-label={showPassword ? "Hide password" : "Show password"}
                             >
-                                {showPassword ? <EyeOff /> : <Eye />}
+                                <img src={showPassword ? '/authbc/eyeClosed.svg' : '/authbc/EyeOpen.svg'} alt="Toggle password visibility" />
                             </button>
                         </div>
                     </div>
 
-                    <div className="auth-options-group">
-                        <div className="bubble-checkbox-group">
+                    <div className="flux-options-group">
+                        <div className="flux-checkbox-group">
                              <input
                                 type="checkbox"
                                 id="login-remember"
@@ -122,19 +85,18 @@ const Login = ({ onLoginSuccess }) => {
                             />
                             <label htmlFor="login-remember">Remember me</label>
                         </div>
-                        <Link to="/forgot-password" className="bubble-forgot-password">Forgot password?</Link>
+                        <div className="flux-forgot-password-box">
+                            <Link to="/forgot-password" className="flux-link">Forgot password?</Link>
+                        </div>
                     </div>
 
-                    <button type="submit" className="bubble-continue-button">
-                        Sign In
-                        <LogIn size={20} />
-                    </button>
+                    <button type="submit" className="flux-continue-button" aria-label="Continue"></button>
                 </form>
                 
-                <div className="bubble-switch-form">
-                    Don't have an account?{' '}
-                    <Link to="/register" className="bubble-switch-form-button">
-                        Create one
+                <div className="flux-switch-form">
+                    New to Flux?{' '}
+                    <Link to="/register" className="flux-link">
+                        Create an account
                     </Link>
                 </div>
             </div>
