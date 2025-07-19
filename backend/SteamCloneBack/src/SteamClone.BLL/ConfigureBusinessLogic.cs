@@ -11,6 +11,7 @@ using SteamClone.BLL.Services.GameService;
 using SteamClone.BLL.Services.GenreService;
 using SteamClone.BLL.Services.ImageService;
 using SteamClone.BLL.Services.JwtService;
+using SteamClone.BLL.Services.LanguageService;
 using SteamClone.BLL.Services.MailService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.BLL.Services.ReviewService;
@@ -42,6 +43,7 @@ public static class ConfigureBusinessLogic
         services.AddScoped<IGameService, GameService>();
         services.AddScoped<IDeveloperAndPublisherService, DeveloperAndPublisherService>();
         services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<ILanguageService, LanguageService>();
     }
     
     private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)

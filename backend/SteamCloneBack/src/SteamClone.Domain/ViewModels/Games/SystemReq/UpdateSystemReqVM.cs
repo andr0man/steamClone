@@ -2,7 +2,7 @@
 
 namespace SteamClone.Domain.ViewModels.Games.SystemReq;
 
-public class SystemReqCreateUpdateVM
+public class UpdateSystemReqVM
 {
     public RequirementType RequirementType { get; set; }
     public RequirementPlatform Platform { get; set; }

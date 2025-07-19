@@ -18,7 +18,7 @@ public static class Settings
         public static string HtmlPagesPath = "templates";
         public static string UserImagesPath = "images/user";
 
-        public const string ImagesPath = "data/images";
+        public const string ImagesPath = "wwwroot/images";
         public const string StaticFileRequestPath = "images";
 
         public const string GameCoverImagePathName = "game_covers";

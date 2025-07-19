@@ -40,10 +40,17 @@ public class ReviewService(
         var review = mapper.Map<Review>(model);
 
         review.Id = Guid.NewGuid().ToString();
+        
+        if (await gameRepository.GetByIdAsync(model.GameId, cancellationToken) == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
 
         try
         {
             var createdReview = await reviewRepository.CreateAsync(review, cancellationToken);
+            
+            await gameRepository.CalculateRatingAsync(createdReview!.GameId, cancellationToken);
 
             return ServiceResponse.OkResponse("Review created successfully", mapper.Map<ReviewVM>(createdReview));
         }
@@ -75,6 +82,8 @@ public class ReviewService(
         try
         {
             var result = await reviewRepository.UpdateAsync(updatedReview, cancellationToken);
+            
+            await gameRepository.CalculateRatingAsync(result!.GameId, cancellationToken);
 
             return ServiceResponse.OkResponse("Review updated successfully", mapper.Map<ReviewVM>(result));
         }
@@ -103,6 +112,9 @@ public class ReviewService(
             }
 
             await reviewRepository.DeleteAsync(id, cancellationToken);
+            
+            await gameRepository.CalculateRatingAsync(review.GameId, cancellationToken);
+            
             return ServiceResponse.OkResponse("Review deleted successfully");
         }
         catch (Exception e)

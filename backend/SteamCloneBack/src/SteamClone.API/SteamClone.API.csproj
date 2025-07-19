@@ -28,9 +28,4 @@
       <None Include="wwwroot\countries\countries.json" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="data\images\game_covers\" />
-      <Folder Include="data\images\game_screenshots\" />
-    </ItemGroup>
-
 </Project>

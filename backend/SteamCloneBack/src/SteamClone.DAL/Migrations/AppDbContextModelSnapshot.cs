@@ -2107,6 +2107,10 @@ namespace SteamClone.DAL.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
+                    b.Property<int?>("PercentageOfPositiveReviews")
+                        .HasColumnType("integer")
+                        .HasColumnName("percentage_of_positive_reviews");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("price");
@@ -2191,6 +2195,45 @@ namespace SteamClone.DAL.Migrations
                         .HasDatabaseName("ix_genres_modified_by");
 
                     b.ToTable("genres", (string)null);
+                });
+
+            modelBuilder.Entity("SteamClone.Domain.Models.Games.Localization", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("FullAudio")
+                        .HasColumnType("boolean")
+                        .HasColumnName("full_audio");
+
+                    b.Property<string>("GameId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("game_id");
+
+                    b.Property<bool>("Interface")
+                        .HasColumnType("boolean")
+                        .HasColumnName("interface");
+
+                    b.Property<int>("LanguageId")
+                        .HasColumnType("integer")
+                        .HasColumnName("language_id");
+
+                    b.Property<bool>("Subtitles")
+                        .HasColumnType("boolean")
+                        .HasColumnName("subtitles");
+
+                    b.HasKey("Id")
+                        .HasName("pk_localizations");
+
+                    b.HasIndex("GameId")
+                        .HasDatabaseName("ix_localizations_game_id");
+
+                    b.HasIndex("LanguageId")
+                        .HasDatabaseName("ix_localizations_language_id");
+
+                    b.ToTable("localizations", (string)null);
                 });
 
             modelBuilder.Entity("SteamClone.Domain.Models.Games.Review", b =>
@@ -2294,6 +2337,1128 @@ namespace SteamClone.DAL.Migrations
                         .HasDatabaseName("ix_system_requirements_game_id");
 
                     b.ToTable("system_requirements", (string)null);
+                });
+
+            modelBuilder.Entity("SteamClone.Domain.Models.Languages.Language", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_languages");
+
+                    b.ToTable("languages", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "aa",
+                            Name = "Afar"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "ab",
+                            Name = "Abkhazian"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "ae",
+                            Name = "Avestan"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "af",
+                            Name = "Afrikaans"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Code = "ak",
+                            Name = "Akan"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Code = "am",
+                            Name = "Amharic"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Code = "an",
+                            Name = "Aragonese"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Code = "ar",
+                            Name = "Arabic"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Code = "as",
+                            Name = "Assamese"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Code = "av",
+                            Name = "Avaric"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Code = "ay",
+                            Name = "Aymara"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Code = "az",
+                            Name = "Azerbaijani"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Code = "ba",
+                            Name = "Bashkir"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Code = "be",
+                            Name = "Belarusian"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Code = "bg",
+                            Name = "Bulgarian"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Code = "bh",
+                            Name = "Bihari languages"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Code = "bi",
+                            Name = "Bislama"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Code = "bm",
+                            Name = "Bambara"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Code = "bn",
+                            Name = "Bengali"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Code = "bo",
+                            Name = "Tibetan"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Code = "br",
+                            Name = "Breton"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Code = "bs",
+                            Name = "Bosnian"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Code = "ca",
+                            Name = "Catalan; Valencian"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Code = "ce",
+                            Name = "Chechen"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Code = "ch",
+                            Name = "Chamorro"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Code = "co",
+                            Name = "Corsican"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Code = "cr",
+                            Name = "Cree"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Code = "cs",
+                            Name = "Czech"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Code = "cv",
+                            Name = "Chuvash"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Code = "cy",
+                            Name = "Welsh"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Code = "da",
+                            Name = "Danish"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Code = "de",
+                            Name = "German"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Code = "dv",
+                            Name = "Divehi; Dhivehi; Maldivian"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Code = "dz",
+                            Name = "Dzongkha"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Code = "ee",
+                            Name = "Ewe"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Code = "el",
+                            Name = "Greek, Modern (1453-)"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Code = "en",
+                            Name = "English"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Code = "eo",
+                            Name = "Esperanto"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Code = "es",
+                            Name = "Spanish; Castilian"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Code = "et",
+                            Name = "Estonian"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Code = "eu",
+                            Name = "Basque"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Code = "fa",
+                            Name = "Persian"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Code = "ff",
+                            Name = "Fulah"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Code = "fi",
+                            Name = "Finnish"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Code = "fj",
+                            Name = "Fijian"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Code = "fo",
+                            Name = "Faroese"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Code = "fr",
+                            Name = "French"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Code = "fy",
+                            Name = "Western Frisian"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Code = "ga",
+                            Name = "Irish"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Code = "gd",
+                            Name = "Gaelic; Scomttish Gaelic"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Code = "gl",
+                            Name = "Galician"
+                        },
+                        new
+                        {
+                            Id = 52,
+                            Code = "gn",
+                            Name = "Guarani"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            Code = "gu",
+                            Name = "Gujarati"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Code = "gv",
+                            Name = "Manx"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            Code = "ha",
+                            Name = "Hausa"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            Code = "he",
+                            Name = "Hebrew"
+                        },
+                        new
+                        {
+                            Id = 57,
+                            Code = "hi",
+                            Name = "Hindi"
+                        },
+                        new
+                        {
+                            Id = 58,
+                            Code = "ho",
+                            Name = "Hiri Motu"
+                        },
+                        new
+                        {
+                            Id = 59,
+                            Code = "hr",
+                            Name = "Croatian"
+                        },
+                        new
+                        {
+                            Id = 60,
+                            Code = "ht",
+                            Name = "Haitian; Haitian Creole"
+                        },
+                        new
+                        {
+                            Id = 61,
+                            Code = "hu",
+                            Name = "Hungarian"
+                        },
+                        new
+                        {
+                            Id = 62,
+                            Code = "hy",
+                            Name = "Armenian"
+                        },
+                        new
+                        {
+                            Id = 63,
+                            Code = "hz",
+                            Name = "Herero"
+                        },
+                        new
+                        {
+                            Id = 64,
+                            Code = "id",
+                            Name = "Indonesian"
+                        },
+                        new
+                        {
+                            Id = 65,
+                            Code = "ie",
+                            Name = "Interlingue; Occidental"
+                        },
+                        new
+                        {
+                            Id = 66,
+                            Code = "ig",
+                            Name = "Igbo"
+                        },
+                        new
+                        {
+                            Id = 67,
+                            Code = "ii",
+                            Name = "Sichuan Yi; Nuosu"
+                        },
+                        new
+                        {
+                            Id = 68,
+                            Code = "ik",
+                            Name = "Inupiaq"
+                        },
+                        new
+                        {
+                            Id = 69,
+                            Code = "io",
+                            Name = "Ido"
+                        },
+                        new
+                        {
+                            Id = 70,
+                            Code = "is",
+                            Name = "Icelandic"
+                        },
+                        new
+                        {
+                            Id = 71,
+                            Code = "it",
+                            Name = "Italian"
+                        },
+                        new
+                        {
+                            Id = 72,
+                            Code = "iu",
+                            Name = "Inuktitut"
+                        },
+                        new
+                        {
+                            Id = 73,
+                            Code = "ja",
+                            Name = "Japanese"
+                        },
+                        new
+                        {
+                            Id = 74,
+                            Code = "jv",
+                            Name = "Javanese"
+                        },
+                        new
+                        {
+                            Id = 75,
+                            Code = "ka",
+                            Name = "Georgian"
+                        },
+                        new
+                        {
+                            Id = 76,
+                            Code = "kg",
+                            Name = "Kongo"
+                        },
+                        new
+                        {
+                            Id = 77,
+                            Code = "ki",
+                            Name = "Kikuyu; Gikuyu"
+                        },
+                        new
+                        {
+                            Id = 78,
+                            Code = "kj",
+                            Name = "Kuanyama; Kwanyama"
+                        },
+                        new
+                        {
+                            Id = 79,
+                            Code = "kk",
+                            Name = "Kazakh"
+                        },
+                        new
+                        {
+                            Id = 80,
+                            Code = "kl",
+                            Name = "Kalaallisut; Greenlandic"
+                        },
+                        new
+                        {
+                            Id = 81,
+                            Code = "km",
+                            Name = "Central Khmer"
+                        },
+                        new
+                        {
+                            Id = 82,
+                            Code = "kn",
+                            Name = "Kannada"
+                        },
+                        new
+                        {
+                            Id = 83,
+                            Code = "ko",
+                            Name = "Korean"
+                        },
+                        new
+                        {
+                            Id = 84,
+                            Code = "kr",
+                            Name = "Kanuri"
+                        },
+                        new
+                        {
+                            Id = 85,
+                            Code = "ks",
+                            Name = "Kashmiri"
+                        },
+                        new
+                        {
+                            Id = 86,
+                            Code = "ku",
+                            Name = "Kurdish"
+                        },
+                        new
+                        {
+                            Id = 87,
+                            Code = "kv",
+                            Name = "Komi"
+                        },
+                        new
+                        {
+                            Id = 88,
+                            Code = "kw",
+                            Name = "Cornish"
+                        },
+                        new
+                        {
+                            Id = 89,
+                            Code = "ky",
+                            Name = "Kirghiz; Kyrgyz"
+                        },
+                        new
+                        {
+                            Id = 90,
+                            Code = "la",
+                            Name = "Latin"
+                        },
+                        new
+                        {
+                            Id = 91,
+                            Code = "lb",
+                            Name = "Luxembourgish; Letzeburgesch"
+                        },
+                        new
+                        {
+                            Id = 92,
+                            Code = "lg",
+                            Name = "Ganda"
+                        },
+                        new
+                        {
+                            Id = 93,
+                            Code = "li",
+                            Name = "Limburgan; Limburger; Limburgish"
+                        },
+                        new
+                        {
+                            Id = 94,
+                            Code = "ln",
+                            Name = "Lingala"
+                        },
+                        new
+                        {
+                            Id = 95,
+                            Code = "lo",
+                            Name = "Lao"
+                        },
+                        new
+                        {
+                            Id = 96,
+                            Code = "lt",
+                            Name = "Lithuanian"
+                        },
+                        new
+                        {
+                            Id = 97,
+                            Code = "lu",
+                            Name = "Luba-Katanga"
+                        },
+                        new
+                        {
+                            Id = 98,
+                            Code = "lv",
+                            Name = "Latvian"
+                        },
+                        new
+                        {
+                            Id = 99,
+                            Code = "mg",
+                            Name = "Malagasy"
+                        },
+                        new
+                        {
+                            Id = 100,
+                            Code = "mh",
+                            Name = "Marshallese"
+                        },
+                        new
+                        {
+                            Id = 101,
+                            Code = "mi",
+                            Name = "Maori"
+                        },
+                        new
+                        {
+                            Id = 102,
+                            Code = "mk",
+                            Name = "Macedonian"
+                        },
+                        new
+                        {
+                            Id = 103,
+                            Code = "ml",
+                            Name = "Malayalam"
+                        },
+                        new
+                        {
+                            Id = 104,
+                            Code = "mn",
+                            Name = "Mongolian"
+                        },
+                        new
+                        {
+                            Id = 105,
+                            Code = "mr",
+                            Name = "Marathi"
+                        },
+                        new
+                        {
+                            Id = 106,
+                            Code = "ms",
+                            Name = "Malay"
+                        },
+                        new
+                        {
+                            Id = 107,
+                            Code = "mt",
+                            Name = "Maltese"
+                        },
+                        new
+                        {
+                            Id = 108,
+                            Code = "my",
+                            Name = "Burmese"
+                        },
+                        new
+                        {
+                            Id = 109,
+                            Code = "na",
+                            Name = "Nauru"
+                        },
+                        new
+                        {
+                            Id = 110,
+                            Code = "nb",
+                            Name = "Bokmål, Norwegian; Norwegian Bokmål"
+                        },
+                        new
+                        {
+                            Id = 111,
+                            Code = "nd",
+                            Name = "Ndebele, North; North Ndebele"
+                        },
+                        new
+                        {
+                            Id = 112,
+                            Code = "ne",
+                            Name = "Nepali"
+                        },
+                        new
+                        {
+                            Id = 113,
+                            Code = "ng",
+                            Name = "Ndonga"
+                        },
+                        new
+                        {
+                            Id = 114,
+                            Code = "nl",
+                            Name = "Dutch; Flemish"
+                        },
+                        new
+                        {
+                            Id = 115,
+                            Code = "nn",
+                            Name = "Norwegian Nynorsk; Nynorsk, Norwegian"
+                        },
+                        new
+                        {
+                            Id = 116,
+                            Code = "no",
+                            Name = "Norwegian"
+                        },
+                        new
+                        {
+                            Id = 117,
+                            Code = "nr",
+                            Name = "Ndebele, South; South Ndebele"
+                        },
+                        new
+                        {
+                            Id = 118,
+                            Code = "nv",
+                            Name = "Navajo; Navaho"
+                        },
+                        new
+                        {
+                            Id = 119,
+                            Code = "ny",
+                            Name = "Chichewa; Chewa; Nyanja"
+                        },
+                        new
+                        {
+                            Id = 120,
+                            Code = "oc",
+                            Name = "Occitan (post 1500)"
+                        },
+                        new
+                        {
+                            Id = 121,
+                            Code = "oj",
+                            Name = "Ojibwa"
+                        },
+                        new
+                        {
+                            Id = 122,
+                            Code = "om",
+                            Name = "Oromo"
+                        },
+                        new
+                        {
+                            Id = 123,
+                            Code = "or",
+                            Name = "Oriya"
+                        },
+                        new
+                        {
+                            Id = 124,
+                            Code = "os",
+                            Name = "Ossetian; Ossetic"
+                        },
+                        new
+                        {
+                            Id = 125,
+                            Code = "pa",
+                            Name = "Panjabi; Punjabi"
+                        },
+                        new
+                        {
+                            Id = 126,
+                            Code = "pi",
+                            Name = "Pali"
+                        },
+                        new
+                        {
+                            Id = 127,
+                            Code = "pl",
+                            Name = "Polish"
+                        },
+                        new
+                        {
+                            Id = 128,
+                            Code = "ps",
+                            Name = "Pushto; Pashto"
+                        },
+                        new
+                        {
+                            Id = 129,
+                            Code = "pt",
+                            Name = "Portuguese"
+                        },
+                        new
+                        {
+                            Id = 130,
+                            Code = "qu",
+                            Name = "Quechua"
+                        },
+                        new
+                        {
+                            Id = 131,
+                            Code = "rm",
+                            Name = "Romansh"
+                        },
+                        new
+                        {
+                            Id = 132,
+                            Code = "rn",
+                            Name = "Rundi"
+                        },
+                        new
+                        {
+                            Id = 133,
+                            Code = "ro",
+                            Name = "Romanian; Moldavian; Moldovan"
+                        },
+                        new
+                        {
+                            Id = 134,
+                            Code = "ru",
+                            Name = "Russian"
+                        },
+                        new
+                        {
+                            Id = 135,
+                            Code = "rw",
+                            Name = "Kinyarwanda"
+                        },
+                        new
+                        {
+                            Id = 136,
+                            Code = "sa",
+                            Name = "Sanskrit"
+                        },
+                        new
+                        {
+                            Id = 137,
+                            Code = "sc",
+                            Name = "Sardinian"
+                        },
+                        new
+                        {
+                            Id = 138,
+                            Code = "sd",
+                            Name = "Sindhi"
+                        },
+                        new
+                        {
+                            Id = 139,
+                            Code = "se",
+                            Name = "Northern Sami"
+                        },
+                        new
+                        {
+                            Id = 140,
+                            Code = "sg",
+                            Name = "Sango"
+                        },
+                        new
+                        {
+                            Id = 141,
+                            Code = "si",
+                            Name = "Sinhala; Sinhalese"
+                        },
+                        new
+                        {
+                            Id = 142,
+                            Code = "sk",
+                            Name = "Slovak"
+                        },
+                        new
+                        {
+                            Id = 143,
+                            Code = "sl",
+                            Name = "Slovenian"
+                        },
+                        new
+                        {
+                            Id = 144,
+                            Code = "sm",
+                            Name = "Samoan"
+                        },
+                        new
+                        {
+                            Id = 145,
+                            Code = "sn",
+                            Name = "Shona"
+                        },
+                        new
+                        {
+                            Id = 146,
+                            Code = "so",
+                            Name = "Somali"
+                        },
+                        new
+                        {
+                            Id = 147,
+                            Code = "sq",
+                            Name = "Albanian"
+                        },
+                        new
+                        {
+                            Id = 148,
+                            Code = "sr",
+                            Name = "Serbian"
+                        },
+                        new
+                        {
+                            Id = 149,
+                            Code = "ss",
+                            Name = "Swati"
+                        },
+                        new
+                        {
+                            Id = 150,
+                            Code = "st",
+                            Name = "Sotho, Southern"
+                        },
+                        new
+                        {
+                            Id = 151,
+                            Code = "su",
+                            Name = "Sundanese"
+                        },
+                        new
+                        {
+                            Id = 152,
+                            Code = "sv",
+                            Name = "Swedish"
+                        },
+                        new
+                        {
+                            Id = 153,
+                            Code = "sw",
+                            Name = "Swahili"
+                        },
+                        new
+                        {
+                            Id = 154,
+                            Code = "ta",
+                            Name = "Tamil"
+                        },
+                        new
+                        {
+                            Id = 155,
+                            Code = "te",
+                            Name = "Telugu"
+                        },
+                        new
+                        {
+                            Id = 156,
+                            Code = "tg",
+                            Name = "Tajik"
+                        },
+                        new
+                        {
+                            Id = 157,
+                            Code = "th",
+                            Name = "Thai"
+                        },
+                        new
+                        {
+                            Id = 158,
+                            Code = "ti",
+                            Name = "Tigrinya"
+                        },
+                        new
+                        {
+                            Id = 159,
+                            Code = "tk",
+                            Name = "Turkmen"
+                        },
+                        new
+                        {
+                            Id = 160,
+                            Code = "tl",
+                            Name = "Tagalog"
+                        },
+                        new
+                        {
+                            Id = 161,
+                            Code = "tn",
+                            Name = "Tswana"
+                        },
+                        new
+                        {
+                            Id = 162,
+                            Code = "to",
+                            Name = "Tonga (Tonga Islands)"
+                        },
+                        new
+                        {
+                            Id = 163,
+                            Code = "tr",
+                            Name = "Turkish"
+                        },
+                        new
+                        {
+                            Id = 164,
+                            Code = "ts",
+                            Name = "Tsonga"
+                        },
+                        new
+                        {
+                            Id = 165,
+                            Code = "tt",
+                            Name = "Tatar"
+                        },
+                        new
+                        {
+                            Id = 166,
+                            Code = "tw",
+                            Name = "Twi"
+                        },
+                        new
+                        {
+                            Id = 167,
+                            Code = "ty",
+                            Name = "Tahitian"
+                        },
+                        new
+                        {
+                            Id = 168,
+                            Code = "ug",
+                            Name = "Uighur; Uyghur"
+                        },
+                        new
+                        {
+                            Id = 169,
+                            Code = "uk",
+                            Name = "Ukrainian"
+                        },
+                        new
+                        {
+                            Id = 170,
+                            Code = "ur",
+                            Name = "Urdu"
+                        },
+                        new
+                        {
+                            Id = 171,
+                            Code = "uz",
+                            Name = "Uzbek"
+                        },
+                        new
+                        {
+                            Id = 172,
+                            Code = "ve",
+                            Name = "Venda"
+                        },
+                        new
+                        {
+                            Id = 173,
+                            Code = "vi",
+                            Name = "Vietnamese"
+                        },
+                        new
+                        {
+                            Id = 174,
+                            Code = "vo",
+                            Name = "Volapük"
+                        },
+                        new
+                        {
+                            Id = 175,
+                            Code = "wa",
+                            Name = "Walloon"
+                        },
+                        new
+                        {
+                            Id = 176,
+                            Code = "wo",
+                            Name = "Wolof"
+                        },
+                        new
+                        {
+                            Id = 177,
+                            Code = "xh",
+                            Name = "Xhosa"
+                        },
+                        new
+                        {
+                            Id = 178,
+                            Code = "yi",
+                            Name = "Yiddish"
+                        },
+                        new
+                        {
+                            Id = 179,
+                            Code = "yo",
+                            Name = "Yoruba"
+                        },
+                        new
+                        {
+                            Id = 180,
+                            Code = "za",
+                            Name = "Zhuang; Chuang"
+                        },
+                        new
+                        {
+                            Id = 181,
+                            Code = "zh",
+                            Name = "Chinese"
+                        },
+                        new
+                        {
+                            Id = 182,
+                            Code = "zu",
+                            Name = "Zulu"
+                        });
                 });
 
             modelBuilder.Entity("GameGenre", b =>
@@ -2425,10 +3590,27 @@ namespace SteamClone.DAL.Migrations
                         .HasConstraintName("fk_genres_users_modified_by");
                 });
 
+            modelBuilder.Entity("SteamClone.Domain.Models.Games.Localization", b =>
+                {
+                    b.HasOne("SteamClone.Domain.Models.Games.Game", null)
+                        .WithMany("Localizations")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_localizations_games_game_id");
+
+                    b.HasOne("SteamClone.Domain.Models.Languages.Language", null)
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_localizations_languages_language_id");
+                });
+
             modelBuilder.Entity("SteamClone.Domain.Models.Games.Review", b =>
                 {
                     b.HasOne("SteamClone.Domain.Models.Games.Game", null)
-                        .WithMany()
+                        .WithMany("Reviews")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -2447,6 +3629,10 @@ namespace SteamClone.DAL.Migrations
 
             modelBuilder.Entity("SteamClone.Domain.Models.Games.Game", b =>
                 {
+                    b.Navigation("Localizations");
+
+                    b.Navigation("Reviews");
+
                     b.Navigation("SystemRequirements");
                 });
 #pragma warning restore 612, 618

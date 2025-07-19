@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
 using SteamClone.Domain.Models.Countries;
+using SteamClone.Domain.Models.Languages;
 
 namespace SteamClone.DAL.Data.Initializer;
 
@@ -14,6 +15,7 @@ public static class DataSeed
     {
         SeedRoles(modelBuilder);
         SeedCountries(modelBuilder);
+        SeedLanguages(modelBuilder);
     }
 
     private static void SeedRoles(ModelBuilder modelBuilder)
@@ -26,6 +28,25 @@ public static class DataSeed
         }
 
         modelBuilder.Entity<Role>().HasData(roles);
+    }
+
+    private static void SeedLanguages(ModelBuilder modelBuilder)
+    {
+        try
+        {
+            var json = File.ReadAllText("wwwroot/languages/languages.json");
+            var languagesDto = JsonSerializer.Deserialize<List<LanguageDto>>(json);
+            
+            var languages = languagesDto!
+                .Select((l, index) => new { Id = index + 1, Code = l.code, Name = l.name });
+
+            modelBuilder.Entity<Language>().HasData(languages);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error seeding languages: {ex.Message}");
+        }
     }
 
 
@@ -72,5 +93,11 @@ public static class DataSeed
         public string dialCode { get; set; } = string.Empty;
         public string region { get; set; } = string.Empty;
         public string capital { get; set; } = string.Empty;
+    }
+
+    private class LanguageDto
+    {
+        public string name { get; set; } = string.Empty;
+        public string code { get; set; } = string.Empty;
     }
 }

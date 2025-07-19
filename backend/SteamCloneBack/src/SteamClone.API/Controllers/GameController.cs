@@ -6,6 +6,7 @@ using SteamClone.BLL.Services.GameService;
 using SteamClone.DAL;
 using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.ViewModels.Games;
+using SteamClone.Domain.ViewModels.Games.Localizations;
 using SteamClone.Domain.ViewModels.Games.SystemReq;
 
 namespace SteamClone.API.Controllers;
@@ -17,29 +18,29 @@ namespace SteamClone.API.Controllers;
 public class GameController(IGameService gameService)
     : GenericController<string, CreateGameVM, UpdateGameVM>(gameService)
 {
-    [HttpPost("system-requirements/add/{gameId}")]
-    public async Task<IActionResult> AddSystemRequirementAsync(string gameId, [FromBody] SystemReqCreateUpdateVM model,
+    [HttpPost("system-requirements")]
+    public async Task<IActionResult> AddSystemRequirementAsync([FromBody] CreateUpdateSystemReqVm model,
         CancellationToken cancellationToken)
     {
-        var response = await gameService.AddSystemRequirementsAsync(gameId, model, cancellationToken);
+        var response = await gameService.AddSystemRequirementsAsync(model, cancellationToken);
         return GetResult(response);
     }
 
-    [HttpDelete("system-requirements/delete")]
-    public async Task<IActionResult> DeleteSystemRequirementAsync([FromQuery] string gameId, string systemRequirementId,
+    [HttpDelete("system-requirements/{systemRequirementId}")]
+    public async Task<IActionResult> DeleteSystemRequirementAsync([FromRoute] string systemRequirementId,
         CancellationToken cancellationToken)
     {
-        var response = await gameService.DeleteSystemRequirementsAsync(gameId, systemRequirementId, cancellationToken);
+        var response = await gameService.DeleteSystemRequirementsAsync(systemRequirementId, cancellationToken);
         return GetResult(response);
     }
 
-    [HttpPut("system-requirements/update")]
-    public async Task<IActionResult> UpdateSystemRequirementAsync([FromQuery] string gameId, string systemRequirementId,
-        [FromBody] SystemReqCreateUpdateVM model,
+    [HttpPut("system-requirements/{systemRequirementId}")]
+    public async Task<IActionResult> UpdateSystemRequirementAsync([FromRoute] string systemRequirementId,
+        [FromBody] UpdateSystemReqVM model,
         CancellationToken cancellationToken)
     {
         var response =
-            await gameService.UpdateSystemRequirementsAsync(gameId, systemRequirementId, model, cancellationToken);
+            await gameService.UpdateSystemRequirementsAsync(systemRequirementId, model, cancellationToken);
         return GetResult(response);
     }
 
@@ -78,6 +79,31 @@ public class GameController(IGameService gameService)
         CancellationToken cancellationToken)
     {
         var response = await gameService.UpdateScreenshotsImagesAsync(gameId, newImages, imagesToDelete, cancellationToken);
+        return GetResult(response);
+    }
+    
+    [HttpPost("localization")]
+    public async Task<IActionResult> AddLocalizationAsync([FromBody] CreateLocalizationVM model,
+        CancellationToken cancellationToken)
+    {
+        var response = await gameService.AddLocalizationAsync(model, cancellationToken);
+        return GetResult(response);
+    }
+    
+    [HttpDelete("localization/{localizationId}")] 
+    public async Task<IActionResult> DeleteLocalizationAsync([FromRoute] string localizationId,
+        CancellationToken cancellationToken)
+    {
+        var response = await gameService.DeleteLocalizationAsync(localizationId, cancellationToken);
+        return GetResult(response);
+    }
+    
+    [HttpPut("localization/{localizationId}")] 
+    public async Task<IActionResult> UpdateLocalizationAsync([FromRoute] string localizationId,
+        [FromBody] UpdateLocalizationVM model,
+        CancellationToken cancellationToken)
+    {
+        var response = await gameService.UpdateLocalizationAsync(localizationId, model, cancellationToken);
         return GetResult(response);
     }
 }
