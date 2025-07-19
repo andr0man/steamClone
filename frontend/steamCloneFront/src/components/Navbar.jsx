@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.scss';
 import { ChevronDown, LogOut, UserCircle } from 'lucide-react';
+import { useGetProfileQuery } from '../services/user/userApi';
 
-const Navbar = ({ onLogout, username = "User" }) => {
+const Navbar = ({ onLogout }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [bubbleStyle, setBubbleStyle] = useState({});
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ const Navbar = ({ onLogout, username = "User" }) => {
   const itemRefs = useRef({});
   const leftNavRef = useRef(null);
   const location = useLocation();
+  const { data: profileData, isLoading } = useGetProfileQuery();
+  
 
   const navItems = [
     {
@@ -151,7 +154,7 @@ const Navbar = ({ onLogout, username = "User" }) => {
             className={`fluxi-navbar-user-button ${activeDropdown === 'user-menu' ? 'active' : ''}`}
             onClick={() => toggleDropdown('user-menu')}
           >
-            <span>{username}</span>
+            <span>{isLoading ? '...' : profileData?.payload?.nickname || "User"}</span>
             <ChevronDown size={16} className="fluxi-navbar-item-arrow" />
           </button>
           {activeDropdown === 'user-menu' && (
