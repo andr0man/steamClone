@@ -16,7 +16,7 @@ public class UserService(
 {
     public async Task<ServiceResponse> GetByIdAsync(string id, CancellationToken token = default)
     {
-        var user = await userRepository.GetByIdAsync(id, token);
+        var user = await userRepository.GetByIdAsync(id, token, includes: true);
         if (user == null)
         {
             return ServiceResponse.NotFoundResponse("User not found");
@@ -28,7 +28,7 @@ public class UserService(
 
     public async Task<ServiceResponse> GetByEmailAsync(string email, CancellationToken token = default)
     {
-        var user = await userRepository.GetByEmailAsync(email, token);
+        var user = await userRepository.GetByEmailAsync(email, token, includes: true);
         if (user == null)
         {
             return ServiceResponse.NotFoundResponse("User not found");
@@ -40,7 +40,7 @@ public class UserService(
 
     public async Task<ServiceResponse> GetByUserNicknameAsync(string userName, CancellationToken token = default)
     {
-        var user = await userRepository.GetByUserNicknameAsync(userName, token);
+        var user = await userRepository.GetByUserNicknameAsync(userName, token, includes: true);
         if (user == null)
         {
             return ServiceResponse.NotFoundResponse("User not found");
@@ -59,7 +59,18 @@ public class UserService(
 
     public async Task<ServiceResponse> GetAllAsync(int page, int pageSize, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var (users, totalCount) = await userRepository.GetPagedAsync(page, pageSize, token);
+
+        var userVms = mapper.Map<List<UserVM>>(users);
+        var result = new UserListVM
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            PageCount = (int)Math.Ceiling((double)totalCount / pageSize),
+            Users = userVms
+        };
+        return ServiceResponse.OkResponse("Paged users", result);
     }
 
     public async Task<ServiceResponse> DeleteAsync(string id, CancellationToken token = default)
@@ -105,7 +116,11 @@ public class UserService(
 
         mapper.Map(model, user);
         await userRepository.UpdateAsync(user, token);
-        return ServiceResponse.OkResponse("User updated successfully", user);
+
+        var updatedUser = await userRepository.GetByIdAsync(model.Id!, token, includes: true);
+        var userVm = mapper.Map<UserVM>(updatedUser);
+
+        return ServiceResponse.OkResponse("User updated successfully", userVm);
     }
 
     public async Task<ServiceResponse> AddImageFromUserAsync(UserImageVM model, CancellationToken token = default)
@@ -115,6 +130,14 @@ public class UserService(
 
     public async Task<ServiceResponse> GetUsersByRoleAsync(string role, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var users = await userRepository.GetUsersByRoleAsync(role, token);
+
+        if (users == null || !users.Any())
+        {
+            return ServiceResponse.NotFoundResponse("No users with this role found");
+        }
+
+        var userVms = mapper.Map<List<UserVM>>(users);
+        return ServiceResponse.OkResponse("Users by role", userVms);
     }
 }
