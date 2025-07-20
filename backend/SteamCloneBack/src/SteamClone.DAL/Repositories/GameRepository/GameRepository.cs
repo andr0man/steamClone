@@ -38,7 +38,7 @@ public class GameRepository(AppDbContext appDbContext, IUserProvider userProvide
 
         var complete = reviews.Count(x => x.IsPositive);
 
-        game!.PercentageOfPositiveReviews = (int)Math.Round((double)(100 * complete) / reviews.Count);
+        game!.PercentageOfPositiveReviews = (int)Math.Round(100 * ((double)complete / reviews.Count));
 
         await _appDbContext.SaveChangesAsync(token);
     }
