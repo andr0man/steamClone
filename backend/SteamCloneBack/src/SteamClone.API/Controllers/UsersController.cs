@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SteamClone.BLL.Services.UserService;
 using SteamClone.DAL;
-using SteamClone.DAL.ViewModels.Users;
+using SteamClone.Domain.ViewModels.Users;
 using static Google.Apis.Requests.BatchRequest;
 
 namespace SteamClone.API.Controllers;
