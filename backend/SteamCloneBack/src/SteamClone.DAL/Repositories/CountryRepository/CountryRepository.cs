@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
-using SteamClone.DAL.Models;
 using SteamClone.DAL.Repositories.Common;
+using SteamClone.Domain.Common.Interfaces;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Countries;
 
 namespace SteamClone.DAL.Repositories.CountryRepository;
 
-public class CountryRepository(AppDbContext appDbContext)
-    : RepositoryNotAuditable<Country, int>(appDbContext), ICountryRepository
+public class CountryRepository(AppDbContext appDbContext, IUserProvider userProvider)
+    : Repository<Country, int>(appDbContext, userProvider), ICountryRepository
 {
     private readonly AppDbContext _appDbContext = appDbContext;
 

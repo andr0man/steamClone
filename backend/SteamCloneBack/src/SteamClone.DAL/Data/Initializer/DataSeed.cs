@@ -1,6 +1,9 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using SteamClone.DAL.Models;
+using SteamClone.Domain.Models;
+using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Countries;
+using SteamClone.Domain.Models.Languages;
 
 namespace SteamClone.DAL.Data.Initializer;
 
@@ -12,6 +15,7 @@ public static class DataSeed
     {
         SeedRoles(modelBuilder);
         SeedCountries(modelBuilder);
+        SeedLanguages(modelBuilder);
     }
 
     private static void SeedRoles(ModelBuilder modelBuilder)
@@ -26,14 +30,33 @@ public static class DataSeed
         modelBuilder.Entity<Role>().HasData(roles);
     }
 
-    
+    private static void SeedLanguages(ModelBuilder modelBuilder)
+    {
+        try
+        {
+            var json = File.ReadAllText("wwwroot/languages/languages.json");
+            var languagesDto = JsonSerializer.Deserialize<List<LanguageDto>>(json);
+            
+            var languages = languagesDto!
+                .Select((l, index) => new { Id = index + 1, Code = l.code, Name = l.name });
+
+            modelBuilder.Entity<Language>().HasData(languages);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error seeding languages: {ex.Message}");
+        }
+    }
+
+
     private static void SeedCountries(ModelBuilder modelBuilder)
     {
         try
         {
             var json = File.ReadAllText(CountriesJsonPath);
             var countryDtos = JsonSerializer.Deserialize<List<CountryDto>>(json);
-            
+
             if (countryDtos == null || !countryDtos.Any())
             {
                 Console.WriteLine("Warning: No countries found in the JSON file or the file is empty.");
@@ -41,7 +64,8 @@ public static class DataSeed
             }
 
             var countries = countryDtos
-                .Where(c => !string.IsNullOrWhiteSpace(c.alpha2) && !string.IsNullOrWhiteSpace(c.name) && !string.IsNullOrWhiteSpace(c.alpha3))
+                .Where(c => !string.IsNullOrWhiteSpace(c.alpha2) && !string.IsNullOrWhiteSpace(c.name) &&
+                            !string.IsNullOrWhiteSpace(c.alpha3))
                 .Select((c, index) => new Country
                 {
                     Id = index + 1,
@@ -69,5 +93,11 @@ public static class DataSeed
         public string dialCode { get; set; } = string.Empty;
         public string region { get; set; } = string.Empty;
         public string capital { get; set; } = string.Empty;
+    }
+
+    private class LanguageDto
+    {
+        public string name { get; set; } = string.Empty;
+        public string code { get; set; } = string.Empty;
     }
 }

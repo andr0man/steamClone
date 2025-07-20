@@ -2,8 +2,8 @@
 using SteamClone.BLL.Services;
 using SteamClone.BLL.Services.AccountService;
 using SteamClone.BLL.Validators;
-using SteamClone.DAL.ViewModels;
-using SteamClone.DAL.ViewModels.Auth;
+using SteamClone.Domain.ViewModels;
+using SteamClone.Domain.ViewModels.Auth;
 
 namespace SteamClone.API.Controllers;
 
