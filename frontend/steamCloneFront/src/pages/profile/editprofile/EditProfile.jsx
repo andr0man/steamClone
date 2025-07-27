@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './EditProfile.scss';
 import Notification from '../../../components/Notification';
 import { User, ImageIcon, Globe, Save, XCircle, UploadCloud, Link as LinkIcon, Mail, Lock } from 'lucide-react'; // Added Mail and Lock
+import { useUploadAvatarMutation, useGetProfileQuery } from '../../../services/user/userApi';
 
 const API_BASE_URL = ''; 
 const COUNTRIES_LIST = [
@@ -34,6 +35,9 @@ const EditProfile = ({ currentProfileData }) => {
   const [pageLoading, setPageLoading] = useState(true); 
   const [apiError, setApiError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [uploadAvatar] = useUploadAvatarMutation();
+  const { data: profileData } = useGetProfileQuery();
+  const userId = profileData?.payload?.id;
   
   const navigate = useNavigate();
   const avatarInputRef = useRef(null);
@@ -195,6 +199,23 @@ const EditProfile = ({ currentProfileData }) => {
       // }
       // const result = await response.json();
       
+      if (avatarFile && userId) {
+        const formData = new FormData();
+        formData.append("UserId", userId);
+        formData.append("Image", avatarFile);
+
+        try {
+          const uploadResult = await uploadAvatar(formData).unwrap();
+          console.log("Avatar uploaded:", uploadResult);
+        } catch (err) {
+          console.error("Avatar upload error:", err);
+          setApiError("Failed to upload avatar.");
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+
       await new Promise(resolve => setTimeout(resolve, 1500)); 
       // console.log("Profile update submitted (mock API):", formData, {avatarFile, bannerFile});
       
