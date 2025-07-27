@@ -12,6 +12,9 @@ public class User : AuditableEntity<string>
     public Country? Country { get; set; }
     public required string RoleId { get; set; }
     public Role? Role { get; set; }
+    public string? AvatarUrl { get; set; }
+    public string? Bio { get; set; }
+    public int Level { get; set; } = 0;
     public string? ExternalProvider { get; set; }
     public string? ExternalProviderKey { get; set; }
     public bool EmailConfirmed { get; set; }

@@ -91,4 +91,12 @@ public class UsersController(IUserService userService) : BaseController
         return GetResult(result);
     }
 
+    [Authorize]
+    [HttpPost("avatar")]
+    public async Task<IActionResult> UploadUserAvatar([FromForm] UserImageVM model, CancellationToken token)
+    {
+        var result = await userService.AddImageFromUserAsync(model, token);
+        return GetResult(result);
+    }
+
 }

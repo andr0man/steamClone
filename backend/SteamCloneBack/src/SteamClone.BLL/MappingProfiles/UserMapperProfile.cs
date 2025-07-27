@@ -11,6 +11,8 @@ public class UserMapperProfile : Profile
     {
         CreateMap<User, UserVM>().ReverseMap();
 
+        CreateMap<User, UserProfileVM>().ReverseMap();
+
         CreateMap<CreateUserVM, User>().ReverseMap();
             
         CreateMap<UpdateUserVM, User>().ReverseMap();

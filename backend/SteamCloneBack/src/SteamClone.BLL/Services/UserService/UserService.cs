@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using SteamClone.BLL.Services.ImageService;
 using SteamClone.BLL.Services.PasswordHasher;
+using SteamClone.DAL;
 using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
@@ -11,6 +13,7 @@ namespace SteamClone.BLL.Services.UserService;
 public class UserService(
     IUserRepository userRepository,
     IImageService imageService,
+    IHttpContextAccessor httpContextAccessor,
     IMapper mapper,
     IPasswordHasher passwordHasher) : IUserService
 {
@@ -125,7 +128,28 @@ public class UserService(
 
     public async Task<ServiceResponse> AddImageFromUserAsync(UserImageVM model, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var user = await userRepository.GetByIdAsync(model.UserId, token);
+        if (user == null)
+            return ServiceResponse.NotFoundResponse("User not found");
+
+        string? oldImageName = user.AvatarUrl?.Split('/').LastOrDefault();
+
+        var newImageName = await imageService.SaveImageFromFileAsync(
+            Settings.ImagesPathSettings.UserAvatarImagePath,
+            model.Image,
+            oldImageName
+        );
+
+        if (string.IsNullOrEmpty(newImageName))
+            return ServiceResponse.BadRequestResponse("No image uploaded");
+
+        var baseUrl = $"{httpContextAccessor.HttpContext!.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}/";
+        var newImageUrl = $"{baseUrl}{Settings.ImagesPathSettings.UserAvatarImagePathForUrl}/{newImageName}";
+
+        user.AvatarUrl = newImageUrl;
+        await userRepository.UpdateAsync(user, token);
+
+        return ServiceResponse.OkResponse("User avatar updated successfully", newImageUrl);
     }
 
     public async Task<ServiceResponse> GetUsersByRoleAsync(string role, CancellationToken token = default)
