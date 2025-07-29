@@ -38,6 +38,11 @@ $flux-blur: 24px;
   box-shadow: 0px 10px $flux-blur $flux-shadow-color;
   animation: fadeInFromBottom 0.6s ease forwards;
   
+  &.register {
+    max-width: 520px;
+    padding: 45px 55px;
+  }
+  
   &::after {
     content: '';
     position: absolute;

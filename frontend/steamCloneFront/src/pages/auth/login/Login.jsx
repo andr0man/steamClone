@@ -37,7 +37,6 @@ const Login = ({ onLoginSuccess }) => {
                 
                 <form onSubmit={handleSubmit} noValidate>
                     <div className="flux-form-group">
-                        <label htmlFor="login-identity">Login or Email</label>
                         <div className="flux-input-wrapper">
                             <input
                                 type="text"
@@ -46,13 +45,13 @@ const Login = ({ onLoginSuccess }) => {
                                 value={formData.identity}
                                 onChange={handleChange}
                                 required
+                                placeholder="Login or Email"
                                 autoComplete="username"
                             />
                         </div>
                     </div>
 
                     <div className="flux-form-group">
-                        <label htmlFor="login-password">Your password</label>
                          <div className="flux-input-wrapper">
                             <input
                                 type={showPassword ? "text" : "password"}
@@ -61,6 +60,7 @@ const Login = ({ onLoginSuccess }) => {
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
+                                placeholder="Your password"
                                 autoComplete="current-password"
                             />
                             <button 

@@ -92,7 +92,7 @@ const Register = () => {
 
     return (
         <div className="flux-auth-container">
-            <div className="flux-auth-box">
+            <div className="flux-auth-box register">
                 <div className="flux-header">
                     <h2>Create an Account</h2>
                 </div>
