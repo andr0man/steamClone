@@ -28,6 +28,15 @@ public class UserService(
         var userVm = mapper.Map<UserVM>(user);
         return ServiceResponse.OkResponse("User by id", userVm);
     }
+    public async Task<ServiceResponse> GetProfileAsync(string userId, CancellationToken token = default)
+    {
+        var user = await userRepository.GetByIdAsync(userId, token, includes: true);
+        if (user == null)
+            return ServiceResponse.NotFoundResponse("User not found");
+
+        var profileVm = mapper.Map<UserProfileVM>(user);
+        return ServiceResponse.OkResponse("Profile loaded", profileVm);
+    }
 
     public async Task<ServiceResponse> GetByEmailAsync(string email, CancellationToken token = default)
     {
@@ -117,14 +126,26 @@ public class UserService(
             return ServiceResponse.NotFoundResponse("User not found");
         }
 
-        mapper.Map(model, user);
+        if (!string.IsNullOrWhiteSpace(model.Nickname))
+            user.Nickname = model.Nickname;
+
+        if (!string.IsNullOrWhiteSpace(model.Email))
+            user.Email = model.Email;
+
+        if (model.CountryId.HasValue)
+            user.CountryId = model.CountryId.Value;
+
+        if (!string.IsNullOrWhiteSpace(model.Bio))
+            user.Bio = model.Bio;
+
         await userRepository.UpdateAsync(user, token);
 
         var updatedUser = await userRepository.GetByIdAsync(model.Id!, token, includes: true);
-        var userVm = mapper.Map<UserVM>(updatedUser);
+        var userVm = mapper.Map<UserProfileVM>(updatedUser);
 
         return ServiceResponse.OkResponse("User updated successfully", userVm);
     }
+
 
     public async Task<ServiceResponse> AddImageFromUserAsync(UserImageVM model, CancellationToken token = default)
     {

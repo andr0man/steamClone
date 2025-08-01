@@ -56,6 +56,8 @@ public class UsersController(IUserService userService) : BaseController
         var response = await userService.GetUsersByRoleAsync(roleName, token);
         return GetResult(response);
     }
+
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserVM model, CancellationToken token)
     {
@@ -63,7 +65,8 @@ public class UsersController(IUserService userService) : BaseController
         return GetResult(response);
     }
 
-    [HttpPut]
+    [Authorize]
+    [HttpPatch]
     public async Task<IActionResult> Update([FromBody] UpdateUserVM model, CancellationToken token)
     {
         var response = await userService.UpdateAsync(model, token);
@@ -87,7 +90,7 @@ public class UsersController(IUserService userService) : BaseController
         if (string.IsNullOrEmpty(userId))
             return Unauthorized("User ID not found in token.");
 
-        var result = await userService.GetByIdAsync(userId, token);
+        var result = await userService.GetProfileAsync(userId, token);
         return GetResult(result);
     }
 
