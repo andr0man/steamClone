@@ -12,9 +12,9 @@ public class Game : AuditableEntity<string>
     public DateTime ReleaseDate { get; set; }
     public string DeveloperId { get; set; } = null!;
     public virtual DeveloperAndPublisher? Developer { get; set; }
-    public string? PublisherId { get; set; } = null!;
+    public string? PublisherId { get; set; }
     public virtual DeveloperAndPublisher? Publisher { get; set; }
-    
+
     public int? PercentageOfPositiveReviews { get; set; }
     public string? CoverImageUrl { get; set; }
     public List<string> ScreenshotUrls { get; set; } = new();

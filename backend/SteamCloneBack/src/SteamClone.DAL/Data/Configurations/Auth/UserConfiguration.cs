@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SteamClone.DAL.Extensions;
-using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
 
-namespace SteamClone.DAL.Data.Configurations;
+namespace SteamClone.DAL.Data.Configurations.Auth;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {

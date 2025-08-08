@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.Models.Languages;
 
-namespace SteamClone.DAL.Data.Configurations;
+namespace SteamClone.DAL.Data.Configurations.Games;
 
 public class LocalizationConfiguration : IEntityTypeConfiguration<Localization>
 {

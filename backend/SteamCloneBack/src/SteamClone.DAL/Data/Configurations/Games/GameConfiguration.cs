@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SteamClone.DAL.Extensions;
 using SteamClone.Domain.Models.Games;
 
-namespace SteamClone.DAL.Data.Configurations;
+namespace SteamClone.DAL.Data.Configurations.Games;
 
 public class GameConfiguration : IEntityTypeConfiguration<Game>
 {
