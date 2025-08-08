@@ -21,7 +21,5 @@ public class UserItemConfiguration : IEntityTypeConfiguration<UserItem>
             .WithMany()
             .HasForeignKey(ui => ui.ItemId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.ConfigureAudit();
     }
 }

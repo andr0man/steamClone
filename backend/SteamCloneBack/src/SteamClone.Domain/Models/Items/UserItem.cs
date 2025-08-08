@@ -2,7 +2,7 @@ using SteamClone.Domain.Common.Abstractions;
 
 namespace SteamClone.Domain.Models.Items;
 
-public class UserItem : AuditableEntity<string>
+public class UserItem : Entity<string>
 {
     public string UserId { get; set; } = null!;
     public Item? Item { get; set; }

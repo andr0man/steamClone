@@ -12,7 +12,7 @@ namespace SteamClone.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "item",
+                name: "items",
                 columns: table => new
                 {
                     id = table.Column<string>(type: "text", nullable: false),
@@ -27,21 +27,21 @@ namespace SteamClone.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_item", x => x.id);
+                    table.PrimaryKey("pk_items", x => x.id);
                     table.ForeignKey(
-                        name: "fk_item_games_game_id",
+                        name: "fk_items_games_game_id",
                         column: x => x.game_id,
                         principalTable: "games",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_item_users_created_by",
+                        name: "fk_items_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_item_users_modified_by",
+                        name: "fk_items_users_modified_by",
                         column: x => x.modified_by,
                         principalTable: "users",
                         principalColumn: "id",
@@ -49,41 +49,25 @@ namespace SteamClone.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_item",
+                name: "user_items",
                 columns: table => new
                 {
                     id = table.Column<string>(type: "text", nullable: false),
                     user_id = table.Column<string>(type: "text", nullable: false),
                     item_id = table.Column<string>(type: "text", nullable: false),
-                    is_tradable = table.Column<bool>(type: "boolean", nullable: false),
-                    created_by = table.Column<string>(type: "text", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())"),
-                    modified_by = table.Column<string>(type: "text", nullable: true),
-                    modified_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())")
+                    is_tradable = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_item", x => x.id);
+                    table.PrimaryKey("pk_user_items", x => x.id);
                     table.ForeignKey(
-                        name: "fk_user_item_item_item_id",
+                        name: "fk_user_items_items_item_id",
                         column: x => x.item_id,
-                        principalTable: "item",
+                        principalTable: "items",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_user_item_users_created_by",
-                        column: x => x.created_by,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_user_item_users_modified_by",
-                        column: x => x.modified_by,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "fk_user_item_users_user_id",
+                        name: "fk_user_items_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -91,7 +75,7 @@ namespace SteamClone.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "market_item",
+                name: "market_items",
                 columns: table => new
                 {
                     id = table.Column<string>(type: "text", nullable: false),
@@ -105,21 +89,21 @@ namespace SteamClone.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_market_item", x => x.id);
+                    table.PrimaryKey("pk_market_items", x => x.id);
                     table.ForeignKey(
-                        name: "fk_market_item_user_item_user_item_id",
+                        name: "fk_market_items_user_items_user_item_id",
                         column: x => x.user_item_id,
-                        principalTable: "user_item",
+                        principalTable: "user_items",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_market_item_users_created_by",
+                        name: "fk_market_items_users_created_by",
                         column: x => x.created_by,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_market_item_users_modified_by",
+                        name: "fk_market_items_users_modified_by",
                         column: x => x.modified_by,
                         principalTable: "users",
                         principalColumn: "id",
@@ -127,54 +111,44 @@ namespace SteamClone.DAL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_item_created_by",
-                table: "item",
+                name: "ix_items_created_by",
+                table: "items",
                 column: "created_by");
 
             migrationBuilder.CreateIndex(
-                name: "ix_item_game_id",
-                table: "item",
+                name: "ix_items_game_id",
+                table: "items",
                 column: "game_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_item_modified_by",
-                table: "item",
+                name: "ix_items_modified_by",
+                table: "items",
                 column: "modified_by");
 
             migrationBuilder.CreateIndex(
-                name: "ix_market_item_created_by",
-                table: "market_item",
+                name: "ix_market_items_created_by",
+                table: "market_items",
                 column: "created_by");
 
             migrationBuilder.CreateIndex(
-                name: "ix_market_item_modified_by",
-                table: "market_item",
+                name: "ix_market_items_modified_by",
+                table: "market_items",
                 column: "modified_by");
 
             migrationBuilder.CreateIndex(
-                name: "ix_market_item_user_item_id",
-                table: "market_item",
+                name: "ix_market_items_user_item_id",
+                table: "market_items",
                 column: "user_item_id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_item_created_by",
-                table: "user_item",
-                column: "created_by");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_user_item_item_id",
-                table: "user_item",
+                name: "ix_user_items_item_id",
+                table: "user_items",
                 column: "item_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_item_modified_by",
-                table: "user_item",
-                column: "modified_by");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_user_item_user_id",
-                table: "user_item",
+                name: "ix_user_items_user_id",
+                table: "user_items",
                 column: "user_id");
         }
 
@@ -182,13 +156,13 @@ namespace SteamClone.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "market_item");
+                name: "market_items");
 
             migrationBuilder.DropTable(
-                name: "user_item");
+                name: "user_items");
 
             migrationBuilder.DropTable(
-                name: "item");
+                name: "items");
         }
     }
 }
