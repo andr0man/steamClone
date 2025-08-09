@@ -17,6 +17,7 @@ using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.ReviewRepository;
 using SteamClone.DAL.Repositories.RoleRepository;
 using SteamClone.DAL.Repositories.SystemRequirementsRepo;
+using SteamClone.DAL.Repositories.UserItemRepository;
 using SteamClone.DAL.Repositories.UserRepository;
 
 namespace SteamClone.DAL;
@@ -58,5 +59,6 @@ public static class ConfigureDataAccess
         services.AddScoped<ISystemRequirementsRepo, SystemRequirementsRepo>();
         services.AddScoped<ILocalizationRepository, LocalizationRepository>();
         services.AddScoped<IItemRepository, ItemRepository>();
+        services.AddScoped<IUserItemRepository, UserItemRepository>();
     }
 }
