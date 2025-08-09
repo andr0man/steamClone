@@ -13,7 +13,7 @@ using SteamClone.DAL.Data;
 namespace SteamClone.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250808233159_AddedGameItems")]
+    [Migration("20250809092724_AddedGameItems")]
     partial class AddedGameItems
     {
         /// <inheritdoc />
@@ -2472,7 +2472,6 @@ namespace SteamClone.DAL.Migrations
                         .HasColumnName("item_id");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("user_id");
 
@@ -3835,7 +3834,6 @@ namespace SteamClone.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_user_items_users_user_id");
 
                     b.Navigation("Item");

@@ -2469,7 +2469,6 @@ namespace SteamClone.DAL.Migrations
                         .HasColumnName("item_id");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("user_id");
 
@@ -3832,7 +3831,6 @@ namespace SteamClone.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_user_items_users_user_id");
 
                     b.Navigation("Item");

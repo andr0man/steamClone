@@ -29,10 +29,15 @@ public static class Settings
         public const string GameScreenshotImagePath = $"{ImagesPath}/{GameScreenshotImagePathName}";
         public const string GameScreenshotImagePathForUrl = $"{StaticFileRequestPath}/{GameScreenshotImagePathName}";
         
+        public const string ItemImagePathName = "item_images";
+        public const string ItemImagePath = $"{ImagesPath}/{ItemImagePathName}";
+        public const string ItemImagePathForUrl = $"{StaticFileRequestPath}/{ItemImagePathName}";
+        
         public static readonly List<string> ListOfDirectoriesNames = new()
         {
             GameCoverImagePathName,
-            GameScreenshotImagePathName
+            GameScreenshotImagePathName,
+            ItemImagePathName
         };
     }
 }

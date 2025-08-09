@@ -53,7 +53,7 @@ namespace SteamClone.DAL.Migrations
                 columns: table => new
                 {
                     id = table.Column<string>(type: "text", nullable: false),
-                    user_id = table.Column<string>(type: "text", nullable: false),
+                    user_id = table.Column<string>(type: "text", nullable: true),
                     item_id = table.Column<string>(type: "text", nullable: false),
                     is_tradable = table.Column<bool>(type: "boolean", nullable: false)
                 },
