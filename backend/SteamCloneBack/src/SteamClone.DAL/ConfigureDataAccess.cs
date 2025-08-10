@@ -13,6 +13,7 @@ using SteamClone.DAL.Repositories.GenreRepository;
 using SteamClone.DAL.Repositories.ItemRepository;
 using SteamClone.DAL.Repositories.LanguageRepository;
 using SteamClone.DAL.Repositories.LocalizationRepository;
+using SteamClone.DAL.Repositories.MarketItemRepository;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.ReviewRepository;
 using SteamClone.DAL.Repositories.RoleRepository;
@@ -60,5 +61,6 @@ public static class ConfigureDataAccess
         services.AddScoped<ILocalizationRepository, LocalizationRepository>();
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<IUserItemRepository, UserItemRepository>();
+        services.AddScoped<IMarketItemRepository, MarketItemRepository>();
     }
 }

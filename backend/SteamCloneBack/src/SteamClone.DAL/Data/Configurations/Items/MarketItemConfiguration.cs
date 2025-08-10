@@ -12,8 +12,8 @@ public class MarketItemConfiguration : IEntityTypeConfiguration<MarketItem>
         builder.HasKey(mi => mi.Id);
         
         builder.HasOne(mi => mi.UserItem)
-            .WithOne()
-            .HasForeignKey<MarketItem>(mi => mi.UserItemId)
+            .WithMany()
+            .HasForeignKey(mi => mi.UserItemId)
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.Property(mi => mi.Price)

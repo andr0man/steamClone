@@ -325,12 +325,12 @@ public class GameService(
         {
             return ServiceResponse.NotFoundResponse("Language not found");
         }
-        
+
         if (game.Localizations.Any(x => x.LanguageId == model.LanguageId))
         {
             return ServiceResponse.BadRequestResponse($"Localization with language '{language.Name}' already exists");
         }
-        
+
         if (model is { FullAudio: false, Interface: false, Subtitles: false })
         {
             return ServiceResponse.BadRequestResponse("At least one field must be true");
@@ -342,7 +342,7 @@ public class GameService(
         try
         {
             await localizationRepository.CreateAsync(localization, cancellationToken);
-            
+
             return ServiceResponse.OkResponse("Localization created successfully", localization);
         }
         catch (Exception e)
@@ -355,7 +355,7 @@ public class GameService(
         CancellationToken cancellationToken)
     {
         var localization = await localizationRepository.GetByIdAsync(localizationId, cancellationToken);
-        
+
         if (localization == null)
         {
             return ServiceResponse.NotFoundResponse("Localization not found");
@@ -365,13 +365,13 @@ public class GameService(
         {
             return ServiceResponse.BadRequestResponse("At least one field must be true");
         }
-        
+
         var updLocalization = mapper.Map(model, localization);
-        
+
         try
         {
             await localizationRepository.UpdateAsync(updLocalization, cancellationToken);
-            
+
             return ServiceResponse.OkResponse("Localization updated successfully", updLocalization);
         }
         catch (Exception e)

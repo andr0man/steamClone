@@ -14,6 +14,7 @@ using SteamClone.BLL.Services.ItemService;
 using SteamClone.BLL.Services.JwtService;
 using SteamClone.BLL.Services.LanguageService;
 using SteamClone.BLL.Services.MailService;
+using SteamClone.BLL.Services.MarketItemService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.BLL.Services.ReviewService;
 using SteamClone.BLL.Services.UserItemService;
@@ -48,6 +49,7 @@ public static class ConfigureBusinessLogic
         services.AddScoped<ILanguageService, LanguageService>();
         services.AddScoped<IItemService, ItemService>();
         services.AddScoped<IUserItemService, UserItemService>();
+        services.AddScoped<IMarketItemService, MarketItemService>();
     }
 
     private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)

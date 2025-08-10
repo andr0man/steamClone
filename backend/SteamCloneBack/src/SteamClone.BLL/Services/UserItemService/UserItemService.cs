@@ -14,7 +14,7 @@ public class UserItemService(
     {
         var userItems = await userItemRepository.GetAllAsync(token);
 
-        return ServiceResponse.OkResponse("UserItems retrieved successfully", mapper.Map<List<UserItemVM>>(userItems));
+        return ServiceResponse.OkResponse("User items retrieved successfully", mapper.Map<List<UserItemVM>>(userItems));
     }
 
     public async Task<ServiceResponse> GetByIdAsync(string id, CancellationToken token = default)
@@ -23,10 +23,10 @@ public class UserItemService(
 
         if (userItem == null)
         {
-            return ServiceResponse.NotFoundResponse("UserItem not found");
+            return ServiceResponse.NotFoundResponse("User items not found");
         }
 
-        return ServiceResponse.OkResponse("UserItem retrieved successfully", mapper.Map<UserItemVM>(userItem));
+        return ServiceResponse.OkResponse("User items retrieved successfully", mapper.Map<UserItemVM>(userItem));
     }
 
     public async Task<ServiceResponse> GetByUserIdAsync(CancellationToken token = default)
@@ -39,7 +39,7 @@ public class UserItemService(
             
             var userItems = allUserItems.Where(x => x.UserId == userId).ToList();
             
-            return ServiceResponse.OkResponse("UserItems retrieved successfully", mapper.Map<List<UserItemVM>>(userItems));
+            return ServiceResponse.OkResponse("User itemsg retrieved successfully", mapper.Map<List<UserItemVM>>(userItems));
         }
         catch (Exception e)
         {
