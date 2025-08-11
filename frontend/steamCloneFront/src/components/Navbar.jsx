@@ -3,13 +3,13 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.scss';
 import { ChevronDown, LogOut, UserCircle } from 'lucide-react';
 
-const Navbar = ({ onLogout, username = "User" }) => {
+const Navbar = ({ onLogout, username = 'User123' }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [bubbleStyle, setBubbleStyle] = useState({});
   const navigate = useNavigate();
   const navbarRef = useRef(null);
   const itemRefs = useRef({});
-  const leftNavRef = useRef(null);
+  const linksRef = useRef(null);
   const location = useLocation();
 
   const navItems = [
@@ -50,22 +50,20 @@ const Navbar = ({ onLogout, username = "User" }) => {
   ];
 
   const userNavItems = [
-    { id: 'profile-view', label: 'View My Profile', path: '/profile', icon: <UserCircle size={18}/> },
+    { id: 'profile-view', label: 'View My Profile', path: '/profile', icon: <UserCircle size={18} /> }
   ];
 
   const updateBubblePosition = useCallback(() => {
-    const currentBasePath = '/' + location.pathname.split('/')[1];
-    const activeItemConfig = navItems.find(item => item.path === currentBasePath);
-
-    if (activeItemConfig && itemRefs.current[activeItemConfig.id] && leftNavRef.current) {
-      const activeItem = itemRefs.current[activeItemConfig.id];
-      const navRect = leftNavRef.current.getBoundingClientRect();
-      const itemRect = activeItem.getBoundingClientRect();
-
+    const currentBase = '/' + location.pathname.split('/')[1];
+    const activeItem = navItems.find(i => i.path === currentBase);
+    if (activeItem && itemRefs.current[activeItem.id] && linksRef.current) {
+      const el = itemRefs.current[activeItem.id];
+      const laneRect = linksRef.current.getBoundingClientRect();
+      const itemRect = el.getBoundingClientRect();
       setBubbleStyle({
         width: `${itemRect.width}px`,
-        left: `${itemRect.left - navRect.left}px`,
-        opacity: 1,
+        left: `${itemRect.left - laneRect.left}px`,
+        opacity: 1
       });
     } else {
       setBubbleStyle({ opacity: 0 });
@@ -73,110 +71,116 @@ const Navbar = ({ onLogout, username = "User" }) => {
   }, [location.pathname]);
 
   useEffect(() => {
-    setTimeout(updateBubblePosition, 50);
+    const t = setTimeout(updateBubblePosition, 50);
     window.addEventListener('resize', updateBubblePosition);
-    return () => window.removeEventListener('resize', updateBubblePosition);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('resize', updateBubblePosition);
+    };
   }, [updateBubblePosition]);
 
-  const toggleDropdown = (itemId) => {
-    setActiveDropdown(prev => (prev === itemId ? null : itemId));
-  };
+  const toggleDropdown = id => setActiveDropdown(prev => (prev === id ? null : id));
 
   const handleLogoutClick = () => {
-    onLogout();
+    onLogout?.();
     setActiveDropdown(null);
     navigate('/login');
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (navbarRef.current && !navbarRef.current.contains(event.target)) {
-        setActiveDropdown(null);
-      }
+    const closeOnOutside = e => {
+      if (navbarRef.current && !navbarRef.current.contains(e.target)) setActiveDropdown(null);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [navbarRef]);
+    document.addEventListener('mousedown', closeOnOutside);
+    return () => document.removeEventListener('mousedown', closeOnOutside);
+  }, []);
 
   return (
     <nav className="fluxi-navbar" ref={navbarRef}>
-      <div className="fluxi-navbar-left" ref={leftNavRef}>
-        <div className="fluxi-navbar-bubble" style={bubbleStyle} />
-        {navItems.map(item => (
-          <div
-            key={item.id}
-            className="fluxi-navbar-item-container"
-            onMouseEnter={() => item.subItems && setActiveDropdown(item.id)}
-            onMouseLeave={() => item.subItems && setActiveDropdown(null)}
-          >
-            <NavLink
-              ref={el => (itemRefs.current[item.id] = el)}
-              to={item.path}
-              className={() => {
-                const isBasePathActive = location.pathname.startsWith(item.path);
-                return `fluxi-navbar-item ${isBasePathActive ? 'active' : ''}`;
-              }}
-              onClick={() => setActiveDropdown(null)}
+      <div className="fluxi-bar">
+        <div className="fluxi-left">
+          <a href="/" className="fluxi-logo" aria-label="Logo" />
+          <div className="fluxi-links" ref={linksRef}>
+            <div className="fluxi-bubble" style={bubbleStyle} />
+            {navItems.map(item => (
+              <div
+                key={item.id}
+                className="fluxi-item-wrap"
+                onMouseEnter={() => item.subItems && setActiveDropdown(item.id)}
+                onMouseLeave={() => item.subItems && setActiveDropdown(null)}
+              >
+                <NavLink
+                  ref={el => (itemRefs.current[item.id] = el)}
+                  to={item.path}
+                  className={() => {
+                    const active = location.pathname.startsWith(item.path);
+                    return `fluxi-item ${active ? 'active' : ''}`;
+                  }}
+                  onClick={() => setActiveDropdown(null)}
+                >
+                  {item.label}
+                  {item.subItems && <ChevronDown size={16} className="item-arrow" />}
+                </NavLink>
+
+                {item.subItems && activeDropdown === item.id && (
+                  <div className={`fluxi-dropdown ${item.id === 'store' ? 'store-dropdown' : ''}`}>
+                    {item.subItems.map(sub => (
+                      <NavLink
+                        key={sub.id}
+                        to={sub.path}
+                        className="fluxi-dropdown-item"
+                        onClick={() => setActiveDropdown(null)}
+                      >
+                        {sub.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="fluxi-right">
+          <span className="user-name-plain">{username}</span>
+
+          <div className="user-menu">
+            <button
+              className={`avatar-button ${activeDropdown === 'user-menu' ? 'active' : ''}`}
+              onClick={() => toggleDropdown('user-menu')}
+              aria-haspopup="menu"
+              aria-expanded={activeDropdown === 'user-menu'}
+              aria-controls="user-menu-dropdown"
             >
-              {item.label}
-              {item.subItems && <ChevronDown size={16} className="fluxi-navbar-item-arrow" />}
-            </NavLink>
-            {item.subItems && activeDropdown === item.id && (
-              <div className={`fluxi-navbar-dropdown ${item.id === 'store' ? 'store-dropdown' : ''}`}>
-                {item.subItems.map(subItem => (
+              <UserCircle size={18} />
+            </button>
+
+            {activeDropdown === 'user-menu' && (
+              <div id="user-menu-dropdown" role="menu" className="fluxi-dropdown user-dropdown">
+                {userNavItems.map(u => (
                   <NavLink
-                    key={subItem.id}
-                    to={subItem.path}
-                    className="fluxi-navbar-dropdown-item"
+                    key={u.id}
+                    to={u.path}
+                    className="fluxi-dropdown-item"
                     onClick={() => setActiveDropdown(null)}
+                    role="menuitem"
                   >
-                    {subItem.label}
+                    <span className="dropdown-item-icon">{u.icon}</span>
+                    <span>{u.label}</span>
                   </NavLink>
                 ))}
+                <div className="dropdown-sep" />
+                <button onClick={handleLogoutClick} className="fluxi-dropdown-item logout-item" role="menuitem">
+                  <span className="dropdown-item-icon"><LogOut size={18} /></span>
+                  <span>Logout</span>
+                </button>
               </div>
             )}
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="fluxi-navbar-right">
-        <div
-          className="fluxi-navbar-item-container user-menu-container"
-          onMouseEnter={() => setActiveDropdown('user-menu')}
-          onMouseLeave={() => setActiveDropdown(null)}
-        >
-          <button
-            className={`fluxi-navbar-user-button ${activeDropdown === 'user-menu' ? 'active' : ''}`}
-            onClick={() => toggleDropdown('user-menu')}
-          >
-            <span>{username}</span>
-            <ChevronDown size={16} className="fluxi-navbar-item-arrow" />
-          </button>
-          {activeDropdown === 'user-menu' && (
-            <div className="fluxi-navbar-dropdown user-dropdown">
-              {userNavItems.map(userItem => (
-                <NavLink
-                  key={userItem.id}
-                  to={userItem.path}
-                  className="fluxi-navbar-dropdown-item"
-                  onClick={() => setActiveDropdown(null)}
-                >
-                  {userItem.icon && <span className="dropdown-item-icon">{userItem.icon}</span>}
-                  <span>{userItem.label}</span>
-                </NavLink>
-              ))}
-              <div className="fluxi-navbar-dropdown-separator"></div>
-              <button
-                onClick={handleLogoutClick}
-                className="fluxi-navbar-dropdown-item logout-item"
-              >
-                <span className="dropdown-item-icon"><LogOut size={18}/></span>
-                <span>Logout</span>
-              </button>
-            </div>
-          )}
+        <div className="fluxi-underline">
+          <span className="rgb-line" />
         </div>
       </div>
     </nav>

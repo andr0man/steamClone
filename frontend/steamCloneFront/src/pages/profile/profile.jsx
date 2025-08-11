@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import './profile.scss'; 
+import { useNavigate } from 'react-router-dom';
+import './profile.scss';
 import Notification from '../../components/Notification';
-import { User, Shield, BarChart3, Users, Gift, Edit3 } from 'lucide-react';
+import { User, Shield, BarChart3, Users, Gift } from 'lucide-react';
+import { useGetProfileQuery } from '../../services/user/userApi';
 
-const API_BASE_URL = ''; 
+const API_BASE_URL = '';
 
 const initialProfileState = {
   username: 'Username',
@@ -15,58 +16,45 @@ const initialProfileState = {
   bio: 'This user has not set up a bio yet.',
   recentActivity: [],
   favoriteGame: null,
+  favoriteWorlds: [],
   badges: [],
   friendsCount: 0,
-  bannerImageUrl: 'https://via.placeholder.com/1200x250/101010/333333?Text=Profile+Banner',
 };
 
-
-const Profile = ({ userData }) => { 
+const Profile = ({ userData }) => {
   const [profileData, setProfileData] = useState(initialProfileState);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+  const { data, isLoading, error } = useGetProfileQuery();
 
   useEffect(() => {
-    const fetchProfileData = async () => {
-      setLoading(true);
+    setLoading(isLoading);
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (error) {
+      setApiError(error?.data?.message || 'Could not load profile data from server.');
+      if (userData) setProfileData(prev => ({ ...prev, ...userData, ...initialProfileState, ...userData }));
+    } else {
       setApiError(null);
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/user/profile`); //токен авторизації
+    }
+  }, [error, userData]);
 
-        if (!response.ok) {
-          let errorData;
-          try {
-            errorData = await response.json();
-          } catch (e) { /* ігнор якщо не JSON */ }
-          throw new Error(`HTTP error! Status: ${response.status}. ${errorData?.message || response.statusText}`);
-        }
-        const data = await response.json();
-        
-        setProfileData(prevData => ({
-          ...prevData, 
-          ...data,
-          recentActivity: data.recentActivity || prevData.recentActivity || [],
-          badges: data.badges || prevData.badges || [],
-          bannerImageUrl: data.bannerImageUrl || data.favoriteGame?.imageUrl || prevData.bannerImageUrl,
-          friendsCount: data.friendsCount !== undefined ? data.friendsCount : (prevData.friendsCount || 0),
-        }));
+  useEffect(() => {
+    if (!data) return;
+    const payload = data?.payload || data || {};
+    setProfileData(prevData => ({
+      ...prevData,
+      ...payload,
+      recentActivity: payload.recentActivity || prevData.recentActivity || [],
+      badges: payload.badges || prevData.badges || [],
+      friendsCount: payload.friendsCount !== undefined ? payload.friendsCount : (prevData.friendsCount || 0),
+      favoriteWorlds: payload.favoriteWorlds || prevData.favoriteWorlds || [],
+    }));
+  }, [data]);
 
-      } catch (err) {
-        console.error("Failed to fetch profile data:", err);
-        setApiError(err.message || 'Could not load profile data from server.');
-        // Якщо помилка, залишаємо initialProfileState або дані з userData, якщо вони є
-        if(userData) setProfileData(prev => ({...prev, ...userData, ...initialProfileState, ...userData}));
-
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfileData();
-  }, [userData]);
-
-  
   const displayData = loading && !profileData.username ? initialProfileState : profileData;
 
   const handleEditProfileClick = () => {
@@ -82,19 +70,23 @@ const Profile = ({ userData }) => {
     bio,
     recentActivity,
     favoriteGame,
+    favoriteWorlds: fw,
     badges,
     friendsCount,
-    bannerImageUrl
-  } = displayData; 
+  } = displayData;
+
+  const favoriteWorlds = Array.isArray(fw) && fw.length
+    ? fw
+    : (favoriteGame && favoriteGame.title && favoriteGame.imageUrl ? [favoriteGame] : []);
 
   return (
     <div className="profile-page-container">
-      <Notification message={apiError} type="error" onClose={() => setApiError(null)} />
+      <div className="notification-global-top">
+        <Notification message={apiError} type="error" onClose={() => setApiError(null)} />
+      </div>
 
       {loading && <div className="profile-loading-overlay visible">Loading data...</div>}
 
-      <div className="profile-header-banner" style={{ backgroundImage: `url(${bannerImageUrl})` }}>
-      </div>
       <div className="profile-main-content">
         <div className="profile-sidebar">
           <img src={avatarUrl} alt={`${username}'s avatar`} className="profile-avatar" />
@@ -102,11 +94,9 @@ const Profile = ({ userData }) => {
           <p className="profile-level">Level <span className="level-badge">{level}</span></p>
           <p className="profile-country">{country}</p>
           <p className="profile-member-since">Member since: {memberSince}</p>
-          
-          <button className="profile-edit-button" onClick={handleEditProfileClick}> {/* onClick */}
-            <Edit3 size={18} /> Edit Profile
-          </button>
-          
+
+          <button className="profile-edit-button" onClick={handleEditProfileClick}></button>
+
           <div className="profile-navigation">
             <a href="#activity" className="profile-nav-link"><BarChart3 size={18} /> Activity</a>
             <a href="#badges" className="profile-nav-link"><Shield size={18} /> Badges</a>
@@ -117,27 +107,53 @@ const Profile = ({ userData }) => {
 
         <div className="profile-details-column">
           <div className="profile-section profile-bio">
-            <h3><User size={22} /> About Me</h3>
+            <div className="section-header">
+              <h3><User size={22} /> About me</h3>
+            </div>
             <p>{bio}</p>
           </div>
 
-          {favoriteGame && favoriteGame.title && favoriteGame.imageUrl ? (
-            <div className="profile-section profile-favorite-game">
-              <h3>Favorite Game</h3>
-              <div className="favorite-game-card">
-                <img src={favoriteGame.imageUrl} alt={favoriteGame.title} className="favorite-game-image" />
-                <h4>{favoriteGame.title}</h4>
+          <div className="profile-section profile-favorites">
+            <div className="section-header">
+              <h3>Favorite worlds ({favoriteWorlds.length})</h3>
+              <a href="#favorites" className="section-action">See all</a>
+            </div>
+            {favoriteWorlds.length ? (
+              <div className="favorites-row">
+                {favoriteWorlds.slice(0, 8).map((g, i) => (
+                  <div className="favorite-card" key={g.id || `${g.title}-${i}`}>
+                    <img src={g.imageUrl} alt={g.title} />
+                  </div>
+                ))}
               </div>
+            ) : (
+              <p className="muted">No favorite worlds yet.</p>
+            )}
+          </div>
+
+          <div className="profile-section profile-badges" id="badges">
+            <div className="section-header">
+              <h3><Shield size={22} /> Badges ({(badges && badges.length) || 0})</h3>
+              <a href="#badges-all" className="section-action">See all</a>
             </div>
-          ) : (
-            <div className="profile-section profile-favorite-game">
-              <h3>Favorite Game</h3>
-              <p>No favorite game selected.</p>
-            </div>
-          )}
+            {badges && badges.length > 0 ? (
+              <div className="badges-grid">
+                {badges.map((badge, index) => (
+                  <div key={badge.id || index} className="badge-item" data-title={badge.name}>
+                    <img src={badge.iconUrl || 'https://via.placeholder.com/60/CCCCCC/000000?Text=B'} alt={badge.name || 'Badge'} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="muted">No badges to display.</p>
+            )}
+          </div>
 
           <div className="profile-section profile-recent-activity" id="activity">
-            <h3><BarChart3 size={22} /> Recent Activity</h3>
+            <div className="section-header">
+              <h3><BarChart3 size={22} /> Recent Activity</h3>
+              <a href="#activity-all" className="section-action">See all</a>
+            </div>
             {recentActivity && recentActivity.length > 0 ? (
               <ul>
                 {recentActivity.map((activity, index) => (
@@ -148,22 +164,7 @@ const Profile = ({ userData }) => {
                 ))}
               </ul>
             ) : (
-              <p>No recent activity to display.</p>
-            )}
-          </div>
-
-          <div className="profile-section profile-badges" id="badges">
-            <h3><Shield size={22} /> Badges ({(badges && badges.length) || 0})</h3>
-            {badges && badges.length > 0 ? (
-              <div className="badges-grid">
-                {badges.map((badge, index) => (
-                  <div key={badge.id || index} className="badge-item" data-title={badge.name}>
-                    <img src={badge.iconUrl || 'https://via.placeholder.com/60/CCCCCC/000000?Text=B'} alt={badge.name || 'Badge'} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>No badges to display.</p>
+              <p className="muted">No recent activity to display.</p>
             )}
           </div>
         </div>
