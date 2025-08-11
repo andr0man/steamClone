@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using SteamClone.DAL.Data;
+using SteamClone.DAL.Repositories.BalanceRepository;
 using SteamClone.DAL.Repositories.Common;
 using SteamClone.DAL.Repositories.CountryRepository;
 using SteamClone.DAL.Repositories.DeveloperAndPublisherRepository;
@@ -62,5 +63,6 @@ public static class ConfigureDataAccess
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<IUserItemRepository, UserItemRepository>();
         services.AddScoped<IMarketItemRepository, MarketItemRepository>();
+        services.AddScoped<IBalanceRepository, BalanceRepository>();
     }
 }

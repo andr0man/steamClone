@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data.Initializer;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.Countries;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
@@ -27,6 +28,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Item> Items { get; set; }
     public DbSet<UserItem> UserItems { get; set; }
     public DbSet<MarketItem> MarketItems { get; set; }
+    public DbSet<Balance> Balances { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

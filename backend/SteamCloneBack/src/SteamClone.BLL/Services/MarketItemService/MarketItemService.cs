@@ -1,5 +1,6 @@
 using AutoMapper;
 using SteamClone.DAL;
+using SteamClone.DAL.Repositories.BalanceRepository;
 using SteamClone.DAL.Repositories.MarketItemRepository;
 using SteamClone.DAL.Repositories.UserItemRepository;
 using SteamClone.Domain.Common.Interfaces;
@@ -12,7 +13,8 @@ public class MarketItemService(
     IMarketItemRepository marketItemRepository,
     IMapper mapper,
     IUserItemRepository userItemRepository,
-    IUserProvider userProvider) : IMarketItemService
+    IUserProvider userProvider,
+    IBalanceRepository balanceRepository) : IMarketItemService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -65,6 +67,11 @@ public class MarketItemService(
             return ServiceResponse.BadRequestResponse("User item is not tradable");
         }
 
+        if ((await marketItemRepository.IsUserListedItemAsync(userId, model.UserItemId, cancellationToken)))
+        {
+            return ServiceResponse.BadRequestResponse("User item is already listed for sale");
+        }
+
         try
         {
             var marketItem = mapper.Map<MarketItem>(model);
@@ -96,7 +103,7 @@ public class MarketItemService(
         try
         {
             await marketItemRepository.DeleteAsync(marketItemId, cancellationToken);
-            return ServiceResponse.OkResponse("Market item removed from sale successfully");
+            return ServiceResponse.OkResponse("User item removed from sale successfully");
         }
         catch (Exception e)
         {
@@ -127,8 +134,15 @@ public class MarketItemService(
         
         try
         {
+            if (!(await balanceRepository.WithdrawAsync(newOwnerId, marketItem.Price, cancellationToken)))
+            {
+                return ServiceResponse.BadRequestResponse("Not enough money");
+            }
+            
+            
             var userItem = await userItemRepository.GetByIdAsync(marketItem.UserItemId, cancellationToken);
-            userItem!.UserId = newOwnerId;
+            await balanceRepository.DepositAsync(userItem!.UserId!, marketItem.Price, cancellationToken);
+            userItem.UserId = newOwnerId;
             await marketItemRepository.UpdateAsync(marketItem, cancellationToken);
             
             marketItem.IsSold = true;

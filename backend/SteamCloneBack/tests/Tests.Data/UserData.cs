@@ -1,5 +1,6 @@
 ﻿using SteamClone.DAL;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 
 namespace Tests.Data;
 

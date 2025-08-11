@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL;
 using SteamClone.DAL.Extensions;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.Countries;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.ViewModels.DevelopersAndPublishers;
