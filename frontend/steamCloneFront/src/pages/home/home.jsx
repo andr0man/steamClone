@@ -1,278 +1,262 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import './home.scss';
-import Notification from '../../components/Notification';
-import { Search, Tag, Percent, Star, Users, Gamepad2, CalendarDays, AlertTriangle } from 'lucide-react';
+import React, { useMemo, useState, useRef } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import './Home.scss';
+import { Footer } from '../../components/Footer/Footer';
 
-const API_BASE_URL = ''; 
+const Arrow = ({ dir = 'right', onClick, className = '' }) => (
+  <button
+    type="button"
+    className={`nav-arrow ${dir} ${className}`}
+    aria-label={dir === 'left' ? 'Prev' : 'Next'}
+    onClick={onClick}
+  >
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2">
+      {dir === 'left' ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 6l6 6-6 6" />}
+    </svg>
+  </button>
+);
 
-const MOCK_CATEGORIES = [
-  { id: 'rpg', name: 'RPG', slug: 'rpg' },
-  { id: 'strategy', name: 'Strategy', slug: 'strategy' },
-  { id: 'shooter', name: 'Shooters', slug: 'shooter' },
-  { id: 'simulation', name: 'Simulators', slug: 'simulation' },
-  { id: 'indie', name: 'Indie', slug: 'indie' },
+const RegularPrice = ({ value }) => (
+  <div className="price-badge regular"><span className="now">{value}</span></div>
+);
+
+const DiscountPrice = ({ off, from, to }) => (
+  <div className="price-badge discount">
+    <span className="off">{off}</span>
+    <div className="nums">
+      <span className="from">{from}</span>
+      <span className="now">{to}</span>
+    </div>
+  </div>
+);
+
+const GameCard = ({ src, alt = 'Game', price, size = 'sm', onClick }) => (
+  <button type="button" className={`game-card ${size}`} onClick={onClick} aria-label={alt}>
+    <img src={src} alt={alt} loading="lazy" />
+    {price}
+  </button>
+);
+
+const SectionHeader = ({ title, to }) => (
+  <div className="section-head">
+    <h3>{title}</h3>
+    <NavLink to={to} className="see-all">See all</NavLink>
+  </div>
+);
+
+const HERO = [
+  { id: 'rdr2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-18.png',    price: <DiscountPrice off="-75%" from="2599₴" to="649₴" /> },
+  { id: 'delta-force', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-22@2x.png', price: <RegularPrice value="Free to play" /> },
+  { id: 'expedition-33', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-20@2x.png', price: <RegularPrice value="1499₴" /> },
 ];
 
-const initialHomeDataState = {
-  featuredGame: null,
-  gamesForCurrentTab: [],
-  categories: MOCK_CATEGORIES, 
-};
+const MONTHLY = [
+  { id: 'vrising', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-24.png',    price: <DiscountPrice off="-50%" from="700₴" to="350₴" /> },
+  { id: 'room',    src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-18-1.png',  price: <DiscountPrice off="-75%" from="124-379₴" to="31-94₴" /> },
+  { id: 'payday3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-20-1.png',  price: <DiscountPrice off="-70%" from="799₴" to="239₴" /> },
+  { id: 'ffxvi',   src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-23@2x.png', price: <DiscountPrice off="-35%" from="1399₴" to="909₴" /> },
+];
 
-const Home = () => {
-  const [homeData, setHomeData] = useState(initialHomeDataState);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [loadingPage, setLoadingPage] = useState(true); 
-  const [loadingTabData, setLoadingTabData] = useState(false);
-  const [apiError, setApiError] = useState(null);
-  const [activeTab, setActiveTab] = useState('featured');
+const N_T_TOP = [
+  { id: 'card-1', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29@2x.png', price: <DiscountPrice off="-20%" from="124₴" to="99₴" /> },
+  { id: 'card-2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33@2x.png', price: <DiscountPrice off="-10%" from="225₴" to="202₴" /> },
+  { id: 'card-3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36@2x.png', price: <RegularPrice value="949₴" /> },
+  { id: 'card-4', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37@2x.png', price: <DiscountPrice off="-10%" from="259₴" to="233₴" /> },
+];
+const N_T_BOTTOM = [
+  { id: 'card-5', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="159₴" /> },
+  { id: 'card-6', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-1.png',price: <RegularPrice value="Free to play" /> },
+  { id: 'card-7', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32.png',  price: <RegularPrice value="1079₴" /> },
+];
 
-  const { featuredGame, gamesForCurrentTab, categories } = homeData;
+const REC_TOP = [
+  { id: 'rec-1', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-1@2x.png', price: <RegularPrice value="325₴" /> },
+  { id: 'rec-2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-2@2x.png', price: <RegularPrice value="225₴" /> },
+  { id: 'rec-3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-1@2x.png', price: <RegularPrice value="415₴" /> },
+  { id: 'rec-4', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-1@2x.png', price: <RegularPrice value="429₴" /> },
+];
+const REC_BOTTOM = [
+  { id: 'rec-5', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-1.png', price: <RegularPrice value="Free to play" /> },
+  { id: 'rec-6', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-3.png', price: <RegularPrice value="415₴" /> },
+  { id: 'rec-7', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-1.png', price: <RegularPrice value="699₴" /> },
+];
 
-  const fetchApiData = useCallback(async (endpoint, options = {}) => {
-    setApiError(null); 
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/games${endpoint}`, options);
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: response.statusText }));
-        throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
-      }
-      return await response.json();
-    } catch (err) {
-      console.error(`Error loading data from ${API_BASE_URL}/api/games${endpoint}:`, err);
-      setApiError(err.message || 'Failed to load data. Please try again later.');
-      throw err; 
-    }
-  }, []); 
+const BEST_TOP = [
+  { id: 'best-1', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-2@2x.png', price: <RegularPrice value="Free to play" /> },
+  { id: 'best-2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-4@2x.png', price: <RegularPrice value="Free to play" /> },
+  { id: 'best-3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-2@2x.png', price: <RegularPrice value="Free to play" /> },
+  { id: 'best-4', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-2@2x.png', price: <DiscountPrice off="-20%" from="469₴" to="375₴" /> },
+];
+const BEST_BOTTOM = [
+  { id: 'best-5', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="159₴" /> },
+  { id: 'best-6', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-2.png',price: <RegularPrice value="Free to play" /> },
+  { id: 'best-7', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-2.png',price: <RegularPrice value="Free to play" /> },
+];
 
-  useEffect(() => {
-    const initializePage = async () => {
-      setLoadingPage(true);
-      try {
-        const heroData = await fetchApiData('/hero-featured');
-        setHomeData(prevData => ({
-          ...prevData,
-          featuredGame: heroData.featuredGame || null,
-        }));
-        
-        // const categoriesData = await fetchApiData('/categories');
-        // setHomeData(prevData => ({
-        //   ...prevData,
-        //   categories: categoriesData.categories || MOCK_CATEGORIES, 
-        // }));
+const StoreRail = () => {
+  const navigate = useNavigate();
+  const [q, setQ] = useState('');
 
-      } catch (err) {
-        // apiError fetchApiData
-      } finally {
-        setLoadingPage(false);
-      }
-    };
-    initializePage();
-  }, [fetchApiData]);
-
-  useEffect(() => {
-    const loadTabData = async () => {
-      if (loadingPage) return; 
-
-      setLoadingTabData(true);
-      setHomeData(prevData => ({ ...prevData, gamesForCurrentTab: [] }));
-
-      try {
-        let data;
-        if (searchTerm) {
-          data = await fetchApiData(`/search?term=${encodeURIComponent(searchTerm)}`);
-        } else {
-          let tabEndpoint = '/featured-recommended';
-          if (activeTab === 'special') tabEndpoint = '/special-offers';
-          else if (activeTab === 'new') tabEndpoint = '/new-releases';
-          data = await fetchApiData(tabEndpoint);
-        }
-        setHomeData(prevData => ({
-          ...prevData,
-          gamesForCurrentTab: data.games || [],
-        }));
-      } catch (err) {
-        setHomeData(prevData => ({ ...prevData, gamesForCurrentTab: [] }));
-      } finally {
-        setLoadingTabData(false);
-      }
-    };
-
-    if (searchTerm) {
-      const debounceSearch = setTimeout(() => {
-        loadTabData();
-      }, 500);
-      return () => clearTimeout(debounceSearch);
-    } else {
-      loadTabData();
-    }
-  }, [activeTab, searchTerm, fetchApiData, loadingPage]);
-
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-  
-  const handleTabChange = (tab) => {
-    setSearchTerm(''); 
-    setActiveTab(tab);
+  const doSearch = () => {
+    if (!q.trim()) return;
+    navigate(`/store/search?q=${encodeURIComponent(q.trim())}`);
   };
 
-  const renderGameCard = (game) => (
-    <div key={game.id || game._id} className="game-card">
-      <div className="game-card-image-container">
-        <img src={game.imageUrl || 'https://via.placeholder.com/300x450/1e252e/c7d5e0?text=No+Image'} alt={game.title || 'Game'} className="game-card-image" />
-        <div className="game-card-hover-overlay">
-          <button className="game-card-button primary" onClick={() => console.log('Navigate to game:', game.id)}>Details</button>
-          <button className="game-card-button secondary" onClick={() => console.log('Add to cart:', game.id)}>Add to Cart</button>
-        </div>
-      </div>
-      <div className="game-card-info">
-        <h3 className="game-card-title">{game.title || 'Untitled'}</h3>
-        {game.tags && game.tags.length > 0 && (
-          <div className="game-card-tags">
-            {game.tags.slice(0, 3).map(tag => <span key={tag} className="game-tag"><Tag size={12}/> {tag}</span>)}
+  return (
+    <div className="store-rail">
+      <div className="rail-frame">
+        <div className="rail-inner">
+          <div className="rail-left">
+            <NavLink to="/store/points-shop" className="rail-link">Points Shop</NavLink>
+            <NavLink to="/chat" className="rail-link">Chat</NavLink>
+            <NavLink to="/store/wishlist" className="rail-link">Wishlist</NavLink>
           </div>
-        )}
-        <div className="game-card-price">
-          {game.discountPrice && game.price ? (
-            <>
-              <span className="game-price-original">${parseFloat(game.price).toFixed(2)}</span>
-              <span className="game-price-discounted">${parseFloat(game.discountPrice).toFixed(2)}</span>
-              <span className="game-price-badge">
-                <Percent size={14}/> {Math.round(((parseFloat(game.price) - parseFloat(game.discountPrice)) / parseFloat(game.price)) * 100)}%
-              </span>
-            </>
-          ) : game.price ? (
-            <span className="game-price-current">${parseFloat(game.price).toFixed(2)}</span>
-          ) : (
-            <span className="game-price-current">N/A</span>
-          )}
+          <div className="rail-right">
+            <NavLink to="/home/search" className="filtered">Filtered Search</NavLink>
+            <span className="slash">/</span>
+            <div className="search" role="search">
+              <input
+                type="text"
+                placeholder="Search"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && doSearch()}
+                aria-label="Search games"
+              />
+              <button className="search-btn" type="button" onClick={doSearch} aria-label="Run search">
+                <img src="https://c.animaapp.com/tF1DKM3X/img/fluent-search-sparkle-48-regular.svg" alt="" />
+              </button>
+            </div>
+          </div>
         </div>
+        <span className="rgb-line" aria-hidden="true" />
       </div>
     </div>
   );
+};
 
-  if (loadingPage) {
-    return <div className="home-loading">Loading Flux... <div className="spinner"></div></div>;
-  }
+const Hero = () => {
+  const navigate = useNavigate();
+  const [idx, setIdx] = useState(0);
+  const ordered = useMemo(() => [idx, (idx + 1) % HERO.length, (idx + 2) % HERO.length], [idx]);
+
+  const openGame = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'home-hero' } });
 
   return (
-    <div className="home-container">
-      <Notification message={apiError} type="error" onClose={() => setApiError(null)} />
-
-      {featuredGame && !searchTerm && (
-         <section className="hero-section" style={{ backgroundImage: `linear-gradient(to top, rgba(24,30,37,1) 0%, rgba(24,30,37,0.7) 40%, rgba(24,30,37,0.1) 70%, transparent 100%), url(${featuredGame.bannerUrl || featuredGame.imageUrl || 'https://via.placeholder.com/1200x400/1A2838/66c0f4?text=Featured+Game'})` }}>
-          <div className="hero-content">
-            <h1 className="hero-title">{featuredGame.title || 'Flux Welcomes You!'}</h1>
-            <p className="hero-description">{(featuredGame.description || 'The best games are waiting for you. Discover new worlds!').substring(0,150)}...</p>
-            {featuredGame.title && (
-                <div className="hero-meta">
-                    {featuredGame.rating && <span><Star size={18}/> {parseFloat(featuredGame.rating).toFixed(1)}/5.0</span>}
-                    {featuredGame.developer && <span><Users size={18}/> {featuredGame.developer}</span>}
-                    {featuredGame.releaseDate && <span><CalendarDays size={18}/> {new Date(featuredGame.releaseDate).toLocaleDateString()}</span>}
-                </div>
-            )}
-            <div className="hero-actions">
-              <button className="hero-button primary"><Gamepad2 size={20} /> {featuredGame.title ? "Play Now" : "Browse Games"}</button>
-              <button className="hero-button secondary">Add to Wishlist</button>
-            </div>
-          </div>
-        </section>
-      )}
-      
-      {!featuredGame && !searchTerm && !loadingPage && (
-         <section className="hero-section hero-section-placeholder" >
-          <div className="hero-content">
-            <h1 className="hero-title">Welcome to Flux!</h1>
-            <p className="hero-description">Your new gaming platform. Discover amazing worlds and adventures.</p>
-             <div className="hero-actions">
-              <button className="hero-button primary" onClick={() => handleTabChange('new')}><Gamepad2 size={20} /> Browse New Releases</button>
-            </div>
-          </div>
-        </section>
-      )}
-
-
-      <div className="home-main-content">
-        <aside className="home-sidebar">
-          <h2>Navigation</h2>
-          <div className="search-bar-container">
-            <Search size={20} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search games..."
-              className="search-input"
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
-          </div>
-          {categories && categories.length > 0 && (
-            <nav className="category-nav">
-              <h3>Categories</h3>
-              <ul>
-                {categories.map(cat => (
-                  <li key={cat.id || cat.name}><a href={`/games/category/${cat.slug || cat.name.toLowerCase()}`}>{cat.name}</a></li>
-                ))}
-              </ul>
-            </nav>
-          )}
-          <div className="sidebar-promo">
-            <h4>Summer Sale!</h4>
-            <p>Huge discounts up to -75%!</p>
-            <button onClick={() => handleTabChange('special')}>View Offers</button>
-          </div>
-        </aside>
-
-        <main className="home-game-listings">
-          <div className="tabs-navigation">
-            <button 
-              className={`tab-button ${activeTab === 'featured' ? 'active' : ''}`}
-              onClick={() => handleTabChange('featured')}
-            >
-              <Star size={18}/> Recommended
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'special' ? 'active' : ''}`}
-              onClick={() => handleTabChange('special')}
-            >
-              <Percent size={18}/> Special Offers
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'new' ? 'active' : ''}`}
-              onClick={() => handleTabChange('new')}
-            >
-              <Gamepad2 size={18}/> New Releases
-            </button>
-          </div>
-          
-          {loadingTabData ? (
-            <div className="tab-loading"><div className="spinner"></div>Loading games...</div>
-          ) : gamesForCurrentTab && gamesForCurrentTab.length > 0 ? (
-            <section className="game-section">
-              <h2 className="section-title">
-                {searchTerm ? `Search results for "${searchTerm}"` : 
-                 activeTab === 'featured' ? 'Recommended for You' :
-                 activeTab === 'special' ? 'Special Offers' : 'New & Trending'}
-              </h2>
-              <div className="game-grid">
-                {gamesForCurrentTab.map(renderGameCard)}
-              </div>
-            </section>
-          ) : (
-            <div className="no-results">
-              <AlertTriangle size={48} />
-              <p>{apiError ? "Error loading games." : (searchTerm ? `Sorry, no results found for "${searchTerm}".` : `There are currently no games in this category.`)}</p>
-              {apiError && <p className="error-details">{apiError}</p>}
-              <p>Try changing your search query or browse other sections.</p>
-            </div>
-          )}
-        </main>
+    <section className="hero">
+      <Arrow dir="left" onClick={() => setIdx((p) => (p + HERO.length - 1) % HERO.length)} />
+      <div className="hero-cards">
+        <GameCard size="lg"   src={HERO[ordered[0]].src} alt="Hero 1" price={HERO[ordered[0]].price} onClick={() => openGame(HERO[ordered[0]].id)} />
+        <GameCard size="md"   src={HERO[ordered[1]].src} alt="Hero 2" price={HERO[ordered[1]].price} onClick={() => openGame(HERO[ordered[1]].id)} />
+        <GameCard size="md"   src={HERO[ordered[2]].src} alt="Hero 3" price={HERO[ordered[2]].price} onClick={() => openGame(HERO[ordered[2]].id)} />
       </div>
-       <footer className="home-footer">
-        <p>&copy; {new Date().getFullYear()} Flux. All rights reserved.</p>
-        <p>Flux and the Flux logo are trademarks or registered trademarks of Flux Inc. in Ukraine and/or other countries.</p>
-      </footer>
+      <Arrow dir="right" onClick={() => setIdx((p) => (p + 1) % HERO.length)} />
+      <div className="dots">
+        {HERO.map((_, i) => <span key={i} className={`dot ${i === idx ? 'active' : ''}`} />)}
+      </div>
+    </section>
+  );
+};
+
+const ScrollRow = ({ items, size = 'xl' }) => {
+  const navigate = useNavigate();
+  const ref = useRef(null);
+  const scrollBy = (d) => ref.current?.scrollBy({ left: d, behavior: 'smooth' });
+  const openGame = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'home-row' } });
+
+  return (
+    <div className="scroll-row">
+      <Arrow dir="left" onClick={() => scrollBy(-640)} className="row-arrow" />
+      <div className="scroll-row__track" ref={ref}>
+        {items.map((g, i) => (
+          <GameCard key={g.id || i} src={g.src} alt="Game" price={g.price} size={size} onClick={() => openGame(g.id || `game-${i}`)} />
+        ))}
+      </div>
+      <Arrow dir="right" onClick={() => scrollBy(640)} className="row-arrow" />
+    </div>
+  );
+};
+
+const MonthlyDiscounts = () => (
+  <section className="store-section">
+    <SectionHeader title="Monthly discounts" to="/store/featured" />
+    <ScrollRow items={MONTHLY} size="xl" />
+  </section>
+);
+
+const NewAndTrending = () => {
+  const navigate = useNavigate();
+  const open = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'new-trending' } });
+  return (
+    <section className="store-section">
+      <SectionHeader title="New & Trending" to="/store/discover" />
+      <div className="row grid four">
+        {N_T_TOP.map((g, i) => <GameCard key={g.id || i} src={g.src} price={g.price} size="sm" onClick={() => open(g.id || `nt-${i}`)} />)}
+      </div>
+      <div className="row grid three">
+        {N_T_BOTTOM.map((g, i) => <GameCard key={g.id || i} src={g.src} price={g.price} size="wide" onClick={() => open(g.id || `ntb-${i}`)} />)}
+      </div>
+    </section>
+  );
+};
+
+const RecommendedForYou = () => {
+  const navigate = useNavigate();
+  const open = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'recommended' } });
+  return (
+    <section className="store-section">
+      <SectionHeader title="Recommended for you" to="/store/discover?recommended=1" />
+      <div className="row grid four">
+        {REC_TOP.map((g, i) => <GameCard key={g.id || i} src={g.src} price={g.price} size="sm" onClick={() => open(g.id || `rec-${i}`)} />)}
+      </div>
+      <div className="row grid three">
+        {REC_BOTTOM.map((g, i) => <GameCard key={g.id || i} src={g.src} price={g.price} size="wide" onClick={() => open(g.id || `recb-${i}`)} />)}
+      </div>
+    </section>
+  );
+};
+
+const Bestsellers = () => {
+  const navigate = useNavigate();
+  const open = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'bestsellers' } });
+  return (
+    <section className="store-section">
+      <SectionHeader title="Bestsellers" to="/store/discover?sort=top" />
+      <div className="row grid four">
+        {BEST_TOP.map((g, i) => <GameCard key={g.id || i} src={g.src} price={g.price} size="sm" onClick={() => open(g.id || `best-${i}`)} />)}
+      </div>
+      <div className="row grid three">
+        {BEST_BOTTOM.map((g, i) => <GameCard key={g.id || i} src={g.src} price={g.price} size="wide" onClick={() => open(g.id || `bestb-${i}`)} />)}
+      </div>
+    </section>
+  );
+};
+
+const DiscoveryLoopCTA = () => (
+  <section className="loop-cta">
+    <div className="cta-inner">
+      <div className="cta-text">
+        <h4>Find your perfect world through Discovery Loop</h4>
+        <p>Your queue of top-selling, new, and recommended titles</p>
+      </div>
+      <Arrow dir="right" onClick={() => {}} />
+    </div>
+  </section>
+);
+
+const Home = () => {
+  return (
+    <div className="store-home">
+      <main className="page-inset">
+        <StoreRail />
+        <Hero />
+        <MonthlyDiscounts />
+        <NewAndTrending />
+        <RecommendedForYou />
+        <Bestsellers />
+        <DiscoveryLoopCTA />
+      </main>
+      <Footer />
     </div>
   );
 };

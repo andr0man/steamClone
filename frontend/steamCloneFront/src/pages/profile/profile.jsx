@@ -4,12 +4,11 @@ import './profile.scss';
 import Notification from '../../components/Notification';
 import { User, Shield, BarChart3, Users, Gift } from 'lucide-react';
 import { useGetProfileQuery } from '../../services/user/userApi';
-
-const API_BASE_URL = '';
+import { Footer } from '../../components/Footer/Footer';
 
 const initialProfileState = {
   username: 'Username',
-  avatarUrl: 'https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User',
+  avatarUrl: 'https://via.placeholder.com/180/CCCCCC/FFFFFF?Text=User',
   level: 0,
   country: 'Country',
   memberSince: 'N/A',
@@ -29,14 +28,14 @@ const Profile = ({ userData }) => {
 
   const { data, isLoading, error } = useGetProfileQuery();
 
-  useEffect(() => {
-    setLoading(isLoading);
-  }, [isLoading]);
+  useEffect(() => setLoading(isLoading), [isLoading]);
 
   useEffect(() => {
     if (error) {
       setApiError(error?.data?.message || 'Could not load profile data from server.');
-      if (userData) setProfileData(prev => ({ ...prev, ...userData, ...initialProfileState, ...userData }));
+      if (userData) {
+        setProfileData(prev => ({ ...prev, ...initialProfileState, ...userData }));
+      }
     } else {
       setApiError(null);
     }
@@ -45,21 +44,19 @@ const Profile = ({ userData }) => {
   useEffect(() => {
     if (!data) return;
     const payload = data?.payload || data || {};
-    setProfileData(prevData => ({
-      ...prevData,
+    setProfileData(prev => ({
+      ...prev,
       ...payload,
-      recentActivity: payload.recentActivity || prevData.recentActivity || [],
-      badges: payload.badges || prevData.badges || [],
-      friendsCount: payload.friendsCount !== undefined ? payload.friendsCount : (prevData.friendsCount || 0),
-      favoriteWorlds: payload.favoriteWorlds || prevData.favoriteWorlds || [],
+      recentActivity: payload.recentActivity || prev.recentActivity || [],
+      badges: payload.badges || prev.badges || [],
+      friendsCount: payload.friendsCount ?? prev.friendsCount ?? 0,
+      favoriteWorlds: payload.favoriteWorlds || prev.favoriteWorlds || [],
     }));
   }, [data]);
 
   const displayData = loading && !profileData.username ? initialProfileState : profileData;
 
-  const handleEditProfileClick = () => {
-    navigate('/profile/edit');
-  };
+  const handleEditProfileClick = () => navigate('/profile/edit');
 
   const {
     username,
@@ -80,7 +77,7 @@ const Profile = ({ userData }) => {
     : (favoriteGame && favoriteGame.title && favoriteGame.imageUrl ? [favoriteGame] : []);
 
   return (
-    <div className="profile-page-container">
+    <div id="page-top" className="profile-page-container">
       <div className="notification-global-top">
         <Notification message={apiError} type="error" onClose={() => setApiError(null)} />
       </div>
@@ -88,24 +85,25 @@ const Profile = ({ userData }) => {
       {loading && <div className="profile-loading-overlay visible">Loading data...</div>}
 
       <div className="profile-main-content">
-        <div className="profile-sidebar">
+        <aside className="profile-sidebar">
           <img src={avatarUrl} alt={`${username}'s avatar`} className="profile-avatar" />
           <h1 className="profile-username">{username}</h1>
           <p className="profile-level">Level <span className="level-badge">{level}</span></p>
           <p className="profile-country">{country}</p>
           <p className="profile-member-since">Member since: {memberSince}</p>
 
-          <button className="profile-edit-button" onClick={handleEditProfileClick}></button>
+          <button className="profile-edit-button" onClick={handleEditProfileClick} />
 
-          <div className="profile-navigation">
+          <nav className="profile-navigation">
             <a href="#activity" className="profile-nav-link"><BarChart3 size={18} /> Activity</a>
             <a href="#badges" className="profile-nav-link"><Shield size={18} /> Badges</a>
             <a href="#friends" className="profile-nav-link"><Users size={18} /> Friends ({friendsCount})</a>
             <a href="#inventory" className="profile-nav-link"><Gift size={18} /> Inventory</a>
-          </div>
-        </div>
+          </nav>
+        </aside>
 
-        <div className="profile-details-column">
+        <section className="profile-details-column">
+          {/* About me — Figma spec */}
           <div className="profile-section profile-bio">
             <div className="section-header">
               <h3><User size={22} /> About me</h3>
@@ -167,8 +165,10 @@ const Profile = ({ userData }) => {
               <p className="muted">No recent activity to display.</p>
             )}
           </div>
-        </div>
+        </section>
       </div>
+
+      <Footer />
     </div>
   );
 };

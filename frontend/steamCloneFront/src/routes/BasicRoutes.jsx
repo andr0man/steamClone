@@ -17,6 +17,7 @@ import Stats from '../pages/store/stats/Stats.jsx';
 import Wishlist from '../pages/store/wishlist/Wishlist.jsx';
 import PointsShop from '../pages/store/points-shop/PointsShop.jsx';
 import News from '../pages/store/news/News.jsx';
+import Search from '../pages/home/search/Search.jsx';
 
 const ProtectedRoute = ({ isLoggedIn, children }) => {
   if (!isLoggedIn) {
@@ -87,7 +88,10 @@ const BasicRoutes = ({ isLoggedIn, currentUser, handleLoginSuccess, handleLogout
               path="/store" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><Home /></ProtectedRoute>} 
             />
-            
+            <Route 
+              path="/home/search" 
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><Search /></ProtectedRoute>} 
+            />
             <Route 
               path="/library" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><Library /></ProtectedRoute>} 

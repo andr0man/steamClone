@@ -1,720 +1,281 @@
 @use 'sass:color';
 
-$bubble-primary-hue: 265;
-$bubble-secondary-hue: 220; 
-$bubble-success-hue: 145; 
-$bubble-error-hue: 0;
+:root { --navbar-h: 64px; }
 
-$bubble-bg-deep: hsl($bubble-secondary-hue, 15%, 8%); 
-$bubble-bg-primary: hsl($bubble-secondary-hue, 15%, 12%); 
-$bubble-bg-card: hsl($bubble-secondary-hue, 15%, 18%); 
-$bubble-bg-elements-lighter: hsl($bubble-secondary-hue, 15%, 22%);
-$bubble-bg-input: hsl($bubble-secondary-hue, 20%, 10%);
-$bubble-bg-input-focus: hsl($bubble-secondary-hue, 20%, 14%);
+$ink: #ffffff;
+$inactive: #6d6f7a;
+$violet: #9277C5;
+$bg: #141320;
+$accent: #B835FF;
 
-$bubble-text-bright: hsl($bubble-secondary-hue, 20%, 95%);
-$bubble-text-primary: hsl($bubble-secondary-hue, 15%, 85%);
-$bubble-text-secondary: hsl($bubble-secondary-hue, 10%, 65%);
-$bubble-text-muted: hsl($bubble-secondary-hue, 10%, 50%);
-$bubble-text-placeholder: hsl($bubble-secondary-hue, 10%, 40%);
+$rainbow: linear-gradient(
+  270deg,
+  #FFFFFF 0.54%,
+  #8C8C8C 18.71%,
+  #FF9584 28.28%,
+  #DFED43 40.23%,
+  #A0F885 49.79%,
+  #74BFF7 59.18%,
+  #7C72DB 67.24%,
+  #8681A8 75.3%,
+  #FFFFFF 100%
+);
 
+html, body, #root { min-height: 100%; height: 100%; }
 
-$bubble-accent-home-primary: hsl($bubble-secondary-hue, 85%, 65%); 
-$bubble-accent-home-secondary: hsl($bubble-secondary-hue, 75%, 75%); 
-$bubble-accent-success: hsl($bubble-success-hue, 65%, 55%);
-$bubble-accent-success-darker: hsl($bubble-success-hue, 60%, 35%); 
-
-$bubble-border-soft: hsla($bubble-secondary-hue, 15%, 50%, 0.2);
-$bubble-border-medium: hsla($bubble-secondary-hue, 15%, 50%, 0.4);
-$bubble-border-focus: $bubble-accent-home-primary;
-
-$bubble-font-primary: 'Motiva Sans', 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-$bubble-radius-sm: 10px;
-$bubble-radius-md: 16px;
-$bubble-radius-lg: 24px;
-$bubble-radius-pill: 50px;
-
-$bubble-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
-$bubble-shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.2), 0 3px 8px rgba(0, 0, 0, 0.15);
-$bubble-shadow-glow-accent: 0 0 20px hsla($bubble-secondary-hue, 85%, 65%, 0.25);
-$bubble-shadow-focus: 0 0 0 2px hsla($bubble-secondary-hue, 85%, 65%, 0.25);
-
-
-$bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-$bubble-transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-$bubble-blur: 10px; 
-
-@mixin bubble-button-base {
-  padding: 12px 24px;
-  border: none;
-  border-radius: $bubble-radius-pill;
-  font-family: $bubble-font-primary;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all $bubble-transition-fast;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  text-decoration: none;
-  line-height: 1.2;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: $bubble-shadow-medium;
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: $bubble-shadow-soft;
-  }
-   &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-@mixin bubble-button-primary {
-  @include bubble-button-base;
-  background: linear-gradient(135deg, $bubble-accent-home-primary, $bubble-accent-home-secondary);
-  color: $bubble-text-bright;
-
-  &:hover:not(:disabled) {
-    background: linear-gradient(135deg, color.adjust($bubble-accent-home-primary, $lightness: 5%), color.adjust($bubble-accent-home-secondary, $lightness: 5%));
-    box-shadow: $bubble-shadow-medium, 0 0 15px hsla($bubble-secondary-hue, 85%, 65%, 0.3);
-  }
-}
-
-@mixin bubble-button-secondary {
-  @include bubble-button-base;
-  background-color: hsla($bubble-secondary-hue, 20%, 25%, 0.7);
-  color: $bubble-text-primary;
-  border: 1px solid $bubble-border-soft;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-
-
-  &:hover:not(:disabled) {
-    background-color: hsla($bubble-secondary-hue, 20%, 30%, 0.9);
-    border-color: $bubble-border-medium;
-    color: $bubble-text-bright;
-  }
-}
-
-@mixin bubble-button-success { 
-  @include bubble-button-base;
-  background: linear-gradient(135deg, $bubble-accent-success, color.adjust($bubble-accent-success, $lightness: 10%));
-  color: hsl($bubble-success-hue, 80%, 95%);
-
-  &:hover:not(:disabled) {
-    background: linear-gradient(135deg, color.adjust($bubble-accent-success, $lightness: 5%), color.adjust($bubble-accent-success, $lightness: 15%));
-     box-shadow: $bubble-shadow-medium, 0 0 15px hsla($bubble-success-hue, 65%, 55%, 0.3);
-  }
-}
-
-.home-container {
-  background-color: $bubble-bg-primary;
-  color: $bubble-text-primary;
-  font-family: $bubble-font-primary;
-  min-height: 100vh;
-  padding-top: 0;
-}
-
-.home-loading {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  font-size: 1.5rem;
-  color: $bubble-text-bright;
-  background-color: $bubble-bg-deep;
-
-  .spinner {
-    margin-top: 20px;
-    width: 50px;
-    height: 50px;
-    border: 5px solid hsla($bubble-secondary-hue, 20%, 95%, 0.2);
-    border-top-color: $bubble-accent-home-primary;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.hero-section {
-  height: 450px; 
+body {
+  background-color: $bg;
+  background-repeat: no-repeat;
+  background-position: center top;
   background-size: cover;
-  background-position: center center;
-  display: flex;
-  align-items: flex-end;
-  padding: 3rem 4rem;
+}
+
+.store-home {
+  min-height: 100svh;
+  background: transparent;
+  color: $ink;
+  padding-top: calc(var(--navbar-h) + 16px);
   position: relative;
-  color: $bubble-text-bright;
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, hsla($bubble-secondary-hue, 15%, 8%, 0.8) 0%, hsla($bubble-secondary-hue, 15%, 8%, 0) 70%);
-    z-index: 0;
-  }
-
-
-  .hero-content {
-    max-width: 700px;
-    z-index: 1;
-  }
-
-  .hero-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    color: $bubble-text-bright;
-  }
-
-  .hero-description {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-    max-width: 90%;
-    text-shadow: 0 1px 5px rgba(0,0,0,0.4);
-    color: $bubble-text-primary;
-  }
-  
-  .hero-meta {
-    display: flex;
-    gap: 1.5rem;
-    font-size: 0.9rem;
-    color: $bubble-text-secondary;
-    margin-bottom: 2rem;
-    align-items: center;
-    
-    span {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      svg { color: $bubble-accent-home-secondary; }
-    }
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .hero-button {
-    padding: 12px 28px;
-    font-size: 1rem; 
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    &.primary { @include bubble-button-success; } 
-    &.secondary { @include bubble-button-secondary; }
-  }
+  isolation: isolate;
+}
+.store-home::before {
+  content: '';
+  position: fixed;
+  left: 0; top: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  height: 100lvh;
+  height: 100dvh;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url('/authbc/BG_grey.svg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
 }
 
-.home-main-content {
-  display: flex;
-  gap: 2.5rem;
-  padding: 2.5rem;
-  max-width: 1600px;
-  margin: 0 auto;
+.page-inset {
+  --side: clamp(16px, 3vw, 32px);
+  width: min(1760px, 100% - var(--side) * 2);
+  margin-inline: auto;
+  padding-inline: var(--side);
+  position: relative;
+  z-index: 1;
 }
 
-.home-sidebar {
-  width: 300px;
-  flex-shrink: 0;
-  background-color: hsla($bubble-secondary-hue, 15%, 18%, 0.8);
-  backdrop-filter: blur($bubble-blur);
-  -webkit-backdrop-filter: blur($bubble-blur);
-  padding: 1.75rem;
-  border-radius: $bubble-radius-lg;
-  border: 1px solid $bubble-border-medium;
-  align-self: flex-start;
-  position: sticky;
-  top: 20px;
-  box-shadow: $bubble-shadow-medium;
+.store-rail {
+  margin: 16px 0 12px;
 
-  h2, h3 {
-    color: $bubble-text-bright;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid $bubble-border-soft;
-    font-weight: 600;
-  }
-  h3 {
-    font-size: 1.2rem;
-    margin-top: 1.5rem;
-  }
-
-  .search-bar-container {
+  .rail-frame {
     position: relative;
-    margin-bottom: 1.5rem;
-    .search-icon {
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: $bubble-text-muted;
-      transition: color $bubble-transition-fast;
-      width: 18px; height: 18px;
-    }
-    .search-input {
-      width: 100%;
-      padding: 0.9rem 1rem 0.9rem 3rem; 
-      background-color: $bubble-bg-input;
-      border: 1px solid $bubble-border-medium;
-      border-radius: $bubble-radius-md; 
-      color: $bubble-text-primary;
-      font-size: 0.95rem;
-      transition: all $bubble-transition-fast;
-      &::placeholder { color: $bubble-text-placeholder; }
-      &:focus {
-        outline: none;
-        border-color: $bubble-border-focus;
-        background-color: $bubble-bg-input-focus;
-        box-shadow: $bubble-shadow-focus, $bubble-shadow-glow-accent;
-        & ~ .search-icon {
-          color: $bubble-accent-home-primary;
-        }
-      }
-    }
+    border-radius: 12px;
+    background: #171623;
+    border: 1px solid rgba(255,255,255,.08);
+    padding: clamp(10px, 1.4vw, 14px) clamp(12px, 2vw, 18px);
   }
 
-  .category-nav {
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      li a {
-        display: block;
-        padding: 0.75rem 1rem;
-        color: $bubble-text-secondary;
-        text-decoration: none;
-        border-radius: $bubble-radius-sm;
-        font-size: 0.95rem;
-        transition: all $bubble-transition-fast;
-        font-weight: 500;
-        &:hover {
-          background-color: rgba($bubble-accent-home-secondary, 0.15);
-          color: $bubble-text-bright;
-          transform: translateX(4px);
-        }
-         &.active {
-          background-color: rgba($bubble-accent-home-secondary, 0.15);
-            color: $bubble-accent-home-primary;
-            font-weight: 600;
-        }
-      }
-    }
+  .rgb-line {
+    position: absolute;
+    left: 12px; right: 12px; top: 0;
+    height: 3px;
+    background: $rainbow;
+    border-radius: 2px;
+    transform: translateY(-1px);
+    pointer-events: none;
   }
-  
-  .sidebar-promo {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: hsla($bubble-success-hue, 65%, 55%, 0.1);
-    border-radius: $bubble-radius-md;
-    border: 1px solid hsla($bubble-success-hue, 65%, 55%, 0.2);
-    text-align: center;
-    h4 {
-      color: $bubble-accent-success;
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-    }
-    p {
-      font-size: 0.9rem;
-      color: $bubble-text-primary;
-      margin-bottom: 1rem;
-    }
-    button {
-      @include bubble-button-success;
-      background: $bubble-accent-success-darker;
-      border: 1px solid $bubble-accent-success;
-      color: color.adjust($bubble-accent-success, $lightness: 30%);
-      padding: 8px 18px;
-      font-size: 0.9rem;
-      border-radius: $bubble-radius-pill;
-      &:hover:not(:disabled) {
-        background: $bubble-accent-success;
-        color: hsl($bubble-success-hue, 100%, 95%);
-        border-color: color.adjust($bubble-accent-success, $lightness: 10%);
-      }
-    }
+
+  .rail-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: clamp(10px, 2vw, 24px);
+    width: 100%;
   }
-}
 
-.home-game-listings {
-  flex-grow: 1;
-  min-width: 0;
-
-  .tabs-navigation {
+  .rail-left {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid $bubble-border-medium;
+    align-items: center;
+    gap: clamp(18px, 4vw, 64px);
 
-    .tab-button {
-      @include bubble-button-base;
-      padding: 0.8rem 1.25rem;
-      background-color: transparent;
-      color: $bubble-text-secondary;
-      border-radius: $bubble-radius-md $bubble-radius-md 0 0;
-      border: none;
-      border-bottom: 3px solid transparent;
-      position: relative;
-      top: 1px;
-      font-weight: 500;
+    .rail-link {
+      color: $ink;
+      text-decoration: none;
+      white-space: nowrap;
+      font: 700 clamp(14px, 1.35vw, 20px)/1.2 'Exo 2', system-ui, sans-serif;
+      transition: color .2s ease, text-shadow .2s ease;
 
-      svg { color: $bubble-text-muted; margin-right: 8px; transition: color $bubble-transition-fast; }
+      &:hover { text-shadow: 0 1px 4.5px rgba(184,53,255,.8); }
+      &.active { color: #fff; }
+    }
+  }
 
-      &:hover:not(.active) {
-        color: $bubble-text-bright;
-        background-color: rgba($bubble-accent-home-secondary, 0.15);
-        transform: none;
-        box-shadow: none;
-        svg { color: $bubble-accent-home-secondary; }
+  .rail-right {
+    display: inline-flex; align-items: center; gap: 10px;
+
+    .filtered {
+      color: $accent;
+      text-decoration: none;
+      font: 800 14px/1 'Inter';
+    }
+    .slash { opacity: .85; font: 800 16px/1 'Inter'; }
+
+    .search {
+      position: relative; width: clamp(160px, 18vw, 240px);
+      display: inline-flex; align-items: center;
+
+      input {
+        width: 100%;
+        background: transparent;
+        border: 0; outline: 0;
+        color: #a9aabb;
+        font: 500 16px/1.6 'Exo 2';
+        padding: 0 28px 6px 0;
       }
-      &.active {
-        color: $bubble-accent-home-primary;
-        border-bottom-color: $bubble-accent-home-primary;
-        font-weight: 700;
-        background-color: hsla($bubble-secondary-hue, 15%, 18%, 0.5);
-        svg { color: $bubble-accent-home-primary; }
+
+      .search-btn {
+        position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+        width: 24px; height: 24px; display: grid; place-items: center;
+        background: transparent; border: 0; padding: 0; cursor: pointer;
+
+        img { width: 20px; height: 20px; }
+      }
+
+      &::after {
+        content: ''; position: absolute; left: 0; right: 0; bottom: -2px;
+        height: 1px; background: rgba(255,255,255,.22);
       }
     }
   }
 }
 
-.game-section {
-  margin-bottom: 3rem;
-  .section-title {
-    font-size: 1.8rem;
-    color: $bubble-text-bright;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid $bubble-border-soft;
-    font-weight: 600;
-  }
-}
+.hero {
+  position: relative;
+  margin: 18px 0 34px;
 
-.game-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 2rem;
+  .hero-cards {
+    display: grid;
+    grid-template-columns: 1.33fr 1fr 1fr;
+    gap: clamp(14px, 1.4vw, 22px);
+  }
+
+  .nav-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 54px; height: 74px; display: grid; place-items: center;
+    color: #e4ddf2; cursor: pointer;
+    background: rgba(146,119,197,.10);
+    border: 1px solid rgba($violet,.45); border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(124,114,219,.18);
+    transition: filter .15s, transform .15s ease;
+    &:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    &.left  { left: 10px; }
+    &.right { right: 10px; }
+  }
+
+  .dots {
+    display: flex; gap: 24px; justify-content: center; margin: 14px 0 0;
+    .dot { width: 50px; height: 7px; background: $inactive; border-radius: 6px; }
+    .dot.active { background: #fff; }
+  }
 }
 
 .game-card {
-  background-color: $bubble-bg-card;
-  border-radius: $bubble-radius-lg;
-  overflow: hidden;
-  border: 1px solid $bubble-border-medium;
-  box-shadow: $bubble-shadow-medium;
-  transition: transform $bubble-transition-fast, box-shadow $bubble-transition-fast;
-  display: flex;
-  flex-direction: column;
+  position: relative; border-radius: 16px; overflow: hidden;
+  background: #0f0f14; border: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 8px 22px rgba(0,0,0,.18);
+  padding: 0; cursor: pointer;
 
-  &:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: $bubble-shadow-medium, $bubble-shadow-glow-accent;
-    .game-card-image-container .game-card-hover-overlay {
-      opacity: 1;
-      visibility: visible;
-      backdrop-filter: blur(4px);
-    }
-  }
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  .game-card-image-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 2 / 3; 
-    
-    .game-card-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+  &.lg   { aspect-ratio: 663 / 348; }
+  &.md   { aspect-ratio: 500 / 278; }
+  &.xl   { aspect-ratio: 565.2 / 314.05; }
+  &.sm   { aspect-ratio: 369 / 221.4; }
+  &.wide { aspect-ratio: 500 / 300; }
+
+  .price-badge {
+    position: absolute; left: 10px; bottom: 10px; display: inline-flex; gap: 10px; align-items: center;
+
+    &.regular {
+      background: var(--darkpurpl, #292035); color: #fff; border: 1px solid rgba(255,255,255,.16);
+      border-radius: 8px; padding: 8px 12px; font: 900 16px/1 'Inter';
     }
 
-    .game-card-hover-overlay {
-      position: absolute;
-      inset: 0;
-      background-color: hsla($bubble-secondary-hue, 15%, 10%, 0.75);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity $bubble-transition-fast, visibility $bubble-transition-fast, backdrop-filter $bubble-transition-fast;
-
-      .game-card-button {
-        @include bubble-button-base;
-        padding: 10px 20px;
-        font-size: 0.9rem;
-        width: 80%;
-        border-radius: $bubble-radius-pill;
-        &.primary { 
-          @include bubble-button-primary; 
-          background: linear-gradient(135deg, $bubble-accent-success, color.adjust($bubble-accent-success, $lightness: 10%));
-          color: hsl($bubble-success-hue, 80%, 95%);
-          &:hover {
-             background: linear-gradient(135deg, color.adjust($bubble-accent-success, $lightness: 5%), color.adjust($bubble-accent-success, $lightness: 15%));
-          }
-        }
-        &.secondary { 
-          @include bubble-button-secondary; 
-          background-color: hsla($bubble-secondary-hue, 15%, 25%, 0.8); 
-          border-color: $bubble-border-soft;
-          &:hover {
-            background-color: hsla($bubble-secondary-hue, 15%, 30%, 0.9);
-            border-color: $bubble-border-medium;
-          }
-        }
+    &.discount {
+      .off {
+        padding: 7px 10px; font: 900 14px/1 'Inter';
+        background-clip: text; -webkit-background-clip: text; color: transparent; background-image: $rainbow;
+        border: 1px solid rgba(161, 120, 235, .55); border-radius: 8px;
+      }
+      .nums {
+        display: inline-flex; align-items: center; gap: 12px;
+        background: var(--darkpurpl, #292035); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.16);
+        .from { color: #9aa0a8; text-decoration: line-through; font: 800 16px/1 'Inter'; }
+        .now  { color: #fff; font: 900 16px/1 'Inter'; }
       }
     }
   }
+}
 
-  .game-card-info {
-    padding: 1.25rem; 
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+.section-head {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+  h3 { margin: 0; font: 800 clamp(18px, 1.6vw, 22px)/1.2 'Exo 2', system-ui, sans-serif; }
+  .see-all { color: $accent; text-decoration: none; font: 800 14px/1 'Inter'; }
+}
+
+.store-section { margin: 34px 0 46px; }
+
+.row.grid.four  { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 1.4vw, 22px); margin-bottom: 22px; }
+.row.grid.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 1.8vw, 35px); }
+
+.scroll-row {
+  position: relative;
+
+  .row-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 54px; height: 74px; display: grid; place-items: center;
+    color: #e4ddf2; background: rgba(146,119,197,.10);
+    border: 1px solid rgba($violet,.45); border-radius: 12px; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(124,114,219,.18);
+    &.left  { left: 10px; }
+    &.right { right: 10px; }
   }
 
-  .game-card-title {
-    font-size: 1.25rem;
-    color: $bubble-text-bright;
-    margin: 0 0 0.6rem 0;
-    font-weight: 600;
-    white-space: nowrap;
+  &__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(280px, 1fr);
+    gap: clamp(16px, 1.6vw, 26px);
     overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .game-card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem; 
-    margin-bottom: 0.85rem;
-    .game-tag {
-      background-color: rgba($bubble-accent-home-secondary, 0.15);
-      color: $bubble-accent-home-secondary;
-      padding: 0.3rem 0.6rem;
-      border-radius: $bubble-radius-sm;
-      font-size: 0.75rem;
-      font-weight: 600; 
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      svg { flex-shrink: 0; width: 12px; height: 12px; }
-    }
-  }
-
-  .game-card-price {
-    margin-top: auto;
-    padding-top: 0.85rem;
-    border-top: 1px solid $bubble-border-soft;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 1.15rem;
-    font-weight: 700; 
-
-    .game-price-original {
-      color: $bubble-text-muted;
-      text-decoration: line-through;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-    .game-price-discounted {
-      color: $bubble-accent-success;
-    }
-    .game-price-current {
-      color: $bubble-text-primary;
-    }
-    .game-price-badge {
-      background-color: $bubble-accent-success;
-      color: hsl($bubble-success-hue, 100%, 95%);
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: $bubble-radius-sm;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      margin-left: auto;
-      box-shadow: 0 2px 5px hsla($bubble-success-hue, 65%, 55%, 0.3);
-    }
   }
 }
 
-.no-results {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 3rem 1rem;
-  background-color: $bubble-bg-card;
-  border-radius: $bubble-radius-lg;
-  color: $bubble-text-secondary;
-  margin-top: 2rem;
-  border: 1px solid $bubble-border-medium;
-
-  svg {
-    color: $bubble-accent-home-primary;
-    margin-bottom: 1.5rem;
-    width: 48px; height: 48px;
+.loop-cta {
+  margin: 30px 0 54px;
+  .cta-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px;
+    background: linear-gradient(90deg, rgba(41,32,53,1) 0%, rgba(31,24,40,0) 100%);
+    border-radius: 12px; border: 1px solid rgba(255,255,255,.06);
   }
-
-  p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 0.5rem;
-    &:first-of-type {
-      color: $bubble-text-bright;
-      font-weight: 600;
-      font-size: 1.3rem;
-    }
+  .cta-text {
+    h4 { margin: 0 0 4px; font: 800 clamp(18px, 1.6vw, 20px)/1.2 'Exo 2'; text-shadow: 0 1px 4.5px #b835ff; }
+    p  { margin: 0; color: #e9e9f2; font: 500 15px/1.5 'Exo 2'; opacity: .9; }
   }
+  .nav-arrow { position: static; transform: none; width: 50px; height: 50px; }
 }
 
-.home-footer {
-  background-color: $bubble-bg-deep; 
-  padding: 2.5rem 2rem; 
-  text-align: center;
-  color: $bubble-text-muted;
-  font-size: 0.9rem;
-  margin-top: 3rem;
-  border-top: 1px solid $bubble-border-soft;
-  p {
-    margin: 0.5rem 0;
-    line-height: 1.6;
-  }
-   a { 
-    color: $bubble-text-secondary;
-    text-decoration: none;
-    transition: color $bubble-transition-fast;
-    &:hover {
-      color: $bubble-accent-home-primary;
-      text-decoration: underline;
-    }
-  }
+@media (max-width: 1280px) {
+  .row.grid.four  { grid-template-columns: repeat(3, 1fr); }
+  .row.grid.three { grid-template-columns: repeat(2, 1fr); }
 }
-
-@media (max-width: 1200px) {
-  .home-main-content {
-    padding: 2rem;
-    gap: 2rem;
-  }
-  .home-sidebar {
-    width: 260px;
-  }
-  .game-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5rem;
-  }
-  .hero-section {
-    padding: 2.5rem 3rem;
-    height: 400px;
-    .hero-title { font-size: 3rem; }
-  }
-}
-
 @media (max-width: 992px) {
-  .home-main-content {
-    flex-direction: column;
-  }
-  .home-sidebar {
-    width: 100%;
-    position: static;
-    margin-bottom: 2rem;
-    padding: 1.5rem;
-  }
-  .hero-section {
-    height: 350px;
-    padding: 2rem;
-    .hero-title { font-size: 2.5rem; }
-    .hero-description { font-size: 1rem; }
-    .hero-meta { gap: 1rem; font-size: 0.85rem; }
-  }
-  .game-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  }
-  .tabs-navigation {
-    gap: 0.2rem;
-    .tab-button {
-      padding: 10px 15px;
-      font-size: 0.9rem;
-    }
-  }
+  .hero .hero-cards { grid-template-columns: 1fr; }
 }
-
-@media (max-width: 768px) {
-  .game-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.2rem;
-  }
-  .home-main-content {
-    padding: 1.5rem;
-  }
-  .game-card .game-card-title { font-size: 1.15rem; }
-  .game-card .game-card-price { font-size: 1.05rem; }
-  .section-title { font-size: 1.6rem; }
-
-  .hero-section {
-    height: auto;
-    min-height: 300px;
-    padding: 1.5rem;
-    .hero-content { max-width: 100%; }
-    .hero-title { font-size: 2rem; }
-    .hero-actions { 
-        flex-direction: column; 
-        align-items: stretch; 
-        .hero-button { 
-            width: 100%; 
-            padding: 1rem;
-            font-size: 0.95rem;
-        }
-    }
-  }
-  .tabs-navigation { 
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 8px; 
-    scrollbar-width: thin;
-    scrollbar-color: $bubble-border-medium $bubble-bg-card;
-    &::-webkit-scrollbar { height: 6px; }
-    &::-webkit-scrollbar-track { background: $bubble-bg-card; border-radius: 3px;}
-    &::-webkit-scrollbar-thumb { background: $bubble-border-medium; border-radius: 3px;}
-    &::-webkit-scrollbar-thumb:hover { background: $bubble-accent-home-primary; }
-  }
+@media (max-width: 760px) {
+  .row.grid.four  { grid-template-columns: repeat(2, 1fr); }
+  .row.grid.three { grid-template-columns: 1fr; }
 }
-
-@media (max-width: 480px) {
-  .home-main-content { padding: 1rem; }
-  .home-sidebar { padding: 1.25rem; }
-  .game-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .hero-section {
-    padding: 1.5rem 1rem;
-     .hero-title { font-size: 1.8rem; }
-     .hero-description { display: none; }
-     .hero-meta { flex-direction: column; align-items: flex-start; gap: 0.5rem;}
-  }
-  .tabs-navigation .tab-button { padding: 8px 12px; font-size: 0.85rem; } 
-  .home-footer { padding: 1.5rem 1rem; font-size: 0.8rem;}
-  .game-card .game-card-info { padding: 1rem; }
+@media (max-width: 520px) {
+  .hero .nav-arrow, .scroll-row .row-arrow { display: none; }
 }

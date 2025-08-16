@@ -1,7 +1,25 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.scss';
-import { ChevronDown, LogOut, UserCircle } from 'lucide-react';
+
+const ChevronDown = ({ size = 16, className = '' }) => (
+  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
+const UserIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M6 20c0-3.3137 2.6863-6 6-6s6 2.6863 6 6" />
+  </svg>
+);
+const LogOutIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <path d="M16 17l5-5-5-5" />
+    <path d="M21 12H8" />
+  </svg>
+);
 
 const Navbar = ({ onLogout, username = 'User123' }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -50,7 +68,7 @@ const Navbar = ({ onLogout, username = 'User123' }) => {
   ];
 
   const userNavItems = [
-    { id: 'profile-view', label: 'View My Profile', path: '/profile', icon: <UserCircle size={18} /> }
+    { id: 'profile-view', label: 'View My Profile', path: '/profile', icon: <UserIcon size={18} /> }
   ];
 
   const updateBubblePosition = useCallback(() => {
@@ -152,7 +170,7 @@ const Navbar = ({ onLogout, username = 'User123' }) => {
               aria-expanded={activeDropdown === 'user-menu'}
               aria-controls="user-menu-dropdown"
             >
-              <UserCircle size={18} />
+              <UserIcon size={18} />
             </button>
 
             {activeDropdown === 'user-menu' && (
@@ -171,7 +189,7 @@ const Navbar = ({ onLogout, username = 'User123' }) => {
                 ))}
                 <div className="dropdown-sep" />
                 <button onClick={handleLogoutClick} className="fluxi-dropdown-item logout-item" role="menuitem">
-                  <span className="dropdown-item-icon"><LogOut size={18} /></span>
+                  <span className="dropdown-item-icon"><LogOutIcon size={18} /></span>
                   <span>Logout</span>
                 </button>
               </div>
