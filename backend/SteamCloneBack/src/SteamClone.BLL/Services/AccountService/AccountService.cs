@@ -69,7 +69,7 @@ public class AccountService(
         user.PasswordHash = passwordHasher.HashPassword(model.Password);
         user.CreatedBy = user.Id;
         user.CountryId = user.CountryId;
-        user.RoleId = isDbHasUsers ? Settings.UserRole : Settings.AdminRole;
+        user.RoleId = isDbHasUsers ? (model.IsManager ? Settings.ManagerRole : Settings.UserRole) : Settings.AdminRole;
         user.EmailConfirmed = !isDbHasUsers;
 
         try
@@ -81,7 +81,7 @@ public class AccountService(
                     Id = Guid.NewGuid().ToString(),
                     Amount = 0,
                     UserId = user.Id
-                }, 
+                },
                 token);
         }
         catch (Exception e)

@@ -33,7 +33,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasOne(u => u.Balance)
             .WithOne()
             .HasForeignKey<Balance>(b => b.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.ConfigureAudit();
     }

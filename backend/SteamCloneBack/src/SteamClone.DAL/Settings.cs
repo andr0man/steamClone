@@ -3,13 +3,16 @@
 public static class Settings
 {
     public static int PasswordLength = 6;
+    
     public const string UserRole = "user";
     public const string AdminRole = "admin";
+    public const string ManagerRole = "manager";
     
     public static readonly List<string> ListOfRoles = new()
     {
         AdminRole,
-        UserRole
+        UserRole,
+        ManagerRole
     };
 
     public static class ImagesPathSettings

@@ -29,7 +29,8 @@ public class UserProvider(IHttpContextAccessor context, AppDbContext appDbContex
 
     public string GetUserRole()
     {
-        var userRole = _context.HttpContext!.User.FindFirst("role")?.Value;
+        var userRole = _context.HttpContext!.User.Claims
+            .FirstOrDefault(c => c.Type.Contains("role", StringComparison.OrdinalIgnoreCase))?.Value;
         
         if (userRole == null)
         {

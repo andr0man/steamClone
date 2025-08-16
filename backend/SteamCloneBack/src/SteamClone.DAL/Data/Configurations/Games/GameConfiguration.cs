@@ -9,25 +9,31 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
 {
     public void Configure(EntityTypeBuilder<Game> builder)
     {
-        builder.HasKey(e => e.Id);
+        builder.HasKey(g => g.Id);
 
-        builder.Property(e => e.Name)
+        builder.Property(g => g.Name)
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(e => e.Description)
+        builder.Property(g => g.Description)
             .IsRequired()
             .HasMaxLength(1000);
 
-        builder.Property(e => e.ReleaseDate)
+        builder.Property(g => g.ReleaseDate)
             .IsRequired();
 
-        builder.Property(e => e.PercentageOfPositiveReviews)
+        builder.Property(g => g.PercentageOfPositiveReviews)
             .IsRequired(false);
 
-        builder.Property(e => e.Price)
+        builder.Property(g => g.Price)
             .IsRequired()
             .HasColumnType("decimal(18,2)");
+
+        builder.Property(g => g.IsApproved)
+            .IsRequired(false);
+
+        builder.Property(g => g.Discount)
+            .IsRequired(false);
 
         builder.HasMany(e => e.Genres)
             .WithMany();
@@ -41,6 +47,9 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
             .WithMany()
             .HasForeignKey(e => e.PublisherId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(d => d.AssociatedUsers)
+            .WithMany();
 
         builder.ConfigureAudit();
     }
