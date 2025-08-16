@@ -9,4 +9,5 @@ public class UpdateGameVM
     public required string DeveloperId { get; set; }
     public string? PublisherId { get; set; }
     public List<int> GenresIds { get; set; } = new();
+    public int? Discount { get; set; }
 }

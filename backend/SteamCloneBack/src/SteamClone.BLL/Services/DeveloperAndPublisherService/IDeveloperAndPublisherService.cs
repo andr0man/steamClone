@@ -8,6 +8,6 @@ public interface IDeveloperAndPublisherService : IServiceCRUD<string, CreateDeve
     Task<ServiceResponse> AssociateUserAsync(string developerAndPublisherId, string userId, CancellationToken token);
     Task<ServiceResponse> RemoveAssociatedUserAsync(string developerAndPublisherId, string userId, CancellationToken token);
     Task<ServiceResponse> GetByAssociatedUserAsync(CancellationToken token);
-    Task<ServiceResponse> ApproveAsync(string id, bool isUserApproved, CancellationToken token);
+    Task<ServiceResponse> ApproveAsync(string id, bool isApproved, CancellationToken token);
     Task<ServiceResponse> GetWithoutApprovalAsync(CancellationToken token);
 }

@@ -14,7 +14,7 @@ namespace SteamClone.API.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-[Authorize(Roles = $"{Settings.AdminRole}, {Settings.UserRole}")]
+[Authorize(Roles = $"{Settings.AdminRole}, {Settings.ManagerRole}")]
 public class GameController(IGameService gameService)
     : GenericController<string, CreateGameVM, UpdateGameVM>(gameService)
 {
@@ -105,5 +105,45 @@ public class GameController(IGameService gameService)
     {
         var response = await gameService.UpdateLocalizationAsync(localizationId, model, cancellationToken);
         return GetResult(response);
+    }
+    
+    [HttpPatch("associate-user")]
+    public async Task<IActionResult> AssociateUserAsync([FromQuery] string gameId, string userId,
+        CancellationToken token)
+    {
+        var result = await gameService.AssociateUserAsync(gameId, userId, token);
+        return GetResult(result);
+    }
+
+    [HttpPatch("remove-associated-user")]
+    public async Task<IActionResult> RemoveAssociatedUserAsync([FromQuery] string gameId,
+        string userId, CancellationToken token)
+    {
+        var result =
+            await gameService.RemoveAssociatedUserAsync(gameId, userId, token);
+        return GetResult(result);
+    }
+
+    [HttpGet("by-associated-user")]
+    public async Task<IActionResult> GetByAssociatedUserIdAsync(CancellationToken token)
+    {
+        var result = await gameService.GetByAssociatedUserAsync(token);
+        return GetResult(result);
+    }
+    
+    [Authorize(Roles = Settings.AdminRole)]
+    [HttpPatch("approve")]
+    public async Task<IActionResult> ApproveAsync([FromQuery] string id, bool isApproved = true, CancellationToken token = default)
+    {
+        var result = await gameService.ApproveAsync(id, isApproved, token);
+        return GetResult(result);
+    }
+    
+    [Authorize(Roles = Settings.AdminRole)]
+    [HttpGet("get-without-approval")]
+    public async Task<IActionResult> GetWithoutApprovalAsync(CancellationToken token = default)
+    {
+        var result = await gameService.GetWithoutApprovalAsync(token);
+        return GetResult(result);
     }
 }

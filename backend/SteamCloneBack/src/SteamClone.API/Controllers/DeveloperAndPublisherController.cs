@@ -42,9 +42,9 @@ public class DeveloperAndPublisherController(IDeveloperAndPublisherService devel
     
     [Authorize(Roles = Settings.AdminRole)]
     [HttpPatch("approve")]
-    public async Task<IActionResult> ApproveAsync([FromQuery] string id, bool isUserApproved = true, CancellationToken token = default)
+    public async Task<IActionResult> ApproveAsync([FromQuery] string id, bool isApproved = true, CancellationToken token = default)
     {
-        var result = await developerAndPublisherService.ApproveAsync(id, isUserApproved, token);
+        var result = await developerAndPublisherService.ApproveAsync(id, isApproved, token);
         return GetResult(result);
     }
     

@@ -55,14 +55,14 @@ public class DeveloperAndPublisherService(
             return ServiceResponse.BadRequestResponse(
                 $"Developer Or Publisher with name '{model.Name}' already exists");
         }
-        
+
         var userRole = userProvider.GetUserRole();
-        
+
         if (userRole == "Admin")
         {
             developerAndPublisher.IsApproved = true;
         }
-        
+
         var user = await userRepository.GetByIdAsync(await userProvider.GetUserId(), cancellationToken);
         developerAndPublisher.AssociatedUsers.Add(user!);
 
@@ -87,6 +87,14 @@ public class DeveloperAndPublisherService(
         {
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
         }
+        
+        var userRole = userProvider.GetUserRole();
+        var userId = await userProvider.GetUserId();
+
+        if (!(existingDeveloper.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        {
+            return ServiceResponse.ForbiddenResponse("You don't have permission to update this developer or publisher");
+        }
 
         if (await countryRepository.GetByIdAsync(model.CountryId, cancellationToken) == null)
         {
@@ -98,27 +106,11 @@ public class DeveloperAndPublisherService(
             return ServiceResponse.BadRequestResponse(
                 $"Developer Or Publisher with name '{model.Name}' already exists");
         }
-        
-        var userRole = userProvider.GetUserRole();
-        var userId = await userProvider.GetUserId();
-
-        if (!(existingDeveloper.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
-        {
-            return ServiceResponse.ForbiddenResponse("You don't have permission to update this developer or publisher");
-        }
 
         var updatedDeveloper = mapper.Map(model, existingDeveloper);
 
-        try
-        {
-            var result = await developerAndPublisherRepository.UpdateAsync(updatedDeveloper, cancellationToken);
-
-            return ServiceResponse.OkResponse("Developer Or Publisher updated successfully", result);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
+        return await UpdateDeveloperAndPublisherAsync(updatedDeveloper, "Developer Or Publisher updated successfully",
+            cancellationToken);
     }
 
     public async Task<ServiceResponse> DeleteAsync(string id, CancellationToken cancellationToken = default)
@@ -156,9 +148,9 @@ public class DeveloperAndPublisherService(
         {
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
         }
-        
+
         var userRole = userProvider.GetUserRole();
-        
+
         if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to associate users");
@@ -166,18 +158,11 @@ public class DeveloperAndPublisherService(
 
         developerAndPublisher.AssociatedUsers.Add(user);
 
-        try
-        {
-            await developerAndPublisherRepository.UpdateAsync(developerAndPublisher, token);
-            return ServiceResponse.OkResponse("User associated successfully");
-        }
-        catch (Exception e)
-        {
-            return ServiceResponse.BadRequestResponse(e.Message);
-        }
+        return await UpdateDeveloperAndPublisherAsync(developerAndPublisher, "User associated successfully", token);
     }
 
-    public async Task<ServiceResponse> RemoveAssociatedUserAsync(string developerAndPublisherId, string userId, CancellationToken token)
+    public async Task<ServiceResponse> RemoveAssociatedUserAsync(string developerAndPublisherId, string userId,
+        CancellationToken token)
     {
         var user = await userRepository.GetByIdAsync(userId, token);
 
@@ -192,9 +177,9 @@ public class DeveloperAndPublisherService(
         {
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
         }
-        
+
         var userRole = userProvider.GetUserRole();
-        
+
         if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to remove associated users");
@@ -202,21 +187,14 @@ public class DeveloperAndPublisherService(
 
         developerAndPublisher.AssociatedUsers.Remove(user);
 
-        try
-        {
-            await developerAndPublisherRepository.UpdateAsync(developerAndPublisher, token);
-            return ServiceResponse.OkResponse("User association removed successfully");
-        }
-        catch (Exception e)
-        {
-            return ServiceResponse.BadRequestResponse(e.Message);
-        }
+        return await UpdateDeveloperAndPublisherAsync(developerAndPublisher, "User association removed successfully",
+            token);
     }
 
     public async Task<ServiceResponse> GetByAssociatedUserAsync(CancellationToken token)
     {
         var userId = await userProvider.GetUserId();
-        
+
         return await GetByAssociatedUserIdAsync(userId, token);
     }
 
@@ -230,7 +208,7 @@ public class DeveloperAndPublisherService(
             mapper.Map<List<DeveloperAndPublisherVM>>(developersByAssociatedUser));
     }
 
-    public async Task<ServiceResponse> ApproveAsync(string id, bool isUserApproved, CancellationToken token)
+    public async Task<ServiceResponse> ApproveAsync(string id, bool isApproved, CancellationToken token)
     {
         var developerAndPublisher = await developerAndPublisherRepository.GetByIdAsync(id, token);
 
@@ -238,18 +216,11 @@ public class DeveloperAndPublisherService(
         {
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
         }
-        
-        developerAndPublisher.IsApproved = isUserApproved;
 
-        try
-        {
-            await developerAndPublisherRepository.UpdateAsync(developerAndPublisher, token);
-            return ServiceResponse.OkResponse("Developer Or Publisher approval set successfully");
-        }
-        catch (Exception e)
-        {
-            return ServiceResponse.BadRequestResponse(e.Message);
-        }
+        developerAndPublisher.IsApproved = isApproved;
+
+        return await UpdateDeveloperAndPublisherAsync(developerAndPublisher,
+            "Developer Or Publisher approval set successfully", token);
     }
 
     public async Task<ServiceResponse> GetWithoutApprovalAsync(CancellationToken token)
@@ -259,5 +230,20 @@ public class DeveloperAndPublisherService(
 
         return ServiceResponse.OkResponse("Developers Or Publishers without approval retrieved successfully",
             mapper.Map<List<DeveloperAndPublisherVM>>(developers));
+    }
+
+    private async Task<ServiceResponse> UpdateDeveloperAndPublisherAsync(DeveloperAndPublisher developerAndPublisher,
+        string successMessage,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await developerAndPublisherRepository.UpdateAsync(developerAndPublisher, cancellationToken);
+            return ServiceResponse.OkResponse(successMessage, result);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 }

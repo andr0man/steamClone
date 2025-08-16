@@ -13,14 +13,16 @@ public class GameRepository(AppDbContext appDbContext, IUserProvider userProvide
 
     public override async Task<IEnumerable<Game>> GetAllAsync(CancellationToken token) =>
         await GetAllAsync(token,
-            x => x.Genres);
+            x => x.Genres,
+            x => x.AssociatedUsers);
 
     public override async Task<Game?> GetByIdAsync(string id, CancellationToken token, bool asNoTracking = false)
     {
         return await GetByIdAsync(id, token, asNoTracking,
             x => x.Genres,
             x => x.SystemRequirements,
-            x => x.Localizations);
+            x => x.Localizations,
+            x => x.AssociatedUsers);
     }
 
     public async Task CalculateRatingAsync(string id, CancellationToken token)
