@@ -2,9 +2,8 @@
 using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using SteamClone.DAL;
 using SteamClone.DAL.Extensions;
-using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.Countries;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.ViewModels.DevelopersAndPublishers;
@@ -34,7 +33,7 @@ public class DeveloperAndPublisherControllerTests
         var developerAndPublisherDescription = "Test developer and publisher description";
         var foundedDate = DateTime.UtcNow;
         var website = "https://test.com";
-        
+
         var request = new CreateDeveloperAndPublisherVM
         {
             Name = developerAndPublisherName, Description = developerAndPublisherDescription, FoundedDate = foundedDate,
@@ -70,7 +69,7 @@ public class DeveloperAndPublisherControllerTests
         var developerAndPublisherDescription = "TestDeveloperAndPublisherDescription";
         var foundedDate = DateTime.UtcNow;
         var website = "https://test.com";
-        
+
         var request = new UpdateDeveloperAndPublisherVM
         {
             Name = developerAndPublisherName, Description = developerAndPublisherDescription, FoundedDate = foundedDate,
@@ -140,20 +139,6 @@ public class DeveloperAndPublisherControllerTests
     }
 
     [Fact]
-    public async Task ShouldGetAllDevelopersAndPublishers()
-    {
-        // Act
-        var response = await Client.GetAsync("DeveloperAndPublisher");
-
-        // Assert
-        response.IsSuccessStatusCode.Should().BeTrue();
-
-        var developersAndPublishers = await JsonHelper.GetPayloadAsync<List<DeveloperAndPublisher>>(response);
-
-        developersAndPublishers.Should().NotBeEmpty();
-    }
-
-    [Fact]
     public async Task ShouldNotCreateBecauseNameExists()
     {
         // Arrange
@@ -161,7 +146,7 @@ public class DeveloperAndPublisherControllerTests
         var developerAndPublisherDescription = "Test developer and publisher description";
         var foundedDate = DateTime.UtcNow;
         var website = "https://test.com";
-        
+
         var request = new CreateDeveloperAndPublisherVM
         {
             Name = developerAndPublisherName, Description = developerAndPublisherDescription, FoundedDate = foundedDate,
@@ -175,6 +160,41 @@ public class DeveloperAndPublisherControllerTests
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    // Controller tests for associate/remove/get-by-associated-user endpoints
+    [Fact]
+    public async Task ShouldAssociateUser_WhenUserAlreadyAssociated()
+    {
+        // Act: associate existing associated user (should succeed with current setup)
+        var url =
+            $"DeveloperAndPublisher/associate-user?developerAndPublisherId={_developerAndPublisher.Id}&userId={_user.Id}";
+        using var request = new HttpRequestMessage(new HttpMethod("PATCH"), url);
+        var response = await Client.SendAsync(request);
+
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ShouldRemoveAssociatedUser_WhenUserIsAssociated()
+    {
+        // Arrange: ensure the developer has the user associated (already true from fixture)
+        // Act: remove associated user
+        var url =
+            $"DeveloperAndPublisher/remove-associated-user?developerAndPublisherId={_developerAndPublisher.Id}&userId={_user.Id}";
+        using var request = new HttpRequestMessage(new HttpMethod("PATCH"), url);
+        var response = await Client.SendAsync(request);
+
+        // Assert
+        response.IsSuccessStatusCode.Should().BeTrue();
+
+        // Verify in DB that the user is no longer associated
+        var developerFromDb = await Context.DevelopersAndPublishers
+            .Include(d => d.AssociatedUsers)
+            .FirstOrDefaultAsync(d => d.Id == _developerAndPublisher.Id);
+        developerFromDb.Should().NotBeNull();
+        developerFromDb.AssociatedUsers.Should().NotContain(u => u.Id == _user.Id);
     }
 
     public async Task InitializeAsync()

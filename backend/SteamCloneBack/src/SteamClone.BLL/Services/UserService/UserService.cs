@@ -6,6 +6,7 @@ using SteamClone.DAL;
 using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.ViewModels.Users;
 
 namespace SteamClone.BLL.Services.UserService;

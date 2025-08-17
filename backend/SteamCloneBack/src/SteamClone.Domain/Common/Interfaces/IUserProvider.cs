@@ -3,4 +3,5 @@
 public interface IUserProvider
 {
     Task<string> GetUserId();
+    string GetUserRole();
 }

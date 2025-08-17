@@ -12,22 +12,17 @@ public class GameRepository(AppDbContext appDbContext, IUserProvider userProvide
     private readonly AppDbContext _appDbContext = appDbContext;
 
     public override async Task<IEnumerable<Game>> GetAllAsync(CancellationToken token) =>
-        await _appDbContext.Games
-            .Include(g => g.Genres)
-            .AsNoTracking()
-            .ToListAsync(token);
+        await GetAllAsync(token,
+            x => x.Genres,
+            x => x.AssociatedUsers);
 
     public override async Task<Game?> GetByIdAsync(string id, CancellationToken token, bool asNoTracking = false)
     {
-        var query = _appDbContext.Games
-            .Include(x => x.Genres)
-            .Include(x => x.SystemRequirements)
-            .Include(x => x.Localizations)
-            .AsQueryable();
-
-        if (asNoTracking)
-            query = query.AsNoTracking();
-        return await query.FirstOrDefaultAsync(e => e.Id!.Equals(id), token);
+        return await GetByIdAsync(id, token, asNoTracking,
+            x => x.Genres,
+            x => x.SystemRequirements,
+            x => x.Localizations,
+            x => x.AssociatedUsers);
     }
 
     public async Task CalculateRatingAsync(string id, CancellationToken token)
@@ -38,7 +33,7 @@ public class GameRepository(AppDbContext appDbContext, IUserProvider userProvide
 
         var complete = reviews.Count(x => x.IsPositive);
 
-        game!.PercentageOfPositiveReviews = (int)Math.Round((double)(100 * complete) / reviews.Count);
+        game!.PercentageOfPositiveReviews = (int)Math.Round(100 * ((double)complete / reviews.Count));
 
         await _appDbContext.SaveChangesAsync(token);
     }

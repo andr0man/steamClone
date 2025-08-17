@@ -1,7 +1,7 @@
 ﻿using SteamClone.Domain.Common.Abstractions;
 using SteamClone.Domain.Models.Countries;
 
-namespace SteamClone.Domain.Models.Auth;
+namespace SteamClone.Domain.Models.Auth.Users;
 
 public class User : AuditableEntity<string>
 {
@@ -18,5 +18,5 @@ public class User : AuditableEntity<string>
     public string? ExternalProvider { get; set; }
     public string? ExternalProviderKey { get; set; }
     public bool EmailConfirmed { get; set; }
-    
+    public Balance? Balance { get; set; }
 }

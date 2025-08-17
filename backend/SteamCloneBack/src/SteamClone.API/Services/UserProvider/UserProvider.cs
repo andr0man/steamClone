@@ -26,4 +26,17 @@ public class UserProvider(IHttpContextAccessor context, AppDbContext appDbContex
 
         return userIdStr;
     }
+
+    public string GetUserRole()
+    {
+        var userRole = _context.HttpContext!.User.Claims
+            .FirstOrDefault(c => c.Type.Contains("role", StringComparison.OrdinalIgnoreCase))?.Value;
+        
+        if (userRole == null)
+        {
+            throw new InvalidOperationException("User role claim not found.");
+        }
+        
+        return userRole;
+    } 
 }

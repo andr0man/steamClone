@@ -6,6 +6,7 @@ using MimeKit;
 using SteamClone.DAL;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 
 namespace SteamClone.BLL.Services.MailService
 {

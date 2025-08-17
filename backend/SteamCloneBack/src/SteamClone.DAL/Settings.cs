@@ -3,13 +3,16 @@
 public static class Settings
 {
     public static int PasswordLength = 6;
+    
     public const string UserRole = "user";
     public const string AdminRole = "admin";
+    public const string ManagerRole = "manager";
     
     public static readonly List<string> ListOfRoles = new()
     {
         AdminRole,
-        UserRole
+        UserRole,
+        ManagerRole
     };
 
     public static class ImagesPathSettings
@@ -28,6 +31,11 @@ public static class Settings
         public const string GameScreenshotImagePathName = "game_screenshots";
         public const string GameScreenshotImagePath = $"{ImagesPath}/{GameScreenshotImagePathName}";
         public const string GameScreenshotImagePathForUrl = $"{StaticFileRequestPath}/{GameScreenshotImagePathName}";
+        
+        public const string ItemImagePathName = "item_images";
+        public const string ItemImagePath = $"{ImagesPath}/{ItemImagePathName}";
+        public const string ItemImagePathForUrl = $"{StaticFileRequestPath}/{ItemImagePathName}";
+        
 
         public const string UserAvatarImagePathName = "user_avatars";
         public const string UserAvatarImagePath = $"{ImagesPath}/{UserAvatarImagePathName}";
@@ -37,6 +45,7 @@ public static class Settings
         {
             GameCoverImagePathName,
             GameScreenshotImagePathName,
+            ItemImagePathName,
             UserAvatarImagePathName
         };
     }

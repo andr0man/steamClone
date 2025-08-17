@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.ViewModels.Auth;
 using SteamClone.Domain.ViewModels.Users;
 

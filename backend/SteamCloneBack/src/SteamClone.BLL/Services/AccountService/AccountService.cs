@@ -1,15 +1,15 @@
 ﻿using System.Net;
 using System.Security.Claims;
 using AutoMapper;
-using MailKit;
 using Microsoft.IdentityModel.JsonWebTokens;
 using SteamClone.BLL.Services.JwtService;
+using SteamClone.BLL.Services.MailService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.DAL;
+using SteamClone.DAL.Repositories.BalanceRepository;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.UserRepository;
-using SteamClone.Domain.Models;
-using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.ViewModels;
 using SteamClone.Domain.ViewModels.Auth;
 
@@ -21,7 +21,8 @@ public class AccountService(
     IJwtTokenService jwtService,
     IPasswordHasher passwordHasher,
     IRefreshTokenRepository refreshTokenRepository,
-    SteamClone.BLL.Services.MailService.IMailService mailService) : IAccountService
+    IMailService mailService,
+    IBalanceRepository balanceRepository) : IAccountService
 {
     public async Task<ServiceResponse> SignInAsync(SignInVM model, CancellationToken token = default)
     {
@@ -68,13 +69,20 @@ public class AccountService(
         user.PasswordHash = passwordHasher.HashPassword(model.Password);
         user.CreatedBy = user.Id;
         user.CountryId = user.CountryId;
-        user.RoleId = isDbHasUsers ? Settings.UserRole : Settings.AdminRole;
+        user.RoleId = isDbHasUsers ? (model.IsManager ? Settings.ManagerRole : Settings.UserRole) : Settings.AdminRole;
         user.EmailConfirmed = !isDbHasUsers;
-
 
         try
         {
             await userRepository.CreateAsync(user, token);
+            await balanceRepository.CreateAsync(
+                new Balance
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Amount = 0,
+                    UserId = user.Id
+                },
+                token);
         }
         catch (Exception e)
         {
