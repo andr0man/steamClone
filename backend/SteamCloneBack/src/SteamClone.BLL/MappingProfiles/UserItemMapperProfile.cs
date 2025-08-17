@@ -9,5 +9,6 @@ public class UserItemMapperProfile : Profile
     public UserItemMapperProfile()
     {
         CreateMap<UserItem, UserItemVM>().ReverseMap();
+        CreateMap<UserItem, CreateUserItemVM>().ReverseMap();
     }
 }

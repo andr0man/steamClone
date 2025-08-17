@@ -13,6 +13,6 @@ public class MarketItemRepository(AppDbContext appDbContext, IUserProvider userP
 
     public Task<bool> IsUserListedItemAsync(string userId, string userItemId, CancellationToken token)
     {
-        return _appDbContext.MarketItems.AnyAsync(m => m.CreatedBy == userId && m.UserItemId == userItemId && !m.IsSold, token);
+        return _appDbContext.MarketItems.AnyAsync(m => m.CreatedBy == userId && m.UserItemId == userItemId, token);
     }
 }

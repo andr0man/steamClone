@@ -4,6 +4,8 @@ using SteamClone.BLL.Services.ImageService;
 using SteamClone.DAL;
 using SteamClone.DAL.Repositories.GameRepository;
 using SteamClone.DAL.Repositories.ItemRepository;
+using SteamClone.Domain.Common.Interfaces;
+using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.Models.Items;
 using SteamClone.Domain.ViewModels.Items;
 
@@ -14,7 +16,8 @@ public class ItemService(
     IMapper mapper,
     IGameRepository gameRepository,
     IImageService imageService,
-    IHttpContextAccessor httpContextAccessor) : IItemService
+    IHttpContextAccessor httpContextAccessor,
+    IUserProvider userProvider) : IItemService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -41,10 +44,17 @@ public class ItemService(
         {
             return ServiceResponse.BadRequestResponse($"Name '{model.Name}' already used");
         }
+
+        var game = await gameRepository.GetByIdAsync(model.GameId, cancellationToken);
         
-        if (await gameRepository.GetByIdAsync(model.GameId, cancellationToken) == null)
+        if (game == null)
         {
             return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        if (!await HasAccessToGameAsync(game))
+        {
+            return ServiceResponse.ForbiddenResponse("You don't have permission to create items for this game");
         }
 
         try
@@ -69,6 +79,11 @@ public class ItemService(
             return ServiceResponse.NotFoundResponse("Item not found");
         }
 
+        if (!await HasAccessToGameAsync(existingItem.GameId, cancellationToken))
+        {
+            return ServiceResponse.ForbiddenResponse("You don't have permission to update items for this game");
+        }
+
         var updatedItem = mapper.Map(model, existingItem);
         var result = await itemRepository.UpdateAsync(updatedItem, cancellationToken);
 
@@ -90,6 +105,11 @@ public class ItemService(
                 return ServiceResponse.NotFoundResponse("Item not found");
             }
 
+            if (!await HasAccessToGameAsync(item.GameId, cancellationToken))
+            {
+                return ServiceResponse.ForbiddenResponse("You don't have permission to delete items for this game");
+            }
+
             await itemRepository.DeleteAsync(id, cancellationToken);
             return ServiceResponse.OkResponse("Item deleted successfully");
         }
@@ -106,6 +126,11 @@ public class ItemService(
         if (item == null)
         {
             return ServiceResponse.NotFoundResponse("Item not found");
+        }
+
+        if (!await HasAccessToGameAsync(item.GameId, cancellationToken))
+        {
+            return ServiceResponse.ForbiddenResponse("You don't have permission to update images for this item");
         }
         
         var imageName = item.ImageUrl?.Split('/').LastOrDefault();
@@ -131,5 +156,20 @@ public class ItemService(
         {
             return ServiceResponse.BadRequestResponse(e.Message);
         }
+    }
+    
+    private async Task<bool> HasAccessToGameAsync(Game game)
+    {
+        var userRole = userProvider.GetUserRole();
+        var userId = await userProvider.GetUserId();
+        return game.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.AdminRole;
+    }
+    
+    private async Task<bool> HasAccessToGameAsync(string gameId, CancellationToken token)
+    {
+        var game = await gameRepository.GetByIdAsync(gameId, token);
+        var userRole = userProvider.GetUserRole();
+        var userId = await userProvider.GetUserId();
+        return game!.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.AdminRole;
     }
 }

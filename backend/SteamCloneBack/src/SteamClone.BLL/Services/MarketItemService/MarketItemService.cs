@@ -1,6 +1,7 @@
 using AutoMapper;
 using SteamClone.DAL;
 using SteamClone.DAL.Repositories.BalanceRepository;
+using SteamClone.DAL.Repositories.MarketItemHistoryRepository;
 using SteamClone.DAL.Repositories.MarketItemRepository;
 using SteamClone.DAL.Repositories.UserItemRepository;
 using SteamClone.Domain.Common.Interfaces;
@@ -14,12 +15,12 @@ public class MarketItemService(
     IMapper mapper,
     IUserItemRepository userItemRepository,
     IUserProvider userProvider,
-    IBalanceRepository balanceRepository) : IMarketItemService
+    IBalanceRepository balanceRepository,
+    IMarketItemHistoryRepository marketItemHistoryRepository) : IMarketItemService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var marketItems = await marketItemRepository.GetAllAsync(cancellationToken);
-        marketItems = marketItems.Where(m => !m.IsSold).ToList();
         return ServiceResponse.OkResponse("Market items retrieved successfully",
             mapper.Map<List<MarketItemVM>>(marketItems));
     }
@@ -39,8 +40,7 @@ public class MarketItemService(
 
     public async Task<ServiceResponse> GetHistoryAsync(CancellationToken cancellationToken = default)
     {
-        var marketItems = await marketItemRepository.GetAllAsync(cancellationToken);
-        marketItems = marketItems.Where(m =>  m.IsSold).ToList();
+        var marketItems = await marketItemHistoryRepository.GetAllAsync(cancellationToken);
         return ServiceResponse.OkResponse("Market items history retrieved successfully",
             mapper.Map<List<MarketItemHistoryVM>>(marketItems));
     }
@@ -120,11 +120,6 @@ public class MarketItemService(
             return ServiceResponse.NotFoundResponse("Market item not found");
         }
         
-        if (marketItem.IsSold)
-        {
-            return ServiceResponse.BadRequestResponse("Market item is already sold");
-        }
-        
         var newOwnerId = await userProvider.GetUserId();
         
         if (marketItem.CreatedBy == newOwnerId)
@@ -143,9 +138,18 @@ public class MarketItemService(
             var userItem = await userItemRepository.GetByIdAsync(marketItem.UserItemId, cancellationToken);
             await balanceRepository.DepositAsync(userItem!.UserId!, marketItem.Price, cancellationToken);
             userItem.UserId = newOwnerId;
-            await marketItemRepository.UpdateAsync(marketItem, cancellationToken);
             
-            marketItem.IsSold = true;
+            await marketItemHistoryRepository.CreateAsync(new MarketItemHistory()
+            {
+                Id = Guid.NewGuid().ToString(),
+                BuyerId = newOwnerId,
+                SellerId = marketItem.CreatedBy,
+                Price = marketItem.Price,
+                UserItemId = marketItem.UserItemId,
+                Date = DateTime.UtcNow
+            }, cancellationToken);
+            
+            await marketItemRepository.DeleteAsync(marketItem.Id, cancellationToken);
             await userItemRepository.UpdateAsync(userItem, cancellationToken);
             return ServiceResponse.OkResponse("Market item bought successfully");
         }
