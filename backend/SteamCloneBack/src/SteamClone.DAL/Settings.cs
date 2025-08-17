@@ -45,7 +45,7 @@ public static class Settings
         {
             GameCoverImagePathName,
             GameScreenshotImagePathName,
-            ItemImagePathName
+            ItemImagePathName,
             UserAvatarImagePathName
         };
     }
