@@ -10,6 +10,7 @@ using SteamClone.DAL.Repositories.LocalizationRepository;
 using SteamClone.DAL.Repositories.SystemRequirementsRepo;
 using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Common.Interfaces;
+using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.ViewModels.Games;
 using SteamClone.Domain.ViewModels.Games.Localizations;
@@ -69,19 +70,34 @@ public class GameService(
             game.Genres.Add(genre);
         }
 
-        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken) == null)
+        var developer = await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken);
+
+        if (developer == null)
         {
             return ServiceResponse.NotFoundResponse($"Developer with id '{model.DeveloperId}' not found");
         }
 
-        if (model.PublisherId != null && await developerAndPublisherRepository.GetByIdAsync(model.PublisherId,
-                cancellationToken) == null)
+        if (!await HasAccessToDeveloperOrPublisherAsync(developer))
         {
-            return ServiceResponse.NotFoundResponse($"Publisher with id '{model.PublisherId}' not found");
+            return ServiceResponse.ForbiddenResponse("You don't have permission to create a game with this developer");
+        }
+
+        if (model.PublisherId != null)
+        {
+            var publisher = await developerAndPublisherRepository.GetByIdAsync(model.PublisherId, cancellationToken);
+            if (publisher == null)
+            {
+                return ServiceResponse.NotFoundResponse($"Publisher with id '{model.PublisherId}' not found");
+            }
+            
+            if (!await HasAccessToDeveloperOrPublisherAsync(publisher))
+            {
+                return ServiceResponse.ForbiddenResponse("You don't have permission to create a game with this publisher");
+            }
         }
 
         game.PublisherId = model.PublisherId ?? game.DeveloperId;
-        
+
         var userRole = userProvider.GetUserRole();
 
         if (userRole == "Admin")
@@ -112,7 +128,7 @@ public class GameService(
         {
             return ServiceResponse.NotFoundResponse("Game not found");
         }
-        
+
         var userRole = userProvider.GetUserRole();
         var userId = await userProvider.GetUserId();
 
@@ -431,23 +447,23 @@ public class GameService(
         {
             return ServiceResponse.NotFoundResponse("User not found");
         }
-        
+
         var game = await gameRepository.GetByIdAsync(gameId, token);
-        
+
         if (game == null)
         {
             return ServiceResponse.NotFoundResponse("Game not found");
         }
 
         var userRole = userProvider.GetUserRole();
-        
+
         if (!(game.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to associate users");
         }
-        
+
         game.AssociatedUsers.Add(user);
-        
+
         return await UpdateGameAsync(game, "User associated successfully", token);
     }
 
@@ -459,23 +475,23 @@ public class GameService(
         {
             return ServiceResponse.NotFoundResponse("User not found");
         }
-        
+
         var game = await gameRepository.GetByIdAsync(gameId, token);
-        
+
         if (game == null)
         {
             return ServiceResponse.NotFoundResponse("Game not found");
         }
 
         var userRole = userProvider.GetUserRole();
-        
+
         if (!(game.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to remove associated users");
         }
-        
+
         game.AssociatedUsers.Remove(user);
-        
+
         return await UpdateGameAsync(game, "User association removed successfully", token);
     }
 
@@ -541,5 +557,20 @@ public class GameService(
         if (Enum.GetValues<RequirementPlatform>().All(x => x != model.Platform))
             return ServiceResponse.BadRequestResponse($"Invalid platform '{model.Platform}'");
         return null;
+    }
+
+    private async Task<bool> HasAccessToDeveloperOrPublisherAsync(DeveloperAndPublisher developerAndPublisher)
+    {
+        var userRole = userProvider.GetUserRole();
+        var userId = await userProvider.GetUserId();
+        return developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.AdminRole;
+    }
+
+    private async Task<bool> HasAccessToDeveloperOrPublisherAsync(string developerAndPublisherId, CancellationToken token)
+    {
+        var developerAndPublisher = await developerAndPublisherRepository.GetByIdAsync(developerAndPublisherId, token);
+        var userRole = userProvider.GetUserRole();
+        var userId = await userProvider.GetUserId();
+        return developerAndPublisher!.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.AdminRole;
     }
 }
