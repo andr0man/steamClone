@@ -36,11 +36,17 @@ public static class Settings
         public const string ItemImagePath = $"{ImagesPath}/{ItemImagePathName}";
         public const string ItemImagePathForUrl = $"{StaticFileRequestPath}/{ItemImagePathName}";
         
+
+        public const string UserAvatarImagePathName = "user_avatars";
+        public const string UserAvatarImagePath = $"{ImagesPath}/{UserAvatarImagePathName}";
+        public const string UserAvatarImagePathForUrl = $"{StaticFileRequestPath}/{UserAvatarImagePathName}";
+
         public static readonly List<string> ListOfDirectoriesNames = new()
         {
             GameCoverImagePathName,
             GameScreenshotImagePathName,
             ItemImagePathName
+            UserAvatarImagePathName
         };
     }
 }

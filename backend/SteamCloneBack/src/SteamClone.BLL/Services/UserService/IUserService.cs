@@ -14,4 +14,5 @@ public interface IUserService
     Task<ServiceResponse> UpdateAsync(UpdateUserVM model, CancellationToken token = default);
     Task<ServiceResponse> AddImageFromUserAsync(UserImageVM model, CancellationToken token = default);
     Task<ServiceResponse> GetUsersByRoleAsync(string role, CancellationToken token = default);
+    Task<ServiceResponse> GetProfileAsync(string userId, CancellationToken token);
 }

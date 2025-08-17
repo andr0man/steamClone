@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SteamClone.DAL.Data;
@@ -12,9 +13,11 @@ using SteamClone.DAL.Data;
 namespace SteamClone.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250726213201_AddUserAvatarBioLevel")]
+    partial class AddUserAvatarBioLevel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,25 +25,6 @@ namespace SteamClone.DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("DeveloperAndPublisherUser", b =>
-                {
-                    b.Property<string>("AssociatedUsersId")
-                        .HasColumnType("text")
-                        .HasColumnName("associated_users_id");
-
-                    b.Property<string>("DeveloperAndPublisherId")
-                        .HasColumnType("text")
-                        .HasColumnName("developer_and_publisher_id");
-
-                    b.HasKey("AssociatedUsersId", "DeveloperAndPublisherId")
-                        .HasName("pk_developer_and_publisher_user");
-
-                    b.HasIndex("DeveloperAndPublisherId")
-                        .HasDatabaseName("ix_developer_and_publisher_user_developer_and_publisher_id");
-
-                    b.ToTable("developer_and_publisher_user", (string)null);
-                });
 
             modelBuilder.Entity("GameGenre", b =>
                 {
@@ -59,25 +43,6 @@ namespace SteamClone.DAL.Migrations
                         .HasDatabaseName("ix_game_genre_genres_id");
 
                     b.ToTable("game_genre", (string)null);
-                });
-
-            modelBuilder.Entity("GameUser", b =>
-                {
-                    b.Property<string>("AssociatedUsersId")
-                        .HasColumnType("text")
-                        .HasColumnName("associated_users_id");
-
-                    b.Property<string>("GameId")
-                        .HasColumnType("text")
-                        .HasColumnName("game_id");
-
-                    b.HasKey("AssociatedUsersId", "GameId")
-                        .HasName("pk_game_user");
-
-                    b.HasIndex("GameId")
-                        .HasDatabaseName("ix_game_user_game_id");
-
-                    b.ToTable("game_user", (string)null);
                 });
 
             modelBuilder.Entity("SteamClone.Domain.Models.Auth.RefreshToken", b =>
@@ -155,40 +120,10 @@ namespace SteamClone.DAL.Migrations
                         {
                             Id = "user",
                             Name = "user"
-                        },
-                        new
-                        {
-                            Id = "manager",
-                            Name = "manager"
                         });
                 });
 
-            modelBuilder.Entity("SteamClone.Domain.Models.Auth.Users.Balance", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("amount");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_balances");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_balances_user_id");
-
-                    b.ToTable("balances", (string)null);
-                });
-
-            modelBuilder.Entity("SteamClone.Domain.Models.Auth.Users.User", b =>
+            modelBuilder.Entity("SteamClone.Domain.Models.Auth.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text")
@@ -2099,10 +2034,6 @@ namespace SteamClone.DAL.Migrations
                         .HasColumnName("founded_date")
                         .HasDefaultValueSql("timezone('utc', now())");
 
-                    b.Property<bool?>("IsApproved")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_approved");
-
                     b.Property<string>("LogoUrl")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
@@ -2174,14 +2105,6 @@ namespace SteamClone.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("developer_id");
-
-                    b.Property<int?>("Discount")
-                        .HasColumnType("integer")
-                        .HasColumnName("discount");
-
-                    b.Property<bool?>("IsApproved")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_approved");
 
                     b.Property<DateTime>("ModifiedAt")
                         .ValueGeneratedOnAdd()
@@ -2429,150 +2352,6 @@ namespace SteamClone.DAL.Migrations
                         .HasDatabaseName("ix_system_requirements_game_id");
 
                     b.ToTable("system_requirements", (string)null);
-                });
-
-            modelBuilder.Entity("SteamClone.Domain.Models.Items.Item", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("timezone('utc', now())");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("GameId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("game_id");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("image_url");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("modified_at")
-                        .HasDefaultValueSql("timezone('utc', now())");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("modified_by");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("pk_items");
-
-                    b.HasIndex("CreatedBy")
-                        .HasDatabaseName("ix_items_created_by");
-
-                    b.HasIndex("GameId")
-                        .HasDatabaseName("ix_items_game_id");
-
-                    b.HasIndex("ModifiedBy")
-                        .HasDatabaseName("ix_items_modified_by");
-
-                    b.ToTable("items", (string)null);
-                });
-
-            modelBuilder.Entity("SteamClone.Domain.Models.Items.MarketItem", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("timezone('utc', now())");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("created_by");
-
-                    b.Property<bool>("IsSold")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_sold");
-
-                    b.Property<DateTime>("ModifiedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("modified_at")
-                        .HasDefaultValueSql("timezone('utc', now())");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("text")
-                        .HasColumnName("modified_by");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("price");
-
-                    b.Property<string>("UserItemId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("user_item_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_market_items");
-
-                    b.HasIndex("CreatedBy")
-                        .HasDatabaseName("ix_market_items_created_by");
-
-                    b.HasIndex("ModifiedBy")
-                        .HasDatabaseName("ix_market_items_modified_by");
-
-                    b.HasIndex("UserItemId")
-                        .HasDatabaseName("ix_market_items_user_item_id");
-
-                    b.ToTable("market_items", (string)null);
-                });
-
-            modelBuilder.Entity("SteamClone.Domain.Models.Items.UserItem", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text")
-                        .HasColumnName("id");
-
-                    b.Property<bool>("IsTradable")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_tradable");
-
-                    b.Property<string>("ItemId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("item_id");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("text")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_user_items");
-
-                    b.HasIndex("ItemId")
-                        .HasDatabaseName("ix_user_items_item_id");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_items_user_id");
-
-                    b.ToTable("user_items", (string)null);
                 });
 
             modelBuilder.Entity("SteamClone.Domain.Models.Languages.Language", b =>
@@ -3697,23 +3476,6 @@ namespace SteamClone.DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DeveloperAndPublisherUser", b =>
-                {
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("AssociatedUsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_developer_and_publisher_user_users_associated_users_id");
-
-                    b.HasOne("SteamClone.Domain.Models.DevelopersAndPublishers.DeveloperAndPublisher", null)
-                        .WithMany()
-                        .HasForeignKey("DeveloperAndPublisherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_developer_and_publisher_user_developers_and_publishers_deve");
-                });
-
             modelBuilder.Entity("GameGenre", b =>
                 {
                     b.HasOne("SteamClone.Domain.Models.Games.Game", null)
@@ -3731,26 +3493,9 @@ namespace SteamClone.DAL.Migrations
                         .HasConstraintName("fk_game_genre_genres_genres_id");
                 });
 
-            modelBuilder.Entity("GameUser", b =>
-                {
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("AssociatedUsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_game_user_users_associated_users_id");
-
-                    b.HasOne("SteamClone.Domain.Models.Games.Game", null)
-                        .WithMany()
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_game_user_games_game_id");
-                });
-
             modelBuilder.Entity("SteamClone.Domain.Models.Auth.RefreshToken", b =>
                 {
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
+                    b.HasOne("SteamClone.Domain.Models.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3758,17 +3503,7 @@ namespace SteamClone.DAL.Migrations
                         .HasConstraintName("fk_refresh_tokens_users_user_id");
                 });
 
-            modelBuilder.Entity("SteamClone.Domain.Models.Auth.Users.Balance", b =>
-                {
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
-                        .WithOne("Balance")
-                        .HasForeignKey("SteamClone.Domain.Models.Auth.Users.Balance", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_balances_users_user_id");
-                });
-
-            modelBuilder.Entity("SteamClone.Domain.Models.Auth.Users.User", b =>
+            modelBuilder.Entity("SteamClone.Domain.Models.Auth.User", b =>
                 {
                     b.HasOne("SteamClone.Domain.Models.Countries.Country", "Country")
                         .WithMany()
@@ -3776,13 +3511,13 @@ namespace SteamClone.DAL.Migrations
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_users_countries_country_id");
 
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
+                    b.HasOne("SteamClone.Domain.Models.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_users_users_created_by");
 
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
+                    b.HasOne("SteamClone.Domain.Models.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("ModifiedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -3808,13 +3543,13 @@ namespace SteamClone.DAL.Migrations
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_developers_and_publishers_countries_country_id");
 
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
+                    b.HasOne("SteamClone.Domain.Models.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_developers_and_publishers_users_created_by");
 
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
+                    b.HasOne("SteamClone.Domain.Models.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("ModifiedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -3825,7 +3560,7 @@ namespace SteamClone.DAL.Migrations
 
             modelBuilder.Entity("SteamClone.Domain.Models.Games.Game", b =>
                 {
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
+                    b.HasOne("SteamClone.Domain.Models.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -3838,7 +3573,7 @@ namespace SteamClone.DAL.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_games_developers_and_publishers_developer_id");
 
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
+                    b.HasOne("SteamClone.Domain.Models.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("ModifiedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -3857,13 +3592,13 @@ namespace SteamClone.DAL.Migrations
 
             modelBuilder.Entity("SteamClone.Domain.Models.Games.Genre", b =>
                 {
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
+                    b.HasOne("SteamClone.Domain.Models.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("CreatedBy")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_genres_users_created_by");
 
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
+                    b.HasOne("SteamClone.Domain.Models.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("ModifiedBy")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -3905,75 +3640,6 @@ namespace SteamClone.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_system_requirements_games_game_id");
-                });
-
-            modelBuilder.Entity("SteamClone.Domain.Models.Items.Item", b =>
-                {
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_items_users_created_by");
-
-                    b.HasOne("SteamClone.Domain.Models.Games.Game", null)
-                        .WithMany()
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_items_games_game_id");
-
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("ModifiedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_items_users_modified_by");
-                });
-
-            modelBuilder.Entity("SteamClone.Domain.Models.Items.MarketItem", b =>
-                {
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_market_items_users_created_by");
-
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("ModifiedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_market_items_users_modified_by");
-
-                    b.HasOne("SteamClone.Domain.Models.Items.UserItem", "UserItem")
-                        .WithMany()
-                        .HasForeignKey("UserItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_market_items_user_items_user_item_id");
-
-                    b.Navigation("UserItem");
-                });
-
-            modelBuilder.Entity("SteamClone.Domain.Models.Items.UserItem", b =>
-                {
-                    b.HasOne("SteamClone.Domain.Models.Items.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_items_items_item_id");
-
-                    b.HasOne("SteamClone.Domain.Models.Auth.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("fk_user_items_users_user_id");
-
-                    b.Navigation("Item");
-                });
-
-            modelBuilder.Entity("SteamClone.Domain.Models.Auth.Users.User", b =>
-                {
-                    b.Navigation("Balance");
                 });
 
             modelBuilder.Entity("SteamClone.Domain.Models.Games.Game", b =>
