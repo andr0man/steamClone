@@ -28,11 +28,16 @@ public static class Settings
         public const string GameScreenshotImagePathName = "game_screenshots";
         public const string GameScreenshotImagePath = $"{ImagesPath}/{GameScreenshotImagePathName}";
         public const string GameScreenshotImagePathForUrl = $"{StaticFileRequestPath}/{GameScreenshotImagePathName}";
-        
+
+        public const string UserAvatarImagePathName = "user_avatars";
+        public const string UserAvatarImagePath = $"{ImagesPath}/{UserAvatarImagePathName}";
+        public const string UserAvatarImagePathForUrl = $"{StaticFileRequestPath}/{UserAvatarImagePathName}";
+
         public static readonly List<string> ListOfDirectoriesNames = new()
         {
             GameCoverImagePathName,
-            GameScreenshotImagePathName
+            GameScreenshotImagePathName,
+            UserAvatarImagePathName
         };
     }
 }

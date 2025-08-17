@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using SteamClone.BLL.Services.ImageService;
 using SteamClone.BLL.Services.PasswordHasher;
+using SteamClone.DAL;
 using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
@@ -11,6 +13,7 @@ namespace SteamClone.BLL.Services.UserService;
 public class UserService(
     IUserRepository userRepository,
     IImageService imageService,
+    IHttpContextAccessor httpContextAccessor,
     IMapper mapper,
     IPasswordHasher passwordHasher) : IUserService
 {
@@ -24,6 +27,15 @@ public class UserService(
 
         var userVm = mapper.Map<UserVM>(user);
         return ServiceResponse.OkResponse("User by id", userVm);
+    }
+    public async Task<ServiceResponse> GetProfileAsync(string userId, CancellationToken token = default)
+    {
+        var user = await userRepository.GetByIdAsync(userId, token, includes: true);
+        if (user == null)
+            return ServiceResponse.NotFoundResponse("User not found");
+
+        var profileVm = mapper.Map<UserProfileVM>(user);
+        return ServiceResponse.OkResponse("Profile loaded", profileVm);
     }
 
     public async Task<ServiceResponse> GetByEmailAsync(string email, CancellationToken token = default)
@@ -114,18 +126,51 @@ public class UserService(
             return ServiceResponse.NotFoundResponse("User not found");
         }
 
-        mapper.Map(model, user);
+        if (!string.IsNullOrWhiteSpace(model.Nickname))
+            user.Nickname = model.Nickname;
+
+        if (!string.IsNullOrWhiteSpace(model.Email))
+            user.Email = model.Email;
+
+        if (model.CountryId.HasValue)
+            user.CountryId = model.CountryId.Value;
+
+        if (!string.IsNullOrWhiteSpace(model.Bio))
+            user.Bio = model.Bio;
+
         await userRepository.UpdateAsync(user, token);
 
         var updatedUser = await userRepository.GetByIdAsync(model.Id!, token, includes: true);
-        var userVm = mapper.Map<UserVM>(updatedUser);
+        var userVm = mapper.Map<UserProfileVM>(updatedUser);
 
         return ServiceResponse.OkResponse("User updated successfully", userVm);
     }
 
+
     public async Task<ServiceResponse> AddImageFromUserAsync(UserImageVM model, CancellationToken token = default)
     {
-        throw new NotImplementedException();
+        var user = await userRepository.GetByIdAsync(model.UserId, token);
+        if (user == null)
+            return ServiceResponse.NotFoundResponse("User not found");
+
+        string? oldImageName = user.AvatarUrl?.Split('/').LastOrDefault();
+
+        var newImageName = await imageService.SaveImageFromFileAsync(
+            Settings.ImagesPathSettings.UserAvatarImagePath,
+            model.Image,
+            oldImageName
+        );
+
+        if (string.IsNullOrEmpty(newImageName))
+            return ServiceResponse.BadRequestResponse("No image uploaded");
+
+        var baseUrl = $"{httpContextAccessor.HttpContext!.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}/";
+        var newImageUrl = $"{baseUrl}{Settings.ImagesPathSettings.UserAvatarImagePathForUrl}/{newImageName}";
+
+        user.AvatarUrl = newImageUrl;
+        await userRepository.UpdateAsync(user, token);
+
+        return ServiceResponse.OkResponse("User avatar updated successfully", newImageUrl);
     }
 
     public async Task<ServiceResponse> GetUsersByRoleAsync(string role, CancellationToken token = default)
