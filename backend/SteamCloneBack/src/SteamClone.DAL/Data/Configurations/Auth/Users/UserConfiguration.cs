@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SteamClone.DAL.Extensions;
 using SteamClone.Domain.Models.Auth.Users;
+using SteamClone.Domain.Models.Games;
 
 namespace SteamClone.DAL.Data.Configurations.Auth.Users;
 
@@ -34,6 +35,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .WithOne()
             .HasForeignKey<Balance>(b => b.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(u => u.Games)
+            .WithMany()
+            .UsingEntity(j => j.ToTable("users_games_library"));
 
         builder.ConfigureAudit();
     }

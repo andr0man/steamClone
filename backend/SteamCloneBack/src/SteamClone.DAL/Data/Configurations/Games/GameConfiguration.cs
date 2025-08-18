@@ -35,21 +35,22 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
         builder.Property(g => g.Discount)
             .IsRequired(false);
 
-        builder.HasMany(e => e.Genres)
+        builder.HasMany(g => g.Genres)
             .WithMany();
 
-        builder.HasOne(e => e.Developer)
+        builder.HasOne(g => g.Developer)
             .WithMany()
-            .HasForeignKey(e => e.DeveloperId)
+            .HasForeignKey(g => g.DeveloperId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(e => e.Publisher)
+        builder.HasOne(g => g.Publisher)
             .WithMany()
-            .HasForeignKey(e => e.PublisherId)
+            .HasForeignKey(g => g.PublisherId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(d => d.AssociatedUsers)
-            .WithMany();
+        builder.HasMany(g => g.AssociatedUsers)
+            .WithMany(g => g.AssociatedGames)
+            .UsingEntity(j => j.ToTable("games_associated_users"));
 
         builder.ConfigureAudit();
     }
