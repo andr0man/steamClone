@@ -35,10 +35,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .WithOne()
             .HasForeignKey<Balance>(b => b.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.HasMany(u => u.Games)
-            .WithMany()
-            .UsingEntity(j => j.ToTable("users_games_library"));
 
         builder.ConfigureAudit();
     }

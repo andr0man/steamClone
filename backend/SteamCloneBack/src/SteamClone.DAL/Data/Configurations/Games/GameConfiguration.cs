@@ -49,7 +49,7 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(g => g.AssociatedUsers)
-            .WithMany(g => g.AssociatedGames)
+            .WithMany()
             .UsingEntity(j => j.ToTable("games_associated_users"));
 
         builder.ConfigureAudit();

@@ -30,6 +30,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<MarketItem> MarketItems { get; set; }
     public DbSet<MarketItemHistory> MarketItemsHistory { get; set; }
     public DbSet<Balance> Balances { get; set; }
+    public DbSet<UserGameLibrary> UserGameLibraries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

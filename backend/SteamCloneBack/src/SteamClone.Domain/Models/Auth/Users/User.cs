@@ -20,6 +20,5 @@ public class User : AuditableEntity<string>
     public string? ExternalProviderKey { get; set; }
     public bool EmailConfirmed { get; set; }
     public Balance? Balance { get; set; }
-    public List<Game> Games { get; set; } = new();
-    public List<Game> AssociatedGames { get; set; } = new();
+    public List<UserGameLibrary>? GameLibrary { get; set; }
 }

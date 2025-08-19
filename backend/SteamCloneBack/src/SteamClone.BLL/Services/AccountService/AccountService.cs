@@ -45,7 +45,7 @@ public class AccountService(
             return ServiceResponse.BadRequestResponse($"Пароль вказано невірно");
         }
 
-        var tokens = await jwtService.GenerateTokensAsync(user);
+        var tokens = await jwtService.GenerateTokensAsync(user, token);
 
         return ServiceResponse.OkResponse("Успішний вхід", tokens);
     }
@@ -78,7 +78,7 @@ public class AccountService(
             await balanceRepository.CreateAsync(
                 new Balance
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = user.Id,
                     Amount = 0,
                     UserId = user.Id
                 },
