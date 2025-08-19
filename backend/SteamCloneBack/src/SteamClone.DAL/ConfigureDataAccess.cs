@@ -20,6 +20,7 @@ using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.ReviewRepository;
 using SteamClone.DAL.Repositories.RoleRepository;
 using SteamClone.DAL.Repositories.SystemRequirementsRepo;
+using SteamClone.DAL.Repositories.UserGameLibraryRepository;
 using SteamClone.DAL.Repositories.UserItemRepository;
 using SteamClone.DAL.Repositories.UserRepository;
 
@@ -66,5 +67,6 @@ public static class ConfigureDataAccess
         services.AddScoped<IMarketItemRepository, MarketItemRepository>();
         services.AddScoped<IBalanceRepository, BalanceRepository>();
         services.AddScoped<IMarketItemHistoryRepository, MarketItemHistoryRepository>();
+        services.AddScoped<IUserGameLibraryRepository, UserGameLibraryRepository>();
     }
 }
