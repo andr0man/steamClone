@@ -19,6 +19,7 @@ using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.BLL.Services.ReviewService;
 using SteamClone.BLL.Services.UserItemService;
 using SteamClone.BLL.Services.UserService;
+using SteamClone.DAL;
 
 namespace SteamClone.BLL;
 
@@ -30,6 +31,14 @@ public static class ConfigureBusinessLogic
 
         services.AddJwtTokenAuth(builder);
         services.AddSwaggerAuth();
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(Settings.Roles.AnyAuthenticated,
+                policy => policy.RequireRole(Settings.Roles.AdminRole, Settings.Roles.ManagerRole, Settings.Roles.UserRole));
+            options.AddPolicy(Settings.Roles.AdminOrManager,
+                policy => policy.RequireRole(Settings.Roles.AdminRole, Settings.Roles.ManagerRole));
+        });
     }
 
     private static void AddServices(this IServiceCollection services)

@@ -9,8 +9,10 @@ using SteamClone.DAL.Repositories.GenreRepository;
 using SteamClone.DAL.Repositories.LanguageRepository;
 using SteamClone.DAL.Repositories.LocalizationRepository;
 using SteamClone.DAL.Repositories.SystemRequirementsRepo;
+using SteamClone.DAL.Repositories.UserGameLibraryRepository;
 using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Common.Interfaces;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.ViewModels.Games;
@@ -31,12 +33,14 @@ public class GameService(
     ILanguageRepository languageRepository,
     IUserRepository userRepository,
     IUserProvider userProvider,
-    IBalanceRepository balanceRepository)
+    IBalanceRepository balanceRepository,
+    IUserGameLibraryRepository userGameLibraryRepository)
     : IGameService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var games = await gameRepository.GetAllAsync(cancellationToken);
+        var games = (await gameRepository.GetAllAsync(cancellationToken))
+            .Where(x => x.IsApproved.HasValue && x.IsApproved.Value);
 
         return ServiceResponse.OkResponse("Games retrieved successfully", mapper.Map<List<GameVM>>(games));
     }
@@ -134,7 +138,7 @@ public class GameService(
         var userRole = userProvider.GetUserRole();
         var userId = await userProvider.GetUserId();
 
-        if (!(existingGame.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        if (!(existingGame.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to update this game");
         }
@@ -464,7 +468,7 @@ public class GameService(
 
         var userRole = userProvider.GetUserRole();
 
-        if (!(game.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        if (!(game.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to associate users");
         }
@@ -492,7 +496,7 @@ public class GameService(
 
         var userRole = userProvider.GetUserRole();
 
-        if (!(game.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        if (!(game.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to remove associated users");
         }
@@ -542,6 +546,38 @@ public class GameService(
         return ServiceResponse.OkResponse("Games without approval retrieved successfully",
             mapper.Map<List<GameVM>>(games));
     }
+    
+    public async Task<ServiceResponse> BuyGameAsync(string id, CancellationToken token)
+    {
+        var game = await gameRepository.GetByIdAsync(id, token);
+        
+        if (game == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+        
+        var buyerId = await userProvider.GetUserId();
+
+        try
+        {
+            if (!(await balanceRepository.WithdrawAsync(buyerId, game.Price, token)))
+            {
+                return ServiceResponse.BadRequestResponse("Not enough money");
+            }
+
+            await userGameLibraryRepository.CreateAsync(new UserGameLibrary
+            {
+                UserId = buyerId,
+                GameId = id
+            }, token);
+            
+            return ServiceResponse.OkResponse("Game bought successfully");
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 
     private async Task<ServiceResponse> UpdateGameAsync(Game game, string successMessage,
         CancellationToken cancellationToken)
@@ -570,13 +606,13 @@ public class GameService(
     {
         var userRole = userProvider.GetUserRole();
         var userId = await userProvider.GetUserId();
-        return developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.AdminRole;
+        return developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.Roles.AdminRole;
     }
     
     private async Task<bool> HasAccessToGameAsync(Game game)
     {
         var userRole = userProvider.GetUserRole();
         var userId = await userProvider.GetUserId();
-        return game.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.AdminRole;
+        return game.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.Roles.AdminRole;
     }
 }

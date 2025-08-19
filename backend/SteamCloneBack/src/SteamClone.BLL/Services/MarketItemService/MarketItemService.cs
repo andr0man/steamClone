@@ -95,7 +95,7 @@ public class MarketItemService(
         }
 
         if (marketItem.CreatedBy != (await userProvider.GetUserId()) &&
-            userProvider.GetUserRole() != Settings.AdminRole)
+            userProvider.GetUserRole() != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to delete this market item");
         }

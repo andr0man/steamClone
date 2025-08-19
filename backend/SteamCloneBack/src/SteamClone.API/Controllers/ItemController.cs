@@ -11,7 +11,7 @@ namespace SteamClone.API.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-[Authorize(Roles = $"{Settings.AdminRole}, {Settings.ManagerRole}")]
+[Authorize(Policy = Settings.Roles.AdminOrManager)]
 public class ItemController(IItemService itemService)
     : GenericController<string, CreateItemVM, UpdateItemVM>(itemService)
 {

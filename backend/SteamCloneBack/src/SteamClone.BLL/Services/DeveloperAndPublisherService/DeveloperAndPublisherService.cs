@@ -91,7 +91,7 @@ public class DeveloperAndPublisherService(
         var userRole = userProvider.GetUserRole();
         var userId = await userProvider.GetUserId();
 
-        if (!(existingDeveloper.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        if (!(existingDeveloper.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to update this developer or publisher");
         }
@@ -151,7 +151,7 @@ public class DeveloperAndPublisherService(
 
         var userRole = userProvider.GetUserRole();
 
-        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to associate users");
         }
@@ -180,7 +180,7 @@ public class DeveloperAndPublisherService(
 
         var userRole = userProvider.GetUserRole();
 
-        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to remove associated users");
         }

@@ -93,6 +93,6 @@ public class UserItemService(
     {
         var userRole = userProvider.GetUserRole();
         var userId = await userProvider.GetUserId();
-        return game.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.AdminRole;
+        return game.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.Roles.AdminRole;
     }
 }

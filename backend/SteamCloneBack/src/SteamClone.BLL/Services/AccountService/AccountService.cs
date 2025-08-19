@@ -69,7 +69,7 @@ public class AccountService(
         user.PasswordHash = passwordHasher.HashPassword(model.Password);
         user.CreatedBy = user.Id;
         user.CountryId = user.CountryId;
-        user.RoleId = isDbHasUsers ? (model.IsManager ? Settings.ManagerRole : Settings.UserRole) : Settings.AdminRole;
+        user.RoleId = isDbHasUsers ? (model.IsManager ? Settings.Roles.ManagerRole : Settings.Roles.UserRole) : Settings.Roles.AdminRole;
         user.EmailConfirmed = !isDbHasUsers;
 
         try

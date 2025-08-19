@@ -72,7 +72,7 @@ public class ReviewService(
         
         var user = await userRepository.GetByIdAsync(await userProvider.GetUserId(), cancellationToken);
 
-        if (user!.Id != existingReview.CreatedBy && user.RoleId != Settings.AdminRole)
+        if (user!.Id != existingReview.CreatedBy && user.RoleId != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to update this review");
         }
@@ -106,7 +106,7 @@ public class ReviewService(
             
             var user = await userRepository.GetByIdAsync(await userProvider.GetUserId(), cancellationToken);
             
-            if (user!.Id != review.CreatedBy && user.RoleId != Settings.AdminRole)
+            if (user!.Id != review.CreatedBy && user.RoleId != Settings.Roles.AdminRole)
             {
                 return ServiceResponse.ForbiddenResponse("You don't have permission to delete this review");
             }

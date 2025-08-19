@@ -6,6 +6,7 @@ namespace SteamClone.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Tags("User Item")]
 public class UserItemController(IUserItemService userItemService) : BaseController
 {
     [HttpGet]

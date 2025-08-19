@@ -10,8 +10,9 @@ namespace SteamClone.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Tags("Game Genre")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-[Authorize(Roles = Settings.AdminRole)]
+[Authorize(Roles = Settings.Roles.AdminRole)]
 public class GameGenreController(IGenreService genreService)
     : GenericController<int, CreateUpdateGenreVM, CreateUpdateGenreVM>(genreService)
 {

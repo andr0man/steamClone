@@ -60,7 +60,7 @@ public static class DataSeed
             Email = "admin@mail.com",
             PasswordHash =
                 "7D64D8B0B76B23625CA2804E54F2B9F9562EE3175AD21AB02ACB9AE80E80C970-C8DCFB0B66B8BA472A481750248172C3", // string123
-            RoleId = Settings.AdminRole,
+            RoleId = Settings.Roles.AdminRole,
             EmailConfirmed = true,
             CountryId = 231
         };
@@ -72,7 +72,7 @@ public static class DataSeed
             Email = "user@mail.com",
             PasswordHash =
                 "7D64D8B0B76B23625CA2804E54F2B9F9562EE3175AD21AB02ACB9AE80E80C970-C8DCFB0B66B8BA472A481750248172C3", // string123
-            RoleId = Settings.UserRole,
+            RoleId = Settings.Roles.UserRole,
             EmailConfirmed = true,
             CountryId = 231
         };
@@ -84,7 +84,7 @@ public static class DataSeed
             Email = "manager@mail.com",
             PasswordHash =
                 "7D64D8B0B76B23625CA2804E54F2B9F9562EE3175AD21AB02ACB9AE80E80C970-C8DCFB0B66B8BA472A481750248172C3", // string123
-            RoleId = Settings.ManagerRole,
+            RoleId = Settings.Roles.ManagerRole,
             EmailConfirmed = true,
             CountryId = 231
         };
@@ -143,7 +143,7 @@ public static class DataSeed
     {
         var roles = new List<Role>();
 
-        foreach (var role in Settings.ListOfRoles)
+        foreach (var role in Settings.Roles.ListOfRoles)
         {
             roles.Add(new Role { Name = role, Id = role });
         }
