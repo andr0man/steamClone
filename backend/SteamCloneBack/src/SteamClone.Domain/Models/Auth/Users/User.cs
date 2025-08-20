@@ -1,6 +1,7 @@
 ﻿using SteamClone.Domain.Common.Abstractions;
 using SteamClone.Domain.Models.Countries;
 using SteamClone.Domain.Models.Games;
+using SteamClone.Domain.Models.UserGameLibraries;
 
 namespace SteamClone.Domain.Models.Auth.Users;
 

@@ -8,6 +8,7 @@ using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.Models.Items;
 using SteamClone.Domain.Models.Languages;
+using SteamClone.Domain.Models.UserGameLibraries;
 
 namespace SteamClone.DAL.Data;
 

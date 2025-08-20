@@ -1,4 +1,5 @@
 using SteamClone.Domain.Models.Auth.Users;
+using SteamClone.Domain.Models.UserGameLibraries;
 
 namespace SteamClone.DAL.Repositories.UserGameLibraryRepository;
 

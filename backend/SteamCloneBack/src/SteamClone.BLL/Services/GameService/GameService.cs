@@ -15,6 +15,7 @@ using SteamClone.Domain.Common.Interfaces;
 using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
+using SteamClone.Domain.Models.UserGameLibraries;
 using SteamClone.Domain.ViewModels.Games;
 using SteamClone.Domain.ViewModels.Games.Localizations;
 using SteamClone.Domain.ViewModels.Games.SystemReq;

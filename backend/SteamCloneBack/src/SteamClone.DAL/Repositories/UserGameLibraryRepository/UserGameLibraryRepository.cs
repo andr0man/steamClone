@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
 using SteamClone.Domain.Models.Auth.Users;
+using SteamClone.Domain.Models.UserGameLibraries;
 
 namespace SteamClone.DAL.Repositories.UserGameLibraryRepository;
 
