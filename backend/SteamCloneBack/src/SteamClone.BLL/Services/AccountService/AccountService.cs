@@ -45,7 +45,7 @@ public class AccountService(
             return ServiceResponse.BadRequestResponse($"Пароль вказано невірно");
         }
 
-        var tokens = await jwtService.GenerateTokensAsync(user);
+        var tokens = await jwtService.GenerateTokensAsync(user, token);
 
         return ServiceResponse.OkResponse("Успішний вхід", tokens);
     }
@@ -69,7 +69,7 @@ public class AccountService(
         user.PasswordHash = passwordHasher.HashPassword(model.Password);
         user.CreatedBy = user.Id;
         user.CountryId = user.CountryId;
-        user.RoleId = isDbHasUsers ? (model.IsManager ? Settings.ManagerRole : Settings.UserRole) : Settings.AdminRole;
+        user.RoleId = isDbHasUsers ? (model.IsManager ? Settings.Roles.ManagerRole : Settings.Roles.UserRole) : Settings.Roles.AdminRole;
         user.EmailConfirmed = !isDbHasUsers;
 
         try
@@ -78,7 +78,7 @@ public class AccountService(
             await balanceRepository.CreateAsync(
                 new Balance
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = user.Id,
                     Amount = 0,
                     UserId = user.Id
                 },

@@ -10,6 +10,5 @@ public class MarketItemHistoryVM
     public decimal Price { get; set; }
     public string SellerId { get; set; } = null!;
     public string BuyerId { get; set; } = null!;
-    public DateTime ListedAt { get; set; }
-    public DateTime? SoldAt { get; set; }
+    public DateTime Date { get; set; }
 }

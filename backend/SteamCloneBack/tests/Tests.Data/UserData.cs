@@ -11,7 +11,7 @@ public class UserData
         Id = userId,
         Email = "qwerty@gmail.com",
         PasswordHash = "fdsafdsafsad",
-        RoleId = Settings.AdminRole,
+        RoleId = Settings.Roles.AdminRole,
         Nickname = "qwerty",
         CountryId = countryId
     };

@@ -62,7 +62,7 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebFact
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Role, Settings.AdminRole),
+            new(ClaimTypes.Role, Settings.Roles.AdminRole),
             new("id", UserId.ToString()),
         };
         var token = new JwtSecurityToken(

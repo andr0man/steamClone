@@ -38,7 +38,8 @@ public class DeveloperAndPublisherConfiguration : IEntityTypeConfiguration<Devel
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(d => d.AssociatedUsers)
-            .WithMany();
+            .WithMany()
+            .UsingEntity(j => j.ToTable("dev_and_pub_associated_users"));;
 
         builder.ConfigureAudit();
     }

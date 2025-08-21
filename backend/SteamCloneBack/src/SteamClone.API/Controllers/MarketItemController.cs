@@ -8,6 +8,7 @@ namespace SteamClone.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Tags("Market Item")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class MarketItemController(IMarketItemService marketItemService) : BaseController
 {

@@ -91,7 +91,7 @@ public class DeveloperAndPublisherService(
         var userRole = userProvider.GetUserRole();
         var userId = await userProvider.GetUserId();
 
-        if (!(existingDeveloper.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        if (!(existingDeveloper.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to update this developer or publisher");
         }
@@ -142,6 +142,11 @@ public class DeveloperAndPublisherService(
             return ServiceResponse.NotFoundResponse("User not found");
         }
 
+        if (user.RoleId != Settings.Roles.ManagerRole)
+        {
+            return ServiceResponse.BadRequestResponse("User must have Manager role");
+        }
+
         var developerAndPublisher = await developerAndPublisherRepository.GetByIdAsync(developerAndPublisherId, token);
 
         if (developerAndPublisher == null)
@@ -151,7 +156,7 @@ public class DeveloperAndPublisherService(
 
         var userRole = userProvider.GetUserRole();
 
-        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to associate users");
         }
@@ -180,7 +185,7 @@ public class DeveloperAndPublisherService(
 
         var userRole = userProvider.GetUserRole();
 
-        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.AdminRole)
+        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to remove associated users");
         }
@@ -215,6 +220,11 @@ public class DeveloperAndPublisherService(
         if (developerAndPublisher == null)
         {
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
+        }
+
+        if (developerAndPublisher.IsApproved.HasValue && developerAndPublisher.IsApproved.Value)
+        {
+            return ServiceResponse.BadRequestResponse("Developer Or Publisher is already approved");
         }
 
         developerAndPublisher.IsApproved = isApproved;
