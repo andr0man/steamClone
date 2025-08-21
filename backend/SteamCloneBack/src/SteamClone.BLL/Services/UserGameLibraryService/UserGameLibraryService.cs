@@ -1,4 +1,5 @@
 using AutoMapper;
+using SteamClone.DAL.Repositories.GameRepository;
 using SteamClone.DAL.Repositories.UserGameLibraryRepository;
 using SteamClone.Domain.Common.Interfaces;
 using SteamClone.Domain.Models.UserGameLibraries;
@@ -9,7 +10,8 @@ namespace SteamClone.BLL.Services.UserGameLibraryService;
 public class UserGameLibraryService(
     IUserGameLibraryRepository userGameLibraryRepository,
     IMapper mapper,
-    IUserProvider userProvider) : IUserGameLibraryService
+    IUserProvider userProvider,
+    IGameRepository gameRepository) : IUserGameLibraryService
 {
     public async Task<ServiceResponse> GetAllByUserAsync(CancellationToken cancellationToken = default)
     {
@@ -20,9 +22,19 @@ public class UserGameLibraryService(
 
     public async Task<ServiceResponse> ChangeFavoriteStatusAsync(string gameId, CancellationToken cancellationToken)
     {
+        if (await gameRepository.GetByIdAsync(gameId, cancellationToken) == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+        
         var userGamesLibrary = await GetByUserIdAsync(cancellationToken);
         
         var userGameLibrary = userGamesLibrary.FirstOrDefault(x => x.GameId == gameId);
+        
+        if (userGameLibrary == null)
+        {
+            return ServiceResponse.NotFoundResponse("User don't have this game in library");
+        }
         
         userGameLibrary!.IsFavorite = !userGameLibrary.IsFavorite;
 
