@@ -34,15 +34,25 @@ public class UserGameLibraryRepository(AppDbContext appDbContext) : IUserGameLib
     public async Task<UserGameLibrary?> GetAsync(string userId, string gameId, CancellationToken token,
         bool asNoTracking = false)
     {
-        var query = appDbContext.UserGameLibraries.Include(ugl => ugl.Game).AsQueryable();
+        var query = appDbContext.UserGameLibraries
+            .Include(ugl => ugl.Game).AsQueryable();
         if (asNoTracking)
             query = query.AsNoTracking();
         return await query.FirstOrDefaultAsync(ugl => ugl.UserId == userId && ugl.GameId == gameId, token);
     }
 
-    public async Task<List<UserGameLibrary>> GetByUserIdAsync(string userId, CancellationToken token)
+    public async Task<List<UserGameLibrary>> GetAllByUserIdAsync(string userId, CancellationToken token)
     {
-        return await appDbContext.UserGameLibraries.Include(ugl => ugl.Game).Where(ugl => ugl.UserId == userId)
+        return await appDbContext.UserGameLibraries.Include(ugl => ugl.Game)
+            .Where(ugl => ugl.UserId == userId)
+            .ToListAsync(token);
+    }
+
+    public async Task<List<UserGameLibrary>> GetAllByGameIdAsync(string gameId, CancellationToken token)
+    {
+        return await appDbContext.UserGameLibraries
+            // .Include(ugl => ugl.Game)
+            .Where(ugl => ugl.GameId == gameId)
             .ToListAsync(token);
     }
 }

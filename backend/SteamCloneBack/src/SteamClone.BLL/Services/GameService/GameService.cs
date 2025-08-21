@@ -96,10 +96,11 @@ public class GameService(
             {
                 return ServiceResponse.NotFoundResponse($"Publisher with id '{model.PublisherId}' not found");
             }
-            
+
             if (!await HasAccessToDeveloperOrPublisherAsync(publisher))
             {
-                return ServiceResponse.ForbiddenResponse("You don't have permission to create a game with this publisher");
+                return ServiceResponse.ForbiddenResponse(
+                    "You don't have permission to create a game with this publisher");
             }
         }
 
@@ -460,6 +461,11 @@ public class GameService(
             return ServiceResponse.NotFoundResponse("User not found");
         }
 
+        if (user.RoleId != Settings.Roles.ManagerRole)
+        {
+            return ServiceResponse.BadRequestResponse("User must have Manager role");
+        }
+
         var game = await gameRepository.GetByIdAsync(gameId, token);
 
         if (game == null)
@@ -533,6 +539,11 @@ public class GameService(
             return ServiceResponse.NotFoundResponse("Game not found");
         }
 
+        if ((await userGameLibraryRepository.GetAllByGameIdAsync(game.Id, token)).Any())
+        {
+            return ServiceResponse.BadRequestResponse("Game has already been bought");
+        }
+
         game.IsApproved = isApproved;
 
         return await UpdateGameAsync(game,
@@ -547,16 +558,16 @@ public class GameService(
         return ServiceResponse.OkResponse("Games without approval retrieved successfully",
             mapper.Map<List<GameVM>>(games));
     }
-    
+
     public async Task<ServiceResponse> BuyGameAsync(string id, CancellationToken token)
     {
         var game = await gameRepository.GetByIdAsync(id, token);
-        
+
         if (game == null)
         {
             return ServiceResponse.NotFoundResponse("Game not found");
         }
-        
+
         var buyerId = await userProvider.GetUserId();
 
         try
@@ -571,7 +582,7 @@ public class GameService(
                 UserId = buyerId,
                 GameId = id
             }, token);
-            
+
             return ServiceResponse.OkResponse("Game bought successfully");
         }
         catch (Exception e)
@@ -609,7 +620,7 @@ public class GameService(
         var userId = await userProvider.GetUserId();
         return developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.Roles.AdminRole;
     }
-    
+
     private async Task<bool> HasAccessToGameAsync(Game game)
     {
         var userRole = userProvider.GetUserRole();

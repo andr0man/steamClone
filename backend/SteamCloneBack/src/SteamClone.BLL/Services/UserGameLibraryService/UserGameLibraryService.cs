@@ -40,7 +40,7 @@ public class UserGameLibraryService(
     private async Task<List<UserGameLibrary>> GetByUserIdAsync(CancellationToken cancellationToken = default)
     {
         var userId = await userProvider.GetUserId();
-        var userGamesLibrary = await userGameLibraryRepository.GetByUserIdAsync(userId, cancellationToken);
+        var userGamesLibrary = await userGameLibraryRepository.GetAllByUserIdAsync(userId, cancellationToken);
         
         return userGamesLibrary;
     }

@@ -10,6 +10,7 @@ public interface IUserGameLibraryRepository
     Task<UserGameLibrary?> DeleteAsync(string userId, string gameId, CancellationToken token);
     Task<UserGameLibrary?> GetAsync(string userId, string gameId, CancellationToken token,
         bool asNoTracking = false);
-    Task<List<UserGameLibrary>> GetByUserIdAsync(string userId, CancellationToken token);
+    Task<List<UserGameLibrary>> GetAllByUserIdAsync(string userId, CancellationToken token);
+    Task<List<UserGameLibrary>> GetAllByGameIdAsync(string gameId, CancellationToken token); 
     // Task<List<UserGameLibrary>> GetByFilterAsync(FilterUserGameLibrary filter, CancellationToken token>
 }

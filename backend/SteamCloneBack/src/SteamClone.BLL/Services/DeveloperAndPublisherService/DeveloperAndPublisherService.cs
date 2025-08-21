@@ -142,6 +142,11 @@ public class DeveloperAndPublisherService(
             return ServiceResponse.NotFoundResponse("User not found");
         }
 
+        if (user.RoleId != Settings.Roles.ManagerRole)
+        {
+            return ServiceResponse.BadRequestResponse("User must have Manager role");
+        }
+
         var developerAndPublisher = await developerAndPublisherRepository.GetByIdAsync(developerAndPublisherId, token);
 
         if (developerAndPublisher == null)
@@ -215,6 +220,11 @@ public class DeveloperAndPublisherService(
         if (developerAndPublisher == null)
         {
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
+        }
+
+        if (developerAndPublisher.IsApproved.HasValue && developerAndPublisher.IsApproved.Value)
+        {
+            return ServiceResponse.BadRequestResponse("Developer Or Publisher is already approved");
         }
 
         developerAndPublisher.IsApproved = isApproved;
