@@ -19,4 +19,6 @@ public class User : AuditableEntity<string>
     public string? ExternalProviderKey { get; set; }
     public bool EmailConfirmed { get; set; }
     public Balance? Balance { get; set; }
+    public ICollection<Friendship> SentFriendships { get; set; } = new List<Friendship>();
+    public ICollection<Friendship> ReceivedFriendships { get; set; } = new List<Friendship>();
 }
