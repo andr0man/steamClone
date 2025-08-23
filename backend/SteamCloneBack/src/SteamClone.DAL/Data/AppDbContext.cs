@@ -29,6 +29,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<UserItem> UserItems { get; set; }
     public DbSet<MarketItem> MarketItems { get; set; }
     public DbSet<Balance> Balances { get; set; }
+    public DbSet<Friendship> Friendships { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
