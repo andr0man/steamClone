@@ -22,4 +22,6 @@ public class User : AuditableEntity<string>
     public bool EmailConfirmed { get; set; }
     public Balance? Balance { get; set; }
     public List<UserGameLibrary>? GameLibrary { get; set; }
+    public ICollection<Friendship> SentFriendships { get; set; } = new List<Friendship>();
+    public ICollection<Friendship> ReceivedFriendships { get; set; } = new List<Friendship>();
 }
