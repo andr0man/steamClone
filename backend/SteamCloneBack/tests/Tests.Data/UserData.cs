@@ -15,4 +15,14 @@ public class UserData
         Nickname = "qwerty",
         CountryId = countryId
     };
+    
+    public static User UserForAssociate(string userId, int countryId) => new()
+    {
+        Id = userId,
+        Email = "qwerty@gmail.com",
+        PasswordHash = "fdsafdsafsad",
+        RoleId = Settings.Roles.ManagerRole,
+        Nickname = "qwerty",
+        CountryId = countryId
+    };
 }

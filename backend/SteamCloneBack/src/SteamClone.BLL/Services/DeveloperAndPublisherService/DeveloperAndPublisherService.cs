@@ -58,7 +58,7 @@ public class DeveloperAndPublisherService(
 
         var userRole = userProvider.GetUserRole();
 
-        if (userRole == "Admin")
+        if (userRole == Settings.Roles.AdminRole)
         {
             developerAndPublisher.IsApproved = true;
         }

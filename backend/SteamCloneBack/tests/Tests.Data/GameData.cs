@@ -13,6 +13,7 @@ public class GameData
         ReleaseDate = DateTime.UtcNow,
         DeveloperId = developerId,
         PublisherId = developerId,
-        CreatedBy = userId
+        CreatedBy = userId,
+        IsApproved = true,
     };
 }

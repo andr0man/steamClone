@@ -167,7 +167,7 @@ public class GameControllerTests : BaseIntegrationTest, IAsyncLifetime
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
 
-        var games = await JsonHelper.GetPayloadAsync<List<Game>>(response);
+        var games = await JsonHelper.GetPayloadAsync<List<GameVM>>(response);
 
         games.Should().NotBeEmpty();
     }

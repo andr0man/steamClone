@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SteamClone.Domain.Models.Auth.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SteamClone.DAL.Data.Configurations.Auth.Users
 {
@@ -17,13 +12,12 @@ namespace SteamClone.DAL.Data.Configurations.Auth.Users
 
             // Відношення з Sender
             builder.HasOne(f => f.Sender)
-                .WithMany() // можна додати колекції в User, якщо треба
-                .HasForeignKey(f => f.SenderId)
+                .WithMany(f => f.SentFriendships)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Відношення з Receiver
             builder.HasOne(f => f.Receiver)
-                .WithMany()
+                .WithMany(f => f.ReceivedFriendships)
                 .HasForeignKey(f => f.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 

@@ -108,7 +108,7 @@ public class GameService(
 
         var userRole = userProvider.GetUserRole();
 
-        if (userRole == "Admin")
+        if (userRole == Settings.Roles.AdminRole)
         {
             game.IsApproved = true;
         }
