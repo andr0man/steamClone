@@ -4,7 +4,7 @@ using SteamClone.DAL.Converters;
 using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.UserGameLibraries;
 
-namespace SteamClone.DAL.Data.Configurations.Auth.Users;
+namespace SteamClone.DAL.Data.Configurations;
 
 public class UserGameLibraryConfiguration : IEntityTypeConfiguration<UserGameLibrary>
 {
