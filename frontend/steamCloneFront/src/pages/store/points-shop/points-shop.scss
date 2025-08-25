@@ -1,0 +1,201 @@
+@use 'sass:color';
+
+$bubble-secondary-hue: 220;
+$bubble-bg-primary: hsl($bubble-secondary-hue, 15%, 12%);
+$bubble-bg-card: hsl($bubble-secondary-hue, 15%, 18%);
+$bubble-bg-elements-lighter: hsl($bubble-secondary-hue, 15%, 22%);
+$bubble-text-bright: hsl($bubble-secondary-hue, 20%, 95%);
+$bubble-text-primary: hsl($bubble-secondary-hue, 15%, 85%);
+$bubble-text-secondary: hsl($bubble-secondary-hue, 10%, 60%);
+$bubble-text-muted: hsl($bubble-secondary-hue, 10%, 40%);
+$bubble-accent-home-primary: hsl($bubble-secondary-hue, 85%, 65%);
+$bubble-accent-success: hsl(145, 65%, 50%);
+$bubble-border-soft: hsla($bubble-secondary-hue, 15%, 50%, 0.2);
+$bubble-border-medium: hsla($bubble-secondary-hue, 15%, 50%, 0.4);
+$bubble-font-primary: 'Motiva Sans', 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+$bubble-radius-md: 16px;
+$bubble-radius-lg: 24px;
+$bubble-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.15);
+$bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+@mixin bubble-button-base {
+  padding: 12px 24px; border: none; border-radius: 50px;
+  font-family: $bubble-font-primary; font-weight: 600; font-size: 1rem;
+  cursor: pointer; transition: all $bubble-transition-fast;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; text-decoration: none; line-height: 1.2;
+}
+
+.points-shop-container {
+  background-color: $bubble-bg-primary;
+  color: $bubble-text-primary;
+  font-family: $bubble-font-primary;
+  padding: 70px 5% 4rem 5%;
+}
+
+.ps-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, hsl($bubble-secondary-hue, 18%, 15%), $bubble-bg-card);
+  border-radius: $bubble-radius-lg;
+  margin-bottom: 3rem;
+  border: 1px solid $bubble-border-soft;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: $bubble-text-bright;
+    margin: 0 0 0.5rem 0;
+  }
+  p {
+    font-size: 1.1rem;
+    color: $bubble-text-secondary;
+    margin: 0;
+  }
+}
+
+.ps-user-points {
+  text-align: right;
+  span {
+    color: $bubble-text-muted;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+  }
+  .points-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $bubble-accent-home-primary;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+}
+
+.ps-main-content {
+  .tabs-navigation {
+    display: flex; gap: 0.5rem; margin-bottom: 2rem;
+    border-bottom: 1px solid $bubble-border-medium;
+    .tab-button {
+      @include bubble-button-base;
+      padding: 0.8rem 1.25rem; background-color: transparent; color: $bubble-text-secondary;
+      border-radius: $bubble-radius-md $bubble-radius-md 0 0; border: none;
+      border-bottom: 3px solid transparent; position: relative; top: 1px; font-weight: 500;
+      svg { color: $bubble-text-muted; margin-right: 8px; transition: color $bubble-transition-fast; }
+      &:hover:not(.active) {
+        color: $bubble-text-bright; background-color: rgba($bubble-accent-home-primary, 0.1);
+      }
+      &.active {
+        color: $bubble-accent-home-primary; border-bottom-color: $bubble-accent-home-primary;
+        font-weight: 700; background-color: hsla($bubble-secondary-hue, 15%, 18%, 0.5);
+        svg { color: $bubble-accent-home-primary; }
+      }
+    }
+  }
+}
+
+.ps-item-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.ps-item-card {
+  background-color: $bubble-bg-card;
+  border-radius: $bubble-radius-md;
+  border: 1px solid $bubble-border-soft;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all $bubble-transition-fast;
+  box-shadow: $bubble-shadow-soft;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    border-color: $bubble-border-medium;
+  }
+}
+
+.ps-item-preview {
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.5rem;
+  background-color: $bubble-bg-elements-lighter;
+}
+
+.ps-item-game-source {
+  background-color: rgba(0,0,0,0.7);
+  color: $bubble-text-primary;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.ps-item-info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.ps-item-name {
+  color: $bubble-text-bright;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  flex-grow: 1;
+}
+
+.ps-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.ps-item-price {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: $bubble-accent-home-primary;
+}
+
+.ps-buy-button {
+  background-color: $bubble-accent-home-primary;
+  color: $bubble-text-bright;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all $bubble-transition-fast;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($bubble-accent-home-primary, $lightness: 5%);
+    transform: scale(1.05);
+  }
+  &:disabled {
+    background-color: $bubble-text-muted;
+    cursor: not-allowed;
+  }
+}
+
+.ps-loading {
+  display: flex; justify-content: center; align-items: center; padding: 5rem;
+  .spinner {
+    width: 50px; height: 50px; border: 5px solid hsla($bubble-secondary-hue, 20%, 95%, 0.2);
+    border-top-color: $bubble-accent-home-primary; border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
