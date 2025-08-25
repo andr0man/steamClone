@@ -21,5 +21,11 @@ public class UserMapperProfile : Profile
         CreateMap<SignUpVM, User>().ReverseMap();
         
         CreateMap<SignInVM, User>().ReverseMap();
+
+        CreateMap<Friendship, FriendshipVM>().ReverseMap();
+
+        CreateMap<CreateFriendshipVM, Friendship>().ReverseMap();
+
+        CreateMap<UpdateFriendshipStatusVM, Friendship>().ReverseMap();
     }
 }

@@ -1,8 +1,10 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.Countries;
+using SteamClone.Domain.Models.DevelopersAndPublishers;
+using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.Models.Languages;
 
 namespace SteamClone.DAL.Data.Initializer;
@@ -16,13 +18,132 @@ public static class DataSeed
         SeedRoles(modelBuilder);
         SeedCountries(modelBuilder);
         SeedLanguages(modelBuilder);
+        SeedGameGenres(modelBuilder);
+
+        // for testing
+        var (adminId, userId, managerId) = SeedUsers(modelBuilder);
+        var developerAndPublisherId = SeedDevelopersAndPublishers(managerId, modelBuilder);
+    }
+
+    private static string SeedDevelopersAndPublishers(string managerId, ModelBuilder modelBuilder)
+    {
+        var developerAndPublisher = new DeveloperAndPublisher
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = "DeveloperAndPublisher",
+            FoundedDate = DateTime.UtcNow,
+            CountryId = 231,
+            Description = "DeveloperAndPublisher description",
+            IsApproved = true
+        };
+        
+        modelBuilder.Entity<DeveloperAndPublisher>().HasData(developerAndPublisher);
+        
+        // modelBuilder.Entity<DeveloperAndPublisher>()
+        //     .HasMany(x => x.AssociatedUsers)
+        //     .WithMany()
+        //     .UsingEntity(x => x.HasData(new
+        //     {
+        //         DeveloperAndPublisherId = developerAndPublisher.Id,
+        //         AssociatedUsersId = managerId
+        //     }));
+        
+        return developerAndPublisher.Id;
+    }
+
+    private static (string adminId, string userId, string managerId) SeedUsers(ModelBuilder modelBuilder)
+    {
+        var admin = new User
+        {
+            Id = Guid.NewGuid().ToString(),
+            Nickname = "Admin",
+            Email = "admin@mail.com",
+            PasswordHash =
+                "7D64D8B0B76B23625CA2804E54F2B9F9562EE3175AD21AB02ACB9AE80E80C970-C8DCFB0B66B8BA472A481750248172C3", // string123
+            RoleId = Settings.Roles.AdminRole,
+            EmailConfirmed = true,
+            CountryId = 231
+        };
+
+        var user = new User
+        {
+            Id = Guid.NewGuid().ToString(),
+            Nickname = "User",
+            Email = "user@mail.com",
+            PasswordHash =
+                "7D64D8B0B76B23625CA2804E54F2B9F9562EE3175AD21AB02ACB9AE80E80C970-C8DCFB0B66B8BA472A481750248172C3", // string123
+            RoleId = Settings.Roles.UserRole,
+            EmailConfirmed = true,
+            CountryId = 231
+        };
+
+        var manager = new User
+        {
+            Id = Guid.NewGuid().ToString(),
+            Nickname = "Manager",
+            Email = "manager@mail.com",
+            PasswordHash =
+                "7D64D8B0B76B23625CA2804E54F2B9F9562EE3175AD21AB02ACB9AE80E80C970-C8DCFB0B66B8BA472A481750248172C3", // string123
+            RoleId = Settings.Roles.ManagerRole,
+            EmailConfirmed = true,
+            CountryId = 231
+        };
+
+        var userList = new List<User>
+        {
+            admin,
+            user,
+            manager
+        };
+
+        modelBuilder.Entity<User>().HasData(userList);
+        
+        modelBuilder.Entity<Balance>().HasData(new List<Balance>
+        {
+            new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = admin.Id,
+                Amount = 100
+            },
+            new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = user.Id,
+                Amount = 100
+            },
+            new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = manager.Id,
+                Amount = 100
+            }
+        });
+        
+        return (admin.Id, user.Id, manager.Id);
+    }
+
+    private static void SeedGameGenres(ModelBuilder modelBuilder)
+    {
+        List<Genre> genres =
+        [
+            new() { Id = 1, Name = "Action" },
+            new() { Id = 2, Name = "Adventure" },
+            new() { Id = 3, Name = "RPG" },
+            new() { Id = 4, Name = "Strategy" },
+            new() { Id = 5, Name = "Simulation" },
+            new() { Id = 6, Name = "Sports" },
+            new() { Id = 7, Name = "Racing" }
+        ];
+
+        modelBuilder.Entity<Genre>().HasData(genres);
     }
 
     private static void SeedRoles(ModelBuilder modelBuilder)
     {
         var roles = new List<Role>();
 
-        foreach (var role in Settings.ListOfRoles)
+        foreach (var role in Settings.Roles.ListOfRoles)
         {
             roles.Add(new Role { Name = role, Id = role });
         }
@@ -36,12 +157,11 @@ public static class DataSeed
         {
             var json = File.ReadAllText("wwwroot/languages/languages.json");
             var languagesDto = JsonSerializer.Deserialize<List<LanguageDto>>(json);
-            
+
             var languages = languagesDto!
                 .Select((l, index) => new { Id = index + 1, Code = l.code, Name = l.name });
 
             modelBuilder.Entity<Language>().HasData(languages);
-
         }
         catch (Exception ex)
         {

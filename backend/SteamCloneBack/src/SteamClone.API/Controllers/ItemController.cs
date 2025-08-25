@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SteamClone.API.Controllers.Common;
 using SteamClone.BLL.Services.ItemService;
+using SteamClone.DAL;
 using SteamClone.Domain.ViewModels.Items;
 
 namespace SteamClone.API.Controllers;
@@ -10,6 +11,7 @@ namespace SteamClone.API.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(Policy = Settings.Roles.AdminOrManager)]
 public class ItemController(IItemService itemService)
     : GenericController<string, CreateItemVM, UpdateItemVM>(itemService)
 {

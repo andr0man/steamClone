@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SteamClone.DAL.Extensions;
 using SteamClone.Domain.Models.Auth.Users;
+using SteamClone.Domain.Models.Games;
 
 namespace SteamClone.DAL.Data.Configurations.Auth.Users;
 
