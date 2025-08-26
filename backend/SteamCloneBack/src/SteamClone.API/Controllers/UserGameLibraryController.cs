@@ -6,7 +6,7 @@ using SteamClone.BLL.Services.UserGameLibraryService;
 namespace SteamClone.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("user-game-library")]
 [Tags("User Game Library")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserGameLibraryController(IUserGameLibraryService userGameLibraryService) : BaseController

@@ -5,7 +5,7 @@ using SteamClone.Domain.ViewModels.Items.UserItem;
 namespace SteamClone.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("user-item")]
 [Tags("User Item")]
 public class UserItemController(IUserItemService userItemService) : BaseController
 {

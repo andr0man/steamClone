@@ -5,13 +5,12 @@ using SteamClone.Domain.Models.Wishlists;
 
 namespace SteamClone.DAL.Repositories.WishlistRepository;
 
-public class WishlistRepository(AppDbContext context, IUserProvider userProvider) : IWishlistRepository
+public class WishlistRepository(AppDbContext context) : IWishlistRepository
 {
     public async Task<Wishlist> CreateAsync(Wishlist wishlist, CancellationToken cancellationToken)
     {
-        var userId = await userProvider.GetUserId();
         var numbersOfWishlists = await context.Wishlists
-            .CountAsync(w => w.UserId == userId, cancellationToken);
+            .CountAsync(w => w.UserId == wishlist.UserId, cancellationToken);
         wishlist.Rank = ++numbersOfWishlists;
 
         await context.Wishlists.AddAsync(wishlist, cancellationToken);
@@ -35,7 +34,7 @@ public class WishlistRepository(AppDbContext context, IUserProvider userProvider
         
         var wishlistItem = wishlists.FirstOrDefault(w => w.UserId == userId && w.GameId == gameId);
 
-        if (wishlistItem == null || wishlistItem.Rank == 1 || wishlistItem.Rank == lastNumberOfWishlists)
+        if (wishlistItem == null || isMoveUp ? wishlistItem!.Rank == 1 : wishlistItem.Rank == lastNumberOfWishlists)
             return; // не існує або вже на верхівці або на низу
 
         var currentRank = wishlistItem.Rank;
@@ -97,5 +96,11 @@ public class WishlistRepository(AppDbContext context, IUserProvider userProvider
         return await context.Wishlists.Include(w => w.Game)
             .Where(w => w.UserId == userId)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Wishlist?> GetByUserIdAndGameIdAsync(string userId, string gameId, CancellationToken cancellationToken)
+    {
+        return await context.Wishlists.Where(w => w.UserId == userId && w.GameId == gameId)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }
