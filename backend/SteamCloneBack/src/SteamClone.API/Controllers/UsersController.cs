@@ -9,7 +9,7 @@ using static Google.Apis.Requests.BatchRequest;
 
 namespace SteamClone.API.Controllers;
 
-[Route("users")]
+[Route("[controller]")]
 [ApiController]
 // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 // [Authorize(Roles = $"{Settings.AdminRole}, {Settings.UserRole}")]

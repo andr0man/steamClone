@@ -9,7 +9,7 @@ using SteamClone.Domain.ViewModels.Games.Genre;
 namespace SteamClone.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("game-genre")]
 [Tags("Game Genre")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Authorize(Roles = Settings.Roles.AdminRole)]

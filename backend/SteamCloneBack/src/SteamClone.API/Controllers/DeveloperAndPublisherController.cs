@@ -9,7 +9,7 @@ using SteamClone.Domain.ViewModels.DevelopersAndPublishers;
 namespace SteamClone.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("developer-and-publisher")]
 [Tags("Developer And Publisher")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Authorize(Policy = Settings.Roles.AdminOrManager)]

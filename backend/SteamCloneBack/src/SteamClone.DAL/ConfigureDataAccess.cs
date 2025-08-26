@@ -23,6 +23,7 @@ using SteamClone.DAL.Repositories.SystemRequirementsRepo;
 using SteamClone.DAL.Repositories.UserGameLibraryRepository;
 using SteamClone.DAL.Repositories.UserItemRepository;
 using SteamClone.DAL.Repositories.UserRepository;
+using SteamClone.DAL.Repositories.WishlistRepository;
 
 namespace SteamClone.DAL;
 
@@ -68,5 +69,6 @@ public static class ConfigureDataAccess
         services.AddScoped<IBalanceRepository, BalanceRepository>();
         services.AddScoped<IMarketItemHistoryRepository, MarketItemHistoryRepository>();
         services.AddScoped<IUserGameLibraryRepository, UserGameLibraryRepository>();
+        services.AddScoped<IWishlistRepository, WishlistRepository>();
     }
 }
