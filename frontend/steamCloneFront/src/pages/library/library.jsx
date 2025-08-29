@@ -4,9 +4,12 @@ import './library.scss';
 import Notification from '../../components/Notification';
 import { Search as SearchIcon } from 'lucide-react';
 
-const API_BASE_URL = '';
-
 const initialLibraryDataState = { games: [] };
+
+const LS_KEYS = {
+  LIB: 'mock:library-games',
+  COL: 'mock:collections',
+};
 
 const MOCK_GAMES = [
   {
@@ -104,6 +107,32 @@ const MOCK_GAMES = [
 const DEFAULT_TAGS = ['Indie', 'Singleplayer', 'Casual', 'Action', 'Adventure'];
 const STATUS_LIST = ['Played', 'Not played', 'Non-installed'];
 
+function readLS(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+function writeLS(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+}
+
+function shapeCollections(rawList, libraryGames) {
+  const map = new Map((libraryGames || []).map(g => [g.id, g]));
+  return (rawList || []).map(c => {
+    const ids = Array.from(new Set(c.gameIds || []));
+    const previewGames = ids.map(id => map.get(id)).filter(Boolean).slice(0, 4);
+    return {
+      id: c.id,
+      name: c.name,
+      gameCount: ids.length,
+      previewGames,
+    };
+  });
+}
+
 const Library = () => {
   const [libraryData, setLibraryData] = useState(initialLibraryDataState);
   const [loading, setLoading] = useState(true);
@@ -116,27 +145,28 @@ const Library = () => {
   const navigate = useNavigate();
   const { games } = libraryData;
 
-  const fetchLibraryGames = useCallback(async () => {
+  // Ініціалізація бібліотеки з mock у localStorage
+  useEffect(() => {
     setLoading(true);
-    setApiError(null);
-    setLibraryData(initialLibraryDataState);
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/user/library_nonexistent_endpoint`);
-      if (!response.ok) throw new Error(`Failed to fetch library. Status: ${response.status}`);
-      const data = await response.json();
-      setLibraryData(prev => ({ ...prev, games: data.games || MOCK_GAMES }));
-    } catch (err) {
-      setApiError('Using local data (API unavailable).');
-      setLibraryData({ games: MOCK_GAMES });
-    } finally {
-      setLoading(false);
-    }
+    setTimeout(() => {
+      try {
+        let lib = readLS(LS_KEYS.LIB, null);
+        if (!lib || !Array.isArray(lib) || lib.length === 0) {
+          lib = MOCK_GAMES;
+          writeLS(LS_KEYS.LIB, lib);
+        }
+        setLibraryData({ games: lib });
+      } catch (e) {
+        setApiError('Failed to load local library data.');
+        setLibraryData({ games: MOCK_GAMES });
+      } finally {
+        setLoading(false);
+      }
+    }, 150);
   }, []);
 
-  useEffect(() => { fetchLibraryGames(); }, [fetchLibraryGames]);
-
-  const toggleSet = (set, value) => {
-    const next = new Set(set);
+  const toggleSet = (setVal, value) => {
+    const next = new Set(setVal);
     if (next.has(value)) next.delete(value);
     else next.add(value);
     return next;
@@ -179,20 +209,16 @@ const Library = () => {
 
   const filteredRecent = useMemo(() => applyFilters(recentGames), [applyFilters, recentGames]);
 
-  const collections = useMemo(() => {
-    const cats = (games || []).map(g => g.category).filter(Boolean);
-    const uniq = [...new Set(cats)];
-    return uniq.length ? uniq : ['Fav', 'RPG', 'Strategies'];
+  // Читаємо реальні колекції з localStorage і будуємо прев’юшки
+  const userCollections = useMemo(() => {
+    const raw = readLS(LS_KEYS.COL, []);
+    return shapeCollections(raw, games);
   }, [games]);
 
-  const collectionCovers = useMemo(() => {
-    return collections.map(name => {
-      const sample = (games || []).find(g => g.category === name);
-      return { name, cover: sample?.imageUrl };
-    });
-  }, [games, collections]);
-
-  const handleGameInfoClick = (gameId) => navigate(`/games/${gameId}`);
+  const handleGameInfoClick = (gameId) => navigate(`/library/game/${gameId}`);
+  const handleCreateCollection = () => navigate('/library/collections?create=1');
+  const handleOpenCollection = (id) => navigate(`/library/collections?open=${encodeURIComponent(id)}`);
+  const handleOpenCollections = () => navigate('/library/collections');
 
   return (
     <div className="library-page-container">
@@ -251,7 +277,7 @@ const Library = () => {
         <div className="lib-panel lib-status-panel">
           <div className="lib-panel-title">Filter by Status</div>
           <span className="lib-underline" />
-          {['Played', 'Not played', 'Non-installed'].map(s => (
+          {STATUS_LIST.map(s => (
             <label key={s} className="lib-check">
               <input
                 type="checkbox"
@@ -268,7 +294,9 @@ const Library = () => {
         <section className="lib-panel lib-recent-panel">
           <div className="lib-panel-title linkish">Recent</div>
           <div className="recent-grid">
-            {filteredRecent.length ? filteredRecent.map((g, i) => (
+            {loading ? (
+              <div className="recent-empty">Loading...</div>
+            ) : filteredRecent.length ? filteredRecent.map((g, i) => (
               <button
                 key={g.id || i}
                 type="button"
@@ -286,21 +314,59 @@ const Library = () => {
         </section>
 
         <section className="lib-panel lib-collections-panel">
-          <div className="lib-panel-title">Collections</div>
+          <div className="lib-panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>Collections</span>
+            <button className="linkish-btn" type="button" onClick={handleOpenCollections} title="Open Collections">
+              Manage
+            </button>
+          </div>
           <div className="collections-row">
-            <button className="collection-card add-card" type="button" title="Create collection">+</button>
-            {collectionCovers.map((c, i) => (
-              <div className="collection-card" key={c.name || i} title={c.name}>
-                <div
-                  className="collection-cover"
-                  style={{ backgroundImage: c.cover ? `url(${c.cover})` : 'none' }}
-                >
-                  <div className="collection-overlay">
-                    <span className="collection-name">{c.name}</span>
+            <button className="collection-card add-card" type="button" title="Create collection" onClick={handleCreateCollection}>+</button>
+
+            {userCollections && userCollections.length > 0 ? (
+              userCollections.map((c) => {
+                const cover = c.previewGames?.[0]?.imageUrl;
+                return (
+                  <div
+                    className="collection-card clickable"
+                    key={c.id}
+                    title={`${c.name} (${c.gameCount})`}
+                    onClick={() => handleOpenCollection(c.id)}
+                  >
+                    <div
+                      className="collection-cover"
+                      style={{ backgroundImage: cover ? `url(${cover})` : 'none' }}
+                    >
+                      <div className="collection-overlay">
+                        <span className="collection-name">{c.name}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                );
+              })
+            ) : (
+              // Фолбек: якщо колекцій ще нема — покажемо авто-підказки з категорій
+              [...new Set((games || []).map(g => g.category).filter(Boolean))].slice(0, 3).map((name, i) => {
+                const sample = (games || []).find(g => g.category === name);
+                return (
+                  <div
+                    className="collection-card clickable"
+                    key={name || i}
+                    title={`Create "${name}" collection`}
+                    onClick={handleCreateCollection}
+                  >
+                    <div
+                      className="collection-cover"
+                      style={{ backgroundImage: sample?.imageUrl ? `url(${sample.imageUrl})` : 'none' }}
+                    >
+                      <div className="collection-overlay">
+                        <span className="collection-name">{name}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </section>
       </main>

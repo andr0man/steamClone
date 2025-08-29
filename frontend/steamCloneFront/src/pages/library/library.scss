@@ -75,6 +75,18 @@ body {
 }
 .lib-panel-title.linkish { color: #A178EB; text-decoration: underline; text-underline-offset: 3px; }
 
+.linkish-btn {
+  background: none;
+  border: none;
+  color: #A178EB;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+}
+
+/* UNDERLINE */
 .lib-underline {
   display: block;
   width: 218px;
@@ -108,7 +120,7 @@ body {
 
 /* CHECKS */
 .lib-checks { display: flex; flex-direction: column; gap: 14px; margin-bottom: 8px; }
-.lib-check { display: inline-flex; align-items: center; gap: 14px; color: $ink; font-size: 16px; }
+.lib-check { display: inline-flex; align-items: center; gap: 14px; color: $ink; font-size: 16px; cursor: pointer; }
 .lib-check input[type="checkbox"] {
   appearance: none;
   width: 24px; height: 24px;
@@ -127,6 +139,11 @@ body {
   color: #121117;
   font-weight: 800;
 }
+
+/* STATUS COLUMN */
+.lib-status-panel { display: flex; flex-direction: column; }
+.lib-status-panel > .lib-check { display: flex; }
+.lib-status-panel > .lib-check + .lib-check { margin-top: 14px; }
 
 /* ENTER TAG */
 .lib-enter-tag { margin-top: 8px; }
@@ -195,6 +212,13 @@ body {
   transition: transform .2s ease, filter .2s ease;
 }
 .collection-card.add-card:hover { transform: translateY(-2px); filter: brightness(1.08); }
+
+/* робимо картки клікабельними */
+.collection-card.clickable { 
+  cursor: pointer; 
+  transition: transform .2s ease, filter .2s ease;
+}
+.collection-card.clickable:hover { transform: translateY(-2px); filter: brightness(1.06); }
 
 .collection-cover {
   width: 100%; height: 100%;
