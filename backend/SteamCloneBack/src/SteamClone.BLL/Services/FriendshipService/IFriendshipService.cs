@@ -11,5 +11,6 @@ namespace SteamClone.BLL.Services.FriendshipService
         Task<ServiceResponse> GetFriendCountAsync(string userId, CancellationToken token);
         Task<ServiceResponse> GetSentRequestsAsync(string userId, CancellationToken token);
         Task<ServiceResponse> GetReceivedRequestsAsync(string userId, CancellationToken token);
+        Task<ServiceResponse> RemoveFriendAsync(string userId, string friendId, CancellationToken token);
     }
 }

@@ -76,5 +76,15 @@ namespace SteamClone.BLL.Services.FriendshipService
             var result = requests.Select(r => mapper.Map<FriendshipVM>(r)).ToList();
             return ServiceResponse.OkResponse("Received requests", result);
         }
+        public async Task<ServiceResponse> RemoveFriendAsync(string userId, string friendId, CancellationToken token)
+        {
+            var friendship = await friendshipRepository.GetFriendshipAsync(userId, friendId, token);
+
+            if (friendship == null || friendship.Status != FriendshipStatus.Accepted)
+                return ServiceResponse.NotFoundResponse("Friendship not found or not accepted");
+
+            await friendshipRepository.DeleteAsync(friendship.Id, token);
+            return ServiceResponse.OkResponse("Friend removed successfully");
+        }
     }
 }

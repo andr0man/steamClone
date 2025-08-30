@@ -21,6 +21,7 @@ using SteamClone.DAL.Repositories.RoleRepository;
 using SteamClone.DAL.Repositories.SystemRequirementsRepo;
 using SteamClone.DAL.Repositories.UserItemRepository;
 using SteamClone.DAL.Repositories.UserRepository;
+using SteamClone.DAL.Repositories.FriendshipRepository;
 
 namespace SteamClone.DAL;
 
@@ -64,5 +65,6 @@ public static class ConfigureDataAccess
         services.AddScoped<IUserItemRepository, UserItemRepository>();
         services.AddScoped<IMarketItemRepository, MarketItemRepository>();
         services.AddScoped<IBalanceRepository, BalanceRepository>();
+        services.AddScoped<IFriendshipRepository, FriendshipRepository>();
     }
 }

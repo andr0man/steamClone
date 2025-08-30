@@ -67,4 +67,15 @@ public class FriendshipsController(IFriendshipService friendshipService, IUserPr
         var response = await friendshipService.GetReceivedRequestsAsync(userId, token);
         return Ok(response);
     }
+    [HttpDelete("{friendId}")]
+    public async Task<IActionResult> RemoveFriend(string friendId, CancellationToken token)
+    {
+        
+        var userId = User.FindFirst("id")?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized("User ID not found in token.");
+
+        var response = await friendshipService.RemoveFriendAsync(userId, friendId, token);
+        return Ok(response);
+    }
 }
