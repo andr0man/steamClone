@@ -29,4 +29,8 @@ public class WishlistController(IWishlistService wishlistService) : BaseControll
     [HttpPatch("move-to-position")]
     public async Task<IActionResult> MoveToPositionAsync(string gameId, int position, CancellationToken token = default) =>
         GetResult(await wishlistService.MoveToPositionAsync(gameId, position, token));
+    
+    [HttpGet("is-in-wishlist")]
+    public async Task<IActionResult> IsInWishlistAsync(string gameId, CancellationToken token = default) =>
+        GetResult(await wishlistService.IsInWishlistAsync(gameId, token));
 }

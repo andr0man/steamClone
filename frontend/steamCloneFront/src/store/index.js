@@ -1,11 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import { authApi } from '../services/auth/authApi';
-import { userApi } from '../services/user/userApi';
-import { rootReducer } from './rootReducer';
-import { gameApi } from '../services/game/gameApi';
+import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { authApi } from "../services/auth/authApi";
+import { userApi } from "../services/user/userApi";
+import { rootReducer } from "./rootReducer";
+import { gameApi } from "../services/game/gameApi";
+import { wishlistApi } from "../services/wishlist/wishlistApi";
 
-const middlewares = [authApi.middleware, userApi.middleware, gameApi.middleware];
+const middlewares = [
+  authApi.middleware,
+  userApi.middleware,
+  gameApi.middleware,
+  wishlistApi.middleware,
+];
 
 export const store = configureStore({
   reducer: rootReducer,

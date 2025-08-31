@@ -1,454 +1,503 @@
-$rainbow-stops: #ffffff 0.54%, #8c8c8c 18.71%, #ff9584 28.28%, #dfed43 40.23%, #a0f885 49.79%, #74bff7 59.18%,
-    #7c72db 67.24%, #8681a8 75.3%, #ffffff 100%;
+$rainbow-stops: #ffffff 0.54%, #8c8c8c 18.71%, #ff9584 28.28%, #dfed43 40.23%,
+  #a0f885 49.79%, #74bff7 59.18%, #7c72db 67.24%, #8681a8 75.3%, #ffffff 100%;
 
 // Функція, яка повертає градієнт з переданим кутом
 @function rainbow($angle) {
-    @return linear-gradient($angle, $rainbow-stops);
+  @return linear-gradient($angle, $rainbow-stops);
 }
 
 // Або міксін, якщо потрібно застосувати фон безпосередньо
 @mixin rainbow-bg($angle) {
-    background: linear-gradient($angle, $rainbow-stops);
+  background: linear-gradient($angle, $rainbow-stops);
 }
 
 $button-rotation-degree: 15deg;
 
 // --- Карусель скріншотів ---
 .screenshots-carousel {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-    min-height: 180px;
-    max-height: 500px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  min-height: 180px;
+  max-height: 500px;
 }
 
 .carousel-track-wrapper {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
 .carousel-track {
-    display: flex;
-    transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
-    will-change: transform;
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+  will-change: transform;
 }
 
 .carousel-slide {
-    flex: 0 0 60%;
-    margin: 0 1.5%;
-    opacity: 0.6;
-    transform: scale(0.92);
-    transition: opacity 0.3s, transform 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 160px;
+  flex: 0 0 60%;
+  margin: 0 1.5%;
+  opacity: 0.6;
+  transform: scale(0.92);
+  transition: opacity 0.3s, transform 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
 }
 
 .carousel-slide img {
-    max-width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.13);
-    object-fit: cover;
-    background: #23232a;
-    max-height: 50vh;
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.13);
+  object-fit: cover;
+  background: #23232a;
+  max-height: 50vh;
 }
 
 .carousel-slide.active {
-    opacity: 1;
-    transform: scale(1);
-    z-index: 2;
+  opacity: 1;
+  transform: scale(1);
+  z-index: 2;
 }
 
 .game-page {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 // main panel
 
 .game-main-panel {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    & > *:first-child {
-        flex: 1;
-    }
-    & > *:nth-child(2) {
-        flex: 2;
-    }
-    & > *:last-child {
-        flex: 1;
-    }
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  & > *:first-child {
+    flex: 1;
+  }
+  & > *:nth-child(2) {
+    flex: 2;
+  }
+  & > *:last-child {
+    flex: 1;
+  }
 }
 
 .game-main-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .game-main-content svg {
-    width: 100%;
-    height: auto;
+  width: 100%;
+  height: auto;
 }
 
 .rgb-border {
-    border-radius: 5px;
-    border: 2px solid transparent;
-    background: rainbow(28deg) border-box;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background: rainbow(28deg) border-box;
 }
 
 .rgb-border-for-text {
-    position: relative;
-    padding: 5px 8px;
-    padding-top: 3px;
+  position: relative;
+  padding: 5px 8px;
+  padding-top: 3px;
 }
 
 .rgb-border-for-text::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 5px;
-    border: 2px solid transparent;
-    background: rainbow(28deg) border-box;
-    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background: rainbow(28deg) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
 }
 
 .game-main-content-center {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
 }
 
 .game-release-info {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
 }
 
 .game-main-content-center h1 {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .game-main-content img {
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: cover;
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: cover;
 }
 
 .game-description {
-    font-size: 13px;
-    padding: 10px;
+  font-size: 13px;
+  padding: 10px;
 }
 
 .game-main-content-left {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tilted-button {
+  transform: skewX(-$button-rotation-degree);
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  text-transform: none;
+  outline: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -2;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    padding: 3px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: background-position 0.6s cubic-bezier(0.4, 0.2, 0.2, 1),
+      opacity 0.25s;
+    z-index: -1;
+    opacity: 0;
+  }
+
+  &:hover {
+    transform: scale(1.02) skewX(-$button-rotation-degree);
+    filter: brightness(1.1);
+  }
+
+  &:hover::before {
+    background-position: 100% 0;
+    opacity: 1;
+  }
+
+  &:hover::after {
+    animation-duration: 1s;
+  }
+
+  &:active {
+    transform: scale(0.99) skewX(-$button-rotation-degree);
+  }
+}
+
+.white-button {
+  @extend .tilted-button;
+
+  color: #fff;
+  font-family: inherit;
+  background: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 10px 30px;
+  margin: 20px;
+  border: none;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+  margin-top: 18px;
+  border-radius: 6px;
+  overflow: visible;
+
+  &::after {
+    /* Градієнтна рамка замість білої */
+    background: white;
+    background-size: 200% 200%;
+    /* Створюємо рамку через padding і mask */
+    padding: 3px;
+  }
+
+  /* райдужний шар при ховері */
+  &::before {
+    background: white;
+    background-size: 200% 100%;
+    background-position: 0 0;
+  }
 }
 
 .rainbow-button {
-    transform: skewX(-$button-rotation-degree);
-    background: linear-gradient(90deg, #121218 0%, #474350 100%);
-    color: #fff;
-    font-family: inherit;
-    font-size: 1.3rem;
-    font-weight: 600;
-    padding: 10px 30px;
-    margin: 20px;
-    border: none;
-    box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.18);
-    outline: none;
-    cursor: pointer;
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    text-transform: none;
-    letter-spacing: 0.01em;
-    margin-top: 18px;
-    border-radius: 6px;
-    overflow: visible;
+  @extend .tilted-button;
 
-    /* градієнтна основа (підкладка) */
-    &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: 6px;
-        /* Градієнтна рамка замість білої */
-        background: rainbow(270deg);
-        background-size: 200% 200%;
-        animation: gradientShift 3s ease infinite;
-        /* Створюємо рамку через padding і mask */
-        padding: 3px;
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        mask-composite: exclude;
-        pointer-events: none;
-        z-index: -2;
-    }
+  background: linear-gradient(90deg, #121218 0%, #474350 100%);
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 10px 30px;
+  margin: 20px;
+  border: none;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+  margin-top: 18px;
+  border-radius: 6px;
+  overflow: visible;
 
-    /* райдужний шар при ховері */
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: 6px;
-        padding: 3px;
-        background: rainbow(45deg);
-        background-size: 200% 100%;
-        background-position: 0 0;
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        mask-composite: exclude;
-        pointer-events: none;
-        transition: background-position 0.6s cubic-bezier(0.4, 0.2, 0.2, 1), opacity 0.25s;
-        z-index: -1;
-        opacity: 0;
-    }
+  /* градієнтна основа (підкладка) */
+  &::after {
+    /* Градієнтна рамка замість білої */
+    background: rainbow(270deg);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+    /* Створюємо рамку через padding і mask */
+    padding: 3px;
+  }
 
-    &:hover {
-        transform: scale(1.02) skewX(-$button-rotation-degree);
-        filter: brightness(1.1);
-    }
-
-    &:hover::before {
-        background-position: 100% 0;
-        opacity: 1;
-    }
-
-    &:hover::after {
-        animation-duration: 1s;
-    }
-
-    &:active {
-        transform: scale(0.99) skewX(-$button-rotation-degree);
-    }
+  /* райдужний шар при ховері */
+  &::before {
+    background: rainbow(45deg);
+    background-size: 200% 100%;
+    background-position: 0 0;
+  }
 }
 
 @keyframes gradientShift {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .rainbow-button-text {
-    transform: skewX($button-rotation-degree);
+  transform: skewX($button-rotation-degree);
 }
 
 .game-release-info a {
+  text-decoration: none;
+  color: #a178eb;
+  font-weight: 400;
+
+  &:hover {
+    filter: brightness(130%);
+  }
+
+  &:visited {
+    filter: brightness(90%);
+  }
+
+  &:not([href]) {
+    color: inherit;
     text-decoration: none;
-    color: #a178eb;
     font-weight: 400;
-
-    &:hover {
-        filter: brightness(130%);
-    }
-
-    &:visited {
-        filter: brightness(90%);
-    }
-
-    &:not([href]) {
-        color: inherit;
-        text-decoration: none;
-        font-weight: 400;
-        cursor: default;
-        filter: none;
-        pointer-events: none;
-    }
+    cursor: default;
+    filter: none;
+    pointer-events: none;
+  }
 }
 
 // game bottom panels
 
 .game-bottom-panels {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
 }
 
 .game-bottom-left-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 70%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 70%;
 }
 
 .game-bottom-right-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 30%;
 }
 
 // screenshots
 
 .game-screenshots-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
 }
 
 .screenshots-title-and-buttons {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .screenshots-buttons {
-    width: 40px;
-    height: 30px;
-    padding: 0;
-    border: none;
-    background: url('/game-page/screenshotLeftButton.svg') no-repeat center;
-    background-size: 100% 100%;
-    cursor: pointer;
-    transition: transform 0.2s ease, filter 0.2s ease;
-    color: transparent;
+  width: 40px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: url("/game-page/screenshotLeftButton.svg") no-repeat center;
+  background-size: 100% 100%;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  color: transparent;
 
-    &:hover:not(:disabled) {
-        transform: scale(1.02);
-        filter: brightness(1.1);
-    }
+  &:hover:not(:disabled) {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
 
-    &:active:not(:disabled) {
-        transform: scale(0.99);
-    }
+  &:active:not(:disabled) {
+    transform: scale(0.99);
+  }
 
-    &:disabled {
-        cursor: not-allowed;
-        filter: grayscale(0.7);
-        opacity: 0.6;
-    }
+  &:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.7);
+    opacity: 0.6;
+  }
 }
 
 .screenshots-left-button {
-    @extend .screenshots-buttons;
-    /* Mirror the SVG without animation */
-    transform: scaleX(-1);
-    transition: transform 0.2s ease, filter 0.2s ease;
+  @extend .screenshots-buttons;
+  /* Mirror the SVG without animation */
+  transform: scaleX(-1);
+  transition: transform 0.2s ease, filter 0.2s ease;
 
-    &:hover:not(:disabled) {
-        /* Only scale, keep mirrored */
-        transform: scaleX(-1) scale(1.02);
-    }
+  &:hover:not(:disabled) {
+    /* Only scale, keep mirrored */
+    transform: scaleX(-1) scale(1.02);
+  }
 
-    &:active:not(:disabled) {
-        /* Only scale, keep mirrored */
-        transform: scaleX(-1) scale(0.99);
-    }
+  &:active:not(:disabled) {
+    /* Only scale, keep mirrored */
+    transform: scaleX(-1) scale(0.99);
+  }
 }
 
 .special-editions {
-    display: flex;
+  display: flex;
 }
 
 .about-game {
-    display: flex;
+  display: flex;
 }
 
 .buy-game-panel {
-    display: flex;
-    padding: 20px;
-    flex-direction: column;
+  display: flex;
+  padding: 20px;
+  flex-direction: column;
 }
 
 .game-bottom-panels h3 {
-    margin: 0;
-    font-weight: 400;
-    font-size: 1.3rem;
+  margin: 0;
+  font-weight: 400;
+  font-size: 1.3rem;
 }
 
 .system-requirements {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
 .h3-with-bottom-border {
-    display: inline-block;
-    width: max-content;
-    border: none;
-    border-bottom: 2.5px solid transparent;
-    background-clip: border-box;
-    -webkit-background-clip: border-box;
-    border-image: linear-gradient(
-            90deg,
-            rgba(31, 24, 40, 0) 0%,
-            #474350 10.58%,
-            #474350 92.31%,
-            rgba(31, 24, 40, 0) 100%
-        )
-        1;
-    border-image-slice: 1;
+  display: inline-block;
+  width: max-content;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  border-image: linear-gradient(
+      90deg,
+      rgba(31, 24, 40, 0) 0%,
+      #474350 10.58%,
+      #474350 92.31%,
+      rgba(31, 24, 40, 0) 100%
+    )
+    1;
+  border-image-slice: 1;
 }
 
 .age-req {
-    display: flex;
+  display: flex;
 }
 
 .buy-game-button-section {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .buy-game-button-section .rainbow-button {
-    margin: 0;
-    flex: 1;
-    text-align: center;
-    padding: 5px 20px;
-    font-size: 1rem;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  padding: 5px 20px;
+  font-size: 1rem;
 }
 
 .system-requirements-content {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    justify-content: space-around;
-    margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: space-around;
+  margin-top: 10px;
 }
 
 .system-requirements-content ul {
-    padding: 5px 25px;
-    margin: 0;
-    font-size: small;
+  padding: 5px 25px;
+  margin: 0;
+  font-size: small;
 }
 
 .minimum-requirements {
-    border: none;
-    border-right: 2.5px solid transparent;
-    background-clip: border-box;
-    -webkit-background-clip: border-box;
-    border-image: linear-gradient(
-            180deg,
-            rgba(31, 24, 40, 0) 0%,
-            #474350 10.58%,
-            #474350 92.31%,
-            rgba(31, 24, 40, 0) 100%
-        )
-        1;
-    border-image-slice: 1;
-    width: 100%;
+  border: none;
+  border-right: 2.5px solid transparent;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  border-image: linear-gradient(
+      180deg,
+      rgba(31, 24, 40, 0) 0%,
+      #474350 10.58%,
+      #474350 92.31%,
+      rgba(31, 24, 40, 0) 100%
+    )
+    1;
+  border-image-slice: 1;
+  width: 100%;
 }
 
 .recommended-requirements {
-    width: 100%;
+  width: 100%;
 }

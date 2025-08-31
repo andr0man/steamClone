@@ -7,4 +7,5 @@ public interface IWishlistService
     Task<ServiceResponse> RemoveAsync(string gameId, CancellationToken token);
     Task<ServiceResponse> MoveAsync(string gameId, bool isMoveUp, CancellationToken token);
     Task<ServiceResponse> MoveToPositionAsync(string gameId, int position, CancellationToken token);
+    Task<ServiceResponse> IsInWishlistAsync(string gameId, CancellationToken token);
 }

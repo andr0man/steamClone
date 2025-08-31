@@ -5,31 +5,35 @@ import { SvgComponentMainPanel } from "./components/SvgComponentMainPanel";
 import "../../App.scss";
 import "./gamePage.scss";
 import { useGetGameByIdQuery } from "../../services/game/gameApi";
+import {
+  useGetIsInWishlistQuery,
+  useAddToWishlistMutation,
+  useRemoveFromWishlistMutation,
+} from "../../services/wishlist/wishlistApi";
 
 export const GamePage = () => {
   const { gameId } = useParams();
 
-  const { data, isLoading } = useGetGameByIdQuery(gameId);
+  const { data: gameData, isLoading } = useGetGameByIdQuery(gameId);
+  const { data: isInWishlistData, isLoading: isLoadingWishlist } =
+    useGetIsInWishlistQuery(gameId);
 
-//   useEffect(() => {
-//     (async () => {
-//       await getGameById(gameId);
-//     })();
-//   }, []);
+  const [addToWishlist] = useAddToWishlistMutation();
+  const [removeFromWishlist] = useRemoveFromWishlistMutation();
 
   // Стан для кастомної стрічкової каруселі скріншотів
   const [screenshotIndex, setScreenshotIndex] = useState(0);
   const visibleCount = 2; // Скільки зображень видно повністю/частково (1 центр + 1 частково)
 
-  if (isLoading) {
+  if (isLoading && isLoadingWishlist) {
     return <div>Loading...</div>;
   }
 
-  if (!data) {
+  if (!gameData) {
     return <div>Game not found</div>;
   }
 
-  const gameById = data.payload;
+  const gameById = gameData.payload;
 
   const minimumRequirements = Array.isArray(gameById.systemRequirements)
     ? gameById.systemRequirements.find(
@@ -104,8 +108,23 @@ export const GamePage = () => {
           <div className="game-description">{gameById.description}</div>
 
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <button className="rainbow-button">
-              <div className="rainbow-button-text">Add to wishlist</div>
+            <button
+              className={
+                isInWishlistData.payload ? "white-button" : "rainbow-button"
+              }
+              onClick={() => {
+                if (isInWishlistData.payload) {
+                  removeFromWishlist(gameId);
+                } else {
+                  addToWishlist(gameId);
+                }
+              }}
+            >
+              <div className="rainbow-button-text">
+                {isInWishlistData.payload
+                  ? "Remove from wishlist"
+                  : "Add to wishlist"}
+              </div>
             </button>
           </div>
         </div>

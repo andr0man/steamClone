@@ -114,6 +114,26 @@ public class WishlistService(
         }
     }
 
+    public async Task<ServiceResponse> IsInWishlistAsync(string gameId, CancellationToken token)
+    {
+        var userId = await userProvider.GetUserId();
+        
+        var gameValidate = await ValidateGame(gameId, token);
+        if (gameValidate != null)
+        {
+            return gameValidate;
+        }
+        
+        var existingWishlistItem = await wishlistRepository.GetByUserIdAndGameIdAsync(userId, gameId, token);
+
+        if (existingWishlistItem == null)
+        {
+            return ServiceResponse.OkResponse("Game not found in wishlist", false);
+        }
+        
+        return ServiceResponse.OkResponse("Game found in wishlist", true);
+    }
+
     private async Task<ServiceResponse?> ValidateRequirements(string gameId, string? userId = null,
         CancellationToken token = default,
         string messageForExistingWishlistItem = "Game not found in wishlist")
@@ -127,7 +147,7 @@ public class WishlistService(
 
         userId ??= await userProvider.GetUserId();
 
-        var existingWishlistItem = await wishlistRepository.GetByUserIdAndGameIdAsync(userId, gameId, token);
+        var existingWishlistItem = await wishlistRepository.GetByUserIdAndGameIdAsync(userId, gameId, token, asNoTracking: true);
 
         if (existingWishlistItem == null)
         {
@@ -139,7 +159,7 @@ public class WishlistService(
 
     private async Task<ServiceResponse?> ValidateGame(string gameId, CancellationToken token)
     {
-        var game = await gameRepository.GetByIdAsync(gameId, token);
+        var game = await gameRepository.GetByIdAsync(gameId, token, asNoTracking: true);
 
         if (game == null)
         {
