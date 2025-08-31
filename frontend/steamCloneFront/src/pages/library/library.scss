@@ -26,7 +26,6 @@ body {
   background-attachment: fixed;
 }
 
-/* PAGE */
 .library-page-container {
   display: grid;
   grid-template-columns: 360px 1fr;
@@ -53,11 +52,9 @@ body {
   z-index: -1;
 }
 
-/* LAYOUT */
 .library-left  { display: flex; flex-direction: column; gap: 14px; align-self: start; }
 .library-right { display: flex; flex-direction: column; gap: 16px; }
 
-/* PANEL */
 .lib-panel {
   background: $panel-bg;
   border: 1px solid $panel-border;
@@ -86,7 +83,7 @@ body {
   padding: 0;
 }
 
-/* UNDERLINE */
+
 .lib-underline {
   display: block;
   width: 218px;
@@ -96,7 +93,7 @@ body {
 }
 .lib-underline.small { width: 181px; }
 
-/* SEARCH */
+
 .lib-search-panel { padding-bottom: 24px; }
 .lib-search-input {
   position: relative;
@@ -118,7 +115,7 @@ body {
   position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: #a4a4a4;
 }
 
-/* CHECKS */
+
 .lib-checks { display: flex; flex-direction: column; gap: 14px; margin-bottom: 8px; }
 .lib-check { display: inline-flex; align-items: center; gap: 14px; color: $ink; font-size: 16px; cursor: pointer; }
 .lib-check input[type="checkbox"] {
@@ -140,12 +137,11 @@ body {
   font-weight: 800;
 }
 
-/* STATUS COLUMN */
+
 .lib-status-panel { display: flex; flex-direction: column; }
 .lib-status-panel > .lib-check { display: flex; }
 .lib-status-panel > .lib-check + .lib-check { margin-top: 14px; }
 
-/* ENTER TAG */
 .lib-enter-tag { margin-top: 8px; }
 .lib-enter-tag-row {
   position: relative;
@@ -167,7 +163,6 @@ body {
   position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: #a4a4a4;
 }
 
-/* RECENT */
 .lib-recent-panel { padding-bottom: 28px; }
 .recent-grid { display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 14px; }
 .recent-tile {
@@ -191,7 +186,6 @@ body {
 }
 .recent-empty { color: $text-3; padding: 8px 0; grid-column: 1 / -1; }
 
-/* COLLECTIONS */
 .lib-collections-panel { padding-bottom: 36px; }
 .collections-row { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 16px; }
 
@@ -213,7 +207,7 @@ body {
 }
 .collection-card.add-card:hover { transform: translateY(-2px); filter: brightness(1.08); }
 
-/* робимо картки клікабельними */
+
 .collection-card.clickable { 
   cursor: pointer; 
   transition: transform .2s ease, filter .2s ease;
@@ -233,7 +227,6 @@ body {
 }
 .collection-name { color: #fff; font-weight: 800; font-size: 18px; }
 
-/* RESPONSIVE */
 @media (max-width: 1200px) {
   .library-page-container { grid-template-columns: 320px 1fr; gap: 18px; }
   .collections-row { grid-template-columns: repeat(3, 1fr); }

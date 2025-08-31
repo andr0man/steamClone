@@ -16,13 +16,11 @@ $card-radius: 5px;
   position: relative;
   padding: $pad;
   color: $flux-text-primary;
-  background: $flux-bg_form_gradient;
   background: $flux-bg-form-gradient;
   border: 1px solid rgba(146,119,197,.35);
   border-radius: $card-radius;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 10px $flux-blur $flux-shadow_color;
   box-shadow: 0 10px $flux-blur $flux-shadow-color;
 }
 
@@ -59,14 +57,15 @@ body {
 }
 .notification-global-top > * { pointer-events: auto; }
 
-.profile-page-container {
+.profile-page-wrapper {
   min-height: 100vh;
   width: 100%;
-  padding-top: calc(var(--navbar-h) + 12px);
+  display: flex;
+  flex-direction: column;
   isolation: isolate;
 }
 
-.profile-page-container::before {
+.profile-page-wrapper::before {
   content: '';
   position: fixed;
   inset: 0;
@@ -79,16 +78,21 @@ body {
   pointer-events: none;
 }
 
+.profile-page-container {
+  flex: 1;
+  padding-top: calc(var(--navbar-h) + 12px);
+  padding-bottom: 40px;
+}
+
 .profile-main-content {
   display: flex;
   gap: 22px;
   width: 100%;
   max-width: $max-width;
-  margin: 20px auto 40px auto;
+  margin: 20px auto 0 auto;
   padding: 0 16px;
 }
 
-/* Sidebar в стилі About me (фон, бордер, тінь, радіус 5px) */
 .profile-sidebar {
   @include flux-card(24px);
   width: $sidebar-w;
@@ -107,7 +111,6 @@ body {
 }
 
 .profile-avatar {
-  width: $avatar_size;
   width: $avatar-size;
   height: $avatar-size;
   border-radius: 50%;
@@ -202,7 +205,6 @@ body {
   min-width: 0;
 }
 
-/* Усі секції як About me (фон, бордер, тінь, радіус 5px, паддінги) */
 .profile-section {
   background: #121218 !important;
   border: 1px solid #9277C5 !important;
@@ -211,7 +213,6 @@ body {
   padding: 25px 50px 40px 50px !important;
 }
 
-/* Мінімальна висота тільки для About me */
 .profile-section.profile-bio { min-height: 143px; }
 
 .section-header {
@@ -231,7 +232,6 @@ body {
   color: $flux-text-primary;
 }
 .section-header .section-action {
-  color: $flux-text_secondary;
   color: $flux-text-secondary;
   text-decoration: none;
   font-weight: 600;

@@ -59,7 +59,7 @@ const Collections = () => {
   const [notice, setNotice] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('create'); // 'create' | 'edit'
+  const [modalMode, setModalMode] = useState('create'); 
   const [editingCollection, setEditingCollection] = useState(null);
   const [saving, setSaving] = useState(false);
 
@@ -96,7 +96,6 @@ const Collections = () => {
     setLoading(true);
     setApiError(null);
     try {
-      // seed library if not exists
       let lib = readLS(LS_KEYS.LIB, null);
       if (!lib || !Array.isArray(lib) || lib.length === 0) {
         lib = DEFAULT_LIBRARY;
@@ -205,7 +204,7 @@ const Collections = () => {
       setIsModalOpen(false);
     } catch (err) {
       setApiError('Failed to save collection.');
-      await loadCollections(); // rollback
+      await loadCollections();
     } finally {
       setSaving(false);
     }

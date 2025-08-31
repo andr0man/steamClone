@@ -27,7 +27,7 @@ body {
   background-attachment: fixed;
 }
 
-/* PAGE BG */
+
 .wl-page {
   min-height: 100svh;
   padding: 18px clamp(16px, 3vw, 32px);
@@ -50,7 +50,7 @@ body {
   pointer-events: none;
 }
 
-/* PANEL */
+
 .wl-panel {
   width: min(980px, 100%);
   margin: 0 auto;
@@ -62,7 +62,7 @@ body {
   color: $ink;
 }
 
-/* HEADER */
+
 .wl-head {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -75,10 +75,10 @@ body {
   display: inline-flex; align-items: center; gap: 18px;
 }
 
-/* Search input 220px + underline */
+
 .wl-input {
   position: relative;
-  width: 220px;        /* Figma */
+  width: 220px;        
   padding: 0 5px 2px;
 }
 .wl-input input {
@@ -94,14 +94,14 @@ body {
 .wl-input .ico { position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: #a4a4a4; }
 .wl-search-underline {
   display: block;
-  width: 220px;       /* Figma */
+  width: 220px;      
   height: 1px;
   background: #fff;
   opacity: .9;
   margin-top: 4px;
 }
 
-/* Sort */
+
 .wl-sort { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 14px; }
 .wl-sort .plain-sort {
   background: transparent; border: 0; color: #fff; font-weight: 700; cursor: pointer; padding: 0;
@@ -116,13 +116,12 @@ body {
   background-size: 6px 6px, 6px 6px; background-repeat: no-repeat;
 }
 
-/* Underline під заголовком зліва 127px */
+
 .wl-underline {
   display: block; width: 127px; height: 1px; background: rgba(255,255,255,.9);
   margin: 12px 0 16px;
 }
 
-/* LIST */
 .wl-list { display: flex; flex-direction: column; gap: 18px; }
 
 .wl-row {
@@ -132,7 +131,7 @@ body {
   gap: 14px;
 }
 
-/* Rank badge 38x74 з тонкими рисками */
+
 .rank-badge {
   position: relative;
   width: 38px; height: 74px;
@@ -149,14 +148,13 @@ body {
 .rank-badge .chev.up { top: 8px; }
 .rank-badge .chev.down { bottom: 8px; }
 
-/* Thumb 158x74 */
 .thumb {
   width: 158px; height: 74px;
   object-fit: cover; border-radius: 6px;
   border: 1px solid rgba(255,255,255,.06);
 }
 
-/* Meta */
+
 .meta .name { color: #fff; font-weight: 800; font-size: 22px; margin-bottom: 6px; }
 .meta .sub { display: inline-flex; align-items: center; gap: 14px; color: $muted; font-size: 15px; }
 .meta .sub .dot { opacity: .6; }
@@ -165,10 +163,10 @@ body {
 
 .spacer { }
 
-/* RIGHT PRICE SIDE */
+
 .price-side { display: inline-flex; align-items: center; gap: 12px; justify-self: end; }
 
-/* -% бейдж з градієнтним текстом і рамкою */
+
 .pct-badge {
   padding: 7px 10px;
   font-weight: 900;
@@ -181,7 +179,7 @@ body {
   color: transparent;
 }
 
-/* Прямокутник зі старою/новою ціною */
+
 .price-box {
   display: inline-flex; align-items: center; gap: 12px;
   background: #292035;
@@ -192,7 +190,6 @@ body {
 .price-box .old { color: #9aa0a8; text-decoration: line-through; font-weight: 800; }
 .price-box .new { color: #fff; font-weight: 900; }
 
-/* Якщо без знижки — маленький чіп */
 .price-chip {
   background: #292035;
   color: #fff;
@@ -204,7 +201,7 @@ body {
   text-align: center;
 }
 
-/* LOADING */
+
 .wl-loading { display: grid; place-items: center; color: #c8d0d8; padding: 20px 0; }
 .wl-loading .spinner {
   width: 30px; height: 30px; border: 4px solid rgba(255,255,255,.2); border-top-color: #A178EB; border-radius: 50%;
@@ -212,7 +209,7 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Responsive */
+
 @media (max-width: 720px) {
   .wl-panel { padding: 18px 16px 22px; }
   .wl-head { grid-template-columns: 1fr; gap: 10px; }

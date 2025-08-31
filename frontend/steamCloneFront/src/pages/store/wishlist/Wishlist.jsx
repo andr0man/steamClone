@@ -20,8 +20,7 @@ const Wishlist = () => {
   const [loading, setLoading] = useState(true);
 
   const [q, setQ] = useState('');
-  const [sortBy, setSortBy] = useState('personal'); // personal | date | price_asc | price_desc | name_asc
-
+  const [sortBy, setSortBy] = useState('personal');
   const fetchWishlist = useCallback(async () => {
     setLoading(true);
     setApiError(null);

@@ -145,7 +145,6 @@ const Library = () => {
   const navigate = useNavigate();
   const { games } = libraryData;
 
-  // Ініціалізація бібліотеки з mock у localStorage
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
@@ -209,7 +208,6 @@ const Library = () => {
 
   const filteredRecent = useMemo(() => applyFilters(recentGames), [applyFilters, recentGames]);
 
-  // Читаємо реальні колекції з localStorage і будуємо прев’юшки
   const userCollections = useMemo(() => {
     const raw = readLS(LS_KEYS.COL, []);
     return shapeCollections(raw, games);
@@ -345,7 +343,6 @@ const Library = () => {
                 );
               })
             ) : (
-              // Фолбек: якщо колекцій ще нема — покажемо авто-підказки з категорій
               [...new Set((games || []).map(g => g.category).filter(Boolean))].slice(0, 3).map((name, i) => {
                 const sample = (games || []).find(g => g.category === name);
                 return (
