@@ -18,6 +18,7 @@ import Wishlist from '../pages/store/wishlist/Wishlist.jsx';
 import PointsShop from '../pages/store/points-shop/PointsShop.jsx';
 import News from '../pages/store/news/News.jsx';
 import Search from '../pages/home/search/Search.jsx';
+import { GamePage } from '../pages/game/GamePage.jsx';
 
 const ProtectedRoute = ({ isLoggedIn, children }) => {
   if (!isLoggedIn) {
@@ -55,7 +56,11 @@ const BasicRoutes = ({ isLoggedIn, currentUser, handleLoginSuccess, handleLogout
               path="/register" 
               element={isLoggedIn ? <Navigate to="/store" replace /> : <Register />} 
             />
-            
+
+            <Route
+              path="/store/game/:gameId"
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><GamePage /></ProtectedRoute>}
+            />
             <Route 
               path="/store/featured" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><Featured /></ProtectedRoute>} 

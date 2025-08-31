@@ -140,7 +140,7 @@ const Hero = () => {
   const [idx, setIdx] = useState(0);
   const ordered = useMemo(() => [idx, (idx + 1) % HERO.length, (idx + 2) % HERO.length], [idx]);
 
-  const openGame = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'home-hero' } });
+  const openGame = (slug) => navigate(`/store/game/${slug}`, { state: { slug, from: 'home-hero' } });
 
   return (
     <section className="hero">

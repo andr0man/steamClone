@@ -570,6 +570,11 @@ public class GameService(
 
         var buyerId = await userProvider.GetUserId();
 
+        if (await userGameLibraryRepository.GetAsync(buyerId, game.Id, token, asNoTracking: true) != null)
+        {
+            return ServiceResponse.BadRequestResponse("Game has already been bought");
+        }
+
         try
         {
             if (!(await balanceRepository.WithdrawAsync(buyerId, game.Price, token)))

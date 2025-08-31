@@ -41,4 +41,9 @@ public class BalanceRepository(AppDbContext appDbContext) : IBalanceRepository
         
         return true;
     }
+
+    public async Task<decimal?> GetByUserAsync(string userId, CancellationToken token)
+    {
+        return (await appDbContext.Balances.FirstOrDefaultAsync(b => b.UserId == userId, token))!.Amount;
+    }
 }

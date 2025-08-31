@@ -1,11 +1,9 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SteamClone.BLL.Services;
 using SteamClone.BLL.Services.UserService;
-using SteamClone.DAL;
+using SteamClone.DAL.Repositories.BalanceRepository;
 using SteamClone.Domain.ViewModels.Users;
-using static Google.Apis.Requests.BatchRequest;
 
 namespace SteamClone.API.Controllers;
 
@@ -13,7 +11,7 @@ namespace SteamClone.API.Controllers;
 [ApiController]
 // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 // [Authorize(Roles = $"{Settings.AdminRole}, {Settings.UserRole}")]
-public class UsersController(IUserService userService) : BaseController
+public class UsersController(IUserService userService, IBalanceRepository balanceRepository) : BaseController
 {
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id, CancellationToken token)
@@ -44,7 +42,8 @@ public class UsersController(IUserService userService) : BaseController
     }
 
     [HttpGet("paged")]
-    public async Task<IActionResult> GetPagedUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken token = default)
+    public async Task<IActionResult> GetPagedUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10,
+        CancellationToken token = default)
     {
         var response = await userService.GetAllAsync(page, pageSize, token);
         return GetResult(response);
@@ -80,9 +79,8 @@ public class UsersController(IUserService userService) : BaseController
         return GetResult(response);
     }
 
-    [Authorize] 
+    [Authorize]
     [HttpGet("profile")]
-    
     public async Task<IActionResult> GetCurrentUserAsync(CancellationToken token)
     {
         var userId = User.FindFirst("id")?.Value;
@@ -102,4 +100,16 @@ public class UsersController(IUserService userService) : BaseController
         return GetResult(result);
     }
 
+    [Authorize]
+    [HttpGet("balance")]
+    public async Task<IActionResult> GetBalanceAsync(CancellationToken token)
+    {
+        var userId = User.FindFirst("id")?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized("User ID not found in token.");
+
+        var result = await balanceRepository.GetByUserAsync(userId, token);
+        return GetResult(ServiceResponse.OkResponse("Balance retrieved successfully", result));
+    }
 }
