@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './library.scss';
 import Notification from '../../components/Notification';
 import { Search as SearchIcon } from 'lucide-react';
-
-const initialLibraryDataState = { games: [] };
+import { useAddGameMutation, useGetLibraryQuery } from '../../services/library/libraryApi';
 
 const LS_KEYS = {
   LIB: 'mock:library-games',
@@ -132,7 +131,7 @@ function shapeCollections(rawList, libraryGames) {
     };
   });
 }
-
+const initialLibraryDataState = { games: [] };
 const Library = () => {
   const [libraryData, setLibraryData] = useState(initialLibraryDataState);
   const [loading, setLoading] = useState(true);
@@ -141,6 +140,21 @@ const Library = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [tagFilters, setTagFilters] = useState(new Set());
   const [statusFilters, setStatusFilters] = useState(new Set());
+
+  // =====================================================
+
+
+  // const { data, isLoading, isError, error } = useGetLibraryQuery();
+  const [addGame, result] = useAddGameMutation();
+  useEffect(() => {
+    addGame('6ec70d8b-91b9-4411-9ddb-fa97a0748d4a');
+    // console.log(result);
+    console.log(result);
+  }, [])
+
+
+
+  // =======================================================
 
   const navigate = useNavigate();
   const { games } = libraryData;
