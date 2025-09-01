@@ -1,0 +1,159 @@
+@use "./variables";
+
+.flux-border {
+  background: variables.$panel-bg;
+  border: 1px solid variables.$panel-border;
+  border-radius: variables.$card-radius;
+  box-shadow: variables.$panel-shadow;
+  color: variables.$ink;
+}
+
+.toast-container {
+  @extend .flux-border;
+}
+
+.tilted-button {
+  transform: skewX(-(variables.$button-rotation-degree));
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  text-transform: none;
+  outline: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -2;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    padding: 3px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: background-position 0.6s cubic-bezier(0.4, 0.2, 0.2, 1),
+      opacity 0.25s;
+    z-index: -1;
+    opacity: 0;
+  }
+
+  &:hover {
+    transform: scale(1.02) skewX(-(variables.$button-rotation-degree));
+    filter: brightness(1.1);
+  }
+
+  &:hover::before {
+    background-position: 100% 0;
+    opacity: 1;
+  }
+
+  &:hover::after {
+    animation-duration: 1s;
+  }
+
+  &:active {
+    transform: scale(0.99) skewX(-(variables.$button-rotation-degree));
+  }
+}
+
+.white-button {
+  @extend .tilted-button;
+
+  color: #fff;
+  font-family: inherit;
+  background: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 10px 30px;
+  margin: 20px;
+  border: none;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+  margin-top: 18px;
+  border-radius: 6px;
+  overflow: visible;
+
+  &::after {
+    /* Градієнтна рамка замість білої */
+    background: white;
+    background-size: 200% 200%;
+    /* Створюємо рамку через padding і mask */
+    padding: 3px;
+  }
+
+  /* райдужний шар при ховері */
+  &::before {
+    background: white;
+    background-size: 200% 100%;
+    background-position: 0 0;
+  }
+}
+
+.rainbow-button {
+  @extend .tilted-button;
+
+  background: linear-gradient(90deg, #121218 0%, #474350 100%);
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 10px 30px;
+  margin: 20px;
+  border: none;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+  margin-top: 18px;
+  border-radius: 6px;
+  overflow: visible;
+
+  /* градієнтна основа (підкладка) */
+  &::after {
+    /* Градієнтна рамка замість білої */
+    background: variables.rainbow(270deg);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+    /* Створюємо рамку через padding і mask */
+    padding: 3px;
+  }
+
+  /* райдужний шар при ховері */
+  &::before {
+    background: variables.rainbow(45deg);
+    background-size: 200% 100%;
+    background-position: 0 0;
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.rainbow-button-text {
+  transform: skewX(variables.$button-rotation-degree);
+}

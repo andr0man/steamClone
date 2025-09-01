@@ -1,0 +1,23 @@
+$font-primary: "Inter", "Segoe UI", "Roboto", sans-serif;
+
+$ink: #ffffff;
+$panel-bg: #151518;
+$panel-border: #9277c4;
+$panel-shadow: 0px 10px 24px #7c72db33;
+
+$card-radius: 5px;
+
+$rainbow-stops: #ffffff 0.54%, #8c8c8c 18.71%, #ff9584 28.28%, #dfed43 40.23%,
+  #a0f885 49.79%, #74bff7 59.18%, #7c72db 67.24%, #8681a8 75.3%, #ffffff 100%;
+
+// Функція, яка повертає градієнт з переданим кутом
+@function rainbow($angle) {
+  @return linear-gradient($angle, $rainbow-stops);
+}
+
+// Або міксін, якщо потрібно застосувати фон безпосередньо
+@mixin rainbow-bg($angle) {
+  background: linear-gradient($angle, $rainbow-stops);
+}
+
+$button-rotation-degree: 15deg;

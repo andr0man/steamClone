@@ -1,15 +1,16 @@
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { SvgComponentMainPanel } from "./components/SvgComponentMainPanel";
-import "../../App.scss";
-import "./gamePage.scss";
+import { toast } from "react-toastify";
+import "../../styles/App.scss";
 import { useGetGameByIdQuery } from "../../services/game/gameApi";
 import {
-  useGetIsInWishlistQuery,
   useAddToWishlistMutation,
+  useGetIsInWishlistQuery,
   useRemoveFromWishlistMutation,
 } from "../../services/wishlist/wishlistApi";
+import { SvgComponentMainPanel } from "./components/SvgComponentMainPanel";
+import "./gamePage.scss";
+
 
 export const GamePage = () => {
   const { gameId } = useParams();
@@ -29,7 +30,7 @@ export const GamePage = () => {
     return <div>Loading...</div>;
   }
 
-  if (!gameData) {
+  if (!gameData || !isInWishlistData) {
     return <div>Game not found</div>;
   }
 
@@ -210,7 +211,7 @@ export const GamePage = () => {
             <div className="buy-game-button-section">
               <span>{gameById.price}₴</span>
               <div>
-                <button className="rainbow-button">
+                <button className="rainbow-button" onClick={() => toast.info("Purchase functionality is not implemented yet.")}>
                   <div className="rainbow-button-text">Purchase</div>
                 </button>
               </div>
