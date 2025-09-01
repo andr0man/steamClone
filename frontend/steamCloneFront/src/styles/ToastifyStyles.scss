@@ -1,15 +1,15 @@
 @use "./variables";
-@import "./App";
+@forward "./App";
 
 .Toastify__toast {
-    @extend .flux-border;
-    background: variables.$panel-bg !important;
-    color: variables.$ink !important;
-    border: 1px solid variables.$panel-border;
-    border-radius: variables.$card-radius;
-    box-shadow: variables.$panel-shadow;
-    font-family: variables.$font-primary;
-    // Додайте тут будь-які додаткові стилі для окремого тоста
+  @extend .flux-border;
+  background: variables.$panel-bg !important;
+  color: variables.$ink !important;
+  border: 1px solid variables.$panel-border;
+  border-radius: variables.$card-radius;
+  box-shadow: variables.$panel-shadow;
+  font-family: variables.$font-primary;
+  // Додайте тут будь-які додаткові стилі для окремого тоста
 }
 
 .custom-progress-bar {

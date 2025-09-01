@@ -6,10 +6,11 @@ const getToken = () => {
   const token = localStorage.getItem("accessToken");
   return token;
 };
-export const gameApi = createApi({
-  reducerPath: "gameApi",
+
+export const gameLibraryApi = createApi({
+  reducerPath: "gameLibraryApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${APP_ENV.API_URL}game/`,
+    baseUrl: `${APP_ENV.API_URL}user-game-library/`,
     prepareHeaders: (headers) => {
       const token = getToken();
       if (token) {
@@ -18,20 +19,17 @@ export const gameApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Game"],
+  tagTypes: ["GameLibrary"],
   endpoints: (builder) => ({
-    getGameById: builder.query({
-      query: (id) => `${id}`,
-      providesTags: ["Game"],
+    getGameLibrary: builder.query({
+      query: () => `by-user`,
+      providesTags: ["GameLibrary"],
     }),
-    buyGame: builder.mutation({
-      query: (gameId) => ({
-        url: `buy/${gameId}`,
-        method: "POST",
-      }),
-      invalidatesTags: ["Game"],
+    getIsInGameLibrary: builder.query({
+      query: (gameId) => `is-in-library/${gameId}`,
+      providesTags: ["GameLibrary"],
     }),
   }),
 });
 
-export const { useGetGameByIdQuery, useBuyGameMutation } = gameApi;
+export const { useGetGameLibraryQuery, useGetIsInGameLibraryQuery } = gameLibraryApi;

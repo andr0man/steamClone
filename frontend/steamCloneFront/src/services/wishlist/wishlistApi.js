@@ -10,7 +10,7 @@ const getToken = () => {
 export const wishlistApi = createApi({
   reducerPath: "wishlistApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: APP_ENV.REMOTE_API_URL,
+    baseUrl: `${APP_ENV.API_URL}wishlist/`,
     prepareHeaders: (headers) => {
       const token = getToken();
       if (token) {
@@ -22,23 +22,23 @@ export const wishlistApi = createApi({
   tagTypes: ["Wishlist"],
   endpoints: (builder) => ({
     getWishlistByUser: builder.query({
-      query: () => `wishlist/by-user`,
+      query: () => `by-user`,
       providesTags: ["Wishlist"],
     }),
     getIsInWishlist: builder.query({
-      query: (gameId) => `wishlist/is-in-wishlist?gameId=${gameId}`,
+      query: (gameId) => `is-in-wishlist?gameId=${gameId}`,
       providesTags: ["Wishlist"],
     }),
     addToWishlist: builder.mutation({
       query: (gameId) => ({
-        url: `wishlist?gameId=${gameId}`,
+        url: `?gameId=${gameId}`,
         method: "POST",
       }),
       invalidatesTags: ["Wishlist"],
     }),
     removeFromWishlist: builder.mutation({
       query: (gameId) => ({
-        url: `wishlist?gameId=${gameId}`,
+        url: `?gameId=${gameId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Wishlist"],

@@ -12,16 +12,20 @@
   @extend .flux-border;
 }
 
-.tilted-button {
+.tilted-component {
   transform: skewX(-(variables.$button-rotation-degree));
   color: #fff;
   font-family: inherit;
-  cursor: pointer;
   position: relative;
   z-index: 1;
   text-align: center;
   text-transform: none;
   outline: none;
+
+    // make inner content counter-skew so text appears upright
+  * {
+    transform: skewX(variables.$button-rotation-degree);
+  }
 
   &::after {
     content: "";
@@ -54,6 +58,12 @@
     z-index: -1;
     opacity: 0;
   }
+}
+
+.tilted-button {
+  @extend .tilted-component;
+
+  cursor: pointer;
 
   &:hover {
     transform: scale(1.02) skewX(-(variables.$button-rotation-degree));
@@ -92,19 +102,17 @@
   overflow: visible;
 
   &::after {
-    /* Градієнтна рамка замість білої */
     background: white;
     background-size: 200% 200%;
-    /* Створюємо рамку через padding і mask */
     padding: 3px;
   }
 
-  /* райдужний шар при ховері */
-  &::before {
-    background: white;
-    background-size: 200% 100%;
-    background-position: 0 0;
-  }
+  // /* райдужний шар при ховері */
+  // &::before {
+  //   background: white;
+  //   background-size: 200% 100%;
+  //   background-position: 0 0;
+  // }
 }
 
 .rainbow-button {
@@ -154,6 +162,33 @@
   }
 }
 
-.rainbow-button-text {
-  transform: skewX(variables.$button-rotation-degree);
+
+.white-outline-for-text {
+  @extend .tilted-component;
+
+  color: #fff;
+  font-family: inherit;
+  background: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 10px 30px;
+  margin: 20px;
+  border: none;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+  margin-top: 18px;
+  border-radius: 6px;
+  overflow: visible;
+
+  &::after {
+    background: white;
+    background-size: 200% 200%;
+    padding: 3px;
+  }
+
+  &::before {
+    background: white;
+    background-size: 200% 100%;
+    background-position: 0 0;
+  }
 }

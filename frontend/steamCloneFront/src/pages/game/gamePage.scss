@@ -17,35 +17,32 @@
 
 .carousel-track {
   display: flex;
+  align-items: center; /* Vertical alignment */
+  gap: 20px; /* Space between slides */
   transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
   will-change: transform;
 }
 
 .carousel-slide {
-  flex: 0 0 60%;
-  margin: 0 1.5%;
-  opacity: 0.6;
-  transform: scale(0.92);
-  transition: opacity 0.3s, transform 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 160px;
-}
-
-.carousel-slide img {
-  max-width: 100%;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.13);
-  object-fit: cover;
-  background: #23232a;
-  max-height: 50vh;
+  flex-shrink: 0; /* Prevent slides from shrinking */
+  width: 60%; /* Adjust width as needed */
+  opacity: 0.5;
+  transform: scale(0.95);
+  transition: opacity 0.4s, transform 0.4s;
 }
 
 .carousel-slide.active {
   opacity: 1;
   transform: scale(1);
-  z-index: 2;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.13);
+  object-fit: cover;
+  background: #23232a;
 }
 
 .game-page {
@@ -80,6 +77,13 @@
 .game-main-content svg {
   width: 100%;
   height: auto;
+}
+
+.game-main-content .white-button {
+  flex: 1;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 10px 20px;
 }
 
 .rgb-border {
@@ -304,7 +308,15 @@
   margin: 0;
   flex: 1;
   text-align: center;
-  padding: 5px 20px;
+  padding: 7px 20px;
+  font-size: 1rem;
+}
+
+.buy-game-button-section .white-outline-for-text {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  padding: 7px 20px;
   font-size: 1rem;
 }
 
