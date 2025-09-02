@@ -18,6 +18,10 @@ import Wishlist from '../pages/store/wishlist/Wishlist.jsx';
 import PointsShop from '../pages/store/points-shop/PointsShop.jsx';
 import News from '../pages/store/news/News.jsx';
 import Search from '../pages/home/search/Search.jsx';
+import Purchase from '../pages/store/purchase/Purchase.jsx';
+import MarketHistory from '../pages/market/history/MarketHistory.jsx';
+import ForgotPassword from '../pages/auth/login/ForgotPassword.jsx';
+import Chat from '../pages/chat/Chat.jsx';
 
 const ProtectedRoute = ({ isLoggedIn, children }) => {
   if (!isLoggedIn) {
@@ -51,6 +55,7 @@ const BasicRoutes = ({ isLoggedIn, currentUser, handleLoginSuccess, handleLogout
               path="/login" 
               element={isLoggedIn ? <Navigate to="/store" replace /> : <Login onLoginSuccess={handleLoginSuccess} />} 
             />
+            <Route path="/forgot-password" element={isLoggedIn ? <Navigate to="/store" replace /> : <ForgotPassword />} />
             <Route 
               path="/register" 
               element={isLoggedIn ? <Navigate to="/store" replace /> : <Register />} 
@@ -88,6 +93,9 @@ const BasicRoutes = ({ isLoggedIn, currentUser, handleLoginSuccess, handleLogout
               path="/store" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><Home /></ProtectedRoute>} 
             />
+            <Route path="/chat" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Chat /></ProtectedRoute>} />
+            <Route path="/store/purchase" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Purchase /></ProtectedRoute>} 
+            />
             <Route 
               path="/home/search" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><Search /></ProtectedRoute>} 
@@ -112,6 +120,10 @@ const BasicRoutes = ({ isLoggedIn, currentUser, handleLoginSuccess, handleLogout
             <Route 
               path="/market" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><Market /></ProtectedRoute>} 
+            />
+            <Route
+              path="/market/history"
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><MarketHistory /></ProtectedRoute>}
             />
             
             <Route 

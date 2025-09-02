@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import "../styles/auth.scss";
+import '../styles/auth.scss';
+import './ForgotPassword.scss';
 import { useLoginMutation } from '../../../services/auth/authApi';
 
 const Login = ({ onLoginSuccess }) => {
@@ -12,6 +13,9 @@ const Login = ({ onLoginSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
+
+  const [isResetModalOpen, setResetModalOpen] = useState(false);
+  const [seconds, setSeconds] = useState(60);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -51,6 +55,29 @@ const Login = ({ onLoginSuccess }) => {
       alert(msg);
     }
   };
+
+  const openResetModal = (e) => {
+    e.preventDefault();
+    setResetModalOpen(true);
+    setSeconds(60);
+  };
+
+  const handleResendLink = () => {
+    if (seconds > 0) return;
+    setSeconds(60);
+  };
+
+  useEffect(() => {
+    if (!isResetModalOpen || seconds <= 0) return;
+    const t = setInterval(() => setSeconds((s) => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [isResetModalOpen, seconds]);
+
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && setResetModalOpen(false);
+    if (isResetModalOpen) window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isResetModalOpen]);
 
   return (
     <div className="flux-auth-container">
@@ -110,7 +137,7 @@ const Login = ({ onLoginSuccess }) => {
               <label htmlFor="login-remember">Remember me</label>
             </div>
             <div className="flux-forgot-password-box">
-              <Link to="/forgot-password" className="flux-link">Forgot password?</Link>
+              <a href="#" className="flux-link" onClick={openResetModal}>Forgot password?</a>
             </div>
           </div>
 
@@ -129,6 +156,54 @@ const Login = ({ onLoginSuccess }) => {
           </Link>
         </div>
       </div>
+
+      {isResetModalOpen && (
+        <div
+          className="flux-modal-overlay modal-enter"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setResetModalOpen(false)}
+        >
+          <div
+            className="flux-modal-content reset-sent-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="flux-modal-close"
+              aria-label="Close modal"
+              onClick={() => setResetModalOpen(false)}
+              type="button"
+              title="Close"
+            >
+              ×
+            </button>
+
+            <h3>Password Reset Sent</h3>
+
+            <p>
+              A secure recovery link has been dispatched to your email.
+              Please check your inbox (and spam folder) to begin restoring
+              access to your Flux account.
+            </p>
+
+            <p className="flux-reset-hint">
+              Didn’t get the message? You can request a new link in
+              <span className="flux-countdown"> {seconds}</span> seconds.
+            </p>
+
+            <button
+              type="button"
+              className="flux-request-link-button"
+              onClick={handleResendLink}
+              disabled={seconds > 0}
+              aria-label="Request a new link"
+              title={seconds > 0 ? `Wait ${seconds}s` : 'Request a new link'}
+            >
+              Request a new link
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
