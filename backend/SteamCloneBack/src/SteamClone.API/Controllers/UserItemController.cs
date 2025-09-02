@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using SteamClone.BLL.Services.UserItemService;
+using SteamClone.Domain.ViewModels.Items.UserItem;
 
 namespace SteamClone.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("user-item")]
+[Tags("User Item")]
 public class UserItemController(IUserItemService userItemService) : BaseController
 {
     [HttpGet]
@@ -18,4 +20,8 @@ public class UserItemController(IUserItemService userItemService) : BaseControll
     [HttpGet("by-user")]
     public async Task<IActionResult> GetByUserIdAsync(CancellationToken token = default) =>
         GetResult(await userItemService.GetByUserIdAsync(token));
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateAsync([FromBody] CreateUserItemVM model, CancellationToken token = default) =>
+        GetResult(await userItemService.CreateAsync(model, token));
 }

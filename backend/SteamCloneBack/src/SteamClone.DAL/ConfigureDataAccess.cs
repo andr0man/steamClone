@@ -14,13 +14,16 @@ using SteamClone.DAL.Repositories.GenreRepository;
 using SteamClone.DAL.Repositories.ItemRepository;
 using SteamClone.DAL.Repositories.LanguageRepository;
 using SteamClone.DAL.Repositories.LocalizationRepository;
+using SteamClone.DAL.Repositories.MarketItemHistoryRepository;
 using SteamClone.DAL.Repositories.MarketItemRepository;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.ReviewRepository;
 using SteamClone.DAL.Repositories.RoleRepository;
 using SteamClone.DAL.Repositories.SystemRequirementsRepo;
+using SteamClone.DAL.Repositories.UserGameLibraryRepository;
 using SteamClone.DAL.Repositories.UserItemRepository;
 using SteamClone.DAL.Repositories.UserRepository;
+using SteamClone.DAL.Repositories.WishlistRepository;
 using SteamClone.DAL.Repositories.FriendshipRepository;
 
 namespace SteamClone.DAL;
@@ -65,6 +68,9 @@ public static class ConfigureDataAccess
         services.AddScoped<IUserItemRepository, UserItemRepository>();
         services.AddScoped<IMarketItemRepository, MarketItemRepository>();
         services.AddScoped<IBalanceRepository, BalanceRepository>();
+        services.AddScoped<IMarketItemHistoryRepository, MarketItemHistoryRepository>();
+        services.AddScoped<IUserGameLibraryRepository, UserGameLibraryRepository>();
+        services.AddScoped<IWishlistRepository, WishlistRepository>();
         services.AddScoped<IFriendshipRepository, FriendshipRepository>();
     }
 }

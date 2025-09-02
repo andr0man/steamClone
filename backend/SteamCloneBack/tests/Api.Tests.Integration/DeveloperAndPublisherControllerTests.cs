@@ -18,11 +18,13 @@ public class DeveloperAndPublisherControllerTests
     private readonly Country _country = CountryData.MainCountry;
     private readonly User _user;
     private readonly DeveloperAndPublisher _developerAndPublisher;
+    private readonly User _userForAssociate;
 
     public DeveloperAndPublisherControllerTests(IntegrationTestWebFactory factory) : base(factory)
     {
         _user = UserData.UserForAuth(UserId.ToString(), _country.Id);
         _developerAndPublisher = DeveloperAndPublisherData.MainDeveloperAndPublisher(_country.Id, _user.Id);
+        _userForAssociate = UserData.UserForAssociate (Guid.NewGuid().ToString(), _country.Id);
     }
 
     [Fact]
@@ -168,7 +170,7 @@ public class DeveloperAndPublisherControllerTests
     {
         // Act: associate existing associated user (should succeed with current setup)
         var url =
-            $"DeveloperAndPublisher/associate-user?developerAndPublisherId={_developerAndPublisher.Id}&userId={_user.Id}";
+            $"DeveloperAndPublisher/associate-user?developerAndPublisherId={_developerAndPublisher.Id}&userId={_userForAssociate.Id}";
         using var request = new HttpRequestMessage(new HttpMethod("PATCH"), url);
         var response = await Client.SendAsync(request);
 
@@ -201,6 +203,7 @@ public class DeveloperAndPublisherControllerTests
     {
         await Context.AddAsync(_country);
         await Context.Users.AddAsync(_user);
+        await Context.Users.AddAsync(_userForAssociate);
         await Context.AddAuditableAsync(_developerAndPublisher);
         await SaveChangesAsync();
     }

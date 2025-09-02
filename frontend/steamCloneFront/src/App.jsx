@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import BasicRoutes from './routes/BasicRoutes';
+import { Footer } from './components/Footer/Footer';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+
+  useEffect(() => {
+    const storedUserData = localStorage.getItem('steamCloneUser');
+    if (storedUserData) {
+      try {
+        const user = JSON.parse(storedUserData);
+        setCurrentUser(user);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("Failed to parse user data from localStorage:", error);
+        localStorage.removeItem('steamCloneUser');
+        setCurrentUser(null);
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(true); //якшо нада без логінки зайти поміняйте на true 
+    }
+    setIsLoadingAuth(false);
+  }, []);
+
+  const handleLoginSuccess = (formData) => {
+    const username = formData.nickname || formData.identity || "User";
+    const userData = { username };
+    setCurrentUser(userData);
+    setIsLoggedIn(true);
+    localStorage.setItem('steamCloneUser', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentUser(null);
+    localStorage.removeItem('steamCloneUser');
+  };
+  
+  if (isLoadingAuth) {
+    return <div className="app-loading-initial">Initializing Fluxi...</div>; 
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <BasicRoutes 
+        isLoggedIn={isLoggedIn}
+        currentUser={currentUser}
+        handleLoginSuccess={handleLoginSuccess}
+        handleLogout={handleLogout}
+      />
+      {/* <Footer /> */}
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

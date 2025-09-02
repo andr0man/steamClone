@@ -8,6 +8,8 @@ using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.Models.Items;
 using SteamClone.Domain.Models.Languages;
+using SteamClone.Domain.Models.UserGameLibraries;
+using SteamClone.Domain.Models.Wishlists;
 
 namespace SteamClone.DAL.Data;
 
@@ -28,8 +30,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Item> Items { get; set; }
     public DbSet<UserItem> UserItems { get; set; }
     public DbSet<MarketItem> MarketItems { get; set; }
+    public DbSet<MarketItemHistory> MarketItemsHistory { get; set; }
     public DbSet<Balance> Balances { get; set; }
+    public DbSet<UserGameLibrary> UserGameLibraries { get; set; }
     public DbSet<Friendship> Friendships { get; set; }
+    public DbSet<Wishlist> Wishlists { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

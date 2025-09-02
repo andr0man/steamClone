@@ -17,9 +17,12 @@ using SteamClone.BLL.Services.MailService;
 using SteamClone.BLL.Services.MarketItemService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.BLL.Services.ReviewService;
+using SteamClone.BLL.Services.UserGameLibraryService;
 using SteamClone.BLL.Services.UserItemService;
 using SteamClone.BLL.Services.UserService;
 using SteamClone.BLL.Services.FriendshipService;
+using SteamClone.BLL.Services.WishlistService;
+using SteamClone.DAL;
 
 namespace SteamClone.BLL;
 
@@ -31,6 +34,14 @@ public static class ConfigureBusinessLogic
 
         services.AddJwtTokenAuth(builder);
         services.AddSwaggerAuth();
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(Settings.Roles.AnyAuthenticated,
+                policy => policy.RequireRole(Settings.Roles.AdminRole, Settings.Roles.ManagerRole, Settings.Roles.UserRole));
+            options.AddPolicy(Settings.Roles.AdminOrManager,
+                policy => policy.RequireRole(Settings.Roles.AdminRole, Settings.Roles.ManagerRole));
+        });
     }
 
     private static void AddServices(this IServiceCollection services)
@@ -52,6 +63,8 @@ public static class ConfigureBusinessLogic
         services.AddScoped<IUserItemService, UserItemService>();
         services.AddScoped<IMarketItemService, MarketItemService>();
         services.AddScoped<IFriendshipService, FriendshipService>();
+        services.AddScoped<IUserGameLibraryService, UserGameLibraryService>();
+        services.AddScoped<IWishlistService, WishlistService>();
     }
 
     private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)

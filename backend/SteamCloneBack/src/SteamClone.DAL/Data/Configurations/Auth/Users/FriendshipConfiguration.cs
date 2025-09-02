@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SteamClone.Domain.Models.Auth.Users;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SteamClone.DAL.Data.Configurations.Auth.Users
 {
@@ -23,7 +18,7 @@ namespace SteamClone.DAL.Data.Configurations.Auth.Users
 
             
             builder.HasOne(f => f.Receiver)
-                .WithMany()
+                .WithMany(f => f.ReceivedFriendships)
                 .HasForeignKey(f => f.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 

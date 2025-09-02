@@ -1,0 +1,121 @@
+.notification {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px) scale(0.98);
+  padding: 12px 14px 12px 12px;
+  border-radius: 8px;
+  background: #121117; 
+  color: #fff;        
+  border: 1px solid #9277C4;
+  box-shadow: 0 10px 24px #7C72DB33;
+  z-index: 3300;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 280px;
+  max-width: min(560px, 92vw);
+
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity .25s ease,
+    visibility .25s ease,
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+
+.notification.notification-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.notification-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+}
+.notification-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+
+.notification-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.25rem;
+}
+
+.notification-close-btn {
+  margin-left: 8px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0.8;
+}
+.notification-close-btn:hover { opacity: 1; }
+
+.notification::before {
+  content: '';
+  position: absolute;
+  left: -1px; 
+  top: -1px;
+  bottom: -1px;
+  width: 4px;
+  border-radius: 8px 0 0 8px;
+  background: var(--notif-accent, #A178EB);
+}
+
+.notification-info {
+  --notif-accent: #A178EB; 
+}
+.notification-info .notification-icon { color: #C7B1F3; }
+
+.notification-success {
+  --notif-accent: #3CCB7F;
+  color: #E9FFF3;
+  border-color: rgba(60,203,127,.55);
+}
+.notification-success .notification-icon { color: #6BE2A1; }
+
+.notification-warning {
+  --notif-accent: #F7B955;
+  color: #FFF8E8;
+  border-color: rgba(247,185,85,.55);
+}
+.notification-warning .notification-icon { color: #FFD391; }
+
+.notification-error {
+  --notif-accent: #FF6B6B;
+  color: #FFECEC;
+  border-color: rgba(255,107,107,.55);
+}
+.notification-error .notification-icon { color: #FFA4A4; }
+
+.notification:hover {
+  box-shadow: 0 12px 28px rgba(124,114,219,0.28);
+}
+
+
+@media (max-width: 560px) {
+  .notification {
+    top: 10px;
+    padding: 10px 12px 10px 10px;
+    gap: 8px;
+  }
+}

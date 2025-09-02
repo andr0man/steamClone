@@ -9,5 +9,4 @@ public class UserVM
     public string? RoleName { get; set; }
     public bool EmailConfirmed { get; set; }
     public string? AvatarUrl { get; set; }
-    
 }

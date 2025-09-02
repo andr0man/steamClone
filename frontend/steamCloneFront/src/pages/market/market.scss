@@ -1,0 +1,243 @@
+@use 'sass:color';
+
+$font: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+
+$ink: #ffffff;
+$bg: #141320;
+
+$panel-bg: #121117;
+$panel-border: #9277C4;
+$panel-shadow: 0px 10px 24px #7C72DB33;
+
+$text-1: #f0f4f8;
+$text-2: #c8d0d8;
+$text-3: #9aa6b3;
+$text-muted: #565558;
+
+$violet: #9277C5;
+$accent: #A178EB;
+$green: #3dffb3;
+
+:root { --navbar-h: 64px; }
+
+html, body, #root { min-height: 100%; height: auto; }
+body {
+  background-color: $bg;
+  background-image: url('/authbc/BG_grey.svg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.market-page-container {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 22px;
+  padding: 20px clamp(16px, 3vw, 32px);
+  padding-top: calc(var(--navbar-h) + 18px);
+  min-height: 100svh;
+  color: $text-2;
+  font-family: $font;
+  position: relative;
+  isolation: isolate;
+}
+.market-page-container::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-color: $bg;
+  background-image: url('/authbc/BG_grey.svg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.market-left  { display: flex; flex-direction: column; gap: 14px; align-self: start; }
+.market-right { display: flex; flex-direction: column; gap: 16px; }
+
+.mk-panel {
+  background: $panel-bg;
+  border: 1px solid $panel-border;
+  border-radius: 5px;
+  box-shadow: $panel-shadow;
+  padding: 25px 50px 40px 50px;
+  color: $ink;
+}
+
+.mk-title { font-size: 22px; color: $ink; font-weight: 700; margin-bottom: 5px; }
+
+.mk-underline {
+  display: block;
+  width: 218px;
+  height: 1px;
+  background: rgba(255,255,255,.9);
+  margin-bottom: 13px;
+}
+.mk-underline.small { width: 181px; }
+
+.mk-input {
+  position: relative;
+  padding: 0 5px 6px;
+  width: 100%;
+  max-width: 420px;
+}
+.mk-input input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: $ink;
+  font-size: 16px;
+  padding-right: 28px;
+  &::placeholder { color: $text-muted; }
+}
+.mk-input .ico {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a4a4a4;
+}
+
+.game-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+.game-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: $ink;
+  background: transparent;
+  cursor: pointer;
+  transition: .15s ease;
+  text-align: left;
+}
+.game-row img { width: 26px; height: 26px; border-radius: 4px; object-fit: cover; }
+.game-row:hover { background: rgba(146,119,197,.08); border-color: rgba(146,119,197,.35); }
+.game-row.active { background: rgba(146,119,197,.14); border-color: rgba(146,119,197,.55); }
+
+.mk-enter-game { margin-top: 8px; }
+.mk-input.small { max-width: 320px; }
+.mk-input.small input { padding-right: 24px; }
+
+.mk-records .records { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.mk-records .records li button {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 6px 0;
+  transition: .15s ease;
+}
+.mk-records .records li button:hover { color: $text-1; text-shadow: 0 1px 6px rgba(161,120,235,.5); }
+.mk-records .records li.accent button { color: $accent; }
+
+.mk-market { padding-bottom: 28px; }
+
+.market-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.market-head .h-left { color: #fff; font-size: 22px; font-weight: 800; }
+.market-head .h-right { display: inline-flex; align-items: center; gap: 8px; color: #fff; }
+
+.sort-select { position: relative; }
+.sort-select select {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 26px 6px 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+.sort-select .chev {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  color: #b9b9c7; pointer-events: none;
+}
+
+.market-sub {
+  color: #a4a4a4; font-size: 13px;
+  margin: 6px 0 12px;
+}
+
+.market-list { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+
+.list-row {
+  display: grid;
+  grid-template-columns: 64px auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border: 1px solid rgba(146,119,197,.18);
+  background: rgba(0,0,0,.1);
+  border-radius: 8px;
+  transition: .15s ease;
+}
+.list-row:hover { background: rgba(146,119,197,.12); border-color: rgba(146,119,197,.35); }
+
+.list-row.sold { opacity: .7; }
+
+.icon-wrap {
+  width: 64px; height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0f1016;
+  display: grid; place-items: center;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.icon-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.meta .name { color: #fff; font-weight: 800; font-size: 15px; line-height: 1.3; }
+.meta .game { color: #a4a4a4; font-size: 12px; }
+
+.spacer { }
+
+.price-badge {
+  background: #292035;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 8px;
+  font-weight: 900;
+  padding: 10px 12px;
+  min-width: 96px;
+  text-align: center;
+  transition: transform .15s ease, filter .15s ease, opacity .15s ease;
+  cursor: pointer;
+}
+.price-badge:hover { transform: translateY(-1px); filter: brightness(1.08); }
+.price-badge:disabled { opacity: .7; cursor: not-allowed; transform: none; filter: none; }
+
+.market-inline-loader {
+  display: grid; place-items: center; color: #c8d0d8; padding: 20px 0;
+}
+.market-inline-loader .spinner-small {
+  border: 3px solid rgba(255,255,255,.15);
+  border-top-color: $violet;
+  border-radius: 50%;
+  width: 28px; height: 28px; margin-bottom: 10px;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.market-empty {
+  color: #9aa6b3; text-align: center; padding: 20px 0;
+}
+
+@media (max-width: 1100px) {
+  .market-page-container { grid-template-columns: 1fr; }
+  .market-left { position: static; }
+}
+@media (max-width: 640px) {
+  .mk-panel { padding: 18px 16px 22px; }
+  .mk-underline { width: 160px; }
+  .mk-underline.small { width: 140px; }
+  .list-row { grid-template-columns: 48px auto auto; }
+  .icon-wrap { width: 48px; height: 48px; }
+  .price-badge { padding: 8px 10px; min-width: 82px; }
+}

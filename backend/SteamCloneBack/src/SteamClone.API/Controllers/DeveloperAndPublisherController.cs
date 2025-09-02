@@ -9,9 +9,10 @@ using SteamClone.Domain.ViewModels.DevelopersAndPublishers;
 namespace SteamClone.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("developer-and-publisher")]
+[Tags("Developer And Publisher")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-[Authorize(Roles = $"{Settings.AdminRole}, {Settings.ManagerRole}")]
+[Authorize(Policy = Settings.Roles.AdminOrManager)]
 public class DeveloperAndPublisherController(IDeveloperAndPublisherService developerAndPublisherService)
     : GenericController<string, CreateDeveloperAndPublisherVM, UpdateDeveloperAndPublisherVM>(
         developerAndPublisherService)
@@ -40,7 +41,7 @@ public class DeveloperAndPublisherController(IDeveloperAndPublisherService devel
         return GetResult(result);
     }
     
-    [Authorize(Roles = Settings.AdminRole)]
+    [Authorize(Roles = Settings.Roles.AdminRole)]
     [HttpPatch("approve")]
     public async Task<IActionResult> ApproveAsync([FromQuery] string id, bool isApproved = true, CancellationToken token = default)
     {
@@ -48,7 +49,7 @@ public class DeveloperAndPublisherController(IDeveloperAndPublisherService devel
         return GetResult(result);
     }
     
-    [Authorize(Roles = Settings.AdminRole)]
+    [Authorize(Roles = Settings.Roles.AdminRole)]
     [HttpGet("get-without-approval")]
     public async Task<IActionResult> GetWithoutApprovalAsync(CancellationToken token = default)
     {
