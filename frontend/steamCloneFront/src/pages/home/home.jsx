@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import './Home.scss';
-import { Footer } from '../../components/Footer/Footer';
+
 
 const Arrow = ({ dir = 'right', onClick, className = '' }) => (
   <button
@@ -256,7 +256,6 @@ const Home = () => {
         <Bestsellers />
         <DiscoveryLoopCTA />
       </main>
-      <Footer />
     </div>
   );
 };

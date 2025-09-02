@@ -1,8 +1,8 @@
-// src/pages/store/search/Search.jsx
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './Search.scss';
-import { Footer } from '../../../components/Footer/Footer';
+
 
 const ALL_GAMES = [
   { id: 'peak', title: 'Peak', year: 2025, price: 159, tags: ['Indie'], os: ['windows'], players: ['Single-player'], imageUrl: 'https://storage.googleapis.com/tagjs-prod.appspot.com/v1/nJZmgJCsJw/9ta02v1k_expires_30_days.png' },
@@ -226,7 +226,6 @@ const Search = () => {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 };

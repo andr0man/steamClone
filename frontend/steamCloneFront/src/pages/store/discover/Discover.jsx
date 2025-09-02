@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Discover.scss';
-import Notification from '../../../components/Notification'; // Перевір шлях!
+import Notification from '../../../components/Notification'; 
 import { Eye, Heart, XCircle, ChevronRight, Tag, ShoppingCart, Zap, TrendingUp, Percent } from 'lucide-react';
 
 const API_BASE_URL = '';
@@ -94,17 +94,15 @@ const Discover = () => {
     if (currentQueueIndex < discoveryQueue.length - 1) {
       setCurrentQueueIndex(prevIndex => prevIndex + 1);
     } else {
-      // Optionally, fetch a new queue or show a "queue finished" message
       alert("Discovery queue finished! Come back later for more.");
-      fetchDiscoveryQueue(); // Refetch for a new queue (example)
+      fetchDiscoveryQueue(); 
     }
   };
   
   const handleQueueAction = (action, gameId) => {
     console.log(`${action} game ${gameId}`);
-    // TODO: API call for wishlist, ignore, etc.
     if (action !== 'viewDetails') {
-        handleNextInQueue(); // Move to next game unless viewing details
+        handleNextInQueue(); 
     }
   };
 
@@ -202,7 +200,7 @@ const Discover = () => {
                     <div className="reco-grid">{recommendations.specialOffers.map(renderRecommendationCard)}</div>
                 </div>
             )}
-            {/* Add more recommendation sections here */}
+            {}
         </>
         )}
       </section>

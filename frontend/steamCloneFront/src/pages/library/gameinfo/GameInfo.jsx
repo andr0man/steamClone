@@ -46,7 +46,7 @@ const GameInfo = () => {
       // const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
       // const response = await fetch(`${API_BASE_URL}/api/games/${id}`, { headers });
 
-      // Симуляція API запиту (заміни на реальний fetch вище)
+      // Симуляція API запиту
       await new Promise(resolve => setTimeout(resolve, 1000));
       const mockResponses = {
         '1': { ok: true, json: async () => ({ id: 1, title: 'CyberRevolt 2088', tagline: 'The future is a neon-drenched battleground.', headerImageUrl: 'https://via.placeholder.com/1200x450/10171F/5FA8F4?Text=CyberRevolt+Header', coverImageUrl: 'https://via.placeholder.com/300x400/1A2838/66c0f4?Text=CyberRevolt', description: 'Dive into the dystopian Neo-Kyoto of 2088. As a renegade cyber-enhanced mercenary, navigate a web of corporate espionage, underground rebellion, and high-octane combat. Your choices will shape the fate of the city. Features deep customization, a branching narrative, and visceral first-person action. Explore vast cityscapes, engage in thrilling shootouts, and upgrade your cybernetics to become the ultimate urban legend.', releaseDate: '2025-10-27', developer: 'SynthCore Games', publisher: 'Fluxi Interactive', genres: ['RPG', 'Cyberpunk', 'Open World', 'FPS'], tags: ['Singleplayer', 'Story Rich', 'Atmospheric', 'Sci-fi', 'Action'], price: 59.99, discountPrice: 39.99, storePageUrl: '/store/game/1', screenshots: ['https://via.placeholder.com/800x450/1A2838/C7D0D8?Text=CR+Screenshot+1', 'https://via.placeholder.com/800x450/1A2838/A6ADC8?Text=CR+Screenshot+2', 'https://via.placeholder.com/800x450/1A2838/9AA6B3?Text=CR+Screenshot+3'], videos: [{ id: 'vid_cr1', type: 'youtube', videoId: 'U_t5pXoAGqY', name: 'Official Gameplay Trailer' }], systemRequirements: { minimum: "OS: Windows 10 (64-bit)\nProcessor: Intel Core i5-8700K\nMemory: 16 GB RAM\nGraphics: NVIDIA GeForce GTX 1070\nStorage: 150 GB", recommended: "OS: Windows 11 (64-bit)\nProcessor: Intel Core i7-10700K\nMemory: 32 GB RAM\nGraphics: NVIDIA GeForce RTX 3070\nStorage: 150 GB (SSD Recommended)"}, isInstalled: true, isOwned: true, hoursPlayed: 120 }) },
@@ -60,7 +60,7 @@ const GameInfo = () => {
         try {
             const errorData = await response.json();
             errorMessage = errorData.message || errorMessage;
-        } catch (e) { /* Залишити errorMessage як є */ }
+        } catch (e) {}
         throw new Error(errorMessage);
       }
       const data = await response.json();

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import BasicRoutes from './routes/BasicRoutes'; // Імпортуємо новий компонент маршрутів
+import BasicRoutes from './routes/BasicRoutes';
+import { Footer } from './components/Footer/Footer';
 import './App.css';
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
         handleLoginSuccess={handleLoginSuccess}
         handleLogout={handleLogout}
       />
+      {/* <Footer /> */}
     </BrowserRouter>
   );
 }
