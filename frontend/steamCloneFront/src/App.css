@@ -60,7 +60,7 @@ body {
     /* font-family: var(--font-family-main); */
     font-family: 'Exo 2';
     /* Два шари: спочатку градієнт, поверх нього svg */
-    background: url('/authbc/BG_grey.svg') center top / 100% no-repeat,
+    background: url('/common/BG_pages.svg') center top / 100% no-repeat,
       radial-gradient(
         circle at 50% 0%,
         var(--color-bg-primary) 0%,
