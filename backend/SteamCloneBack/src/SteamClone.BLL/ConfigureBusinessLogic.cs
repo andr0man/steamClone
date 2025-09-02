@@ -10,12 +10,18 @@ using SteamClone.BLL.Services.DeveloperAndPublisherService;
 using SteamClone.BLL.Services.GameService;
 using SteamClone.BLL.Services.GenreService;
 using SteamClone.BLL.Services.ImageService;
+using SteamClone.BLL.Services.ItemService;
 using SteamClone.BLL.Services.JwtService;
 using SteamClone.BLL.Services.LanguageService;
 using SteamClone.BLL.Services.MailService;
+using SteamClone.BLL.Services.MarketItemService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.BLL.Services.ReviewService;
+using SteamClone.BLL.Services.UserGameLibraryService;
+using SteamClone.BLL.Services.UserItemService;
 using SteamClone.BLL.Services.UserService;
+using SteamClone.BLL.Services.WishlistService;
+using SteamClone.DAL;
 
 namespace SteamClone.BLL;
 
@@ -24,18 +30,26 @@ public static class ConfigureBusinessLogic
     public static void AddBusinessLogic(this IServiceCollection services, WebApplicationBuilder builder)
     {
         services.AddServices();
-        
+
         services.AddJwtTokenAuth(builder);
         services.AddSwaggerAuth();
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(Settings.Roles.AnyAuthenticated,
+                policy => policy.RequireRole(Settings.Roles.AdminRole, Settings.Roles.ManagerRole, Settings.Roles.UserRole));
+            options.AddPolicy(Settings.Roles.AdminOrManager,
+                policy => policy.RequireRole(Settings.Roles.AdminRole, Settings.Roles.ManagerRole));
+        });
     }
-    
+
     private static void AddServices(this IServiceCollection services)
     {
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IMailService, MailService>();
         services.AddScoped<IImageService, ImageService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
-        
+
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<ICountryService, CountryService>();
@@ -44,8 +58,13 @@ public static class ConfigureBusinessLogic
         services.AddScoped<IDeveloperAndPublisherService, DeveloperAndPublisherService>();
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<ILanguageService, LanguageService>();
+        services.AddScoped<IItemService, ItemService>();
+        services.AddScoped<IUserItemService, UserItemService>();
+        services.AddScoped<IMarketItemService, MarketItemService>();
+        services.AddScoped<IUserGameLibraryService, UserGameLibraryService>();
+        services.AddScoped<IWishlistService, WishlistService>();
     }
-    
+
     private static void AddJwtTokenAuth(this IServiceCollection services, WebApplicationBuilder builder)
     {
         services.AddAuthentication(options =>

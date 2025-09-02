@@ -2,13 +2,20 @@
 using Microsoft.AspNetCore.Http;
 using SteamClone.BLL.Services.ImageService;
 using SteamClone.DAL;
+using SteamClone.DAL.Repositories.BalanceRepository;
 using SteamClone.DAL.Repositories.DeveloperAndPublisherRepository;
 using SteamClone.DAL.Repositories.GameRepository;
 using SteamClone.DAL.Repositories.GenreRepository;
 using SteamClone.DAL.Repositories.LanguageRepository;
 using SteamClone.DAL.Repositories.LocalizationRepository;
 using SteamClone.DAL.Repositories.SystemRequirementsRepo;
+using SteamClone.DAL.Repositories.UserGameLibraryRepository;
+using SteamClone.DAL.Repositories.UserRepository;
+using SteamClone.Domain.Common.Interfaces;
+using SteamClone.Domain.Models.Auth.Users;
+using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
+using SteamClone.Domain.Models.UserGameLibraries;
 using SteamClone.Domain.ViewModels.Games;
 using SteamClone.Domain.ViewModels.Games.Localizations;
 using SteamClone.Domain.ViewModels.Games.SystemReq;
@@ -24,12 +31,17 @@ public class GameService(
     IHttpContextAccessor httpContextAccessor,
     ISystemRequirementsRepo systemRequirementsRepo,
     ILocalizationRepository localizationRepository,
-    ILanguageRepository languageRepository)
+    ILanguageRepository languageRepository,
+    IUserRepository userRepository,
+    IUserProvider userProvider,
+    IBalanceRepository balanceRepository,
+    IUserGameLibraryRepository userGameLibraryRepository)
     : IGameService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var games = await gameRepository.GetAllAsync(cancellationToken);
+        var games = (await gameRepository.GetAllAsync(cancellationToken))
+            .Where(x => x.IsApproved.HasValue && x.IsApproved.Value);
 
         return ServiceResponse.OkResponse("Games retrieved successfully", mapper.Map<List<GameVM>>(games));
     }
@@ -65,23 +77,49 @@ public class GameService(
             game.Genres.Add(genre);
         }
 
-        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken) == null)
+        var developer = await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken);
+
+        if (developer == null)
         {
             return ServiceResponse.NotFoundResponse($"Developer with id '{model.DeveloperId}' not found");
         }
 
-        if (model.PublisherId != null && await developerAndPublisherRepository.GetByIdAsync(model.PublisherId,
-                cancellationToken) == null)
+        if (!await HasAccessToDeveloperOrPublisherAsync(developer))
         {
-            return ServiceResponse.NotFoundResponse($"Publisher with id '{model.PublisherId}' not found");
+            return ServiceResponse.ForbiddenResponse("You don't have permission to create a game with this developer");
+        }
+
+        if (model.PublisherId != null)
+        {
+            var publisher = await developerAndPublisherRepository.GetByIdAsync(model.PublisherId, cancellationToken);
+            if (publisher == null)
+            {
+                return ServiceResponse.NotFoundResponse($"Publisher with id '{model.PublisherId}' not found");
+            }
+
+            if (!await HasAccessToDeveloperOrPublisherAsync(publisher))
+            {
+                return ServiceResponse.ForbiddenResponse(
+                    "You don't have permission to create a game with this publisher");
+            }
         }
 
         game.PublisherId = model.PublisherId ?? game.DeveloperId;
 
+        var userRole = userProvider.GetUserRole();
+
+        if (userRole == Settings.Roles.AdminRole)
+        {
+            game.IsApproved = true;
+        }
+
+        var user = await userRepository.GetByIdAsync(await userProvider.GetUserId(), cancellationToken);
+        game.AssociatedUsers.Add(user!);
+
         try
         {
             var createdGame = await gameRepository.CreateAsync(game, cancellationToken);
-            return ServiceResponse.OkResponse("Game created successfully", createdGame);
+            return ServiceResponse.OkResponse("Game created successfully", mapper.Map<GameVM>(createdGame));
         }
         catch (Exception e)
         {
@@ -97,6 +135,14 @@ public class GameService(
         if (existingGame == null)
         {
             return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        var userRole = userProvider.GetUserRole();
+        var userId = await userProvider.GetUserId();
+
+        if (!(existingGame.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
+        {
+            return ServiceResponse.ForbiddenResponse("You don't have permission to update this game");
         }
 
         existingGame.Genres.Clear();
@@ -127,7 +173,6 @@ public class GameService(
 
         updatedGame.PublisherId = model.PublisherId ?? updatedGame.DeveloperId;
 
-
         return await UpdateGameAsync(updatedGame, "Game updated successfully", cancellationToken);
     }
 
@@ -139,6 +184,11 @@ public class GameService(
             if (game == null)
             {
                 return ServiceResponse.NotFoundResponse("Game not found");
+            }
+
+            if (!await HasAccessToGameAsync(game))
+            {
+                return ServiceResponse.ForbiddenResponse("You don't have permission to update this game");
             }
 
             await gameRepository.DeleteAsync(id, cancellationToken);
@@ -325,12 +375,12 @@ public class GameService(
         {
             return ServiceResponse.NotFoundResponse("Language not found");
         }
-        
+
         if (game.Localizations.Any(x => x.LanguageId == model.LanguageId))
         {
             return ServiceResponse.BadRequestResponse($"Localization with language '{language.Name}' already exists");
         }
-        
+
         if (model is { FullAudio: false, Interface: false, Subtitles: false })
         {
             return ServiceResponse.BadRequestResponse("At least one field must be true");
@@ -342,7 +392,7 @@ public class GameService(
         try
         {
             await localizationRepository.CreateAsync(localization, cancellationToken);
-            
+
             return ServiceResponse.OkResponse("Localization created successfully", localization);
         }
         catch (Exception e)
@@ -355,7 +405,7 @@ public class GameService(
         CancellationToken cancellationToken)
     {
         var localization = await localizationRepository.GetByIdAsync(localizationId, cancellationToken);
-        
+
         if (localization == null)
         {
             return ServiceResponse.NotFoundResponse("Localization not found");
@@ -365,13 +415,13 @@ public class GameService(
         {
             return ServiceResponse.BadRequestResponse("At least one field must be true");
         }
-        
+
         var updLocalization = mapper.Map(model, localization);
-        
+
         try
         {
             await localizationRepository.UpdateAsync(updLocalization, cancellationToken);
-            
+
             return ServiceResponse.OkResponse("Localization updated successfully", updLocalization);
         }
         catch (Exception e)
@@ -402,13 +452,152 @@ public class GameService(
         }
     }
 
+    public async Task<ServiceResponse> AssociateUserAsync(string gameId, string userId, CancellationToken token)
+    {
+        var user = await userRepository.GetByIdAsync(userId, token);
+
+        if (user == null)
+        {
+            return ServiceResponse.NotFoundResponse("User not found");
+        }
+
+        if (user.RoleId != Settings.Roles.ManagerRole)
+        {
+            return ServiceResponse.BadRequestResponse("User must have Manager role");
+        }
+
+        var game = await gameRepository.GetByIdAsync(gameId, token);
+
+        if (game == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        var userRole = userProvider.GetUserRole();
+
+        if (!(game.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
+        {
+            return ServiceResponse.ForbiddenResponse("You don't have permission to associate users");
+        }
+
+        game.AssociatedUsers.Add(user);
+
+        return await UpdateGameAsync(game, "User associated successfully", token);
+    }
+
+    public async Task<ServiceResponse> RemoveAssociatedUserAsync(string gameId, string userId, CancellationToken token)
+    {
+        var user = await userRepository.GetByIdAsync(userId, token);
+
+        if (user == null)
+        {
+            return ServiceResponse.NotFoundResponse("User not found");
+        }
+
+        var game = await gameRepository.GetByIdAsync(gameId, token);
+
+        if (game == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        var userRole = userProvider.GetUserRole();
+
+        if (!(game.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
+        {
+            return ServiceResponse.ForbiddenResponse("You don't have permission to remove associated users");
+        }
+
+        game.AssociatedUsers.Remove(user);
+
+        return await UpdateGameAsync(game, "User association removed successfully", token);
+    }
+
+    public async Task<ServiceResponse> GetByAssociatedUserAsync(CancellationToken token)
+    {
+        var userId = await userProvider.GetUserId();
+
+        return await GetByAssociatedUserIdAsync(userId, token);
+    }
+
+    public async Task<ServiceResponse> GetByAssociatedUserIdAsync(string id, CancellationToken token)
+    {
+        var games = await gameRepository.GetAllAsync(token);
+        var gamesByAssociatedUser = games
+            .Where(d => d.AssociatedUsers.Any(u => u.Id == id) && (d.IsApproved.HasValue && d.IsApproved.Value));
+
+        return ServiceResponse.OkResponse("Games by associated user retrieved successfully",
+            mapper.Map<List<GameVM>>(gamesByAssociatedUser));
+    }
+
+    public async Task<ServiceResponse> ApproveAsync(string id, bool isApproved, CancellationToken token)
+    {
+        var game = await gameRepository.GetByIdAsync(id, token);
+
+        if (game == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        if ((await userGameLibraryRepository.GetAllByGameIdAsync(game.Id, token)).Any())
+        {
+            return ServiceResponse.BadRequestResponse("Game has already been bought");
+        }
+
+        game.IsApproved = isApproved;
+
+        return await UpdateGameAsync(game,
+            "Game approval set successfully", token);
+    }
+
+    public async Task<ServiceResponse> GetWithoutApprovalAsync(CancellationToken token)
+    {
+        var games = (await gameRepository.GetAllAsync(token))
+            .Where(x => x.IsApproved.HasValue == false);
+
+        return ServiceResponse.OkResponse("Games without approval retrieved successfully",
+            mapper.Map<List<GameVM>>(games));
+    }
+
+    public async Task<ServiceResponse> BuyGameAsync(string id, CancellationToken token)
+    {
+        var game = await gameRepository.GetByIdAsync(id, token);
+
+        if (game == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        var buyerId = await userProvider.GetUserId();
+
+        try
+        {
+            if (!(await balanceRepository.WithdrawAsync(buyerId, game.Price, token)))
+            {
+                return ServiceResponse.BadRequestResponse("Not enough money");
+            }
+
+            await userGameLibraryRepository.CreateAsync(new UserGameLibrary
+            {
+                UserId = buyerId,
+                GameId = id
+            }, token);
+
+            return ServiceResponse.OkResponse("Game bought successfully");
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     private async Task<ServiceResponse> UpdateGameAsync(Game game, string successMessage,
         CancellationToken cancellationToken)
     {
         try
         {
             var result = await gameRepository.UpdateAsync(game, cancellationToken);
-            return ServiceResponse.OkResponse(successMessage, result);
+            return ServiceResponse.OkResponse(successMessage, mapper.Map<GameVM>(result));
         }
         catch (Exception e)
         {
@@ -423,5 +612,19 @@ public class GameService(
         if (Enum.GetValues<RequirementPlatform>().All(x => x != model.Platform))
             return ServiceResponse.BadRequestResponse($"Invalid platform '{model.Platform}'");
         return null;
+    }
+
+    private async Task<bool> HasAccessToDeveloperOrPublisherAsync(DeveloperAndPublisher developerAndPublisher)
+    {
+        var userRole = userProvider.GetUserRole();
+        var userId = await userProvider.GetUserId();
+        return developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.Roles.AdminRole;
+    }
+
+    private async Task<bool> HasAccessToGameAsync(Game game)
+    {
+        var userRole = userProvider.GetUserRole();
+        var userId = await userProvider.GetUserId();
+        return game.AssociatedUsers.Any(x => x.Id == userId) || userRole == Settings.Roles.AdminRole;
     }
 }

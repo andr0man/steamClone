@@ -5,6 +5,7 @@ using SteamClone.DAL.Repositories.Common;
 using SteamClone.Domain.Common.Interfaces;
 using SteamClone.Domain.Models;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 
 namespace SteamClone.DAL.Repositories.UserRepository;
 

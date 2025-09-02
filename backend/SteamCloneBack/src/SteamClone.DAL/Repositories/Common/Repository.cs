@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL.Data;
 using SteamClone.DAL.Extensions;
 using SteamClone.Domain.Common.Abstractions;
@@ -12,6 +13,18 @@ public class Repository<TEntity, TKey>(AppDbContext appDbContext, IUserProvider 
 {
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken token) =>
         await appDbContext.Set<TEntity>().AsNoTracking().ToListAsync(token);
+    
+    protected async Task<IEnumerable<TEntity>> GetAllAsync(
+        CancellationToken token,
+        params Expression<Func<TEntity, object>>[] includes)
+    {
+        IQueryable<TEntity> query = appDbContext.Set<TEntity>().AsNoTracking();
+        
+        foreach (var include in includes)
+            query = query.Include(include);
+
+        return await query.ToListAsync(token);
+    }
 
     public virtual async Task<TEntity?> CreateAsync(TEntity entity, CancellationToken token)
     {
@@ -60,6 +73,23 @@ public class Repository<TEntity, TKey>(AppDbContext appDbContext, IUserProvider 
         var query = appDbContext.Set<TEntity>().AsQueryable();
         if (asNoTracking)
             query = query.AsNoTracking();
+        return await query.FirstOrDefaultAsync(e => e.Id!.Equals(id), token);
+    }
+    
+    protected async Task<TEntity?> GetByIdAsync(
+        TKey id,
+        CancellationToken token,
+        bool asNoTracking = false,
+        params Expression<Func<TEntity, object>>[] includes)
+    {
+        IQueryable<TEntity> query = appDbContext.Set<TEntity>();
+        
+        if (asNoTracking)
+            query = query.AsNoTracking();
+
+        foreach (var include in includes)
+            query = query.Include(include);
+
         return await query.FirstOrDefaultAsync(e => e.Id!.Equals(id), token);
     }
 

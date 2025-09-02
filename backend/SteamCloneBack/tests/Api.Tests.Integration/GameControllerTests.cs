@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SteamClone.DAL;
 using SteamClone.DAL.Extensions;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.Countries;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
@@ -25,6 +26,7 @@ public class GameControllerTests : BaseIntegrationTest, IAsyncLifetime
     {
         _user = UserData.UserForAuth(UserId.ToString(), _country.Id);
         _developerAndPublisher = DeveloperAndPublisherData.MainDeveloperAndPublisher(_country.Id, _user.Id);
+        _developerAndPublisher.AssociatedUsers.Add(_user);
         _game = GameData.MainGame(_developerAndPublisher.Id, _user.Id);
     }
 
@@ -165,7 +167,7 @@ public class GameControllerTests : BaseIntegrationTest, IAsyncLifetime
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
 
-        var games = await JsonHelper.GetPayloadAsync<List<Game>>(response);
+        var games = await JsonHelper.GetPayloadAsync<List<GameVM>>(response);
 
         games.Should().NotBeEmpty();
     }

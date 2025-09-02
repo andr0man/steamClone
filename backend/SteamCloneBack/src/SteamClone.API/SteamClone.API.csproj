@@ -28,4 +28,10 @@
       <None Include="wwwroot\countries\countries.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\images\game_covers\" />
+      <Folder Include="wwwroot\images\game_screenshots\" />
+      <Folder Include="wwwroot\images\item_images\" />
+    </ItemGroup>
+
 </Project>

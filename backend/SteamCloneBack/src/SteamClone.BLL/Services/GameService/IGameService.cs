@@ -31,4 +31,15 @@ public interface IGameService : IServiceCRUD<string, CreateGameVM, UpdateGameVM>
 
     Task<ServiceResponse> DeleteLocalizationAsync(string localizationId,
         CancellationToken cancellationToken);
+    
+    Task<ServiceResponse> AssociateUserAsync(string gameId, string userId, CancellationToken token);
+    
+    Task<ServiceResponse> RemoveAssociatedUserAsync(string gameId, string userId, CancellationToken token);
+    
+    Task<ServiceResponse> GetByAssociatedUserAsync(CancellationToken token);
+    
+    Task<ServiceResponse> ApproveAsync(string id, bool isApproved, CancellationToken token);
+    
+    Task<ServiceResponse> GetWithoutApprovalAsync(CancellationToken token);
+    Task<ServiceResponse> BuyGameAsync(string id, CancellationToken token);
 }

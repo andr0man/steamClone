@@ -9,9 +9,10 @@ using SteamClone.Domain.ViewModels.Games.Reviews;
 namespace SteamClone.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("game-review")]
+[Tags("Game Review")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-[Authorize(Roles = $"{Settings.AdminRole}, {Settings.UserRole}")]
+[Authorize(Roles = $"{Settings.Roles.AdminRole}, {Settings.Roles.UserRole}")]
 public class GameReviewController(IReviewService reviewService)
     : GenericController<string, CreateReviewVM, UpdateReviewVM>(reviewService)
 {

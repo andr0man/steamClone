@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SteamClone.Domain.Models.Auth;
+using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.ViewModels.Auth;
 using SteamClone.Domain.ViewModels.Users;
 
@@ -11,6 +12,8 @@ public class UserMapperProfile : Profile
     {
         CreateMap<User, UserVM>().ReverseMap();
 
+        CreateMap<User, UserProfileVM>().ReverseMap();
+
         CreateMap<CreateUserVM, User>().ReverseMap();
             
         CreateMap<UpdateUserVM, User>().ReverseMap();
@@ -18,5 +21,11 @@ public class UserMapperProfile : Profile
         CreateMap<SignUpVM, User>().ReverseMap();
         
         CreateMap<SignInVM, User>().ReverseMap();
+
+        CreateMap<Friendship, FriendshipVM>().ReverseMap();
+
+        CreateMap<CreateFriendshipVM, Friendship>().ReverseMap();
+
+        CreateMap<UpdateFriendshipStatusVM, Friendship>().ReverseMap();
     }
 }
