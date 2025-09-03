@@ -1,0 +1,29 @@
+@use "./variables";
+@forward "./App";
+
+.Toastify__toast {
+  @extend .flux-border;
+  background: variables.$panel-bg !important;
+  color: variables.$ink !important;
+  border: 1px solid variables.$panel-border;
+  border-radius: variables.$card-radius;
+  box-shadow: variables.$panel-shadow;
+  font-family: variables.$font-primary;
+  // Додайте тут будь-які додаткові стилі для окремого тоста
+}
+
+.custom-progress-bar {
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0.54%,
+    #8c8c8c 18.71%,
+    #ff9584 28.28%,
+    #dfed43 40.23%,
+    #a0f885 49.79%,
+    #74bff7 59.18%,
+    #7c72db 67.24%,
+    #8681a8 75.3%,
+    #ffffff 100%
+  );
+}

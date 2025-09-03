@@ -44,7 +44,7 @@ public class DeveloperAndPublisherControllerTests
         };
 
         // Act
-        var response = await Client.PostAsJsonAsync("DeveloperAndPublisher", request);
+        var response = await Client.PostAsJsonAsync("developer-and-publisher", request);
 
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -80,7 +80,7 @@ public class DeveloperAndPublisherControllerTests
         };
 
         // Act
-        var response = await Client.PutAsJsonAsync($"DeveloperAndPublisher/{_developerAndPublisher.Id}", request);
+        var response = await Client.PutAsJsonAsync($"developer-and-publisher/{_developerAndPublisher.Id}", request);
 
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -103,7 +103,7 @@ public class DeveloperAndPublisherControllerTests
     public async Task ShouldDeleteDeveloperAndPublisher()
     {
         // Act
-        var response = await Client.DeleteAsync($"DeveloperAndPublisher/{_developerAndPublisher.Id}");
+        var response = await Client.DeleteAsync($"developer-and-publisher/{_developerAndPublisher.Id}");
 
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -122,7 +122,7 @@ public class DeveloperAndPublisherControllerTests
             { Name = "TestDeveloper", Description = "TestDeveloperAndPublisherDescription" };
 
         // Act
-        var response = await Client.PutAsJsonAsync($"DeveloperAndPublisher/{int.MaxValue}", request);
+        var response = await Client.PutAsJsonAsync($"developer-and-publisher/{int.MaxValue}", request);
 
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();
@@ -133,7 +133,7 @@ public class DeveloperAndPublisherControllerTests
     public async Task ShouldNotDeleteBecauseNotFound()
     {
         // Act
-        var response = await Client.DeleteAsync($"DeveloperAndPublisher/{int.MaxValue}");
+        var response = await Client.DeleteAsync($"developer-and-publisher/{int.MaxValue}");
 
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();
@@ -157,7 +157,7 @@ public class DeveloperAndPublisherControllerTests
         };
 
         // Act
-        var response = await Client.PostAsJsonAsync("DeveloperAndPublisher", request);
+        var response = await Client.PostAsJsonAsync("developer-and-publisher", request);
 
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();
@@ -170,7 +170,7 @@ public class DeveloperAndPublisherControllerTests
     {
         // Act: associate existing associated user (should succeed with current setup)
         var url =
-            $"DeveloperAndPublisher/associate-user?developerAndPublisherId={_developerAndPublisher.Id}&userId={_userForAssociate.Id}";
+            $"developer-and-publisher/associate-user?developerAndPublisherId={_developerAndPublisher.Id}&userId={_userForAssociate.Id}";
         using var request = new HttpRequestMessage(new HttpMethod("PATCH"), url);
         var response = await Client.SendAsync(request);
 
@@ -184,7 +184,7 @@ public class DeveloperAndPublisherControllerTests
         // Arrange: ensure the developer has the user associated (already true from fixture)
         // Act: remove associated user
         var url =
-            $"DeveloperAndPublisher/remove-associated-user?developerAndPublisherId={_developerAndPublisher.Id}&userId={_user.Id}";
+            $"developer-and-publisher/remove-associated-user?developerAndPublisherId={_developerAndPublisher.Id}&userId={_user.Id}";
         using var request = new HttpRequestMessage(new HttpMethod("PATCH"), url);
         var response = await Client.SendAsync(request);
 

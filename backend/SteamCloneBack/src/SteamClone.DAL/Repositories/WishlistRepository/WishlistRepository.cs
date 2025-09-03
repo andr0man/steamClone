@@ -29,9 +29,9 @@ public class WishlistRepository(AppDbContext context) : IWishlistRepository
         CancellationToken cancellationToken = default)
     {
         var wishlists = await context.Wishlists.ToListAsync(cancellationToken);
-        
+
         var lastNumberOfWishlists = wishlists.Count;
-        
+
         var wishlistItem = wishlists.FirstOrDefault(w => w.UserId == userId && w.GameId == gameId);
 
         if (wishlistItem == null || isMoveUp ? wishlistItem!.Rank == 1 : wishlistItem.Rank == lastNumberOfWishlists)
@@ -98,9 +98,13 @@ public class WishlistRepository(AppDbContext context) : IWishlistRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Wishlist?> GetByUserIdAndGameIdAsync(string userId, string gameId, CancellationToken cancellationToken)
+    public async Task<Wishlist?> GetByUserIdAndGameIdAsync(string userId, string gameId,
+        CancellationToken cancellationToken, bool asNoTracking = true)
     {
-        return await context.Wishlists.Where(w => w.UserId == userId && w.GameId == gameId)
+        var query = context.Wishlists.AsQueryable();
+        if (asNoTracking)
+            query = query.AsNoTracking();
+        return await query.Where(w => w.UserId == userId && w.GameId == gameId)
             .FirstOrDefaultAsync(cancellationToken);
     }
 }

@@ -41,7 +41,7 @@ public class GameReviewControllerTests : BaseIntegrationTest, IAsyncLifetime
         };
 
         // Act
-        var response = await Client.PostAsJsonAsync("GameReview", request);
+        var response = await Client.PostAsJsonAsync("game-review", request);
 
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -68,7 +68,7 @@ public class GameReviewControllerTests : BaseIntegrationTest, IAsyncLifetime
         };
 
         // Act
-        var response = await Client.PutAsJsonAsync($"GameReview/{_review.Id}", request);
+        var response = await Client.PutAsJsonAsync($"game-review/{_review.Id}", request);
 
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -87,7 +87,7 @@ public class GameReviewControllerTests : BaseIntegrationTest, IAsyncLifetime
     public async Task ShouldDeleteReview()
     {
         // Act
-        var response = await Client.DeleteAsync($"GameReview/{_review.Id}");
+        var response = await Client.DeleteAsync($"game-review/{_review.Id}");
         
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -101,7 +101,7 @@ public class GameReviewControllerTests : BaseIntegrationTest, IAsyncLifetime
     public async Task ShouldGetReview()
     {
         // Act
-        var response = await Client.GetAsync($"GameReview/{_review.Id}");
+        var response = await Client.GetAsync($"game-review/{_review.Id}");
         
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();

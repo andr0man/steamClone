@@ -160,13 +160,13 @@ public class GameService(
         var updatedGame = mapper.Map(model, existingGame);
         updatedGame.ReleaseDate = model.ReleaseDate ?? DateTime.UtcNow;
 
-        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken) == null)
+        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken, asNoTracking: true) == null)
         {
             return ServiceResponse.NotFoundResponse($"Developer with id '{model.DeveloperId}' not found");
         }
 
         if (model.PublisherId != null && await developerAndPublisherRepository.GetByIdAsync(model.PublisherId,
-                cancellationToken) == null)
+                cancellationToken, asNoTracking: true) == null)
         {
             return ServiceResponse.NotFoundResponse($"Publisher with id '{model.PublisherId}' not found");
         }
@@ -569,6 +569,11 @@ public class GameService(
         }
 
         var buyerId = await userProvider.GetUserId();
+
+        if (await userGameLibraryRepository.GetAsync(buyerId, game.Id, token, asNoTracking: true) != null)
+        {
+            return ServiceResponse.BadRequestResponse("Game has already been bought");
+        }
 
         try
         {

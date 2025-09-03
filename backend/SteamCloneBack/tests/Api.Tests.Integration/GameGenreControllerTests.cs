@@ -26,7 +26,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
         var request = new CreateUpdateGenreVM { Name = genreName, Description = genreDescription };
 
         // Act
-        var response = await Client.PostAsJsonAsync("GameGenre", request);
+        var response = await Client.PostAsJsonAsync("game-genre", request);
 
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -50,7 +50,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
         var request = new CreateUpdateGenreVM { Name = genreName, Description = genreDescription };
 
         // Act
-        var response = await Client.PutAsJsonAsync($"GameGenre/{_gameGenre.Id}", request);
+        var response = await Client.PutAsJsonAsync($"game-genre/{_gameGenre.Id}", request);
         
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -69,7 +69,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
     public async Task ShouldDeleteGameGenre()
     {
         // Act
-        var response = await Client.DeleteAsync($"GameGenre/{_gameGenre.Id}");
+        var response = await Client.DeleteAsync($"game-genre/{_gameGenre.Id}");
         
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
@@ -86,7 +86,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
         var request = new CreateUpdateGenreVM { Name = "TestGenre", Description = "TestGenreDescription" };
         
         // Act
-        var response = await Client.PutAsJsonAsync($"GameGenre/{int.MaxValue}", request);
+        var response = await Client.PutAsJsonAsync($"game-genre/{int.MaxValue}", request);
         
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();
@@ -97,7 +97,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
     public async Task ShouldNotDeleteBecauseNotFound()
     {
         // Act
-        var response = await Client.DeleteAsync($"GameGenre/{int.MaxValue}");
+        var response = await Client.DeleteAsync($"game-genre/{int.MaxValue}");
         
         // Assert
         response.IsSuccessStatusCode.Should().BeFalse();
@@ -108,7 +108,7 @@ public class GameGenreControllerTests(IntegrationTestWebFactory factory, bool us
     public async Task ShouldGetAllGenres()
     {
         // Act
-        var response = await Client.GetAsync("GameGenre");
+        var response = await Client.GetAsync("game-genre");
         
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();

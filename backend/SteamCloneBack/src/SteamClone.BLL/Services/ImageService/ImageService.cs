@@ -11,15 +11,7 @@ public class ImageService(IWebHostEnvironment webHostEnvironment) : IImageServic
         {
             if (!string.IsNullOrEmpty(oldImagePath))
             {
-                var fullOldPath = Path.Combine(webHostEnvironment.ContentRootPath, path, oldImagePath);
-                if (File.Exists(fullOldPath))
-                {
-                    File.Delete(fullOldPath);
-                }
-                else
-                {
-                    throw new Exception("File path does not exist to save image.");
-                }
+                DeleteImage(path, oldImagePath);
             }
 
             var types = image.ContentType.Split('/');
@@ -80,10 +72,6 @@ public class ImageService(IWebHostEnvironment webHostEnvironment) : IImageServic
             if (File.Exists(fullOldPath))
             {
                 File.Delete(fullOldPath);
-            }
-            else
-            {
-                throw new Exception($"File {fullOldPath} does not exist to delete image.");
             }
 
             return true;

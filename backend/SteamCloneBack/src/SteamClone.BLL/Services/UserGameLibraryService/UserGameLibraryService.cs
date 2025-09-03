@@ -49,6 +49,23 @@ public class UserGameLibraryService(
         }
     }
 
+    public async Task<ServiceResponse> IsInLibraryAsync(string gameId, CancellationToken cancellationToken)
+    {
+        if (await gameRepository.GetByIdAsync(gameId, cancellationToken) == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+        
+        var isInLibrary = await userGameLibraryRepository.GetAsync(await userProvider.GetUserId(), gameId, cancellationToken);
+        
+        if (isInLibrary == null)
+        {
+            return ServiceResponse.OkResponse("Game not found in library", false);
+        }
+        
+        return ServiceResponse.OkResponse("Game is in library", true);
+    }
+
     private async Task<List<UserGameLibrary>> GetByUserIdAsync(CancellationToken cancellationToken = default)
     {
         var userId = await userProvider.GetUserId();

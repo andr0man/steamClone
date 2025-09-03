@@ -22,7 +22,9 @@ public class GameRepository(AppDbContext appDbContext, IUserProvider userProvide
             x => x.Genres,
             x => x.SystemRequirements,
             x => x.Localizations,
-            x => x.AssociatedUsers);
+            x => x.AssociatedUsers,
+            x => x.Developer!,
+            x => x.Publisher!);
     }
 
     public async Task CalculateRatingAsync(string id, CancellationToken token)

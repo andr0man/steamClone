@@ -19,4 +19,11 @@ public class UserGameLibraryController(IUserGameLibraryService userGameLibrarySe
     public async Task<IActionResult> ChangeFavoriteStatusAsync(string gameId,
         CancellationToken cancellationToken = default) =>
         GetResult(await userGameLibraryService.ChangeFavoriteStatusAsync(gameId, cancellationToken));
+
+    [HttpGet("is-in-library/{gameId}")]
+    public async Task<IActionResult> IsInLibraryAsync(string gameId, CancellationToken cancellationToken = default)
+    {
+        var result = await userGameLibraryService.IsInLibraryAsync(gameId, cancellationToken);
+        return GetResult(result);
+    }
 }
