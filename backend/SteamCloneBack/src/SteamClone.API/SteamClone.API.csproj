@@ -32,6 +32,7 @@
       <Folder Include="wwwroot\images\game_covers\" />
       <Folder Include="wwwroot\images\game_screenshots\" />
       <Folder Include="wwwroot\images\item_images\" />
+      <Folder Include="wwwroot\images\user_avatars\" />
     </ItemGroup>
 
 </Project>

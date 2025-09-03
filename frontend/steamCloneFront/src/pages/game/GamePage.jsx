@@ -60,7 +60,6 @@ export const GamePage = () => {
 
   const handleBuyingGame = async (gameId) => {
     try {
-      // unwrap() поверне payload або кине помилку — зручно для try/catch
       const payload = await buyGame(gameId).unwrap();
       setIsModalOpen(false);
       await refetchIsInLibrary();
@@ -105,7 +104,7 @@ export const GamePage = () => {
           </div>
           <div className="game-main-content">
             <img
-              src={gameById.coverImageUrl}
+              src={gameById.coverImageUrl ?? "/common/gameNoImage.png"}
               alt="Game Cover"
               className="rgb-border"
               loading="lazy"

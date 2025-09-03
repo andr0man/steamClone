@@ -94,7 +94,7 @@ public class GameControllerTests : BaseIntegrationTest, IAsyncLifetime
         // Assert
         response.IsSuccessStatusCode.Should().BeTrue();
 
-        var gameFromResponse = await JsonHelper.GetPayloadAsync<Game>(response);
+        var gameFromResponse = await JsonHelper.GetPayloadAsync<GameVM>(response);
         var gameId = gameFromResponse.Id;
 
         Context.ChangeTracker.Clear();
