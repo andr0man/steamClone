@@ -37,11 +37,11 @@ export const GamePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (isLoading && isLoadingWishlist && isLoadingLibrary) {
-    return <div>Loading...</div>;
+    return <div className="loading-overlay visible">Loading data...</div>;
   }
 
   if (!gameData || !isInWishlistData || !isInLibraryData) {
-    return <div>Game not found</div>;
+    return <h1 style={{display: "flex", justifyContent: "center", alignContent: "center", height: "100vh"}}>Game not found</h1>;
   }
 
   const gameById = gameData.payload;
