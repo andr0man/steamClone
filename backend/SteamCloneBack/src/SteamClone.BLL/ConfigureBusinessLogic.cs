@@ -20,6 +20,7 @@ using SteamClone.BLL.Services.ReviewService;
 using SteamClone.BLL.Services.UserGameLibraryService;
 using SteamClone.BLL.Services.UserItemService;
 using SteamClone.BLL.Services.UserService;
+using SteamClone.BLL.Services.FriendshipService;
 using SteamClone.BLL.Services.WishlistService;
 using SteamClone.DAL;
 
@@ -61,6 +62,7 @@ public static class ConfigureBusinessLogic
         services.AddScoped<IItemService, ItemService>();
         services.AddScoped<IUserItemService, UserItemService>();
         services.AddScoped<IMarketItemService, MarketItemService>();
+        services.AddScoped<IFriendshipService, FriendshipService>();
         services.AddScoped<IUserGameLibraryService, UserGameLibraryService>();
         services.AddScoped<IWishlistService, WishlistService>();
     }
