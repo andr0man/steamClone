@@ -10,18 +10,19 @@ namespace SteamClone.DAL.Data.Configurations.Auth.Users
         {
             builder.HasKey(f => f.Id);
 
-            // Відношення з Sender
+            
             builder.HasOne(f => f.Sender)
-                .WithMany(f => f.SentFriendships)
+                .WithMany() 
+                .HasForeignKey(f => f.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Відношення з Receiver
+            
             builder.HasOne(f => f.Receiver)
                 .WithMany(f => f.ReceivedFriendships)
                 .HasForeignKey(f => f.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Enum → string
+            
             builder.Property(f => f.Status)
                 .HasConversion<string>()
                 .HasMaxLength(20);
