@@ -6,7 +6,7 @@ import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, clearUser } from "./store/reduserSlises/userSlice";
 import { jwtDecode } from "jwt-decode";
-import { useGetProfileQuery } from "./services/user/userApi";
+import { useGetProfileQuery, userApi } from "./services/user/userApi";
 
 function App() {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
@@ -39,6 +39,7 @@ function App() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     dispatch(clearUser());
+    dispatch(userApi.util.resetApiState());
   };
 
   if (isLoadingAuth || isLoading) {

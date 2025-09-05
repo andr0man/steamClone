@@ -43,10 +43,12 @@ const Login = () => {
       const { accessToken, refreshToken } = res.payload || {};
       if (accessToken) localStorage.setItem("accessToken", accessToken);
       if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
-      
+
       // Після логіну — отримати профіль і оновити user
-      debugger;
-      const profileRes = await dispatch(userApi.endpoints.getProfile.initiate()).unwrap();
+      dispatch(userApi.util.resetApiState());
+      const profileRes = await dispatch(
+        userApi.endpoints.getProfile.initiate()
+      ).unwrap();
       if (profileRes.payload) {
         dispatch(setUser(profileRes.payload));
       }
