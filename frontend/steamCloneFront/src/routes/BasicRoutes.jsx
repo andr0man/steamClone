@@ -25,9 +25,13 @@ import MarketHistory from "../pages/market/history/MarketHistory.jsx";
 import ForgotPassword from "../pages/auth/login/ForgotPassword.jsx";
 import Chat from "../pages/chat/Chat.jsx";
 import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 
-const ProtectedRoute = ({ isLoggedIn, children }) => {
-  if (!isLoggedIn) {
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("accessToken");
+  const user = token ? jwtDecode(token) : null;
+  console.log("ProtectedRoute - isLoggedIn prop:", user);
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
   return children;
@@ -48,25 +52,16 @@ const UnderConstructionPage = ({ pageName }) => (
 
 const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
   const currentUser = useSelector((state) => state.user.user);
-  console.log("isLoggedIn in Routes:", isLoggedIn);  return (
+  return (
     <div className="app-container">
       {isLoggedIn && <Navbar onLogout={handleLogout} />}
 
       <main className="main-content">
         <div className="content-wrapper">
           <Routes>
-            <Route
-              path="/login"
-              element={isLoggedIn ? <Navigate to="/store" replace /> : <Login />}
-            />
-            <Route
-              path="/forgot-password"
-              element={<ForgotPassword />}
-            />
-            <Route
-              path="/register"
-              element={<Register />}
-            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/register" element={<Register />} />
 
             <Route
               path="/store/game/:gameId"
@@ -87,7 +82,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/discover"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Discover />
                 </ProtectedRoute>
               }
@@ -95,7 +90,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/stats"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Stats />
                 </ProtectedRoute>
               }
@@ -103,7 +98,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/wishlist"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute >
                   <Wishlist />
                 </ProtectedRoute>
               }
@@ -111,7 +106,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/points-shop"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute >
                   <PointsShop />
                 </ProtectedRoute>
               }
@@ -119,7 +114,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/news"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute >
                   <News />
                 </ProtectedRoute>
               }
@@ -127,7 +122,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/admin/dashboard"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <AdminDashboard />
                 </ProtectedRoute>
               }
@@ -135,7 +130,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/:subpage"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Home />
                 </ProtectedRoute>
               }
@@ -143,7 +138,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Home />
                 </ProtectedRoute>
               }
@@ -151,7 +146,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/chat"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Chat />
                 </ProtectedRoute>
               }
@@ -159,7 +154,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/purchase"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Purchase />
                 </ProtectedRoute>
               }
@@ -167,7 +162,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/home/search"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Search />
                 </ProtectedRoute>
               }
@@ -175,7 +170,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/library"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Library />
                 </ProtectedRoute>
               }
@@ -183,7 +178,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/library/collections"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Collections />
                 </ProtectedRoute>
               }
@@ -191,7 +186,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/library/game/:gameId"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <GameInfo />
                 </ProtectedRoute>
               }
@@ -199,7 +194,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/library/:subpage"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Library />
                 </ProtectedRoute>
               }
@@ -208,7 +203,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/market"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Market />
                 </ProtectedRoute>
               }
@@ -216,7 +211,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/market/history"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <MarketHistory />
                 </ProtectedRoute>
               }
@@ -225,7 +220,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/profile"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Profile userData={currentUser} />
                 </ProtectedRoute>
               }
@@ -233,7 +228,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/profile/edit"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <EditProfile currentProfileData={currentUser} />
                 </ProtectedRoute>
               }
@@ -242,7 +237,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/community"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <UnderConstructionPage pageName="Community" />
                 </ProtectedRoute>
               }
@@ -250,7 +245,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/community/:subpage"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <UnderConstructionPage pageName="Community Section" />
                 </ProtectedRoute>
               }
