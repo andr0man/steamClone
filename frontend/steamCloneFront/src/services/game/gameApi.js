@@ -1,23 +1,11 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import APP_ENV from "../../env";
+import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
-const getToken = () => {
-  const token = localStorage.getItem("accessToken");
-  return token;
-};
 export const gameApi = createApi({
   reducerPath: "gameApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${APP_ENV.API_URL}game/`,
-    prepareHeaders: (headers) => {
-      const token = getToken();
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithRefresh,
   tagTypes: ["Game"],
   endpoints: (builder) => ({
     getGameById: builder.query({

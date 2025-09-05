@@ -1,129 +1,135 @@
 :root {
-    --font-family-main: 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Exo 2';
-    --color-bg-deep-space: hsl(250, 30%, 8%);
-    --color-bg-primary: hsl(250, 25%, 12%);
-    --color-bg-element: hsl(250, 25%, 18%);
-    --color-bg-element-light: hsl(250, 25%, 22%);
-    --color-bg-surface: hsl(250, 20%, 25%);
-    --color-bg-input: hsl(250, 30%, 10%);
-    --color-bg-input-focus: hsl(250, 30%, 14%);
+  --font-family-main: "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif, "Exo 2";
+  --color-bg-deep-space: hsl(250, 30%, 8%);
+  --color-bg-primary: #121218;
+  --color-bg-element: hsl(250, 25%, 18%);
+  --color-bg-element-light: hsl(250, 25%, 22%);
+  --color-bg-surface: hsl(250, 20%, 25%);
+  --color-bg-input: hsl(250, 30%, 10%);
+  --color-bg-input-focus: hsl(250, 30%, 14%);
 
-    --color-text-lightest: hsl(250, 50%, 95%);
-    --color-text-primary: hsl(250, 30%, 85%);
-    --color-text-secondary: hsl(250, 20%, 65%);
-    --color-text-muted: hsl(250, 15%, 50%);
-    --color-text-placeholder: hsl(250, 15%, 40%);
+  --color-text-lightest: hsl(250, 50%, 95%);
+  --color-text-primary: hsl(250, 30%, 85%);
+  --color-text-secondary: hsl(250, 20%, 65%);
+  --color-text-muted: hsl(250, 15%, 50%);
+  --color-text-placeholder: hsl(250, 15%, 40%);
 
-    --color-accent-primary: hsl(265, 80%, 70%);
-    --color-accent-primary-hover: hsl(265, 80%, 75%);
-    --color-accent-primary-active: hsl(265, 80%, 65%);
+  --color-accent-primary: hsl(265, 80%, 70%);
+  --color-accent-primary-hover: hsl(265, 80%, 75%);
+  --color-accent-primary-active: hsl(265, 80%, 65%);
 
-    --color-accent-secondary: hsl(220, 85%, 65%);
-    --color-accent-secondary-hover: hsl(220, 85%, 70%);
+  --color-accent-secondary: hsl(220, 85%, 65%);
+  --color-accent-secondary-hover: hsl(220, 85%, 70%);
 
-    --color-accent-green: hsl(145, 65%, 55%);
-    --color-accent-green-hover: hsl(145, 65%, 60%);
-    --color-accent-green-text: var(--color-bg-deep-space);
+  --color-accent-green: hsl(145, 65%, 55%);
+  --color-accent-green-hover: hsl(145, 65%, 60%);
+  --color-accent-green-text: var(--color-bg-deep-space);
 
-    --color-accent-red: hsl(0, 80%, 70%);
+  --color-accent-red: hsl(0, 80%, 70%);
 
-    --color-border-soft: hsla(250, 20%, 50%, 0.2);
-    --color-border-medium: hsla(250, 20%, 50%, 0.4);
-    --color-border-focus: var(--color-accent-primary);
+  --color-border-soft: hsla(250, 20%, 50%, 0.2);
+  --color-border-medium: hsla(250, 20%, 50%, 0.4);
+  --color-border-focus: var(--color-accent-primary);
 
-    --radius-bubble-sm: 10px;
-    --radius-bubble-md: 16px;
-    --radius-bubble-lg: 24px;
-    --radius-bubble-full: 50px;
+  --radius-bubble-sm: 10px;
+  --radius-bubble-md: 16px;
+  --radius-bubble-lg: 24px;
+  --radius-bubble-full: 50px;
 
-    --shadow-bubble-light: 0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-bubble-medium: 0 8px 20px rgba(0, 0, 0, 0.2), 0 3px 8px rgba(0, 0, 0, 0.15);
-    --shadow-bubble-deep: 0 12px 30px rgba(0, 0, 0, 0.25);
-    --shadow-focus-ring: 0 0 0 3px hsla(var(--color-accent-primary-hsl), 0.4);
+  --shadow-bubble-light: 0 4px 12px rgba(0, 0, 0, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-bubble-medium: 0 8px 20px rgba(0, 0, 0, 0.2),
+    0 3px 8px rgba(0, 0, 0, 0.15);
+  --shadow-bubble-deep: 0 12px 30px rgba(0, 0, 0, 0.25);
+  --shadow-focus-ring: 0 0 0 3px hsla(var(--color-accent-primary-hsl), 0.4);
 
-    --shadow-color-primary-rgb: 24, 23, 38;
-    --shadow-color-accent-rgb: 138, 121, 247;
+  --shadow-color-primary-rgb: 24, 23, 38;
+  --shadow-color-accent-rgb: 138, 121, 247;
 
-    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    --blur-intensity: 8px;
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --blur-intensity: 8px;
 }
 
 :root {
-    --color-accent-primary-h: 265;
-    --color-accent-primary-s: 80%;
-    --color-accent-primary-l: 70%;
+  --color-accent-primary-h: 265;
+  --color-accent-primary-s: 80%;
+  --color-accent-primary-l: 70%;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    /* font-family: var(--font-family-main); */
-    font-family: 'Exo 2';
-    /* Два шари: спочатку градієнт, поверх нього svg */
-    background: url('/authbc/BG_grey.svg') center top / 100% no-repeat,
-      radial-gradient(
-        circle at 50% 0%,
-        var(--color-bg-primary) 0%,
-        var(--color-bg-deep-space) 100%
-      );
-    color: var(--color-text-primary);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  /* font-family: var(--font-family-main); */
+  font-family: "Exo 2";
+  /* Два шари: спочатку градієнт, поверх нього svg */
+  /* background: url("/authbc/BG_grey.svg") center top / 100% no-repeat,
+    radial-gradient(
+      circle at 50% 0%,
+      var(--color-bg-primary) 0%,
+      var(--color-bg-deep-space) 100%
+    ); */
+
+  background: url("/authbc/BG_grey.svg") center top / 100% no-repeat,
+    var(--color-bg-primary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
 .app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .main-content {
-    flex-grow: 1;
-    width: 100%;
+  flex-grow: 1;
+  width: 100%;
 }
 
 .content-wrapper {
-    padding-top: 85px;
-    max-width: 1300px;
-    margin: 0 auto;
-    padding-left: 25px;
-    padding-right: 25px;
-    padding-bottom: 25px;
-    width: 100%;
-    box-sizing: border-box;
+  padding-top: 85px;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-bottom: 25px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
-    .content-wrapper {
-        padding-top: 75px;
-        padding-left: 15px;
-        padding-right: 15px;
-        padding-bottom: 15px;
-    }
+  .content-wrapper {
+    padding-top: 75px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 15px;
+  }
 }
 
 button,
-input[type='submit'],
-input[type='button'] {
-    font-family: var(--font-family-main);
-    cursor: pointer;
-    outline: none;
+input[type="submit"],
+input[type="button"] {
+  font-family: var(--font-family-main);
+  cursor: pointer;
+  outline: none;
 }
 input,
 textarea,
 select {
-    font-family: var(--font-family-main);
-    box-sizing: border-box;
+  font-family: var(--font-family-main);
+  box-sizing: border-box;
 }
 
 .app-loading-initial {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-size: 1.5rem;
-    color: var(--color-text-lightest);
-    background-color: var(--color-bg-deep-space);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.5rem;
+  color: var(--color-text-lightest);
+  background-color: var(--color-bg-deep-space);
 }

@@ -1,0 +1,68 @@
+.admin-dashboard {
+  padding: 32px 24px;
+  color: #fff;
+}
+
+.admin-dashboard h1 {
+  font-size: 2.2rem;
+  margin-bottom: 32px;
+  font-weight: 600;
+}
+
+.admin-dashboard-cards {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.admin-card {
+  background: #23232a;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.13);
+  padding: 28px 22px 22px 22px;
+  min-width: 220px;
+  max-width: 320px;
+  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.admin-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.admin-card p {
+  margin: 0 0 18px 0;
+  font-size: 1rem;
+  color: #bdbdbd;
+}
+
+.admin-btn {
+  background: #7c72db;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.admin-btn:hover {
+  background: #a178eb;
+}
+
+.admin-dashboard-denied {
+  padding: 60px 24px;
+  color: #fff;
+  text-align: center;
+}
+
+.admin-dashboard-denied h2 {
+  font-size: 2rem;
+  margin-bottom: 18px;
+}
