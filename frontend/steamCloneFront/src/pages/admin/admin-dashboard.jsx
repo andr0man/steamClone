@@ -1,6 +1,7 @@
 import React from "react";
 import "./admin-dashboard.scss";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const AdminDashboard = () => {
   const { user: currentUser } = useSelector((state) => state.user);
@@ -25,7 +26,7 @@ const AdminDashboard = () => {
         <div className="admin-card">
           <h3>Manage Genres</h3>
           <p>Add or manage game genres.</p>
-          <button className="admin-btn">Go to Manage Genres</button>
+          <Link to="/admin/genres" className="admin-btn">Go to Manage Genres</Link>
         </div>
         <div className="admin-card">
           <h3>Other Management</h3>

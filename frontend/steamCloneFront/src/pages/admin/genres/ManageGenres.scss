@@ -1,0 +1,84 @@
+// ManageGenres.scss
+.manage-genres-container {
+  background: #181a20;
+  padding: 32px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.12);
+  max-width: 600px;
+  margin: 32px auto;
+}
+
+.genres-table {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #23232a;
+  box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.08);
+}
+
+.genres-table th {
+  background: #23232a;
+  color: #a178eb;
+  font-weight: 500;
+  padding: 12px 8px;
+  border-bottom: 2px solid #353545;
+}
+
+.genres-table td {
+  background: #23232a;
+  color: #fff;
+  padding: 10px 8px;
+  border-bottom: 1px solid #353545;
+}
+
+.create-genre-btn {
+  background: linear-gradient(90deg, #a178eb 0%, #66c0f4 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(161, 120, 235, 0.12);
+  transition: filter 0.2s, transform 0.2s;
+}
+.create-genre-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.04);
+}
+
+.edit-genre-btn {
+  background: linear-gradient(90deg, #74bff7 0%, #a0f885 100%);
+  color: #23232a;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-right: 8px;
+  box-shadow: 0 1px 6px 0 rgba(116, 191, 247, 0.1);
+  transition: filter 0.2s, transform 0.2s;
+}
+.edit-genre-btn:hover {
+  filter: brightness(1.08);
+  transform: scale(1.04);
+}
+
+.delete-genre-btn {
+  background: linear-gradient(90deg, #ff9584 0%, #dfed43 100%);
+  color: #23232a;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 1px 6px 0 rgba(255, 149, 132, 0.1);
+  transition: filter 0.2s, transform 0.2s;
+}
+.delete-genre-btn:hover {
+  filter: brightness(1.08);
+  transform: scale(1.04);
+}

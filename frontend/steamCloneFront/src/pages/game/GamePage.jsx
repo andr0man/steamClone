@@ -60,7 +60,7 @@ export const GamePage = () => {
 
   const handleBuyingGame = async (gameId) => {
     try {
-      const payload = await buyGame(gameId).unwrap();
+      await buyGame(gameId).unwrap();
       setIsModalOpen(false);
       await refetchIsInLibrary();
       toast.success("Thank you for your purchase!");

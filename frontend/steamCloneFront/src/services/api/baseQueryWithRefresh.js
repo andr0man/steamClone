@@ -16,10 +16,11 @@ export const createBaseQueryWithRefresh = (endpointPrefix = "") => {
 
   return async (args, api, extraOptions) => {
     // Додаємо префікс до url
+    // debugger;
     let modifiedArgs = args;
     if (typeof args === "string") {
       modifiedArgs = endpointPrefix + args;
-    } else if (typeof args === "object" && args.url) {
+    } else if (typeof args === "object") {
       modifiedArgs = { ...args, url: endpointPrefix + args.url };
     }
 

@@ -5,6 +5,7 @@ import { gameApi } from "../services/game/gameApi";
 import { wishlistApi } from "../services/wishlist/wishlistApi";
 import { gameLibraryApi } from "../services/game-library/gameLibraryApi";
 import userReducer from "./reduserSlises/userSlice";
+import { genreApi } from "../services/genre/genreApi";
 
 export const rootReducer = combineReducers({
   user: userReducer,
@@ -13,4 +14,5 @@ export const rootReducer = combineReducers({
   [gameApi.reducerPath]: gameApi.reducer,
   [wishlistApi.reducerPath]: wishlistApi.reducer,
   [gameLibraryApi.reducerPath]: gameLibraryApi.reducer,
+  [genreApi.reducerPath]: genreApi.reducer,
 });

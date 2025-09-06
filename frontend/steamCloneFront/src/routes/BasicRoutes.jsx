@@ -26,6 +26,7 @@ import ForgotPassword from "../pages/auth/login/ForgotPassword.jsx";
 import Chat from "../pages/chat/Chat.jsx";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import ManageGenres from "../pages/admin/genres/ManageGenres.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -118,14 +119,28 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
+
             <Route
-              path="/admin/dashboard"
-              element={
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
+              path="/admin"
+            >
+              <Route
+                path="dashboard"
+                element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="genres"
+                element={
+                  <ProtectedRoute>
+                    <ManageGenres />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+
             <Route
               path="/store/:subpage"
               element={
