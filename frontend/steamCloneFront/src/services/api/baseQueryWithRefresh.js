@@ -1,49 +1,55 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import APP_ENV from "../../env";
 
-const baseUrl = import.meta.env.VITE_APP_API_URL;
+export const createBaseQueryWithRefresh = (endpointPrefix = "") => {
+  const baseUrl = APP_ENV.API_URL;
+  const rawBaseQuery = fetchBaseQuery({
+    baseUrl,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  });
 
-const rawBaseQuery = fetchBaseQuery({
-  baseUrl,
-  prepareHeaders: (headers) => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
+  return async (args, api, extraOptions) => {
+    // Додаємо префікс до url
+    let modifiedArgs = args;
+    if (typeof args === "string") {
+      modifiedArgs = endpointPrefix + args;
+    } else if (typeof args === "object" && args.url) {
+      modifiedArgs = { ...args, url: endpointPrefix + args.url };
     }
-    return headers;
-  },
-});
-export const baseQueryWithRefresh = async (args, api, extraOptions) => {
-  let result = await rawBaseQuery(args, api, extraOptions);
 
-  
-  if (result?.error?.status === 401) {
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (!refreshToken) return result;
+    let result = await rawBaseQuery(modifiedArgs, api, extraOptions);
 
-    
-    const refreshResult = await rawBaseQuery(
-      {
-        url: "/account/refresh",
-        method: "POST",
-        body: { refreshToken },
-      },
-      api,
-      extraOptions
-    );
+    if (result?.error?.status === 401) {
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (!refreshToken) return result;
 
-    if (refreshResult?.data?.payload?.accessToken) {
-      const newAccessToken = refreshResult.data.payload.accessToken;
+      const refreshResult = await rawBaseQuery(
+        {
+          url: "/account/refresh",
+          method: "POST",
+          body: { refreshToken },
+        },
+        api,
+        extraOptions
+      );
 
-      localStorage.setItem("accessToken", newAccessToken);
+      if (refreshResult?.data?.payload?.accessToken) {
+        const newAccessToken = refreshResult.data.payload.accessToken;
+        localStorage.setItem("accessToken", newAccessToken);
 
-      
-      result = await rawBaseQuery(args, api, extraOptions);
-    } else {
-      
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+        result = await rawBaseQuery(modifiedArgs, api, extraOptions);
+      } else {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+      }
     }
-  }
 
-  return result;
+    return result;
+  };
 };

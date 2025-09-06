@@ -1,11 +1,9 @@
-import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import APP_ENV from "../../env";
-import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
+import { createBaseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
 export const wishlistApi = createApi({
   reducerPath: "wishlistApi",
-  baseQuery: baseQueryWithRefresh,
+  baseQuery: createBaseQueryWithRefresh("/wishlist/"),
   tagTypes: ["Wishlist"],
   endpoints: (builder) => ({
     getWishlistByUser: builder.query({

@@ -1,11 +1,9 @@
-import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import APP_ENV from "../../env";
-import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
+import { createBaseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
 export const gameLibraryApi = createApi({
   reducerPath: "gameLibraryApi",
-  baseQuery: baseQueryWithRefresh,
+  baseQuery: createBaseQueryWithRefresh("/user-game-library/"),
   tagTypes: ["GameLibrary"],
   endpoints: (builder) => ({
     getGameLibrary: builder.query({

@@ -30,7 +30,6 @@ import { jwtDecode } from "jwt-decode";
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
   const user = token ? jwtDecode(token) : null;
-  console.log("ProtectedRoute - isLoggedIn prop:", user);
   if (!user) {
     return <Navigate to="/login" replace />;
   }

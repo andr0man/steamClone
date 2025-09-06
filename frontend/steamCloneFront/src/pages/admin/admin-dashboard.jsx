@@ -18,14 +18,14 @@ const AdminDashboard = () => {
       <h1>Admin Dashboard</h1>
       <div className="admin-dashboard-cards">
         <div className="admin-card">
-          <h3>Create Game</h3>
+          <h3>Manage Games</h3>
           <p>Add new games to the store.</p>
-          <button className="admin-btn">Go to Create Game</button>
+          <button className="admin-btn">Go to Manage Games</button>
         </div>
         <div className="admin-card">
-          <h3>Create Genre</h3>
+          <h3>Manage Genres</h3>
           <p>Add or manage game genres.</p>
-          <button className="admin-btn">Go to Genres</button>
+          <button className="admin-btn">Go to Manage Genres</button>
         </div>
         <div className="admin-card">
           <h3>Other Management</h3>

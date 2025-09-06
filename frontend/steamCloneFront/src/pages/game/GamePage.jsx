@@ -64,18 +64,14 @@ export const GamePage = () => {
       setIsModalOpen(false);
       await refetchIsInLibrary();
       toast.success("Thank you for your purchase!");
-      console.log("Buy game response:", payload);
     } catch (err) {
       const message =
         err?.data?.message ||
         err?.message ||
         "Purchase failed. Please try again.";
       toast.error(message);
-      console.log("Buy game error:", err);
     }
   };
-
-  console.log("Current Game:", gameById);
 
   return (
     <>
