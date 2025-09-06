@@ -129,8 +129,15 @@ const Navbar = ({ onLogout }) => {
   ];
 
   const updateBubblePosition = useCallback(() => {
+    // Визначаємо базовий шлях, наприклад /admin
     const currentBase = "/" + location.pathname.split("/")[1];
-    const activeItem = navItems.find((i) => i.path === currentBase);
+    // Для admin також враховуємо /admin/dashboard
+    const activeItem = navItems.find(
+      (i) =>
+        currentBase.startsWith(i.path.split("/")[1]) ||
+        currentBase === i.path ||
+        (i.id === "admin" && currentBase === "/admin")
+    );
     if (activeItem && itemRefs.current[activeItem.id] && linksRef.current) {
       const el = itemRefs.current[activeItem.id];
       const laneRect = linksRef.current.getBoundingClientRect();
@@ -185,48 +192,58 @@ const Navbar = ({ onLogout }) => {
                   item.id !== "admin" ||
                   (user && user.roleName.includes("admin"))
               )
-              .map((item) => (
-                <div
-                  key={item.id}
-                  className="fluxi-item-wrap"
-                  onMouseEnter={() => item.subItems && setActiveDropdown(item.id)}
-                  onMouseLeave={() => item.subItems && setActiveDropdown(null)}
-                >
-                  <NavLink
-                    ref={(el) => (itemRefs.current[item.id] = el)}
-                    to={item.path}
-                    className={() => {
-                      const active = location.pathname.startsWith(item.path);
-                      return `fluxi-item ${active ? "active" : ""}`;
-                    }}
-                    onClick={() => setActiveDropdown(null)}
+              .map((item) => {
+                // Визначаємо базовий шлях для вкладки
+                const basePath = "/" + location.pathname.split("/")[1];
+                // Вкладка активна, якщо basePath === базовому шляху вкладки або для admin якщо basePath === "/admin"
+                const isActive =
+                  basePath === item.path ||
+                  basePath.startsWith(item.path) ||
+                  (item.id === "admin" && basePath === "/admin");
+                return (
+                  <div
+                    key={item.id}
+                    className="fluxi-item-wrap"
+                    onMouseEnter={() =>
+                      item.subItems && setActiveDropdown(item.id)
+                    }
+                    onMouseLeave={() =>
+                      item.subItems && setActiveDropdown(null)
+                    }
                   >
-                    {item.label}
-                    {item.subItems && (
-                      <ChevronDown size={16} className="item-arrow" />
-                    )}
-                  </NavLink>
-
-                  {item.subItems && activeDropdown === item.id && (
-                    <div
-                      className={`fluxi-dropdown ${
-                        item.id === "store" ? "store-dropdown" : ""
-                      }`}
+                    <NavLink
+                      ref={(el) => (itemRefs.current[item.id] = el)}
+                      to={item.path}
+                      className={`fluxi-item${isActive ? " active" : ""}`}
+                      onClick={() => setActiveDropdown(null)}
                     >
-                      {item.subItems.map((sub) => (
-                        <NavLink
-                          key={sub.id}
-                          to={sub.path}
-                          className="fluxi-dropdown-item"
-                          onClick={() => setActiveDropdown(null)}
-                        >
-                          {sub.label}
-                        </NavLink>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                      {item.label}
+                      {item.subItems && (
+                        <ChevronDown size={16} className="item-arrow" />
+                      )}
+                    </NavLink>
+
+                    {item.subItems && activeDropdown === item.id && (
+                      <div
+                        className={`fluxi-dropdown ${
+                          item.id === "store" ? "store-dropdown" : ""
+                        }`}
+                      >
+                        {item.subItems.map((sub) => (
+                          <NavLink
+                            key={sub.id}
+                            to={sub.path}
+                            className="fluxi-dropdown-item"
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            {sub.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
           </div>
         </div>
 
