@@ -8,10 +8,6 @@
   color: variables.$ink;
 }
 
-.toast-container {
-  @extend .flux-border;
-}
-
 .tilted-component {
   transform: skewX(-(variables.$button-rotation-degree));
   color: #fff;

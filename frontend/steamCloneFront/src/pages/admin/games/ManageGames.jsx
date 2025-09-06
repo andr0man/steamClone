@@ -1,9 +1,13 @@
 import React from "react";
 import { useGetAllGamesQuery } from "../../../services/game/gameApi";
-import GameCard from "./components/GameCard";
-import "./components/GameCard.scss";
+import GameCard from "./components/gameCard/GameCard";
+import "./components/gameCard/GameCard.scss";
+import "../../../styles/App.scss";
+import "./ManageGames.scss";
+import { Link, useNavigate } from "react-router-dom";
 
 const ManageGames = () => {
+  const navigate = useNavigate();
   const { data: gamesResponse, isLoading, error } = useGetAllGamesQuery();
   const games = gamesResponse?.payload;
 
@@ -44,9 +48,20 @@ const ManageGames = () => {
   return (
     <div
       className="manage-games-container"
-      style={{ maxWidth: "1200px", margin: "32px auto" }}
     >
-      <h2 style={{ marginBottom: 24 }}>Manage Games</h2>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <h2 style={{ marginBottom: 24 }}>Manage Games</h2>
+        <button onClick={() => navigate("/admin/games/create")} className="create-game-btn">
+          Create New Game
+        </button>
+      </div>
+
       <div className="games-grid">
         {games.map((game) => (
           <GameCard key={game.id} game={game} />

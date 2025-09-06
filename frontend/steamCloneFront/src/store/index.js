@@ -7,6 +7,7 @@ import { gameApi } from "../services/game/gameApi";
 import { wishlistApi } from "../services/wishlist/wishlistApi";
 import { gameLibraryApi } from "../services/game-library/gameLibraryApi";
 import { genreApi } from "../services/genre/genreApi";
+import { developerAndPublisherApi } from "../services/developerAndPublisher/developerAndPublisherApi";
 
 const middlewares = [
   authApi.middleware,
@@ -15,6 +16,7 @@ const middlewares = [
   wishlistApi.middleware,
   gameLibraryApi.middleware,
   genreApi.middleware,
+  developerAndPublisherApi.middleware
 ];
 
 export const store = configureStore({

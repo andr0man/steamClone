@@ -28,6 +28,8 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import ManageGenres from "../pages/admin/genres/ManageGenres.jsx";
 import ManageGames from "../pages/admin/games/ManageGames.jsx";
+import GameCreate from "../pages/admin/games/gameCreate/GameCreate.jsx";
+import GameEdit from "../pages/admin/games/gameEdit/GameEdit.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -99,7 +101,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/wishlist"
               element={
-                <ProtectedRoute >
+                <ProtectedRoute>
                   <Wishlist />
                 </ProtectedRoute>
               }
@@ -107,7 +109,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/points-shop"
               element={
-                <ProtectedRoute >
+                <ProtectedRoute>
                   <PointsShop />
                 </ProtectedRoute>
               }
@@ -115,7 +117,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/news"
               element={
-                <ProtectedRoute >
+                <ProtectedRoute>
                   <News />
                 </ProtectedRoute>
               }
@@ -244,9 +246,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
               }
             />
 
-            <Route
-              path="/admin"
-            >
+            <Route path="/admin">
               <Route
                 path="dashboard"
                 element={
@@ -263,14 +263,32 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="games"
-                element={
-                  <ProtectedRoute>
-                    <ManageGames />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="games">
+                <Route
+                  index
+                  element={
+                    <ProtectedRoute>
+                      <ManageGames />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="create"
+                  element={
+                    <ProtectedRoute>
+                      <GameCreate />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="edit/:gameId"
+                  element={
+                    <ProtectedRoute>
+                      <GameEdit />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
             </Route>
 
             <Route

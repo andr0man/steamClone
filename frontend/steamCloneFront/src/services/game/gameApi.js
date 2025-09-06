@@ -10,6 +10,10 @@ export const gameApi = createApi({
       query: () => "",
       providesTags: ["Game"],
     }),
+    isGameBought: builder.query({
+      query: (gameId) => `is-game-bought/${gameId}`,
+      providesTags: ["Game"],
+    }),
     getGameById: builder.query({
       query: (id) => `${id}`,
       providesTags: ["Game"],
@@ -54,4 +58,5 @@ export const {
   useUpdateGameMutation,
   useDeleteGameMutation,
   useGetAllGamesQuery,
+  useIsGameBoughtQuery
 } = gameApi;

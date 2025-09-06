@@ -8,6 +8,7 @@ import "../../../styles/App.scss";
 import "./ManageGenres.scss";
 import GenreRow from "./components/GenreRow";
 import { GenreModal } from "./components/modals/GenreModal";
+import "../../../styles/App.scss";
 
 const ManageGenres = () => {
   const { data: genresResponse, isLoading, isError } = useGetAllGenresQuery();
@@ -34,7 +35,7 @@ const ManageGenres = () => {
   };
 
   return (
-    <div className="manage-genres-container">
+    <div className="manage-genres-container flux-border">
       <div
         style={{
           display: "flex",

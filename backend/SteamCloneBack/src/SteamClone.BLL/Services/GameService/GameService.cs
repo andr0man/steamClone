@@ -160,7 +160,8 @@ public class GameService(
         var updatedGame = mapper.Map(model, existingGame);
         updatedGame.ReleaseDate = model.ReleaseDate ?? DateTime.UtcNow;
 
-        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken, asNoTracking: true) == null)
+        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken,
+                asNoTracking: true) == null)
         {
             return ServiceResponse.NotFoundResponse($"Developer with id '{model.DeveloperId}' not found");
         }
@@ -577,7 +578,9 @@ public class GameService(
 
         try
         {
-            if (!(await balanceRepository.WithdrawAsync(buyerId, game.Price, token)))
+            decimal amountToWithdraw = game.Discount != null ? game.Price * (1 - (decimal)game.Discount / 100) : game.Price;
+            
+            if (!(await balanceRepository.WithdrawAsync(buyerId, amountToWithdraw, token)))
             {
                 return ServiceResponse.BadRequestResponse("Not enough money");
             }
@@ -594,6 +597,18 @@ public class GameService(
         {
             throw new Exception(e.Message);
         }
+    }
+
+    public async Task<ServiceResponse> IsGameBoughtAsync(string gameId, CancellationToken token)
+    {
+        if (await gameRepository.GetByIdAsync(gameId, token, true) == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        var isBought = (await userGameLibraryRepository.GetAllByGameIdAsync(gameId, token)).Any();
+
+        return ServiceResponse.OkResponse("Game bought status retrieved successfully", isBought);
     }
 
     private async Task<ServiceResponse> UpdateGameAsync(Game game, string successMessage,
