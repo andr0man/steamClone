@@ -19,7 +19,7 @@ import PointsShop from "../pages/store/points-shop/PointsShop.jsx";
 import News from "../pages/store/news/News.jsx";
 import Search from "../pages/home/search/Search.jsx";
 import { GamePage } from "../pages/game/GamePage.jsx";
-import AdminDashboard from "../pages/admin/admin-dashboard.jsx";
+import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
 import Purchase from "../pages/store/purchase/Purchase.jsx";
 import MarketHistory from "../pages/market/history/MarketHistory.jsx";
 import ForgotPassword from "../pages/auth/login/ForgotPassword.jsx";
@@ -27,6 +27,7 @@ import Chat from "../pages/chat/Chat.jsx";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import ManageGenres from "../pages/admin/genres/ManageGenres.jsx";
+import ManageGames from "../pages/admin/games/ManageGames.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -119,28 +120,6 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
-
-            <Route
-              path="/admin"
-            >
-              <Route
-                path="dashboard"
-                element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="genres"
-                element={
-                  <ProtectedRoute>
-                    <ManageGenres />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
-
             <Route
               path="/store/:subpage"
               element={
@@ -264,6 +243,35 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              path="/admin"
+            >
+              <Route
+                path="dashboard"
+                element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="genres"
+                element={
+                  <ProtectedRoute>
+                    <ManageGenres />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="games"
+                element={
+                  <ProtectedRoute>
+                    <ManageGames />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
 
             <Route
               path="/"

@@ -1,5 +1,5 @@
 import React from "react";
-import "./admin-dashboard.scss";
+import "./AdminDashboard.scss";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -21,7 +21,7 @@ const AdminDashboard = () => {
         <div className="admin-card">
           <h3>Manage Games</h3>
           <p>Add new games to the store.</p>
-          <button className="admin-btn">Go to Manage Games</button>
+          <Link to="/admin/games" className="admin-btn">Go to Manage Games</Link>
         </div>
         <div className="admin-card">
           <h3>Manage Genres</h3>

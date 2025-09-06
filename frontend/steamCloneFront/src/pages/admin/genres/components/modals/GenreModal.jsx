@@ -11,8 +11,8 @@ export const GenreModal = ({
   setModalReset,
   genre = null,
 }) => {
-  const [name, setName] = useState( genre ? genre.name : "");
-  const [description, setDescription] = useState(genre?.description ? genre.description : "");
+  const [name, setName] = useState(genre?.name ?? "");
+  const [description, setDescription] = useState(genre?.description ?? "");
 
   // Передаємо функцію reset наверх
   React.useEffect(() => {
