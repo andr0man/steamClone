@@ -11,7 +11,7 @@ const ManageGames = () => {
   const { data: gamesResponse, isLoading, error } = useGetAllGamesQuery();
   const games = gamesResponse?.payload;
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div className="loading-overlay visible">Loading data...</div>;
   if (error) return <div>Error loading games</div>;
 
   // game response

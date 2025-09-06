@@ -174,9 +174,12 @@ const GameCreate = () => {
         </div>
 
         <div className="form-actions">
+          <button type="button" className="cancel-game-btn" onClick={() => navigate("/admin/games")}>
+            Cancel
+          </button>
           <button
             type="submit"
-            className="create-game-btn"
+            className="submit-game-btn"
             disabled={isLoading}
           >
             {isLoading ? "Creating..." : "Create Game"}
