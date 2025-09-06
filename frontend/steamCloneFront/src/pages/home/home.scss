@@ -66,23 +66,7 @@ body {
 .store-rail {
   margin: 16px 0 12px;
 
-  .rail-frame {
-    position: relative;
-    border-radius: 12px;
-    background: #171623;
-    border: 1px solid rgba(255,255,255,.08);
-    padding: clamp(10px, 1.4vw, 14px) clamp(12px, 2vw, 18px);
-  }
 
-  .rgb-line {
-    position: absolute;
-    left: 12px; right: 12px; top: 0;
-    height: 3px;
-    background: $rainbow;
-    border-radius: 2px;
-    transform: translateY(-1px);
-    pointer-events: none;
-  }
 
   .rail-inner {
     display: grid;
@@ -154,21 +138,22 @@ body {
 
   .hero-cards {
     display: grid;
+    align-items: end;
     grid-template-columns: 1.33fr 1fr 1fr;
     gap: clamp(14px, 1.4vw, 22px);
   }
 
   .nav-arrow {
     position: absolute; top: 50%; transform: translateY(-50%);
-    width: 54px; height: 74px; display: grid; place-items: center;
+    width: 54px; height: 74px; display: flex; place-items: center;
     color: #e4ddf2; cursor: pointer;
-    background: rgba(146,119,197,.10);
-    border: 1px solid rgba($violet,.45); border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(124,114,219,.18);
+    background: transparent;
+    border: none;
+    
     transition: filter .15s, transform .15s ease;
-    &:hover { filter: brightness(1.06); transform: translateY(-1px); }
-    &.left  { left: 10px; }
-    &.right { right: 10px; }
+    &:hover { filter: brightness(1.06);}
+    &.left  { left: -70px; }
+    &.right { right: -60px; }
   }
 
   .dots {
@@ -180,7 +165,7 @@ body {
 
 .game-card {
   position: relative; border-radius: 16px; overflow: hidden;
-  background: #0f0f14; border: 1px solid rgba(255,255,255,.06);
+  background: none !important; border: 1px solid rgba(255,255,255,.06);
   box-shadow: 0 8px 22px rgba(0,0,0,.18);
   padding: 0; cursor: pointer;
 
@@ -233,11 +218,11 @@ body {
   .row-arrow {
     position: absolute; top: 50%; transform: translateY(-50%);
     width: 54px; height: 74px; display: grid; place-items: center;
-    color: #e4ddf2; background: rgba(146,119,197,.10);
-    border: 1px solid rgba($violet,.45); border-radius: 12px; cursor: pointer;
-    box-shadow: 0 6px 18px rgba(124,114,219,.18);
-    &.left  { left: 10px; }
-    &.right { right: 10px; }
+    color: #e4ddf2; background: transparent;
+    border: none; border-radius: 12px; cursor: pointer;
+    
+    &.left  { left: -70px; }
+    &.right { right: -60px; }
   }
 
   &__track {
@@ -261,8 +246,43 @@ body {
     h4 { margin: 0 0 4px; font: 800 clamp(18px, 1.6vw, 20px)/1.2 'Exo 2'; text-shadow: 0 1px 4.5px #b835ff; }
     p  { margin: 0; color: #e9e9f2; font: 500 15px/1.5 'Exo 2'; opacity: .9; }
   }
-  .nav-arrow { position: static; transform: none; width: 50px; height: 50px; }
+  .nav-arrow { position: static; transform: none; width: 50px; height: 50px; background: transparent; border: none;}
+  img {
+      width: 100%; 
+      height: 100%;
+      object-fit: contain;
+    }
 }
+.store-rail {
+  position: fixed;      
+  top: calc(var(--navbar-h) - 20px); 
+  right: 25px;            
+  width: auto;         
+  z-index: 1000;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.store-rail-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.rail-frame {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 50px;
+}
+
 
 @media (max-width: 1280px) {
   .row.grid.four  { grid-template-columns: repeat(3, 1fr); }

@@ -1,6 +1,8 @@
 import React, { useMemo, useState, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import './Home.scss';
+import ArrowLeft from "../../../src/assets/ArrowLeft.svg";
+import ArrowRight from "../../../src/assets/ArrowRight.svg";
 
 
 const Arrow = ({ dir = 'right', onClick, className = '' }) => (
@@ -10,9 +12,11 @@ const Arrow = ({ dir = 'right', onClick, className = '' }) => (
     aria-label={dir === 'left' ? 'Prev' : 'Next'}
     onClick={onClick}
   >
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2">
-      {dir === 'left' ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 6l6 6-6 6" />}
-    </svg>
+    <img
+      src={dir === 'left' ? ArrowLeft : ArrowRight}
+      alt={dir === 'left' ? 'Previous' : 'Next'}
+      className="arrow-icon"
+    />
   </button>
 );
 
@@ -55,6 +59,10 @@ const MONTHLY = [
   { id: 'room',    src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-18-1.png',  price: <DiscountPrice off="-75%" from="124-379₴" to="31-94₴" /> },
   { id: 'payday3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-20-1.png',  price: <DiscountPrice off="-70%" from="799₴" to="239₴" /> },
   { id: 'ffxvi',   src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-23@2x.png', price: <DiscountPrice off="-35%" from="1399₴" to="909₴" /> },
+  { id: 'cyberpunk2077', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-40.png', price: <DiscountPrice off="-60%" from="1299₴" to="519₴" /> },
+  { id: 'halo-infinite', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-41.png', price: <RegularPrice value="Free to play" /> },
+  { id: 'elden-ring', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-42.png', price: <DiscountPrice off="-30%" from="1999₴" to="1399₴" /> },
+  { id: 'minecraft', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-43.png', price: <RegularPrice value="649₴" /> },
 ];
 
 const N_T_TOP = [
@@ -104,6 +112,9 @@ const StoreRail = () => {
 
   return (
     <div className="store-rail">
+      <svg className="store-rail-bg" width="100%" height="80" viewBox="0 0 500 80" preserveAspectRatio="none">
+        <polygon points="0,0 500,0 500,50 480,80 20,80 0,50" fill="#141320" stroke="#fff" strokeWidth="2"/>
+      </svg>
       <div className="rail-frame">
         <div className="rail-inner">
           <div className="rail-left">
@@ -129,8 +140,17 @@ const StoreRail = () => {
             </div>
           </div>
         </div>
-        <span className="rgb-line" aria-hidden="true" />
       </div>
+    </div>
+  );
+};
+
+const StoreRailWrapper = () => {
+  return (
+    <div className="store-rail-wrapper">
+      <div className="rail-edge left" />
+      <StoreRail />
+      <div className="rail-edge right" />
     </div>
   );
 };
@@ -152,7 +172,9 @@ const Hero = () => {
       </div>
       <Arrow dir="right" onClick={() => setIdx((p) => (p + 1) % HERO.length)} />
       <div className="dots">
-        {HERO.map((_, i) => <span key={i} className={`dot ${i === idx ? 'active' : ''}`} />)}
+        {HERO.map((_, i) => (
+          <span key={i} className={`dot ${i === idx ? 'active' : ''}`} />
+        ))}
       </div>
     </section>
   );
@@ -248,7 +270,7 @@ const Home = () => {
   return (
     <div className="store-home">
       <main className="page-inset">
-        <StoreRail />
+        <StoreRailWrapper />
         <Hero />
         <MonthlyDiscounts />
         <NewAndTrending />
