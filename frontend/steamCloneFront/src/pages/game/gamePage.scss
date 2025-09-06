@@ -1,4 +1,5 @@
 @use "../../styles/variables";
+@import "../../styles/App.scss";
 
 // --- Карусель скріншотів ---
 .screenshots-carousel {
@@ -73,6 +74,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  max-height: 80vh;
 }
 
 .game-main-content svg {
@@ -137,13 +139,17 @@
 .game-description {
   font-size: 13px;
   padding: 10px;
+  overflow-x: auto;
+  margin-top: 10px;
 }
 
 .game-main-content-left {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
-  justify-content: center;
+  padding: 1rem;
   gap: 10px;
+  overflow-x: auto;
 }
 
 .game-release-info a {
@@ -303,6 +309,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin: 15px 0;
 }
 
 .buy-game-button-section .rainbow-button {
@@ -354,4 +361,50 @@
 
 .recommended-requirements {
   width: 100%;
+}
+
+.discount-panel {
+  display: flex;
+  align-items: stretch;
+
+  * {
+    border-radius: 5px;
+  }
+
+  .discount-badge {
+    @extend .flux-border;
+    padding: 10px;
+    box-shadow: none;
+    background: linear-gradient(
+      28deg,
+      #fff 6.34%,
+      #8c8c8c 15.53%,
+      #ff9584 20.36%,
+      #dfed43 26.4%,
+      #a0f885 31.24%,
+      #74bff7 35.98%,
+      #7c72db 40.06%,
+      #8681a8 44.13%,
+      #fff 56.62%
+    );
+    background-clip: text;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .original-price {
+    text-decoration: line-through;
+    color: #A5A5A5;
+    opacity: 0.8;
+  }
+
+  .discount-price {
+    padding: 10px;
+    background-color: #292035;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
 }

@@ -41,7 +41,18 @@ export const GamePage = () => {
   }
 
   if (!gameData || !isInWishlistData || !isInLibraryData) {
-    return <h1 style={{display: "flex", justifyContent: "center", alignContent: "center", height: "100vh"}}>Game not found</h1>;
+    return (
+      <h1
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignContent: "center",
+          height: "100vh",
+        }}
+      >
+        Game not found
+      </h1>
+    );
   }
 
   const gameById = gameData.payload;
@@ -71,6 +82,10 @@ export const GamePage = () => {
         "Purchase failed. Please try again.";
       toast.error(message);
     }
+  };
+
+  const calculateDiscountedPrice = (price, discount) => {
+    return (price - (price * discount) / 100).toFixed(0);
   };
 
   return (
@@ -128,7 +143,9 @@ export const GamePage = () => {
             </div>
           </div>
           <div className="game-main-content">
-            <SvgComponentMainPanel rotate={false} />
+            <div>
+              <SvgComponentMainPanel rotate={false} />
+            </div>
 
             <div className="game-description">{gameById.description}</div>
 
@@ -169,7 +186,21 @@ export const GamePage = () => {
             <div className="buy-game-panel flux-border">
               <h3>Buy Game</h3>
               <div className="buy-game-button-section">
-                <span>{gameById.price}₴</span>
+                {gameById.discount ? (
+                  <div className="discount-panel">
+                    <div className="discount-badge">-{gameById.discount}%</div>
+                    <div className="discount-price">
+                      <span className="original-price">
+                        {gameById.price}₴
+                      </span>
+                      <span className="sale-price">
+                        {calculateDiscountedPrice(gameById.price, gameById.discount)}₴
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <span><b>{gameById.price}₴</b></span>
+                )}
                 <div>
                   {isInLibraryData.payload ? (
                     <div className="white-outline-for-text" disabled>
@@ -266,7 +297,7 @@ export const GamePage = () => {
         description={
           <>
             Are you sure you want to purchase <b>{gameById.name}</b> for{" "}
-            <b>{gameById.price}₴</b>?
+            <b>{calculateDiscountedPrice(gameById.price, gameById.discount)}₴</b>?
           </>
         }
         isOpen={isModalOpen}
