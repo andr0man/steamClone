@@ -87,9 +87,9 @@ const GameLocalizations = ({ game, gameId, onRefetch }) => {
         fullAudio: row.fullAudio,
         subtitles: row.subtitles,
       }).unwrap();
+      await onRefetch?.();
       toast.success("Localization updated");
       setDraft((d) => ({ ...d, [langId]: undefined }));
-      await onRefetch?.();
     } catch (err) {
       toast.error(err?.data?.message || "Failed to update localization");
     }
@@ -120,7 +120,7 @@ const GameLocalizations = ({ game, gameId, onRefetch }) => {
   const existingLocalizations = Array.isArray(game?.localizations)
     ? game.localizations
     : [];
-    
+
   if (languagesLoading)
     return <div className="loading-overlay visible">Loading data...</div>;
 

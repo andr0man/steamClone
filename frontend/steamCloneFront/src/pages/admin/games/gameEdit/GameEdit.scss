@@ -24,3 +24,20 @@ h3 {
   display: flex;
   gap: 20px;
 }
+
+.game-save-image {
+  background: linear-gradient(90deg, #8ee7ff 0%, #80ffa6 100%);
+  color: #23232a;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 15px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.header-with-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

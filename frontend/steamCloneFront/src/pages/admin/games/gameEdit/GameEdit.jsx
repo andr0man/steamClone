@@ -158,7 +158,9 @@ const GameEdit = () => {
       formData.append("coverImage", coverImageFile);
       await updateCoverImage({ gameId, formData }).unwrap();
       setCoverImageFile(null);
-      setCoverImagePreview(null);
+      if (globalSaving) {
+        setCoverImagePreview(null);
+      }
       if (globalSaving) return true;
       toast.success("Cover image updated successfully");
     } catch (err) {
@@ -181,6 +183,8 @@ const GameEdit = () => {
     try {
       await updateScreenshots({ gameId, formData }).unwrap();
       setSelectedFiles([]);
+      // Wait for game data to reload before clearing imagesToDelete
+      await refetchGame();
       setImagesToDelete([]);
       if (globalSaving) return true;
       toast.success("Screenshots updated successfully");
@@ -437,10 +441,12 @@ const GameEdit = () => {
           handleFileChange={onFileSelectionChange}
           markImageForDeletion={markImageForDeletion}
           imagesToDelete={imagesToDelete}
+          handleUpdate={handleUpdateScreenshots}
         />
         <GameCoverImage
           handleFileChange={onCoverImageChange}
           coverImagePreview={coverImagePreview}
+          handleUpdate={handleCoverImageUpload}
         />
       </div>
       <div className="sys-req-and-localizations">

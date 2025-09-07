@@ -1,11 +1,14 @@
 import React from "react";
 import "./GameCoverImage.scss";
 
-const GameCoverImage = ({ handleFileChange, coverImagePreview }) => {
+const GameCoverImage = ({ handleFileChange, coverImagePreview, handleUpdate }) => {
   return (
     <div className="game-form-container flux-border" style={{ width: "70%" }}>
       <div className="game-cover-image">
-        <h3>Game Cover Image</h3>
+        <div className="header-with-action">
+          <h3>Game Cover Image</h3>
+          <button className="game-save-image" onClick={handleUpdate}>Save</button>
+        </div>
         <input
           type="file"
           accept="image/png, image/jpeg, image/jpg, image/gif"
