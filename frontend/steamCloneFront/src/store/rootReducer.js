@@ -7,6 +7,10 @@ import { gameLibraryApi } from "../services/game-library/gameLibraryApi";
 import userReducer from "./reduserSlises/userSlice";
 import { genreApi } from "../services/genre/genreApi";
 import { developerAndPublisherApi } from "../services/developerAndPublisher/developerAndPublisherApi";
+import { gameSystemRequirementsApi } from "../services/gameSystemRequirements/gameSystemRequrementsApi";
+import { languageApi } from "../services/language/languageApi";
+import { countryApi } from "../services/country/countryApi";
+import { gameLocalizationApi } from "../services/gameLocalization/gameLocalizationApi";
 
 export const rootReducer = combineReducers({
   user: userReducer,
@@ -17,4 +21,8 @@ export const rootReducer = combineReducers({
   [gameLibraryApi.reducerPath]: gameLibraryApi.reducer,
   [genreApi.reducerPath]: genreApi.reducer,
   [developerAndPublisherApi.reducerPath]: developerAndPublisherApi.reducer,
+  [gameSystemRequirementsApi.reducerPath]: gameSystemRequirementsApi.reducer,
+  [languageApi.reducerPath]: languageApi.reducer,
+  [countryApi.reducerPath]: countryApi.reducer,
+  [gameLocalizationApi.reducerPath]: gameLocalizationApi.reducer,
 });

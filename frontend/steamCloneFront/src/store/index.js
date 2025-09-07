@@ -8,6 +8,10 @@ import { wishlistApi } from "../services/wishlist/wishlistApi";
 import { gameLibraryApi } from "../services/game-library/gameLibraryApi";
 import { genreApi } from "../services/genre/genreApi";
 import { developerAndPublisherApi } from "../services/developerAndPublisher/developerAndPublisherApi";
+import { gameSystemRequirementsApi } from "../services/gameSystemRequirements/gameSystemRequrementsApi";
+import { languageApi } from "../services/language/languageApi";
+import { countryApi } from "../services/country/countryApi";
+import { gameLocalizationApi } from "../services/gameLocalization/gameLocalizationApi";
 
 const middlewares = [
   authApi.middleware,
@@ -16,7 +20,11 @@ const middlewares = [
   wishlistApi.middleware,
   gameLibraryApi.middleware,
   genreApi.middleware,
-  developerAndPublisherApi.middleware
+  developerAndPublisherApi.middleware,
+  gameSystemRequirementsApi.middleware,
+  languageApi.middleware,
+  countryApi.middleware,
+  gameLocalizationApi.middleware,
 ];
 
 export const store = configureStore({

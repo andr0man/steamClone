@@ -6,6 +6,11 @@ import {
   useUpdateScreenshotsMutation,
   useUpdateCoverImageMutation,
 } from "../../../../services/game/gameApi";
+import {
+  useCreateSystemRequirementMutation,
+  useDeleteSystemRequirementMutation,
+  useUpdateSystemRequirementMutation,
+} from "../../../../services/gameSystemRequirements/gameSystemRequrementsApi";
 import "../../../../styles/App.scss";
 import "../components/common/StylesForGameForm.scss";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,6 +20,8 @@ import { toast } from "react-toastify";
 import GameMainInformation from "./components/GameMainInformation";
 import GameScreenshots from "./components/GameScreenshots/GameScreenshots";
 import GameCoverImage from "./components/GameCoverImage/GameCoverImage";
+import SystemRequirements from "./components/SystemRequirements/SystemRequirements";
+import GameLocalizations from "./components/GameLocalizations/GameLocalizations";
 
 const GameEdit = () => {
   const navigate = useNavigate();
@@ -23,6 +30,7 @@ const GameEdit = () => {
     data: { payload: game } = {},
     isLoading: isGameLoading,
     error,
+    refetch: refetchGame,
   } = useGetGameByIdQuery(gameId);
 
   const [updateGame, { isLoading }] = useUpdateGameMutation();
@@ -56,7 +64,18 @@ const GameEdit = () => {
   // form створюється після завантаження гри
   const [form, setForm] = useState(null);
   const [coverImagePreview, setCoverImagePreview] = useState(null);
-
+  // System requirements forms (Windows platform, Minimum & Recommended)
+  const blankReqForm = {
+    os: "",
+    processor: "",
+    memory: "",
+    graphics: "",
+    directX: "",
+    storage: "",
+    network: "",
+  };
+  const [minReqForm, setMinReqForm] = useState(null);
+  const [recReqForm, setRecReqForm] = useState(null);
 
   React.useEffect(() => {
     if (!isGameLoading && game) {
@@ -71,6 +90,42 @@ const GameEdit = () => {
         genresIds: game.genres ? game.genres.map((g) => g.id) : [],
       });
       setCoverImagePreview(game.coverImageUrl);
+      // Initialize system requirements forms
+      const sysReqs = Array.isArray(game.systemRequirements)
+        ? game.systemRequirements
+        : [];
+      const min = sysReqs.find(
+        (r) => r.requirementType === "Minimum" && r.platform === "Windows"
+      );
+      const rec = sysReqs.find(
+        (r) => r.requirementType === "Recommended" && r.platform === "Windows"
+      );
+      setMinReqForm(
+        min
+          ? {
+              os: min.os || "",
+              processor: min.processor || "",
+              memory: min.memory || "",
+              graphics: min.graphics || "",
+              directX: min.directX || "",
+              storage: min.storage || "",
+              network: min.network || "",
+            }
+          : { ...blankReqForm }
+      );
+      setRecReqForm(
+        rec
+          ? {
+              os: rec.os || "",
+              processor: rec.processor || "",
+              memory: rec.memory || "",
+              graphics: rec.graphics || "",
+              directX: rec.directX || "",
+              storage: rec.storage || "",
+              network: rec.network || "",
+            }
+          : { ...blankReqForm }
+      );
     }
   }, [isGameLoading, game]);
 
@@ -102,7 +157,7 @@ const GameEdit = () => {
     setImagesToDelete((prev) => [...prev, image]);
   };
 
-  const handleCoverImageUpload = async ({globalSaving = false}) => {
+  const handleCoverImageUpload = async ({ globalSaving = false }) => {
     if (!coverImageFile) {
       if (globalSaving) return true;
       toast.error("Please select a cover image");
@@ -121,7 +176,7 @@ const GameEdit = () => {
       toast.error(err?.data?.message || "Failed to update cover image");
       return false;
     }
-  }
+  };
 
   const handleUpdateScreenshots = async ({ globalSaving = false }) => {
     const formData = new FormData();
@@ -140,8 +195,7 @@ const GameEdit = () => {
       setImagesToDelete([]);
       if (globalSaving) return true;
       toast.success("Screenshots updated successfully");
-    }
-    catch (err) {
+    } catch (err) {
       toast.error(err?.data?.message || "Failed to update screenshots");
       return false;
     }
@@ -173,6 +227,146 @@ const GameEdit = () => {
     }));
   };
 
+  // System requirements CRUD
+  const [createSystemRequirement, { isLoading: isCreatingSysReq }] =
+    useCreateSystemRequirementMutation();
+  const [updateSystemRequirement, { isLoading: isUpdatingSysReq }] =
+    useUpdateSystemRequirementMutation();
+  const [deleteSystemRequirement, { isLoading: isDeletingSysReq }] =
+    useDeleteSystemRequirementMutation();
+
+  const anySysReqBusy =
+    isCreatingSysReq || isUpdatingSysReq || isDeletingSysReq || isGameLoading;
+
+  const handleMinReqChange = (e) => {
+    const { name, value } = e.target;
+    setMinReqForm((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleRecReqChange = (e) => {
+    const { name, value } = e.target;
+    setRecReqForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const getReqByType = (type) => {
+    const sysReqs = Array.isArray(game?.systemRequirements)
+      ? game.systemRequirements
+      : [];
+    const found = sysReqs.find(
+      (r) => r.requirementType === type && r.platform === "Windows"
+    );
+    if (!found) return null;
+    // Return a new object with correct numeric platform/type for API
+    return {
+      ...found,
+      platform: 0, // Windows
+      requirementType: type === "Minimum" ? 0 : 1,
+    };
+  };
+
+  const createMinimum = async () => {
+    try {
+      await createSystemRequirement({
+        gameId,
+        platform: 0,
+        requirementType: 0,
+        ...minReqForm,
+      }).unwrap();
+      toast.success("Minimum requirements created");
+      await refetchGame();
+    } catch (err) {
+      toast.error(
+        err?.data?.message || "Failed to create minimum requirements"
+      );
+    }
+  };
+  const updateMinimum = async ({ globalSaving = false }) => {
+    const current = getReqByType("Minimum");
+    if (!current) return;
+    try {
+      await updateSystemRequirement({
+        id: current.id,
+        ...current,
+        ...minReqForm,
+      }).unwrap();
+      if (!globalSaving) {
+        toast.success("Minimum requirements updated");
+      }
+      await refetchGame();
+      return true;
+    } catch (err) {
+      toast.error(
+        err?.data?.message || "Failed to update minimum requirements"
+      );
+      return false;
+    }
+  };
+  const deleteMinimum = async () => {
+    const current = getReqByType("Minimum");
+    if (!current) return;
+    try {
+      await deleteSystemRequirement(current.id).unwrap();
+      setMinReqForm({ ...blankReqForm });
+      toast.success("Minimum requirements deleted");
+      await refetchGame();
+    } catch (err) {
+      toast.error(
+        err?.data?.message || "Failed to delete minimum requirements"
+      );
+    }
+  };
+
+  const createRecommended = async () => {
+    try {
+      await createSystemRequirement({
+        gameId,
+        platform: 0,
+        requirementType: 1,
+        ...recReqForm,
+      }).unwrap();
+      toast.success("Recommended requirements created");
+      await refetchGame();
+    } catch (err) {
+      toast.error(
+        err?.data?.message || "Failed to create recommended requirements"
+      );
+    }
+  };
+  const updateRecommended = async ({ globalSaving = false }) => {
+    const current = getReqByType("Recommended");
+    if (!current) return;
+    try {
+      await updateSystemRequirement({
+        id: current.id,
+        ...current,
+        ...recReqForm,
+      }).unwrap();
+      if (!globalSaving) {
+        toast.success("Recommended requirements updated");
+      }
+      await refetchGame();
+      return true;
+    } catch (err) {
+      toast.error(
+        err?.data?.message || "Failed to update recommended requirements"
+      );
+      return false;
+    }
+  };
+  const deleteRecommended = async () => {
+    const current = getReqByType("Recommended");
+    if (!current) return;
+    try {
+      await deleteSystemRequirement(current.id).unwrap();
+      setRecReqForm({ ...blankReqForm });
+      toast.success("Recommended requirements deleted");
+      await refetchGame();
+    } catch (err) {
+      toast.error(
+        err?.data?.message || "Failed to delete recommended requirements"
+      );
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -182,11 +376,20 @@ const GameEdit = () => {
         releaseDate: new Date(form.releaseDate).toISOString(),
         id: gameId,
       }).unwrap();
-      const isScreenshotsUpdated = await handleUpdateScreenshots({ globalSaving: true });
-      const isCoverImageUpdated = await handleCoverImageUpload({ globalSaving: true });
-      if (!isScreenshotsUpdated || !isCoverImageUpdated) {
+
+      if (!(await handleUpdateScreenshots({ globalSaving: true }))) {
         return;
       }
+      if (!(await handleCoverImageUpload({ globalSaving: true }))) {
+        return;
+      }
+      if (!(await updateMinimum({ globalSaving: true }))) {
+        return;
+      }
+      if (!(await updateRecommended({ globalSaving: true }))) {
+        return;
+      }
+
       toast.success("Game updated successfully");
       setForm({
         name: "",
@@ -254,6 +457,23 @@ const GameEdit = () => {
           handleFileChange={onCoverImageChange}
           coverImagePreview={coverImagePreview}
         />
+      </div>
+      <div className="sys-req-and-localizations">
+        <SystemRequirements
+          game={game}
+          minForm={minReqForm}
+          recForm={recReqForm}
+          onMinChange={handleMinReqChange}
+          onRecChange={handleRecReqChange}
+          onCreateMinimum={createMinimum}
+          onUpdateMinimum={updateMinimum}
+          onDeleteMinimum={deleteMinimum}
+          onCreateRecommended={createRecommended}
+          onUpdateRecommended={updateRecommended}
+          onDeleteRecommended={deleteRecommended}
+          busy={anySysReqBusy}
+        />
+        <GameLocalizations />
       </div>
     </div>
   );
