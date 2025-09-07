@@ -1,20 +1,31 @@
 import React from "react";
 import Select from "react-select";
 import selectStyles from "../../components/common/selectStyles";
+import { useGetAllGenresQuery } from "../../../../../services/genre/genreApi";
+import { useGetAllDevelopersAndPublishersQuery } from "../../../../../services/developerAndPublisher/developerAndPublisherApi";
 
 const GameMainInformation = ({
   form,
   game,
   handleChange,
   handleGenresChange,
-  genres,
   handleDevelopersChange,
   handlePublishersChange,
-  developersAndPublishers,
-  genresLoading,
-  developersAndPublishersLoading,
   isGameLoading,
 }) => {
+  const {
+    data: { payload: genres } = { payload: [] },
+    isLoading: genresLoading,
+  } = useGetAllGenresQuery();
+
+  const {
+    data: { payload: developersAndPublishers } = { payload: [] },
+    isLoading: developersAndPublishersLoading,
+  } = useGetAllDevelopersAndPublishersQuery();
+
+  if (isGameLoading || genresLoading || developersAndPublishersLoading)
+    return <div className="loading-overlay visible">Loading data...</div>;
+
   return (
     <div className="game-form-container flux-border">
       <h2>Edit Game Main Information</h2>
@@ -38,7 +49,7 @@ const GameMainInformation = ({
               value={form?.description}
               onChange={handleChange}
               required
-              rows={3}
+              rows={4}
             />
           </div>
           <div className="form-group">

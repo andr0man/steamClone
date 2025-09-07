@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import "./GameEdit.scss";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
-  useUpdateGameMutation,
   useGetGameByIdQuery,
-  useUpdateScreenshotsMutation,
   useUpdateCoverImageMutation,
+  useUpdateGameMutation,
+  useUpdateScreenshotsMutation,
 } from "../../../../services/game/gameApi";
 import {
   useCreateSystemRequirementMutation,
@@ -13,15 +14,12 @@ import {
 } from "../../../../services/gameSystemRequirements/gameSystemRequrementsApi";
 import "../../../../styles/App.scss";
 import "../components/common/StylesForGameForm.scss";
-import { useNavigate, useParams } from "react-router-dom";
-import { useGetAllGenresQuery } from "../../../../services/genre/genreApi";
-import { useGetAllDevelopersAndPublishersQuery } from "../../../../services/developerAndPublisher/developerAndPublisherApi";
-import { toast } from "react-toastify";
+import GameCoverImage from "./components/GameCoverImage/GameCoverImage";
+import GameLocalizations from "./components/GameLocalizations/GameLocalizations";
 import GameMainInformation from "./components/GameMainInformation";
 import GameScreenshots from "./components/GameScreenshots/GameScreenshots";
-import GameCoverImage from "./components/GameCoverImage/GameCoverImage";
 import SystemRequirements from "./components/SystemRequirements/SystemRequirements";
-import GameLocalizations from "./components/GameLocalizations/GameLocalizations";
+import "./GameEdit.scss";
 
 const GameEdit = () => {
   const navigate = useNavigate();
@@ -38,15 +36,6 @@ const GameEdit = () => {
     useUpdateScreenshotsMutation();
   const [updateCoverImage, { isLoading: isUpdatingCoverImage }] =
     useUpdateCoverImageMutation();
-  const {
-    data: { payload: genres } = { payload: [] },
-    isLoading: genresLoading,
-  } = useGetAllGenresQuery();
-
-  const {
-    data: { payload: developersAndPublishers } = { payload: [] },
-    isLoading: developersAndPublishersLoading,
-  } = useGetAllDevelopersAndPublishersQuery();
 
   const formatDateForInput = (dateStr) => {
     if (!dateStr) return new Date().toISOString().slice(0, 16);
@@ -281,7 +270,7 @@ const GameEdit = () => {
   };
   const updateMinimum = async ({ globalSaving = false }) => {
     const current = getReqByType("Minimum");
-    if (!current) return;
+    if (!current) return true; // nothing to update
     try {
       await updateSystemRequirement({
         id: current.id,
@@ -333,7 +322,7 @@ const GameEdit = () => {
   };
   const updateRecommended = async ({ globalSaving = false }) => {
     const current = getReqByType("Recommended");
-    if (!current) return;
+    if (!current) return true; // nothing to update
     try {
       await updateSystemRequirement({
         id: current.id,
@@ -407,7 +396,7 @@ const GameEdit = () => {
     }
   };
 
-  if (isGameLoading || genresLoading || developersAndPublishersLoading || !form)
+  if (isGameLoading || !form)
     return <div className="loading-overlay visible">Loading data...</div>;
   if (error) return <div>Error loading game</div>;
 
@@ -437,12 +426,8 @@ const GameEdit = () => {
         form={form}
         handleChange={handleChange}
         handleGenresChange={handleGenresChange}
-        genres={genres}
         handleDevelopersChange={handleDevelopersChange}
         handlePublishersChange={handlePublishersChange}
-        developersAndPublishers={developersAndPublishers}
-        genresLoading={genresLoading}
-        developersAndPublishersLoading={developersAndPublishersLoading}
         isGameLoading={isGameLoading}
       />
 
@@ -473,7 +458,11 @@ const GameEdit = () => {
           onDeleteRecommended={deleteRecommended}
           busy={anySysReqBusy}
         />
-        <GameLocalizations />
+        <GameLocalizations
+          game={game}
+          gameId={gameId}
+          onRefetch={refetchGame}
+        />
       </div>
     </div>
   );

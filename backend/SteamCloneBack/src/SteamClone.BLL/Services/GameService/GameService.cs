@@ -12,7 +12,6 @@ using SteamClone.DAL.Repositories.SystemRequirementsRepo;
 using SteamClone.DAL.Repositories.UserGameLibraryRepository;
 using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Common.Interfaces;
-using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.Models.UserGameLibraries;
@@ -646,6 +645,10 @@ public class GameService(
             return ServiceResponse.BadRequestResponse($"Invalid requirement type '{model.RequirementType}'");
         if (Enum.GetValues<RequirementPlatform>().All(x => x != model.Platform))
             return ServiceResponse.BadRequestResponse($"Invalid platform '{model.Platform}'");
+        if (model is { 
+                DirectX: "", Graphics: "", Memory: "", 
+                Network: "", OS: "", Processor: "", Storage: ""})
+            return ServiceResponse.BadRequestResponse("At least one requirement must be specified");
         return null;
     }
 

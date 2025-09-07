@@ -3,10 +3,12 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ConfirmModal } from "../../components/ConfirmModal";
 import "../../styles/App.scss";
+import { useGetAllLanguagesQuery } from "../../services/language/languageApi";
 import {
   useGetGameByIdQuery,
   useBuyGameMutation,
 } from "../../services/game/gameApi";
+import checkMark from "/game-page/checkmark.svg";
 import {
   useAddToWishlistMutation,
   useGetIsInWishlistQuery,
@@ -28,6 +30,10 @@ export const GamePage = () => {
     isLoading: isLoadingLibrary,
     refetch: refetchIsInLibrary,
   } = useGetIsInGameLibraryQuery(gameId);
+  const {
+    data: { payload: languages } = { payload: [] },
+    isLoading: languagesLoading,
+  } = useGetAllLanguagesQuery();
 
   const [addToWishlist] = useAddToWishlistMutation();
   const [removeFromWishlist] = useRemoveFromWishlistMutation();
@@ -36,7 +42,7 @@ export const GamePage = () => {
   // Стан для модального вікна підтвердження купівлі
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (isLoading && isLoadingWishlist && isLoadingLibrary) {
+  if (isLoading && isLoadingWishlist && isLoadingLibrary && languagesLoading) {
     return <div className="loading-overlay visible">Loading data...</div>;
   }
 
@@ -190,16 +196,20 @@ export const GamePage = () => {
                   <div className="discount-panel">
                     <div className="discount-badge">-{gameById.discount}%</div>
                     <div className="discount-price">
-                      <span className="original-price">
-                        {gameById.price}₴
-                      </span>
+                      <span className="original-price">{gameById.price}₴</span>
                       <span className="sale-price">
-                        {calculateDiscountedPrice(gameById.price, gameById.discount)}₴
+                        {calculateDiscountedPrice(
+                          gameById.price,
+                          gameById.discount
+                        )}
+                        ₴
                       </span>
                     </div>
                   </div>
                 ) : (
-                  <span><b>{gameById.price}₴</b></span>
+                  <span>
+                    <b>{gameById.price}₴</b>
+                  </span>
                 )}
                 <div>
                   {isInLibraryData.payload ? (
@@ -226,25 +236,25 @@ export const GamePage = () => {
                     {minimumRequirements ? (
                       <>
                         {minimumRequirements.os ? (
-                          <li>OS: {minimumRequirements.os}</li>
+                          <li><strong>OS:</strong> {minimumRequirements.os}</li>
                         ) : null}
                         {minimumRequirements.processor ? (
-                          <li>Processor: {minimumRequirements.processor}</li>
+                          <li><strong>Processor:</strong> {minimumRequirements.processor}</li>
                         ) : null}
                         {minimumRequirements.memory ? (
-                          <li>Memory: {minimumRequirements.memory}</li>
+                          <li><strong>Memory:</strong> {minimumRequirements.memory}</li>
                         ) : null}
                         {minimumRequirements.graphics ? (
-                          <li>Graphics: {minimumRequirements.graphics}</li>
+                          <li><strong>Graphics:</strong> {minimumRequirements.graphics}</li>
                         ) : null}
                         {minimumRequirements.directX ? (
-                          <li>DirectX: {minimumRequirements.directX}</li>
+                          <li><strong>DirectX:</strong> {minimumRequirements.directX}</li>
                         ) : null}
                         {minimumRequirements.network ? (
-                          <li>Network: {minimumRequirements.network}</li>
+                          <li><strong>Network:</strong> {minimumRequirements.network}</li>
                         ) : null}
                         {minimumRequirements.storage ? (
-                          <li>Storage: {minimumRequirements.storage}</li>
+                          <li><strong>Storage:</strong> {minimumRequirements.storage}</li>
                         ) : null}
                       </>
                     ) : (
@@ -258,27 +268,27 @@ export const GamePage = () => {
                     {recommendedRequirements ? (
                       <>
                         {recommendedRequirements.os ? (
-                          <li>OS: {recommendedRequirements.os}</li>
+                          <li><strong>OS:</strong> {recommendedRequirements.os}</li>
                         ) : null}
                         {recommendedRequirements.processor ? (
                           <li>
-                            Processor: {recommendedRequirements.processor}
+                            <strong>Processor: </strong>{recommendedRequirements.processor}
                           </li>
                         ) : null}
                         {recommendedRequirements.memory ? (
-                          <li>Memory: {recommendedRequirements.memory}</li>
+                          <li><strong>Memory: </strong>{recommendedRequirements.memory}</li>
                         ) : null}
                         {recommendedRequirements.graphics ? (
-                          <li>Graphics: {recommendedRequirements.graphics}</li>
+                          <li><strong>Graphics:</strong> {recommendedRequirements.graphics}</li>
                         ) : null}
                         {recommendedRequirements.directX ? (
-                          <li>DirectX: {recommendedRequirements.directX}</li>
+                          <li><strong>DirectX:</strong> {recommendedRequirements.directX}</li>
                         ) : null}
                         {recommendedRequirements.network ? (
-                          <li>Network: {recommendedRequirements.network}</li>
+                          <li><strong>Network:</strong> {recommendedRequirements.network}</li>
                         ) : null}
                         {recommendedRequirements.storage ? (
-                          <li>Storage: {recommendedRequirements.storage}</li>
+                          <li><strong>Storage:</strong> {recommendedRequirements.storage}</li>
                         ) : null}
                       </>
                     ) : (
@@ -288,7 +298,34 @@ export const GamePage = () => {
                 </div>
               </div>
             </div>
-            {/* <div className="age-req flux-border">123</div> */}
+            <div className="game-page-localizations flux-border">
+              {/* <span className="lang-name">{languages.find(lang => lang.id === loc.languageId)?.name}</span> */}
+              <h3 className="h3-with-bottom-border">Game Localizations</h3>
+              {gameById.localizations.length !== 0 ? (
+                <div className="localizations-list">
+                  <div className="thead">
+                    <div className="tr">
+                      <div className="th"></div>
+                      <div className="th">Interface</div>
+                      <div className="th">Full audio</div>
+                      <div className="th">Subtitles</div>
+                    </div>
+                  </div>
+                  {gameById.localizations.map((loc) => (
+                    <div className="tr" key={loc.id}>
+                      <div className="td lang-name">
+                        {languages.find((lang) => lang.id === loc.languageId)?.name}
+                      </div>
+                      <div className="td">{loc.interface ? <img src={checkMark} alt="Yes" /> : ""}</div>
+                      <div className="td">{loc.fullAudio ? <img src={checkMark} alt="Yes" /> : ""}</div>
+                      <div className="td">{loc.subtitles ? <img src={checkMark} alt="Yes" /> : ""}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span>No localizations found</span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -297,7 +334,10 @@ export const GamePage = () => {
         description={
           <>
             Are you sure you want to purchase <b>{gameById.name}</b> for{" "}
-            <b>{calculateDiscountedPrice(gameById.price, gameById.discount)}₴</b>?
+            <b>
+              {calculateDiscountedPrice(gameById.price, gameById.discount)}₴
+            </b>
+            ?
           </>
         }
         isOpen={isModalOpen}

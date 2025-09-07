@@ -46,7 +46,7 @@ const GameCard = ({ game }) => {
                 {g.name}
               </span>
             ))}
-            {game.genres?.length > 4 && (
+            {game.genres?.length > 3 && (
               <span className="game-card-genre">...</span>
             )}
           </div>

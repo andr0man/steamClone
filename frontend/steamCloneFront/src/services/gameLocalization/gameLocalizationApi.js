@@ -6,6 +6,14 @@ export const gameLocalizationApi = createApi({
   baseQuery: baseQueryWithRefresh("/game/localization/"),
   tagTypes: ["GameLocalization"],
   endpoints: (builder) => ({
+    // create body
+    // {
+    //   "interface": true,
+    //   "fullAudio": true,
+    //   "subtitles": true,
+    //   "gameId": "string",
+    //   "languageId": 0
+    // }
     createGameLocalization: builder.mutation({
       query: (gameLocalizationData) => ({
         url: "",
@@ -14,6 +22,12 @@ export const gameLocalizationApi = createApi({
       }),
       invalidatesTags: ["GameLocalization"],
     }),
+    // update body
+    // {
+    //   "interface": true,
+    //   "fullAudio": true,
+    //   "subtitles": true
+    // }
     updateGameLocalization: builder.mutation({
       query: (gameLocalizationData) => ({
         url: `${gameLocalizationData.id}`,
