@@ -310,17 +310,16 @@
   justify-content: space-between;
   align-items: center;
   margin: 15px 0;
+
+  .no-discount-price {
+    font-size: 1.3rem;
+    color: #fff;
+    font-weight: 500;
+    margin-left: 10px;
+  }
 }
 
 .buy-game-button-section .rainbow-button {
-  margin: 0;
-  flex: 1;
-  text-align: center;
-  padding: 7px 20px;
-  font-size: 1rem;
-}
-
-.buy-game-button-section .white-outline-for-text {
   margin: 0;
   flex: 1;
   text-align: center;
@@ -436,12 +435,13 @@
   }
 
   .tr {
+    @extend .h3-with-bottom-border;
     display: grid;
     grid-template-columns: 1.2fr 1fr 1fr 1fr;
     align-items: center;
     justify-items: center;
-    border-bottom: 2px solid #353545;
     padding: 0 0 5px 0;
+    width: 100%;
   }
 
   .th {

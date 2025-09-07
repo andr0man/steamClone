@@ -11,10 +11,12 @@ using SteamClone.DAL.Repositories.LocalizationRepository;
 using SteamClone.DAL.Repositories.SystemRequirementsRepo;
 using SteamClone.DAL.Repositories.UserGameLibraryRepository;
 using SteamClone.DAL.Repositories.UserRepository;
+using SteamClone.DAL.Repositories.WishlistRepository;
 using SteamClone.Domain.Common.Interfaces;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.Models.UserGameLibraries;
+using SteamClone.Domain.Models.Wishlists;
 using SteamClone.Domain.ViewModels.Games;
 using SteamClone.Domain.ViewModels.Games.Localizations;
 using SteamClone.Domain.ViewModels.Games.SystemReq;
@@ -34,7 +36,8 @@ public class GameService(
     IUserRepository userRepository,
     IUserProvider userProvider,
     IBalanceRepository balanceRepository,
-    IUserGameLibraryRepository userGameLibraryRepository)
+    IUserGameLibraryRepository userGameLibraryRepository,
+    IWishlistRepository wishlistRepository)
     : IGameService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
@@ -592,6 +595,11 @@ public class GameService(
 
         try
         {
+            if (await wishlistRepository.GetByUserIdAndGameIdAsync(buyerId, game.Id, token, asNoTracking: true) != null)
+            {
+                await wishlistRepository.DeleteAsync(new Wishlist {GameId = game.Id, UserId = buyerId}, token);
+            }
+            
             decimal amountToWithdraw = game.Discount != null ? game.Price * (1 - (decimal)game.Discount / 100) : game.Price;
             
             if (!(await balanceRepository.WithdrawAsync(buyerId, amountToWithdraw, token)))

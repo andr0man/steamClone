@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ConfirmModal } from "../../components/ConfirmModal";
 import "../../styles/App.scss";
@@ -21,6 +21,7 @@ import { ImageCarousel } from "./components/ImageCarousel";
 
 export const GamePage = () => {
   const { gameId } = useParams();
+  const navigate = useNavigate();
 
   const { data: gameData, isLoading } = useGetGameByIdQuery(gameId);
   const { data: isInWishlistData, isLoading: isLoadingWishlist } =
@@ -156,24 +157,30 @@ export const GamePage = () => {
             <div className="game-description">{gameById.description}</div>
 
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <button
-                className={
-                  isInWishlistData.payload ? "white-button" : "rainbow-button"
-                }
-                onClick={() => {
-                  if (isInWishlistData.payload) {
-                    removeFromWishlist(gameId);
-                  } else {
-                    addToWishlist(gameId);
-                  }
-                }}
-              >
-                <div>
-                  {isInWishlistData.payload
-                    ? "Remove from wishlist"
-                    : "Add to wishlist"}
+              {isInLibraryData.payload ? (
+                <div className="white-outline-for-text" disabled>
+                  <div>In your Library</div>
                 </div>
-              </button>
+              ) : (
+                <button
+                  className={
+                    isInWishlistData.payload ? "white-button" : "rainbow-button"
+                  }
+                  onClick={() => {
+                    if (isInWishlistData.payload) {
+                      removeFromWishlist(gameId);
+                    } else {
+                      addToWishlist(gameId);
+                    }
+                  }}
+                >
+                  <div>
+                    {isInWishlistData.payload
+                      ? "Remove from wishlist"
+                      : "Add to wishlist"}
+                  </div>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -207,14 +214,14 @@ export const GamePage = () => {
                     </div>
                   </div>
                 ) : (
-                  <span>
+                  <span className="no-discount-price">
                     <b>{gameById.price}₴</b>
                   </span>
                 )}
                 <div>
                   {isInLibraryData.payload ? (
-                    <div className="white-outline-for-text" disabled>
-                      <div>In your Library</div>
+                    <div className="rainbow-button" onClick={() => navigate("/library")}>
+                      <div>Go To Library</div>
                     </div>
                   ) : (
                     <button
@@ -236,29 +243,49 @@ export const GamePage = () => {
                     {minimumRequirements ? (
                       <>
                         {minimumRequirements.os ? (
-                          <li><strong>OS:</strong> {minimumRequirements.os}</li>
+                          <li>
+                            <strong>OS:</strong> {minimumRequirements.os}
+                          </li>
                         ) : null}
                         {minimumRequirements.processor ? (
-                          <li><strong>Processor:</strong> {minimumRequirements.processor}</li>
+                          <li>
+                            <strong>Processor:</strong>{" "}
+                            {minimumRequirements.processor}
+                          </li>
                         ) : null}
                         {minimumRequirements.memory ? (
-                          <li><strong>Memory:</strong> {minimumRequirements.memory}</li>
+                          <li>
+                            <strong>Memory:</strong>{" "}
+                            {minimumRequirements.memory}
+                          </li>
                         ) : null}
                         {minimumRequirements.graphics ? (
-                          <li><strong>Graphics:</strong> {minimumRequirements.graphics}</li>
+                          <li>
+                            <strong>Graphics:</strong> 
+                            {minimumRequirements.graphics}
+                          </li>
                         ) : null}
                         {minimumRequirements.directX ? (
-                          <li><strong>DirectX:</strong> {minimumRequirements.directX}</li>
+                          <li>
+                            <strong>DirectX:</strong> 
+                            {minimumRequirements.directX}
+                          </li>
                         ) : null}
                         {minimumRequirements.network ? (
-                          <li><strong>Network:</strong> {minimumRequirements.network}</li>
+                          <li>
+                            <strong>Network:</strong>{" "}
+                            {minimumRequirements.network}
+                          </li>
                         ) : null}
                         {minimumRequirements.storage ? (
-                          <li><strong>Storage:</strong> {minimumRequirements.storage}</li>
+                          <li>
+                            <strong>Storage:</strong> 
+                            {minimumRequirements.storage}
+                          </li>
                         ) : null}
                       </>
                     ) : (
-                      <span>No minimum requirements found</span>
+                      <span>No minimum requirements specified</span>
                     )}
                   </ul>
                 </div>
@@ -268,37 +295,55 @@ export const GamePage = () => {
                     {recommendedRequirements ? (
                       <>
                         {recommendedRequirements.os ? (
-                          <li><strong>OS:</strong> {recommendedRequirements.os}</li>
+                          <li>
+                            <strong>OS:</strong> {recommendedRequirements.os}
+                          </li>
                         ) : null}
                         {recommendedRequirements.processor ? (
                           <li>
-                            <strong>Processor: </strong>{recommendedRequirements.processor}
+                            <strong>Processor: </strong>
+                            {recommendedRequirements.processor}
                           </li>
                         ) : null}
                         {recommendedRequirements.memory ? (
-                          <li><strong>Memory: </strong>{recommendedRequirements.memory}</li>
+                          <li>
+                            <strong>Memory: </strong>
+                            {recommendedRequirements.memory}
+                          </li>
                         ) : null}
                         {recommendedRequirements.graphics ? (
-                          <li><strong>Graphics:</strong> {recommendedRequirements.graphics}</li>
+                          <li>
+                            <strong>Graphics:</strong> 
+                            {recommendedRequirements.graphics}
+                          </li>
                         ) : null}
                         {recommendedRequirements.directX ? (
-                          <li><strong>DirectX:</strong> {recommendedRequirements.directX}</li>
+                          <li>
+                            <strong>DirectX:</strong> 
+                            {recommendedRequirements.directX}
+                          </li>
                         ) : null}
                         {recommendedRequirements.network ? (
-                          <li><strong>Network:</strong> {recommendedRequirements.network}</li>
+                          <li>
+                            <strong>Network:</strong>{" "}
+                            {recommendedRequirements.network}
+                          </li>
                         ) : null}
                         {recommendedRequirements.storage ? (
-                          <li><strong>Storage:</strong> {recommendedRequirements.storage}</li>
+                          <li>
+                            <strong>Storage:</strong> 
+                            {recommendedRequirements.storage}
+                          </li>
                         ) : null}
                       </>
                     ) : (
-                      <span>No recommended requirements found</span>
+                      <span>No recommended requirements specified</span>
                     )}
                   </ul>
                 </div>
               </div>
             </div>
-            <div className="game-page-localizations flux-border">
+            <div className="game-page-localizations flux-border" style={{display: "flex", flexDirection: "column", gap: "10px"}}>
               {/* <span className="lang-name">{languages.find(lang => lang.id === loc.languageId)?.name}</span> */}
               <h3 className="h3-with-bottom-border">Game Localizations</h3>
               {gameById.localizations.length !== 0 ? (
@@ -314,16 +359,25 @@ export const GamePage = () => {
                   {gameById.localizations.map((loc) => (
                     <div className="tr" key={loc.id}>
                       <div className="td lang-name">
-                        {languages.find((lang) => lang.id === loc.languageId)?.name}
+                        {
+                          languages.find((lang) => lang.id === loc.languageId)
+                            ?.name
+                        }
                       </div>
-                      <div className="td">{loc.interface ? <img src={checkMark} alt="Yes" /> : ""}</div>
-                      <div className="td">{loc.fullAudio ? <img src={checkMark} alt="Yes" /> : ""}</div>
-                      <div className="td">{loc.subtitles ? <img src={checkMark} alt="Yes" /> : ""}</div>
+                      <div className="td">
+                        {loc.interface ? <img src={checkMark} alt="Yes" /> : ""}
+                      </div>
+                      <div className="td">
+                        {loc.fullAudio ? <img src={checkMark} alt="Yes" /> : ""}
+                      </div>
+                      <div className="td">
+                        {loc.subtitles ? <img src={checkMark} alt="Yes" /> : ""}
+                      </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <span>No localizations found</span>
+                <span>No localizations specified</span>
               )}
             </div>
           </div>
