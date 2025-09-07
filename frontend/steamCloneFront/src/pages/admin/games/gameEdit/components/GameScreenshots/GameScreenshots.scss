@@ -1,0 +1,62 @@
+.game-screenshots {
+  padding: 18px 0;
+}
+
+.game-screenshots input[type="file"] {
+  display: block;
+  margin: 18px 0;
+  background: #23232a;
+  color: #fff;
+  border: 1px solid #353545;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.screenshots-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.screenshot {
+  position: relative;
+  width: 200px;
+  height: 150px;
+  overflow: hidden;
+  background: #181a20;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screenshot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+  display: block;
+}
+
+.screenshot button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: linear-gradient(90deg, #ff9584 0%, #dfed43 100%);
+  color: #23232a;
+  border: none;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 6px 0 rgba(255, 149, 132, 0.1);
+  transition: filter 0.2s, transform 0.2s;
+  z-index: 2;
+}
+.screenshot button:hover {
+  filter: brightness(1.08);
+  transform: scale(1.04);
+}

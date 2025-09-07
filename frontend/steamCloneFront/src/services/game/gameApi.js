@@ -75,4 +75,6 @@ export const {
   useDeleteGameMutation,
   useGetAllGamesQuery,
   useIsGameBoughtQuery,
+  useUpdateCoverImageMutation,
+  useUpdateScreenshotsMutation,
 } = gameApi;

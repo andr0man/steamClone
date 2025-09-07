@@ -192,6 +192,8 @@ public class GameService(
                 return ServiceResponse.ForbiddenResponse("You don't have permission to update this game");
             }
 
+            DeleteImagesByGame(game);
+
             await gameRepository.DeleteAsync(id, cancellationToken);
             return ServiceResponse.OkResponse("Game deleted successfully");
         }
@@ -199,6 +201,19 @@ public class GameService(
         {
             throw new Exception(e.Message);
         }
+    }
+
+    private void DeleteImagesByGame(Game game)
+    {
+        foreach (var gameScreenshotUrl in game.ScreenshotUrls)
+        {
+            imageService.DeleteImage(Settings.ImagesPathSettings.GameScreenshotImagePath,
+                gameScreenshotUrl.Split("/").Last());
+        }
+
+        if (game.CoverImageUrl != null)
+            imageService.DeleteImage(Settings.ImagesPathSettings.GameCoverImagePath,
+                game.CoverImageUrl.Split("/").Last());
     }
 
     public async Task<ServiceResponse> AddSystemRequirementsAsync(CreateUpdateSystemReqVm model,

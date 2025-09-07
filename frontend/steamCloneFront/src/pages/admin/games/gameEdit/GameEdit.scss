@@ -1,0 +1,21 @@
+.game-forms-containers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .edit-topbar {
+    margin: 0;
+    padding: 0;
+    justify-content: end;
+  }
+}
+
+.game-images-containers {
+  display: flex;
+  gap: 20px;
+}
+
+h3 {
+  margin: 0;
+  padding: 0;
+}

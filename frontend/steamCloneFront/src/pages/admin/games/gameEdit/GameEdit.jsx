@@ -3,15 +3,18 @@ import "./GameEdit.scss";
 import {
   useUpdateGameMutation,
   useGetGameByIdQuery,
+  useUpdateScreenshotsMutation,
+  useUpdateCoverImageMutation,
 } from "../../../../services/game/gameApi";
 import "../../../../styles/App.scss";
 import "../components/common/StylesForGameForm.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetAllGenresQuery } from "../../../../services/genre/genreApi";
 import { useGetAllDevelopersAndPublishersQuery } from "../../../../services/developerAndPublisher/developerAndPublisherApi";
-import Select from "react-select";
-import selectStyles from "../components/common/selectStyles";
 import { toast } from "react-toastify";
+import GameMainInformation from "./components/GameMainInformation";
+import GameScreenshots from "./components/GameScreenshots/GameScreenshots";
+import GameCoverImage from "./components/GameCoverImage/GameCoverImage";
 
 const GameEdit = () => {
   const navigate = useNavigate();
@@ -23,6 +26,10 @@ const GameEdit = () => {
   } = useGetGameByIdQuery(gameId);
 
   const [updateGame, { isLoading }] = useUpdateGameMutation();
+  const [updateScreenshots, { isLoading: isUpdatingScreenshots }] =
+    useUpdateScreenshotsMutation();
+  const [updateCoverImage, { isLoading: isUpdatingCoverImage }] =
+    useUpdateCoverImageMutation();
   const {
     data: { payload: genres } = { payload: [] },
     isLoading: genresLoading,
@@ -48,6 +55,8 @@ const GameEdit = () => {
 
   // form створюється після завантаження гри
   const [form, setForm] = useState(null);
+  const [coverImagePreview, setCoverImagePreview] = useState(null);
+
 
   React.useEffect(() => {
     if (!isGameLoading && game) {
@@ -61,8 +70,82 @@ const GameEdit = () => {
         publisherId: game.publisherId || "",
         genresIds: game.genres ? game.genres.map((g) => g.id) : [],
       });
+      setCoverImagePreview(game.coverImageUrl);
     }
   }, [isGameLoading, game]);
+
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [imagesToDelete, setImagesToDelete] = useState([]);
+
+  const [coverImageFile, setCoverImageFile] = useState(null);
+
+  const onFileSelectionChange = (e) => {
+    setSelectedFiles(Array.from(e.target.files));
+  };
+
+  const onCoverImageChange = (e) => {
+    const file = e.target.files[0];
+    setCoverImageFile(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setCoverImagePreview(null);
+    }
+  };
+
+  const markImageForDeletion = (image) => {
+    setImagesToDelete((prev) => [...prev, image]);
+  };
+
+  const handleCoverImageUpload = async ({globalSaving = false}) => {
+    if (!coverImageFile) {
+      if (globalSaving) return true;
+      toast.error("Please select a cover image");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("coverImage", coverImageFile);
+      await updateCoverImage({ gameId, formData }).unwrap();
+      setCoverImageFile(null);
+      setCoverImagePreview(null);
+      if (globalSaving) return true;
+      toast.success("Cover image updated successfully");
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to update cover image");
+      return false;
+    }
+  }
+
+  const handleUpdateScreenshots = async ({ globalSaving = false }) => {
+    const formData = new FormData();
+
+    selectedFiles.forEach((file) => {
+      formData.append("newImages", file);
+    });
+
+    imagesToDelete.forEach((img) => {
+      formData.append("imagesToDelete", img);
+    });
+
+    try {
+      await updateScreenshots({ gameId, formData }).unwrap();
+      setSelectedFiles([]);
+      setImagesToDelete([]);
+      if (globalSaving) return true;
+      toast.success("Screenshots updated successfully");
+    }
+    catch (err) {
+      toast.error(err?.data?.message || "Failed to update screenshots");
+      return false;
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,21 +159,34 @@ const GameEdit = () => {
     }));
   };
 
+  const handleDevelopersChange = (selectedOption) => {
+    setForm((prev) => ({
+      ...prev,
+      developerId: selectedOption ? selectedOption.value : "",
+    }));
+  };
+
+  const handlePublishersChange = (selectedOption) => {
+    setForm((prev) => ({
+      ...prev,
+      publisherId: selectedOption ? selectedOption.value : "",
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Submitting form:", {
-        ...form,
-        price: Number(form.price),
-        releaseDate: new Date(form.releaseDate).toISOString(),
-        id: gameId,
-      });
       await updateGame({
         ...form,
         price: Number(form.price),
         releaseDate: new Date(form.releaseDate).toISOString(),
         id: gameId,
       }).unwrap();
+      const isScreenshotsUpdated = await handleUpdateScreenshots({ globalSaving: true });
+      const isCoverImageUpdated = await handleCoverImageUpload({ globalSaving: true });
+      if (!isScreenshotsUpdated || !isCoverImageUpdated) {
+        return;
+      }
       toast.success("Game updated successfully");
       setForm({
         name: "",
@@ -108,12 +204,12 @@ const GameEdit = () => {
     }
   };
 
-  if (isGameLoading)
+  if (isGameLoading || genresLoading || developersAndPublishersLoading || !form)
     return <div className="loading-overlay visible">Loading data...</div>;
   if (error) return <div>Error loading game</div>;
 
   return (
-    <>
+    <div className="game-forms-containers">
       <div className="edit-topbar">
         <div className="form-actions">
           <button
@@ -133,143 +229,33 @@ const GameEdit = () => {
           </button>
         </div>
       </div>
-      <div className="game-form-container flux-border">
-        <h2>Edit Game</h2>
+      <GameMainInformation
+        game={game}
+        form={form}
+        handleChange={handleChange}
+        handleGenresChange={handleGenresChange}
+        genres={genres}
+        handleDevelopersChange={handleDevelopersChange}
+        handlePublishersChange={handlePublishersChange}
+        developersAndPublishers={developersAndPublishers}
+        genresLoading={genresLoading}
+        developersAndPublishersLoading={developersAndPublishersLoading}
+        isGameLoading={isGameLoading}
+      />
 
-        <div className="game-form-inputs">
-          <div className="game-form-inputs-panel">
-            <div className="form-group">
-              <label>Name</label>
-              <input
-                id="name"
-                name="name"
-                value={form?.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea
-                id="description"
-                name="description"
-                value={form?.description}
-                onChange={handleChange}
-                required
-                rows={3}
-              />
-            </div>
-            <div className="form-group">
-              <label>Price</label>
-              <input
-                id="price"
-                name="price"
-                type="number"
-                min="0"
-                step={"0.01"}
-                value={form?.price}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Release Date</label>
-              <input
-                id="releaseDate"
-                name="releaseDate"
-                type="datetime-local"
-                value={form?.releaseDate}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-          <div className="game-form-inputs-panel">
-            <div className="form-group">
-              <label>Discount</label>
-              <input
-                id="discount"
-                name="discount"
-                type="number"
-                min="0"
-                step={"0.01"}
-                value={form?.discount}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Developer</label>
-              <Select
-                id="developerId"
-                name="developerId"
-                defaultValue={
-                  developersAndPublishers
-                    .map((d) => ({ value: d.id, label: d.name }))
-                    .find((option) => option.value === game.developerId) || null
-                }
-                options={developersAndPublishers.map((d) => ({
-                  value: d.id,
-                  label: d.name,
-                }))}
-                onChange={(selectedOption) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    developerId: selectedOption ? selectedOption.value : "",
-                  }))
-                }
-                styles={selectStyles}
-                placeholder="Select developer..."
-                isLoading={developersAndPublishersLoading || isGameLoading}
-              />
-            </div>
-            <div className="form-group">
-              <label>Publisher</label>
-              <Select
-                id="publisherId"
-                name="publisherId"
-                defaultValue={
-                  developersAndPublishers
-                    .map((d) => ({ value: d.id, label: d.name }))
-                    .find((option) => option.value === game.publisherId) || null
-                }
-                options={developersAndPublishers.map((d) => ({
-                  value: d.id,
-                  label: d.name,
-                }))}
-                onChange={(selectedOption) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    publisherId: selectedOption ? selectedOption.value : "",
-                  }))
-                }
-                styles={selectStyles}
-                placeholder="Select publisher..."
-                isLoading={developersAndPublishersLoading || isGameLoading}
-              />
-            </div>
-            <div className="form-group">
-              <label>Genres</label>
-              <Select
-                id="genresIds"
-                name="genresIds"
-                isMulti
-                defaultValue={genres
-                  .map((g) => ({ value: g.id, label: g.name }))
-                  .filter((option) =>
-                    game.genres.some((genre) => genre.id === option.value)
-                  )}
-                options={genres.map((g) => ({ value: g.id, label: g.name }))}
-                isLoading={isGameLoading || genresLoading}
-                onChange={handleGenresChange}
-                styles={selectStyles}
-                placeholder="Select genres..."
-              />
-            </div>
-          </div>
-        </div>
+      <div className="game-images-containers">
+        <GameScreenshots
+          game={game}
+          handleFileChange={onFileSelectionChange}
+          markImageForDeletion={markImageForDeletion}
+          imagesToDelete={imagesToDelete}
+        />
+        <GameCoverImage
+          handleFileChange={onCoverImageChange}
+          coverImagePreview={coverImagePreview}
+        />
       </div>
-    </>
+    </div>
   );
 };
 
