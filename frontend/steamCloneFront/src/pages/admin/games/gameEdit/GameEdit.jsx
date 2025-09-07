@@ -113,11 +113,31 @@ const GameEdit = () => {
   if (error) return <div>Error loading game</div>;
 
   return (
-    <div className="game-create-container flux-border">
-      <h2>Edit Game</h2>
-      <form className="game-create-form" onSubmit={handleSubmit}>
-        <div className="game-create-inputs">
-          <div className="game-create-inputs-panel">
+    <>
+      <div className="edit-topbar">
+        <div className="form-actions">
+          <button
+            type="button"
+            className="cancel-game-btn"
+            onClick={() => navigate("/admin/games")}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="submit-game-btn"
+            disabled={isLoading}
+            onClick={handleSubmit}
+          >
+            {isLoading ? "Updating..." : "Update Game"}
+          </button>
+        </div>
+      </div>
+      <div className="game-form-container flux-border">
+        <h2>Edit Game</h2>
+
+        <div className="game-form-inputs">
+          <div className="game-form-inputs-panel">
             <div className="form-group">
               <label>Name</label>
               <input
@@ -164,7 +184,7 @@ const GameEdit = () => {
               />
             </div>
           </div>
-          <div className="game-create-inputs-panel">
+          <div className="game-form-inputs-panel">
             <div className="form-group">
               <label>Discount</label>
               <input
@@ -248,21 +268,8 @@ const GameEdit = () => {
             </div>
           </div>
         </div>
-
-        <div className="form-actions">
-          <button type="button" className="cancel-game-btn" onClick={() => navigate("/admin/games")}>
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="submit-game-btn"
-            disabled={isLoading}
-          >
-            {isLoading ? "Updating..." : "Update Game"}
-          </button>
-        </div>
-      </form>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -1,9 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { createBaseQueryWithRefresh } from "../api/baseQueryWithRefresh";
+import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
 export const gameLibraryApi = createApi({
   reducerPath: "gameLibraryApi",
-  baseQuery: createBaseQueryWithRefresh("/user-game-library/"),
+  baseQuery: baseQueryWithRefresh("/user-game-library/"),
   tagTypes: ["GameLibrary"],
   endpoints: (builder) => ({
     getGameLibrary: builder.query({
@@ -17,4 +17,5 @@ export const gameLibraryApi = createApi({
   }),
 });
 
-export const { useGetGameLibraryQuery, useGetIsInGameLibraryQuery } = gameLibraryApi;
+export const { useGetGameLibraryQuery, useGetIsInGameLibraryQuery } =
+  gameLibraryApi;

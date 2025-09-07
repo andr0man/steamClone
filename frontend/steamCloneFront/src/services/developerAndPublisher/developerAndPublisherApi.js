@@ -1,9 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { createBaseQueryWithRefresh } from "../api/baseQueryWithRefresh";
+import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
 export const developerAndPublisherApi = createApi({
   reducerPath: "developerAndPublisherApi",
-  baseQuery: createBaseQueryWithRefresh("/developer-and-publisher/"),
+  baseQuery: baseQueryWithRefresh("/developer-and-publisher/"),
   tagTypes: ["DeveloperAndPublisher"],
   endpoints: (builder) => ({
     getAllDevelopersAndPublishers: builder.query({

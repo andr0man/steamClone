@@ -1,9 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { createBaseQueryWithRefresh } from "../api/baseQueryWithRefresh";
+import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
 export const genreApi = createApi({
   reducerPath: "genreApi",
-  baseQuery: createBaseQueryWithRefresh("/game-genre/"),
+  baseQuery: baseQueryWithRefresh("/game-genre/"),
   tagTypes: ["Genre"],
   endpoints: (builder) => ({
     getAllGenres: builder.query({

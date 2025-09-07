@@ -1,9 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { createBaseQueryWithRefresh } from "../api/baseQueryWithRefresh";
+import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
 export const gameApi = createApi({
   reducerPath: "gameApi",
-  baseQuery: createBaseQueryWithRefresh("/game/"),
+  baseQuery: baseQueryWithRefresh("/game/"),
   tagTypes: ["Game"],
   endpoints: (builder) => ({
     getAllGames: builder.query({
@@ -48,6 +48,22 @@ export const gameApi = createApi({
       }),
       invalidatesTags: ["Game"],
     }),
+    updateCoverImage: builder.mutation({
+      query: ({ gameId, formData }) => ({
+        url: `update-cover-image/${gameId}`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: ["Game"],
+    }),
+    updateScreenshots: builder.mutation({
+      query: ({ gameId, formData }) => ({
+        url: `update-screenshots-images/${gameId}`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: ["Game"],
+    }),
   }),
 });
 
@@ -58,5 +74,5 @@ export const {
   useUpdateGameMutation,
   useDeleteGameMutation,
   useGetAllGamesQuery,
-  useIsGameBoughtQuery
+  useIsGameBoughtQuery,
 } = gameApi;

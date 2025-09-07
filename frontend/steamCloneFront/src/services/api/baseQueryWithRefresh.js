@@ -1,7 +1,7 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import APP_ENV from "../../env";
 
-export const createBaseQueryWithRefresh = (endpointPrefix = "") => {
+export const baseQueryWithRefresh = (endpointPrefix = "") => {
   const baseUrl = APP_ENV.API_URL;
   const rawBaseQuery = fetchBaseQuery({
     baseUrl,
