@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import './profile.scss';
 import Notification from '../../components/Notification';
 import { User, Shield, BarChart3, Users, Gift } from 'lucide-react';
 import { useGetProfileQuery } from '../../services/user/userApi';
-
 
 const initialProfileState = {
   username: 'Username',
@@ -97,15 +96,34 @@ const Profile = ({ userData }) => {
               <button className="profile-edit-button" onClick={handleEditProfileClick} />
 
               <nav className="profile-navigation">
-                <a href="#activity" className="profile-nav-link"><BarChart3 size={18} /> Activity</a>
-                <a href="#badges" className="profile-nav-link"><Shield size={18} /> Badges</a>
-                <a href="#friends" className="profile-nav-link"><Users size={18} /> Friends ({friendsCount})</a>
-                <a href="#inventory" className="profile-nav-link"><Gift size={18} /> Inventory</a>
+                <NavLink
+                  to="/profile/activity"
+                  className={({ isActive }) => `profile-nav-link ${isActive ? 'active' : ''}`}
+                >
+                  <BarChart3 size={18} /> Activity
+                </NavLink>
+                <NavLink
+                  to="/profile/badges"
+                  className={({ isActive }) => `profile-nav-link ${isActive ? 'active' : ''}`}
+                >
+                  <Shield size={18} /> Badges
+                </NavLink>
+                <NavLink
+                  to="/profile/friends"
+                  className={({ isActive }) => `profile-nav-link ${isActive ? 'active' : ''}`}
+                >
+                  <Users size={18} /> Friends ({friendsCount})
+                </NavLink>
+                <NavLink
+                  to="/profile/inventory"
+                  className={({ isActive }) => `profile-nav-link ${isActive ? 'active' : ''}`}
+                >
+                  <Gift size={18} /> Inventory
+                </NavLink>
               </nav>
             </aside>
 
             <section className="profile-details-column">
-              {}
               <div className="profile-section profile-bio">
                 <div className="section-header">
                   <h3><User size={22} /> About me</h3>
@@ -134,7 +152,7 @@ const Profile = ({ userData }) => {
               <div className="profile-section profile-badges" id="badges">
                 <div className="section-header">
                   <h3><Shield size={22} /> Badges ({(badges && badges.length) || 0})</h3>
-                  <a href="#badges-all" className="section-action">See all</a>
+                  <NavLink to="/profile/badges" className="section-action">See all</NavLink>
                 </div>
                 {badges && badges.length > 0 ? (
                   <div className="badges-grid">
@@ -152,7 +170,7 @@ const Profile = ({ userData }) => {
               <div className="profile-section profile-recent-activity" id="activity">
                 <div className="section-header">
                   <h3><BarChart3 size={22} /> Recent Activity</h3>
-                  <a href="#activity-all" className="section-action">See all</a>
+                  <NavLink to="/profile/activity" className="section-action">See all</NavLink>
                 </div>
                 {recentActivity && recentActivity.length > 0 ? (
                   <ul>
@@ -171,7 +189,6 @@ const Profile = ({ userData }) => {
           </div>
         </div>
       </div>
-      
     </>
   );
 };

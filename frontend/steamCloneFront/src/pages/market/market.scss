@@ -28,6 +28,7 @@ body {
   background-position: center top;
   background-size: cover;
   background-attachment: fixed;
+  color-scheme: dark;
 }
 
 .market-page-container {
@@ -147,14 +148,26 @@ body {
 
 .sort-select { position: relative; }
 .sort-select select {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.18);
+  background-color: #20172e;
+  border: 1px solid rgba(255,255,255,.24);
   color: #fff;
   border-radius: 6px;
   padding: 6px 26px 6px 10px;
   appearance: none;
   -webkit-appearance: none;
   outline: none;
+}
+.sort-select select:focus {
+  border-color: rgba(146,119,197,.6);
+  box-shadow: 0 0 0 3px rgba(146,119,197,.22);
+}
+.sort-select select option {
+  background-color: #1a1426;
+  color: #fff;
+}
+.sort-select select option:checked {
+  background-color: #33244a;
+  color: #fff;
 }
 .sort-select .chev {
   position: absolute; right: 8px; top: 50%; transform: translateY(-50%);

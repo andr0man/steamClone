@@ -1,8 +1,6 @@
-
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './Search.scss';
-
 
 const ALL_GAMES = [
   { id: 'peak', title: 'Peak', year: 2025, price: 159, tags: ['Indie'], os: ['windows'], players: ['Single-player'], imageUrl: 'https://storage.googleapis.com/tagjs-prod.appspot.com/v1/nJZmgJCsJw/9ta02v1k_expires_30_days.png' },
@@ -37,8 +35,8 @@ const Search = () => {
     setQ(qp);
   }, [params]);
 
-  const toggleInSet = (set, val) => {
-    const next = new Set(set);
+  const toggleInSet = (setVal, val) => {
+    const next = new Set(setVal);
     if (next.has(val)) next.delete(val);
     else next.add(val);
     return next;
@@ -225,7 +223,6 @@ const Search = () => {
           </section>
         </div>
       </div>
-
     </div>
   );
 };

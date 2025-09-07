@@ -23,6 +23,12 @@ import Purchase from '../pages/store/purchase/Purchase.jsx';
 import MarketHistory from '../pages/market/history/MarketHistory.jsx';
 import ForgotPassword from '../pages/auth/login/ForgotPassword.jsx';
 import Chat from '../pages/chat/Chat.jsx';
+import Buy from '../pages/market/buy/Buy.jsx';
+import SellItemModal from '../pages/market/modal/SellItemModal.jsx';
+import Activity from '../pages/profile/activity/Activity.jsx';
+import Badges from '../pages/profile/badges/Badges.jsx';
+import Friends from '../pages/profile/friends/Friends.jsx';
+import Inventory from '../pages/profile/inventory/Inventory.jsx';
 
 const ProtectedRoute = ({ isLoggedIn, children }) => {
   if (!isLoggedIn) {
@@ -130,6 +136,14 @@ const BasicRoutes = ({ isLoggedIn, currentUser, handleLoginSuccess, handleLogout
               path="/market/history"
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><MarketHistory /></ProtectedRoute>}
             />
+            <Route
+              path="/market/buy"
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><Buy /></ProtectedRoute>}
+            />
+            <Route
+              path="/market/sell"
+              element={<ProtectedRoute isLoggedIn={isLoggedIn}><SellItemModal /></ProtectedRoute>}
+            />
             
             <Route 
               path="/profile" 
@@ -140,6 +154,10 @@ const BasicRoutes = ({ isLoggedIn, currentUser, handleLoginSuccess, handleLogout
               path="/profile/edit" 
               element={<ProtectedRoute isLoggedIn={isLoggedIn}><EditProfile currentProfileData={currentUser} /></ProtectedRoute>} 
             />
+              <Route path="/profile/activity" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Activity /></ProtectedRoute>} />
+              <Route path="/profile/badges" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Badges /></ProtectedRoute>} />
+              <Route path="/profile/friends" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Friends /></ProtectedRoute>} />
+              <Route path="/profile/inventory" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Inventory /></ProtectedRoute>} />
             
             <Route 
               path="/community" 

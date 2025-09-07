@@ -16,6 +16,8 @@ $accent: #A178EB;
 
 :root { --navbar-h: 64px; }
 
+*, *::before, *::after { box-sizing: border-box; }
+
 html, body, #root { min-height: 100%; height: auto; }
 
 body {
@@ -25,15 +27,15 @@ body {
   background-position: center top;
   background-size: cover;
   background-attachment: fixed;
+  color: $text-2;
+  font-family: $font;
+  color-scheme: dark;
 }
-
 
 .wl-page {
   min-height: 100svh;
   padding: 18px clamp(16px, 3vw, 32px);
   padding-top: calc(var(--navbar-h) + 18px);
-  color: $text-2;
-  font-family: $font;
   position: relative;
   isolation: isolate;
 }
@@ -50,7 +52,6 @@ body {
   pointer-events: none;
 }
 
-
 .wl-panel {
   width: min(980px, 100%);
   margin: 0 auto;
@@ -60,8 +61,8 @@ body {
   box-shadow: $panel-shadow;
   padding: 25px 50px 40px 50px;
   color: $ink;
+  overflow: clip;
 }
-
 
 .wl-head {
   display: grid;
@@ -72,13 +73,16 @@ body {
 .wl-title { font-size: 22px; color: #fff; font-weight: 700; }
 
 .wl-head-controls {
-  display: inline-flex; align-items: center; gap: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  row-gap: 10px;
 }
-
 
 .wl-input {
   position: relative;
-  width: 220px;        
+  width: 220px;
   padding: 0 5px 2px;
 }
 .wl-input input {
@@ -91,31 +95,54 @@ body {
   font-size: 14px;
   &::placeholder { color: #565558; }
 }
-.wl-input .ico { position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: #a4a4a4; }
+.wl-input .ico {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%); color: #a4a4a4;
+}
 .wl-search-underline {
   display: block;
-  width: 220px;      
+  width: 100%;
   height: 1px;
   background: #fff;
   opacity: .9;
   margin-top: 4px;
 }
 
-
-.wl-sort { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 14px; }
+.wl-sort {
+  display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 14px;
+}
 .wl-sort .plain-sort {
   background: transparent; border: 0; color: #fff; font-weight: 700; cursor: pointer; padding: 0;
   text-decoration: underline; text-underline-offset: 3px;
 }
 .wl-sort .plain-sort.active { color: $accent; }
+
+.wl-sort .sort-dropdown { position: relative; }
 .wl-sort .sort-dropdown select {
-  background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.25);
-  border-radius: 6px; padding: 6px 26px 6px 10px; appearance: none; outline: none;
+  background-color: #20172e;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 6px;
+  padding: 6px 26px 6px 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
   background-image: linear-gradient(45deg, transparent 50%, #b9b9c7 50%), linear-gradient(135deg, #b9b9c7 50%, transparent 50%);
   background-position: calc(100% - 12px) 55%, calc(100% - 6px) 55%;
-  background-size: 6px 6px, 6px 6px; background-repeat: no-repeat;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
 }
-
+.wl-sort .sort-dropdown select:focus {
+  border-color: rgba(146,119,197,.6);
+  box-shadow: 0 0 0 3px rgba(146,119,197,.22);
+}
+.wl-sort .sort-dropdown select option {
+  background-color: #1a1426;
+  color: #fff;
+}
+.wl-sort .sort-dropdown select option:checked {
+  background-color: #33244a;
+  color: #fff;
+}
 
 .wl-underline {
   display: block; width: 127px; height: 1px; background: rgba(255,255,255,.9);
@@ -126,11 +153,10 @@ body {
 
 .wl-row {
   display: grid;
-  grid-template-columns: 38px 158px auto 1fr;
+  grid-template-columns: 38px 158px 1fr auto;
   align-items: center;
   gap: 14px;
 }
-
 
 .rank-badge {
   position: relative;
@@ -154,23 +180,26 @@ body {
   border: 1px solid rgba(255,255,255,.06);
 }
 
-
-.meta .name { color: #fff; font-weight: 800; font-size: 22px; margin-bottom: 6px; }
-.meta .sub { display: inline-flex; align-items: center; gap: 14px; color: $muted; font-size: 15px; }
+.meta { min-width: 0; }
+.meta .name {
+  color: #fff; font-weight: 800; font-size: 22px; margin-bottom: 6px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.meta .sub {
+  display: inline-flex; align-items: center; gap: 14px; color: $muted; font-size: 15px;
+  flex-wrap: wrap;
+}
 .meta .sub .dot { opacity: .6; }
-.meta .sub .remove { background: transparent; border: 0; color: $accent; font-weight: 700; cursor: pointer; padding: 0; }
+.meta .sub .remove {
+  background: transparent; border: 0; color: $accent; font-weight: 700; cursor: pointer; padding: 0;
+}
 .meta .sub .remove:hover { text-shadow: 0 1px 6px rgba(161,120,235,.5); }
 
-.spacer { }
-
-
-.price-side { display: inline-flex; align-items: center; gap: 12px; justify-self: end; }
-
+.price-side { display: inline-flex; align-items: center; gap: 12px; justify-self: end; white-space: nowrap; }
 
 .pct-badge {
   padding: 7px 10px;
-  font-weight: 900;
-  font-size: 14px;
+  font-weight: 900; font-size: 14px;
   border: 1px solid rgba(161,120,235,.55);
   border-radius: 8px;
   background: linear-gradient(270deg,#FFFFFF 0.54%,#8C8C8C 18.71%,#FF9584 28.28%,#DFED43 40.23%,#A0F885 49.79%,#74BFF7 59.18%,#7C72DB 67.24%,#8681A8 75.3%,#FFFFFF 100%);
@@ -178,7 +207,6 @@ body {
   background-clip: text;
   color: transparent;
 }
-
 
 .price-box {
   display: inline-flex; align-items: center; gap: 12px;
@@ -201,7 +229,6 @@ body {
   text-align: center;
 }
 
-
 .wl-loading { display: grid; place-items: center; color: #c8d0d8; padding: 20px 0; }
 .wl-loading .spinner {
   width: 30px; height: 30px; border: 4px solid rgba(255,255,255,.2); border-top-color: #A178EB; border-radius: 50%;
@@ -209,13 +236,11 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-
 @media (max-width: 720px) {
   .wl-panel { padding: 18px 16px 22px; }
   .wl-head { grid-template-columns: 1fr; gap: 10px; }
   .wl-head-controls { justify-content: space-between; }
   .wl-input { width: 100%; }
-  .wl-search-underline { width: 100%; }
-  .wl-row { grid-template-columns: 34px 140px auto; gap: 10px; }
+  .wl-row { grid-template-columns: 34px 140px 1fr; gap: 10px; }
   .price-side { grid-column: 1 / -1; justify-self: start; margin-left: 44px; }
 }

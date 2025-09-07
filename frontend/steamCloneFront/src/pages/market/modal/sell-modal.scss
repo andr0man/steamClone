@@ -1,0 +1,30 @@
+.sell-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 5000;
+    display: grid; place-items: center;
+  }
+  .sell-modal {
+    width: min(560px, 94vw);
+    background: #121117;
+    border: 1px solid #9277C4;
+    border-radius: 8px;
+    box-shadow: 0 12px 32px rgba(124,114,219,.28);
+    padding: 16px;
+    color: #fff;
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+  .sell-modal .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .sell-modal .head .t { font-size: 18px; font-weight: 800; }
+  .sell-modal .head .x { background: transparent; border: 1px solid rgba(255,255,255,.2); width: 28px; height: 28px; border-radius: 50%; color: #fff; cursor: pointer; }
+  
+  .sell-modal .row { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 8px; margin: 8px 0; }
+  .sell-modal .row span { color: #c9c3ef; }
+  .sell-modal .row input {
+    background: transparent; border: 1px solid rgba(255,255,255,.18); color: #fff; border-radius: 6px; padding: 8px 10px; outline: none;
+  }
+  
+  .sell-modal .net { margin-top: 8px; color: #c9c3ef; }
+  .sell-modal .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+  .btn { padding: 8px 12px; border-radius: 6px; cursor: pointer; border: 1px solid rgba(255,255,255,.2); background: transparent; color: #fff; }
+  .btn.primary { background: #292035; border-color: rgba(255,255,255,.32); font-weight: 800; }
+  .btn.ghost:hover { background: rgba(255,255,255,.08); }
+  .btn:disabled { opacity: .6; cursor: not-allowed; }
