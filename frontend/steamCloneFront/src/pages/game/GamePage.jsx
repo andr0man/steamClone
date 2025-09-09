@@ -16,7 +16,7 @@ import {
 } from "../../services/wishlist/wishlistApi";
 import { SvgComponentMainPanel } from "./components/SvgComponentMainPanel";
 import "./gamePage.scss";
-import { useGetIsInGameLibraryQuery } from "../../services/game-library/gameLibraryApi";
+import { useGetIsInGameLibraryQuery } from "../../services/gameLibrary/gameLibraryApi";
 import { ImageCarousel } from "./components/ImageCarousel";
 
 export const GamePage = () => {
@@ -94,6 +94,55 @@ export const GamePage = () => {
   const calculateDiscountedPrice = (price, discount) => {
     return (price - (price * discount) / 100).toFixed(0);
   };
+
+  const renderSystemRequirements = (title, form) => (
+    <>
+      <span>{title}:</span>
+      <ul>
+        {form ? (
+          <>
+            {form.os ? (
+              <li>
+                <strong>OS:</strong> {form.os}
+              </li>
+            ) : null}
+            {form.processor ? (
+              <li>
+                <strong>Processor:</strong> {form.processor}
+              </li>
+            ) : null}
+            {form.memory ? (
+              <li>
+                <strong>Memory:</strong> {form.memory}
+              </li>
+            ) : null}
+            {form.graphics ? (
+              <li>
+                <strong>Graphics:</strong> {form.graphics}
+              </li>
+            ) : null}
+            {form.directX ? (
+              <li>
+                <strong>DirectX:</strong> {form.directX}
+              </li>
+            ) : null}
+            {form.network ? (
+              <li>
+                <strong>Network:</strong> {form.network}
+              </li>
+            ) : null}
+            {form.storage ? (
+              <li>
+                <strong>Storage:</strong> {form.storage}
+              </li>
+            ) : null}
+          </>
+        ) : (
+          <span>No requirements specified</span>
+        )}
+      </ul>
+    </>
+  );
 
   return (
     <>
@@ -220,7 +269,10 @@ export const GamePage = () => {
                 )}
                 <div>
                   {isInLibraryData.payload ? (
-                    <div className="rainbow-button" onClick={() => navigate("/library")}>
+                    <div
+                      className="rainbow-button"
+                      onClick={() => navigate("/library")}
+                    >
                       <div>Go To Library</div>
                     </div>
                   ) : (
@@ -238,112 +290,20 @@ export const GamePage = () => {
               <h3 className="h3-with-bottom-border">System Requirements</h3>
               <div className="system-requirements-content">
                 <div className="minimum-requirements">
-                  <span>Minimum:</span>
-                  <ul>
-                    {minimumRequirements ? (
-                      <>
-                        {minimumRequirements.os ? (
-                          <li>
-                            <strong>OS:</strong> {minimumRequirements.os}
-                          </li>
-                        ) : null}
-                        {minimumRequirements.processor ? (
-                          <li>
-                            <strong>Processor:</strong>{" "}
-                            {minimumRequirements.processor}
-                          </li>
-                        ) : null}
-                        {minimumRequirements.memory ? (
-                          <li>
-                            <strong>Memory:</strong>{" "}
-                            {minimumRequirements.memory}
-                          </li>
-                        ) : null}
-                        {minimumRequirements.graphics ? (
-                          <li>
-                            <strong>Graphics:</strong> 
-                            {minimumRequirements.graphics}
-                          </li>
-                        ) : null}
-                        {minimumRequirements.directX ? (
-                          <li>
-                            <strong>DirectX:</strong> 
-                            {minimumRequirements.directX}
-                          </li>
-                        ) : null}
-                        {minimumRequirements.network ? (
-                          <li>
-                            <strong>Network:</strong>{" "}
-                            {minimumRequirements.network}
-                          </li>
-                        ) : null}
-                        {minimumRequirements.storage ? (
-                          <li>
-                            <strong>Storage:</strong> 
-                            {minimumRequirements.storage}
-                          </li>
-                        ) : null}
-                      </>
-                    ) : (
-                      <span>No minimum requirements specified</span>
-                    )}
-                  </ul>
+                  {renderSystemRequirements("Minimum", minimumRequirements)}
                 </div>
                 <div className="recommended-requirements">
-                  <span>Recommended:</span>
-                  <ul>
-                    {recommendedRequirements ? (
-                      <>
-                        {recommendedRequirements.os ? (
-                          <li>
-                            <strong>OS:</strong> {recommendedRequirements.os}
-                          </li>
-                        ) : null}
-                        {recommendedRequirements.processor ? (
-                          <li>
-                            <strong>Processor: </strong>
-                            {recommendedRequirements.processor}
-                          </li>
-                        ) : null}
-                        {recommendedRequirements.memory ? (
-                          <li>
-                            <strong>Memory: </strong>
-                            {recommendedRequirements.memory}
-                          </li>
-                        ) : null}
-                        {recommendedRequirements.graphics ? (
-                          <li>
-                            <strong>Graphics:</strong> 
-                            {recommendedRequirements.graphics}
-                          </li>
-                        ) : null}
-                        {recommendedRequirements.directX ? (
-                          <li>
-                            <strong>DirectX:</strong> 
-                            {recommendedRequirements.directX}
-                          </li>
-                        ) : null}
-                        {recommendedRequirements.network ? (
-                          <li>
-                            <strong>Network:</strong>{" "}
-                            {recommendedRequirements.network}
-                          </li>
-                        ) : null}
-                        {recommendedRequirements.storage ? (
-                          <li>
-                            <strong>Storage:</strong> 
-                            {recommendedRequirements.storage}
-                          </li>
-                        ) : null}
-                      </>
-                    ) : (
-                      <span>No recommended requirements specified</span>
-                    )}
-                  </ul>
+                  {renderSystemRequirements(
+                    "Recommended",
+                    recommendedRequirements
+                  )}
                 </div>
               </div>
             </div>
-            <div className="game-page-localizations flux-border" style={{display: "flex", flexDirection: "column", gap: "10px"}}>
+            <div
+              className="game-page-localizations flux-border"
+              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+            >
               {/* <span className="lang-name">{languages.find(lang => lang.id === loc.languageId)?.name}</span> */}
               <h3 className="h3-with-bottom-border">Game Localizations</h3>
               {gameById.localizations.length !== 0 ? (

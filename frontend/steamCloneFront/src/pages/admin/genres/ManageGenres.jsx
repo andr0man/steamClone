@@ -22,6 +22,10 @@ const ManageGenres = () => {
     return <div className="loading-overlay visible">Loading data...</div>;
   if (isError) return <div>Error loading genres</div>;
 
+  const handleClose = () => {
+    setCreateModalOpen(false);
+    modalReset();
+  };
 
   const handleCreateGenre = async (genreData) => {
     try {
@@ -79,7 +83,7 @@ const ManageGenres = () => {
       </table>
       <GenreModal
         isOpen={isCreateModalOpen}
-        onClose={() => setCreateModalOpen(false)}
+        onClose={handleClose}
         onSubmit={handleCreateGenre}
         titleText="Create Genre"
         confirmText="Create"

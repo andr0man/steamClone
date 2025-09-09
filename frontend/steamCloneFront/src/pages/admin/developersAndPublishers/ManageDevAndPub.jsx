@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { toast } from "react-toastify";
 import {
-  useGetAllDevelopersAndPublishersQuery,
-  useCreateDeveloperAndPublisherMutation,
+    useCreateDeveloperAndPublisherMutation,
+    useGetAllDevelopersAndPublishersQuery,
 } from "../../../services/developerAndPublisher/developerAndPublisherApi";
 import "./ManageDevAndPub.scss";
 import DevPubRow from "./components/DevPubRow";
 import { DevPubModal } from "./components/modal/DevPubModal";
-import { toast } from "react-toastify";
 
 const ManageDevAndPub = () => {
   const {
@@ -22,6 +22,11 @@ const ManageDevAndPub = () => {
   if (isLoading)
     return <div className="loading-overlay visible">Loading data...</div>;
   if (error) return <div>Error loading developers and publishers</div>;
+
+  const handleClose = () => {
+    setCreateModalOpen(false);
+    modalReset();
+  }
 
   const handleCreateDevPub = async (data) => {
     try {
@@ -79,7 +84,7 @@ const ManageDevAndPub = () => {
       </table>
       <DevPubModal
         isOpen={isCreateModalOpen}
-        onClose={() => setCreateModalOpen(false)}
+        onClose={handleClose}
         onSubmit={handleCreateDevPub}
         titleText="Create Developer/Publisher"
         confirmText="Create"

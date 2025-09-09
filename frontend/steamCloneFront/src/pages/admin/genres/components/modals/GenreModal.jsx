@@ -30,7 +30,6 @@ export const GenreModal = ({
     e.preventDefault();
     if (!name.trim()) return;
     onSubmit({ name, description, id: genre ? genre.id : undefined });
-    // Очищення тепер тільки після успіху через modalReset
   };
 
   return (

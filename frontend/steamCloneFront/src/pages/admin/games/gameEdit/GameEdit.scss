@@ -1,3 +1,5 @@
+@use "../../../../styles/variables.scss" as variables;
+
 .game-forms-containers {
   display: flex;
   flex-direction: column;
@@ -23,6 +25,26 @@
       cursor: not-allowed;
       filter: none;
       transform: none;
+    }
+  }
+
+  .rainbow-button, .white-button {
+    &:hover {
+      transform: scale(1.02) skewX(-(variables.$button-rotation-degree));
+      filter: brightness(1.1);
+    }
+
+    &:hover::before {
+      background-position: 100% 0;
+      opacity: 1;
+    }
+
+    &:hover::after {
+      animation-duration: 1s;
+    }
+
+    &:active {
+      transform: scale(0.99) skewX(-(variables.$button-rotation-degree));
     }
   }
 }

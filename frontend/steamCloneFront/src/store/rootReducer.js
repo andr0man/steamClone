@@ -3,7 +3,7 @@ import { authApi } from "../services/auth/authApi";
 import { userApi } from "../services/user/userApi";
 import { gameApi } from "../services/game/gameApi";
 import { wishlistApi } from "../services/wishlist/wishlistApi";
-import { gameLibraryApi } from "../services/game-library/gameLibraryApi";
+import { gameLibraryApi } from "../services/gameLibrary/gameLibraryApi";
 import userReducer from "./reduserSlises/userSlice";
 import { genreApi } from "../services/genre/genreApi";
 import { developerAndPublisherApi } from "../services/developerAndPublisher/developerAndPublisherApi";
@@ -11,6 +11,7 @@ import { gameSystemRequirementsApi } from "../services/gameSystemRequirements/ga
 import { languageApi } from "../services/language/languageApi";
 import { countryApi } from "../services/country/countryApi";
 import { gameLocalizationApi } from "../services/gameLocalization/gameLocalizationApi";
+import { gameItemApi } from "../services/gameItem/gameItemApi";
 
 export const rootReducer = combineReducers({
   user: userReducer,
@@ -25,4 +26,5 @@ export const rootReducer = combineReducers({
   [languageApi.reducerPath]: languageApi.reducer,
   [countryApi.reducerPath]: countryApi.reducer,
   [gameLocalizationApi.reducerPath]: gameLocalizationApi.reducer,
+  [gameItemApi.reducerPath]: gameItemApi.reducer,
 });
