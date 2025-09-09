@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ConfirmModal } from "../../components/ConfirmModal";
+import { ConfirmModal } from "../../components/Modals/ConfirmModal";
 import "../../styles/App.scss";
 import { useGetAllLanguagesQuery } from "../../services/language/languageApi";
 import {

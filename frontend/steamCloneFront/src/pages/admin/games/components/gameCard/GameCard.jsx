@@ -1,7 +1,7 @@
 // GameCard.jsx
 import { useNavigate } from "react-router-dom";
 import "./GameCard.scss";
-import { ConfirmModal } from "../../../../../components/ConfirmModal";
+import { ConfirmModal } from "../../../../../components/Modals/ConfirmModal";
 import {
   useDeleteGameMutation,
   useIsGameBoughtQuery,

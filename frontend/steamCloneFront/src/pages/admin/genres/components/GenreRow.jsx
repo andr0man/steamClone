@@ -3,7 +3,7 @@ import {
   useDeleteGenreMutation,
   useUpdateGenreMutation,
 } from "../../../../services/genre/genreApi";
-import { ConfirmModal } from "../../../../components/ConfirmModal";
+import { ConfirmModal } from "../../../../components/Modals/ConfirmModal";
 import { toast } from "react-toastify";
 import { GenreModal } from "./modals/GenreModal";
 

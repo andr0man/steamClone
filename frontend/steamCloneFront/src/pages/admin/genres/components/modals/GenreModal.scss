@@ -1,3 +1,5 @@
+@use "../../../../../styles/variables.scss" as variables;
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -11,16 +13,14 @@
   z-index: 1000;
 }
 
-.modal-content {
-  background: var(--panel-bg, #151518);
+.modal-with-border-content {
   color: var(--ink, #fff);
   border-radius: 10px;
-  min-width: 320px;
-  max-width: 50vw;
   padding: 32px 28px 24px 28px;
   box-shadow: 0 8px 32px 0 #7c72db33;
-  text-align: center;
+  text-align: left;
   position: relative;
+  clip-path: variables.$polygon-shape;
 }
 
 .my-modal-close-btn {
@@ -42,11 +42,12 @@
   }
 }
 
-.modal-content h2 {
+.modal-with-border-content h2 {
   margin-bottom: 18px;
   font-size: 1.5rem;
   font-family: inherit;
   text-shadow: 0 1px 4.5px #b835ff;
+  text-align: center;
 }
 
 .create-genre-form {
@@ -66,6 +67,8 @@
   font-size: 1rem;
   color: #a178eb;
   font-weight: 500;
+  padding: 0;
+  margin: 0;
 }
 
 .form-group input,

@@ -1,47 +1,24 @@
-import React, { useState } from "react";
-import "./GenreModal.scss";
-import "../../../../../styles/App.scss";
+import "./ConfirmModal.scss";
 
-export const GenreModal = ({
+export const ConfirmModal = ({
+  title,
+  description,
   isOpen,
   onClose,
-  onSubmit,
-  titleText = "Genre Modal",
-  confirmText = "Confirm",
-  setModalReset,
-  genre = null,
+  onConfirm,
 }) => {
-  const [name, setName] = useState(genre?.name ?? "");
-  const [description, setDescription] = useState(genre?.description ?? "");
-
-  // Передаємо функцію reset наверх
-  React.useEffect(() => {
-    if (setModalReset) {
-      setModalReset(() => () => {
-        setName("");
-        setDescription("");
-      });
-    }
-  }, [setModalReset]);
-
   if (!isOpen) return null;
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-    onSubmit({ name, description, id: genre ? genre.id : undefined });
-    // Очищення тепер тільки після успіху через modalReset
-  };
 
   return (
     <div className="confirm-modal-overlay">
       <div className="modal-with-border-container">
         <div className="modal-border"></div>
+
         <div className="modal-with-border-content">
           <button
-            className="my-modal-close-btn"
+            className="confirm-modal-close-btn"
             onClick={onClose}
-            aria-label="Close"
+            ariaLabel="Close"
           >
             <svg
               width="40"
@@ -97,39 +74,20 @@ export const GenreModal = ({
               </defs>
             </svg>
           </button>
-          <h2>{titleText}</h2>
-          <form onSubmit={handleSubmit} className="create-genre-form">
-            <div className="form-group">
-              <label htmlFor="genre-name">Name</label>
-              <input
-                id="genre-name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                placeholder="Genre name"
-                autoFocus
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="genre-description">Description</label>
-              <textarea
-                id="genre-description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Genre description (optional)"
-                rows={3}
-              />
-            </div>
-            <div className="modal-actions">
-              <button type="button" className="white-button" onClick={onClose}>
-                <div>Cancel</div>
-              </button>
-              <button type="submit" className="rainbow-button">
-                <div>{confirmText}</div>
-              </button>
-            </div>
-          </form>
+          <h2>{title}</h2>
+          <p>
+            {description}
+            {/* Are you sure you want to purchase <b>{gameName}</b> for{" "}
+            <b>{price}₴</b>? */}
+          </p>
+          <div className="confirm-modal-actions">
+            <button className="white-button" onClick={onClose}>
+              <div>Cancel</div>
+            </button>
+            <button className="rainbow-button" onClick={onConfirm}>
+              <div>Confirm</div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
