@@ -35,7 +35,7 @@ const ManageDevAndPub = () => {
   };
 
   return (
-    <div className="manage-devpub-container flux-border">
+    <div className="manage-container flux-border">
       <div
         style={{
           display: "flex",
@@ -46,7 +46,7 @@ const ManageDevAndPub = () => {
       >
         <h2 style={{ margin: 0 }}>Manage Developers & Publishers</h2>
         <button
-          className="create-devpub-btn"
+          className="create-manage-btn"
           onClick={() => setCreateModalOpen(true)}
           disabled={isCreating}
         >
@@ -54,7 +54,7 @@ const ManageDevAndPub = () => {
         </button>
       </div>
       <table
-        className="devpub-table"
+        className="manage-table"
         style={{ width: "100%", borderCollapse: "collapse" }}
       >
         <thead>

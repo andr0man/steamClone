@@ -35,7 +35,7 @@ const ManageGenres = () => {
   };
 
   return (
-    <div className="manage-genres-container flux-border">
+    <div className="manage-container flux-border" style={{ maxWidth: "600px" }}>
       <div
         style={{
           display: "flex",
@@ -46,7 +46,7 @@ const ManageGenres = () => {
       >
         <h2 style={{ margin: 0 }}>Manage Genres</h2>
         <button
-          className="create-genre-btn"
+          className="create-manage-btn"
           onClick={() => setCreateModalOpen(true)}
           disabled={isCreating}
         >
@@ -54,7 +54,7 @@ const ManageGenres = () => {
         </button>
       </div>
       <table
-        className="genres-table"
+        className="manage-table"
         style={{ width: "100%", borderCollapse: "collapse" }}
       >
         <thead>

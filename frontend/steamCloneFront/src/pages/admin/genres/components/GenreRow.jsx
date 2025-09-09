@@ -43,14 +43,14 @@ const GenreRow = ({ genre }) => {
         <td style={{ padding: "8px" }}>{genre.name}</td>
         <td style={{ padding: "8px", textAlign: "center" }}>
           <button
-            className="edit-genre-btn"
+            className="edit-manage-btn"
             style={{ marginRight: 8 }}
             onClick={() => setEditModalOpen(true)}
           >
             Edit
           </button>
           <button
-            className="delete-genre-btn"
+            className="delete-manage-btn"
             onClick={() => setDeleteModalOpen(true)}
           >
             Delete

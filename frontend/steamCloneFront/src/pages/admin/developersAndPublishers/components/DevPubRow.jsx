@@ -40,13 +40,13 @@ const DevPubRow = ({ devpub }) => {
         <td style={{ padding: "8px" }}>{devpub.name}</td>
         <td className="actions-td">
           <button
-            className="edit-devpub-btn"
+            className="edit-manage-btn"
             onClick={() => setEditModalOpen(true)}
           >
             Edit
           </button>
           <button
-            className="delete-devpub-btn"
+            className="delete-manage-btn"
             onClick={() => setDeleteModalOpen(true)}
           >
             Delete
