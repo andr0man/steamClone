@@ -1,4 +1,5 @@
 // GameCard.jsx
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./GameCard.scss";
 import { ConfirmModal } from "../../../../../components/Modals/ConfirmModal";
@@ -7,12 +8,13 @@ import {
   useIsGameBoughtQuery,
 } from "../../../../../services/game/gameApi";
 import { toast } from "react-toastify";
-import { useState } from "react";
 
 const GameCard = ({ game }) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteGame] = useDeleteGameMutation();
   const { data: { payload: isBought } = {} } = useIsGameBoughtQuery(game.id);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleDeleteGame = async (gameId) => {
     try {
@@ -25,9 +27,53 @@ const GameCard = ({ game }) => {
   };
 
   const navigate = useNavigate();
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [dropdownOpen]);
+
   return (
     <>
       <div className="game-card-dashboard flux-border">
+        <div className="game-card-dropdown-wrap">
+          <button
+            className="game-card-dropdown-btn"
+            onClick={() => setDropdownOpen((v) => !v)}
+            aria-label="More actions"
+          >
+            <span className="game-card-dots">Settings</span>
+          </button>
+          {dropdownOpen && (
+            <div className="game-card-dropdown-menu" ref={dropdownRef}>
+              <div
+                className="game-card-dropdown-section"
+                onClick={() => {
+                  setDropdownOpen(false);
+                  navigate(`/admin/games/items/${game.id}`);
+                }}
+              >
+                Item manage
+              </div>
+              <div
+                className="game-card-dropdown-section"
+                onClick={() => {
+                  setDropdownOpen(false);
+                  navigate(`/admin/games/access/${game.id}`);
+                }}
+              >
+                Access manage
+              </div>
+            </div>
+          )}
+        </div>
         <div className="game-card-img-wrap">
           <img
             src={game.coverImageUrl ?? "/common/gameNoImage.png"}
