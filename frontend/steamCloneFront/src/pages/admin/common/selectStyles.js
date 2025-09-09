@@ -27,6 +27,7 @@ const selectStyles = {
     color: isSelected ? "#fff" : "#fff",
     cursor: "pointer",
     fontFamily: "inherit",
+    zIndex: 100,
   }),
   multiValue: (styles) => ({
     ...styles,

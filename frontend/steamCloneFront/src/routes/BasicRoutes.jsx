@@ -30,6 +30,7 @@ import ManageGenres from "../pages/admin/genres/ManageGenres.jsx";
 import ManageGames from "../pages/admin/games/ManageGames.jsx";
 import GameCreate from "../pages/admin/games/gameCreate/GameCreate.jsx";
 import GameEdit from "../pages/admin/games/gameEdit/GameEdit.jsx";
+import ManageDevAndPub from "../pages/admin/developersAndPublishers/ManageDevAndPub.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -285,6 +286,16 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                   element={
                     <ProtectedRoute>
                       <GameEdit />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+              <Route path="developers-and-publishers">
+                <Route
+                  index
+                  element={
+                    <ProtectedRoute>
+                      <ManageDevAndPub />
                     </ProtectedRoute>
                   }
                 />

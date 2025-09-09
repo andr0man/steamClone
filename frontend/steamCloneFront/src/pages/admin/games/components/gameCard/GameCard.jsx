@@ -69,7 +69,7 @@ const GameCard = ({ game }) => {
                   navigate(`/admin/games/access/${game.id}`);
                 }}
               >
-                Access manage
+                Manage access
               </div>
             </div>
           )}

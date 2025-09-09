@@ -1,0 +1,106 @@
+.manage-devpub-container {
+  background: #181a20;
+  padding: 32px 24px;
+  max-width: 800px;
+  margin: 32px auto;
+}
+
+.devpub-table {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #23232a;
+  box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.08);
+}
+
+.devpub-table th {
+  background: #23232a;
+  color: #a178eb;
+  font-weight: 500;
+  padding: 12px 8px;
+  border-bottom: 2px solid #353545;
+}
+
+.devpub-table td {
+  background: #23232a;
+  color: #fff;
+  padding: 10px 8px;
+  border-bottom: 1px solid #353545;
+}
+
+.create-devpub-btn {
+  background: linear-gradient(90deg, #a178eb 0%, #66c0f4 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(161, 120, 235, 0.12);
+  transition: filter 0.2s, transform 0.2s;
+}
+.create-devpub-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.04);
+}
+
+.edit-devpub-btn {
+  background: linear-gradient(90deg, #74bff7 0%, #a0f885 100%);
+  color: #23232a;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 1px 6px 0 rgba(116, 191, 247, 0.1);
+  transition: filter 0.2s, transform 0.2s;
+}
+.edit-devpub-btn:hover {
+  filter: brightness(1.08);
+  transform: scale(1.04);
+}
+
+.manage-associated-users-btn {
+    background: linear-gradient(90deg, #dd8eff 0%, #8099ff 100%);
+    color: #23232a;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 1px 6px 0 rgba(142, 231, 255, 0.1);
+    transition: filter 0.2s, transform 0.2s;
+
+    &:hover {
+      filter: brightness(1.08);
+      transform: scale(1.04);
+    }
+}
+
+.delete-devpub-btn {
+  background: linear-gradient(90deg, #ff9584 0%, #dfed43 100%);
+  color: #23232a;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 1px 6px 0 rgba(255, 149, 132, 0.1);
+  transition: filter 0.2s, transform 0.2s;
+}
+.delete-devpub-btn:hover {
+  filter: brightness(1.08);
+  transform: scale(1.04);
+}
+
+.actions-td {
+    text-align: center;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}

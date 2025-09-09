@@ -66,9 +66,15 @@ const ManageGenres = () => {
           </tr>
         </thead>
         <tbody>
-          {genres.map((genre) => (
+          {genres.length > 0 ? genres.map((genre) => (
             <GenreRow key={genre.id} genre={genre} />
-          ))}
+          )) : (
+            <tr>
+              <td colSpan={2} style={{ textAlign: "center", padding: "8px" }}>
+                No genres available
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
       <GenreModal

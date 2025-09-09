@@ -8,6 +8,23 @@
     padding: 0;
     justify-content: end;
   }
+
+  button {
+    transition: filter 0.2s, transform 0.2s;
+
+    &:hover {
+      filter: brightness(1.1);
+      transform: scale(1.04);
+    }
+
+    &:disabled {
+      background: #3a3a45;
+      color: #7a7a85;
+      cursor: not-allowed;
+      filter: none;
+      transform: none;
+    }
+  }
 }
 
 .game-images-containers {

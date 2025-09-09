@@ -8,7 +8,7 @@ import {
 } from "../../../../../../services/gameLocalization/gameLocalizationApi";
 import Select from "react-select";
 import { toast } from "react-toastify";
-import selectStyles from "../../../components/common/selectStyles";
+import selectStyles from "../../../../common/selectStyles";
 
 const GameLocalizations = ({ game, gameId, onRefetch }) => {
   const {

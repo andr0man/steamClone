@@ -54,6 +54,16 @@ const SystemRequirements = ({
       )
     : null;
 
+  const isReadOnly = (title) => {
+    if (title === "Recommended") {
+      return !minimum;
+    }
+    if (title === "Minimum") {
+      return !!recommended;
+    }
+    return false;
+  };
+
   const renderSection = (
     title,
     hasReq,
@@ -71,49 +81,49 @@ const SystemRequirements = ({
           name="os"
           value={form?.os || ""}
           onChange={onChange}
-          readOnly={false}
+          readOnly={isReadOnly(title)}
         />
         <Row
           label="Processor"
           name="processor"
           value={form?.processor || ""}
           onChange={onChange}
-          readOnly={false}
+          readOnly={isReadOnly(title)}
         />
         <Row
           label="Memory"
           name="memory"
           value={form?.memory || ""}
           onChange={onChange}
-          readOnly={false}
+          readOnly={isReadOnly(title)}
         />
         <Row
           label="Graphics"
           name="graphics"
           value={form?.graphics || ""}
           onChange={onChange}
-          readOnly={false}
+          readOnly={isReadOnly(title)}
         />
         <Row
           label="DirectX"
           name="directX"
           value={form?.directX || ""}
           onChange={onChange}
-          readOnly={false}
+          readOnly={isReadOnly(title)}
         />
         <Row
           label="Storage"
           name="storage"
           value={form?.storage || ""}
           onChange={onChange}
-          readOnly={false}
+          readOnly={isReadOnly(title)}
         />
         <Row
           label="Network"
           name="network"
           value={form?.network || ""}
           onChange={onChange}
-          readOnly={false}
+          readOnly={isReadOnly(title)}
         />
       </div>
       <div className="req-actions">
@@ -122,12 +132,17 @@ const SystemRequirements = ({
             <button disabled={busy} onClick={onUpdate}>
               Update
             </button>
-            <button disabled={busy} className="danger" onClick={onDelete}>
+            <button disabled={isReadOnly(title)} className="danger" onClick={onDelete}>
               Delete
             </button>
           </>
         ) : (
-          <button disabled={busy} onClick={onCreate}>
+          <button
+            disabled={
+              isReadOnly(title) ? true : busy
+            }
+            onClick={onCreate}
+          >
             Create
           </button>
         )}

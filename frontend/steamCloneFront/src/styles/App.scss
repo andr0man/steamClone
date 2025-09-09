@@ -13,7 +13,7 @@
   color: #fff;
   font-family: inherit;
   position: relative;
-  z-index: 1;
+  // z-index: 1;
   text-align: center;
   text-transform: none;
   outline: none;
@@ -207,6 +207,7 @@
   display: inline-block;
   max-width: 70vw;
   min-width: 600px;
+  margin-top: 70px;
   filter: drop-shadow(0 10px 20px rgba(124, 114, 219, 0.20));
 }
 

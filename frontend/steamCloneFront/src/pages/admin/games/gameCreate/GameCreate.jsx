@@ -5,7 +5,7 @@ import "./GameCreate.scss";
 import "../components/common/StylesForGameForm.scss";
 import { toast } from "react-toastify";
 import Select from "react-select";
-import selectStyles from "../components/common/selectStyles";
+import selectStyles from "../../common/selectStyles";
 import { useGetAllDevelopersAndPublishersQuery } from "../../../../services/developerAndPublisher/developerAndPublisherApi";
 import { useNavigate } from "react-router-dom";
 
@@ -128,7 +128,7 @@ const GameCreate = () => {
               <label>Release Date</label>
               <input
                 name="releaseDate"
-                type="datetime-local"
+                type="date"
                 value={form.releaseDate}
                 onChange={handleChange}
                 required

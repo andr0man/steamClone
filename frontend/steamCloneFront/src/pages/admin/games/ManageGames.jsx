@@ -32,9 +32,9 @@ const ManageGames = () => {
       </div>
 
       <div className="games-grid">
-        {games.map((game) => (
+        {games.length > 0 ? games.map((game) => (
           <GameCard key={game.id} game={game} />
-        ))}
+        )) : <div>No games available</div>}
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ const AdminDashboard = () => {
         </div>
         <div className="admin-card flux-border">
           <h3>Manage Developers and Publishers</h3>
-          <Link to="/admin/developers" className="admin-btn">Go to Manage Page</Link>
+          <Link to="/admin/developers-and-publishers" className="admin-btn">Go to Manage Page</Link>
         </div>
         <div className="admin-card flux-border">
           <h3>Other Management</h3>

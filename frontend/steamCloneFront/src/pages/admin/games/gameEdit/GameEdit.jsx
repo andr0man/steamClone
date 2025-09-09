@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -20,6 +20,7 @@ import GameMainInformation from "./components/GameMainInformation";
 import GameScreenshots from "./components/GameScreenshots/GameScreenshots";
 import SystemRequirements from "./components/SystemRequirements/SystemRequirements";
 import "./GameEdit.scss";
+import { formatDateForInput } from "../../common/formatDateForInput";
 
 const GameEdit = () => {
   const navigate = useNavigate();
@@ -37,19 +38,6 @@ const GameEdit = () => {
   const [updateCoverImage, { isLoading: isUpdatingCoverImage }] =
     useUpdateCoverImageMutation();
 
-  const formatDateForInput = (dateStr) => {
-    if (!dateStr) return new Date().toISOString().slice(0, 16);
-    const date = new Date(dateStr);
-    // Get local ISO string without seconds/milliseconds
-    const pad = (n) => n.toString().padStart(2, "0");
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hours = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  };
-
   // form створюється після завантаження гри
   const [form, setForm] = useState(null);
   const [coverImagePreview, setCoverImagePreview] = useState(null);
@@ -66,7 +54,7 @@ const GameEdit = () => {
   const [minReqForm, setMinReqForm] = useState(null);
   const [recReqForm, setRecReqForm] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isGameLoading && game) {
       setForm({
         name: game.name,
