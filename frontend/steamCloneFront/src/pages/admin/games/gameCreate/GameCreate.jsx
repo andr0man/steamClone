@@ -47,7 +47,7 @@ const GameCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createGame({
+      const {payload: created} = await createGame({
         ...form,
         price: Number(form.price),
         releaseDate: new Date(form.releaseDate).toISOString(),
@@ -62,7 +62,7 @@ const GameCreate = () => {
         publisherId: "",
         genresIds: [],
       });
-      navigate("/admin/games");
+      navigate(`/admin/games/edit/${created.id}`);
     } catch (err) {
       toast.error(err?.data?.message || "Failed to create game");
     }
