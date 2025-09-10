@@ -1,19 +1,29 @@
 @import url("https://fonts.googleapis.com/css?family=Inter:500,400");
 
 .footer-container {
-  width: 1611px;
+  width: 100%;
+  max-width: 1611px;
   height: 353px;
+  margin: 0 auto;
+  padding-left: 50px;
+  padding-right: 50px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .footer-wrapper {
   position: relative;
-  width: 1607px;
+  width: 100%;
+  max-width: 1507px;
   height: 353px;
 }
 
 .frame-image {
   position: absolute;
-  width: 1569px;
+  width: 100%;
+  max-width: 1469px;
   height: 270px;
   top: 0;
   left: 0;
@@ -21,24 +31,27 @@
 
 .footer-content {
   display: flex;
-  width: 1488px;
+  width: 100%;
+  max-width: 1388px;
   align-items: center;
   justify-content: space-between;
   position: absolute;
   top: 121px;
-  left: 119px;
-  background-color: var(--bg, rgba(18, 18, 24, 1));
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
 }
 
 .footer-text-section {
   display: flex;
   width: 667px;
   align-items: flex-start;
-  gap: 884px;
+  gap: 24px;
   position: relative;
 }
 
 .footer-info {
+  margin-left: 40px;
   display: flex;
   flex-direction: column;
   width: 667px;
@@ -51,7 +64,7 @@
   position: relative;
   align-self: stretch;
   margin-top: -1px;
-  font-family: 'Inter', Helvetica;
+  font-family: "Inter", Helvetica;
   font-weight: var(--inter-common-font-weight, 400);
   color: var(--inactivegrey, rgba(165, 165, 165, 1));
   font-size: var(--inter-common-font-size, 16px);
@@ -72,7 +85,7 @@
   position: relative;
   width: fit-content;
   margin-top: -1px;
-  font-family: 'Inter', Helvetica;
+  font-family: "Inter", Helvetica;
   font-weight: 500;
   color: #ffffff;
   font-size: 15px;
@@ -80,7 +93,7 @@
   line-height: 22.5px;
   white-space: nowrap;
   cursor: pointer;
-  
+
   &:hover {
     opacity: 0.8;
   }
@@ -90,22 +103,22 @@
   margin-top: -1.5px;
   margin-bottom: -1.5px;
   width: 53.67px;
+  background-color: var(--bg, rgba(18, 18, 24, 1));
+}
+
+.to-the-page-start {
+  position: relative;
+  transform: rotate(90deg);
+  aspect-ratio: 0.73;
 }
 
 .asset-flux-image {
   position: absolute;
   width: 303px;
-  height: 294px;
-  top: 59px;
-  left: 1038px;
-}
-
-.to-the-page-start {
-  position: relative;
-  width: 54px;
-  height: 74px;
-  transform: rotate(90deg);
-  aspect-ratio: 0.73;
+  height: 250px;
+  top: 75px;
+  right: 100px;
+  left: auto;
 }
 
 .vector-image {
@@ -118,7 +131,6 @@
   aspect-ratio: 0.57;
 }
 
-
 :root {
   --bg: rgba(18, 18, 24, 1);
   --button-purpl: rgba(161, 120, 235, 1);
@@ -128,7 +140,7 @@
   --lightpurpl: rgba(146, 119, 197, 1);
   --red: rgba(225, 37, 37, 1);
   --white: rgba(255, 255, 255, 1);
-  
+
   --inter-common-font-family: "Inter", Helvetica;
   --inter-common-font-size: 16px;
   --inter-common-font-style: normal;

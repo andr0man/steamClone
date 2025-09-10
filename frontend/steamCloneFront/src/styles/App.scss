@@ -8,10 +8,6 @@
   color: variables.$ink;
 }
 
-.toast-container {
-  @extend .flux-border;
-}
-
 .tilted-component {
   transform: skewX(-(variables.$button-rotation-degree));
   color: #fff;
@@ -106,13 +102,6 @@
     background-size: 200% 200%;
     padding: 3px;
   }
-
-  // /* райдужний шар при ховері */
-  // &::before {
-  //   background: white;
-  //   background-size: 200% 100%;
-  //   background-position: 0 0;
-  // }
 }
 
 .rainbow-button {
@@ -191,4 +180,23 @@
     background-size: 200% 100%;
     background-position: 0 0;
   }
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18,13,28,.9);
+  display: grid;
+  place-items: center;
+  z-index: 1500;
+  color: #e0ddeb;
+  font-size: 1.4rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s ease, visibility .3s ease;
+}
+.loading-overlay.visible { opacity: 1; visibility: visible; }
+.loading-overlay::after {
+  content: ' .';
+  animation: dots 1.4s steps(3, end) infinite;
 }

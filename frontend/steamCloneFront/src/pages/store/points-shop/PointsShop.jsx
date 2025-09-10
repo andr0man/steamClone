@@ -54,7 +54,6 @@ const PointsShop = () => {
       setApiError("Not enough points to purchase this item.");
       return;
     }
-    console.log(`(API CALL) Purchasing item ${itemId} for ${price} points.`);
     setShopData(prev => ({...prev, userPoints: prev.userPoints - price}));
   };
 

@@ -22,4 +22,5 @@ public class GameVM
     public List<LocalizationVM> Localizations { get; set; } = new();
     public DeveloperAndPublisherVM Publisher { get; set; } = new();
     public DeveloperAndPublisherVM Developer { get; set; } = new();
+    public int? Discount { get; set; }
 }

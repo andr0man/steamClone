@@ -1,0 +1,16 @@
+.create-genre-btn {
+  background: linear-gradient(90deg, #a178eb 0%, #66c0f4 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(161, 120, 235, 0.12);
+  transition: filter 0.2s, transform 0.2s;
+}
+.create-genre-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.04);
+}

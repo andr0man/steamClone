@@ -1,0 +1,58 @@
+.localizations-panel {
+  padding: 18px 0;
+}
+
+.localizations-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.localizations-table .thead {
+  background: #1d1f25;
+  border: 1px solid #2b2d36;
+  border-radius: 6px;
+}
+.localizations-table .tbody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.localizations-table .tr {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr 1fr 1fr 1.5fr;
+  align-items: center;
+  justify-items: center;
+  padding: 10px 12px;
+  gap: 10px;
+  background: #23232a;
+  border: 1px solid #353545;
+  border-radius: 6px;
+}
+
+.localizations-table .th {
+  font-weight: 700;
+  color: #d6d6e0;
+}
+.localizations-table .td {
+  color: #e9e9f0;
+}
+.localizations-table .td.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.localizations-table button {
+  background: linear-gradient(90deg, #8ee7ff 0%, #80ffa6 100%);
+  color: #23232a;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.localizations-table button.danger {
+  background: linear-gradient(90deg, #ff9584 0%, #ffcf73 100%);
+}

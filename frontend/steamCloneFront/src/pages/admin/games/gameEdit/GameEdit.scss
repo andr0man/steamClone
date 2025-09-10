@@ -1,0 +1,43 @@
+.game-forms-containers {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .edit-topbar {
+    margin: 0;
+    padding: 0;
+    justify-content: end;
+  }
+}
+
+.game-images-containers {
+  display: flex;
+  gap: 20px;
+}
+
+h3 {
+  margin: 0;
+  padding: 0;
+}
+
+.sys-req-and-localizations {
+  display: flex;
+  gap: 20px;
+}
+
+.game-save-image {
+  background: linear-gradient(90deg, #8ee7ff 0%, #80ffa6 100%);
+  color: #23232a;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 15px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.header-with-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

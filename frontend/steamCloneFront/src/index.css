@@ -69,4 +69,5 @@ body {
 html {
   scrollbar-width: thin; /* Можливі значення: 'auto', 'thin', 'none' */
   scrollbar-color: #3a4f65 #101317; 
+  color-scheme: dark !important;
 }

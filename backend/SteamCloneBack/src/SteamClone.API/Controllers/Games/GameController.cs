@@ -91,4 +91,11 @@ public class GameController(IGameService gameService)
         var result = await gameService.BuyGameAsync(id, token);
         return GetResult(result);
     }
+
+    [HttpGet("is-game-bought/{gameId}")]
+    public async Task<IActionResult> IsGameBoughtAsync([FromRoute] string gameId, CancellationToken token = default)
+    {
+        var result = await gameService.IsGameBoughtAsync(gameId, token);
+        return GetResult(result);
+    }
 }

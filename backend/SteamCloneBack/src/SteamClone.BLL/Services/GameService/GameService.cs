@@ -11,11 +11,12 @@ using SteamClone.DAL.Repositories.LocalizationRepository;
 using SteamClone.DAL.Repositories.SystemRequirementsRepo;
 using SteamClone.DAL.Repositories.UserGameLibraryRepository;
 using SteamClone.DAL.Repositories.UserRepository;
+using SteamClone.DAL.Repositories.WishlistRepository;
 using SteamClone.Domain.Common.Interfaces;
-using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.Models.Games;
 using SteamClone.Domain.Models.UserGameLibraries;
+using SteamClone.Domain.Models.Wishlists;
 using SteamClone.Domain.ViewModels.Games;
 using SteamClone.Domain.ViewModels.Games.Localizations;
 using SteamClone.Domain.ViewModels.Games.SystemReq;
@@ -35,7 +36,8 @@ public class GameService(
     IUserRepository userRepository,
     IUserProvider userProvider,
     IBalanceRepository balanceRepository,
-    IUserGameLibraryRepository userGameLibraryRepository)
+    IUserGameLibraryRepository userGameLibraryRepository,
+    IWishlistRepository wishlistRepository)
     : IGameService
 {
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
@@ -130,7 +132,7 @@ public class GameService(
     public async Task<ServiceResponse> UpdateAsync(string id, UpdateGameVM model,
         CancellationToken cancellationToken = default)
     {
-        var existingGame = await gameRepository.GetByIdAsync(id, cancellationToken, asNoTracking: true);
+        var existingGame = await gameRepository.GetByIdAsync(id, cancellationToken);
 
         if (existingGame == null)
         {
@@ -160,7 +162,8 @@ public class GameService(
         var updatedGame = mapper.Map(model, existingGame);
         updatedGame.ReleaseDate = model.ReleaseDate ?? DateTime.UtcNow;
 
-        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken, asNoTracking: true) == null)
+        if (await developerAndPublisherRepository.GetByIdAsync(model.DeveloperId, cancellationToken,
+                asNoTracking: true) == null)
         {
             return ServiceResponse.NotFoundResponse($"Developer with id '{model.DeveloperId}' not found");
         }
@@ -191,6 +194,8 @@ public class GameService(
                 return ServiceResponse.ForbiddenResponse("You don't have permission to update this game");
             }
 
+            DeleteImagesByGame(game);
+
             await gameRepository.DeleteAsync(id, cancellationToken);
             return ServiceResponse.OkResponse("Game deleted successfully");
         }
@@ -198,6 +203,19 @@ public class GameService(
         {
             throw new Exception(e.Message);
         }
+    }
+
+    private void DeleteImagesByGame(Game game)
+    {
+        foreach (var gameScreenshotUrl in game.ScreenshotUrls)
+        {
+            imageService.DeleteImage(Settings.ImagesPathSettings.GameScreenshotImagePath,
+                gameScreenshotUrl.Split("/").Last());
+        }
+
+        if (game.CoverImageUrl != null)
+            imageService.DeleteImage(Settings.ImagesPathSettings.GameCoverImagePath,
+                game.CoverImageUrl.Split("/").Last());
     }
 
     public async Task<ServiceResponse> AddSystemRequirementsAsync(CreateUpdateSystemReqVm model,
@@ -577,7 +595,14 @@ public class GameService(
 
         try
         {
-            if (!(await balanceRepository.WithdrawAsync(buyerId, game.Price, token)))
+            if (await wishlistRepository.GetByUserIdAndGameIdAsync(buyerId, game.Id, token, asNoTracking: true) != null)
+            {
+                await wishlistRepository.DeleteAsync(new Wishlist {GameId = game.Id, UserId = buyerId}, token);
+            }
+            
+            decimal amountToWithdraw = game.Discount != null ? game.Price * (1 - (decimal)game.Discount / 100) : game.Price;
+            
+            if (!(await balanceRepository.WithdrawAsync(buyerId, amountToWithdraw, token)))
             {
                 return ServiceResponse.BadRequestResponse("Not enough money");
             }
@@ -594,6 +619,18 @@ public class GameService(
         {
             throw new Exception(e.Message);
         }
+    }
+
+    public async Task<ServiceResponse> IsGameBoughtAsync(string gameId, CancellationToken token)
+    {
+        if (await gameRepository.GetByIdAsync(gameId, token, true) == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        var isBought = (await userGameLibraryRepository.GetAllByGameIdAsync(gameId, token)).Any();
+
+        return ServiceResponse.OkResponse("Game bought status retrieved successfully", isBought);
     }
 
     private async Task<ServiceResponse> UpdateGameAsync(Game game, string successMessage,
@@ -616,6 +653,10 @@ public class GameService(
             return ServiceResponse.BadRequestResponse($"Invalid requirement type '{model.RequirementType}'");
         if (Enum.GetValues<RequirementPlatform>().All(x => x != model.Platform))
             return ServiceResponse.BadRequestResponse($"Invalid platform '{model.Platform}'");
+        if (model is { 
+                DirectX: "", Graphics: "", Memory: "", 
+                Network: "", OS: "", Processor: "", Storage: ""})
+            return ServiceResponse.BadRequestResponse("At least one requirement must be specified");
         return null;
     }
 

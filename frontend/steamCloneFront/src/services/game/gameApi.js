@@ -1,25 +1,19 @@
-import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import APP_ENV from "../../env";
+import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
-const getToken = () => {
-  const token = localStorage.getItem("accessToken");
-  return token;
-};
 export const gameApi = createApi({
   reducerPath: "gameApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${APP_ENV.API_URL}game/`,
-    prepareHeaders: (headers) => {
-      const token = getToken();
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithRefresh("/game/"),
   tagTypes: ["Game"],
   endpoints: (builder) => ({
+    getAllGames: builder.query({
+      query: () => "",
+      providesTags: ["Game"],
+    }),
+    isGameBought: builder.query({
+      query: (gameId) => `is-game-bought/${gameId}`,
+      providesTags: ["Game"],
+    }),
     getGameById: builder.query({
       query: (id) => `${id}`,
       providesTags: ["Game"],
@@ -31,7 +25,56 @@ export const gameApi = createApi({
       }),
       invalidatesTags: ["Game"],
     }),
+    createGame: builder.mutation({
+      query: (gameData) => ({
+        url: "",
+        method: "POST",
+        body: gameData,
+      }),
+      invalidatesTags: ["Game"],
+    }),
+    updateGame: builder.mutation({
+      query: (gameData) => ({
+        url: `${gameData.id}`,
+        method: "PUT",
+        body: gameData,
+      }),
+      invalidatesTags: ["Game"],
+    }),
+    deleteGame: builder.mutation({
+      query: (id) => ({
+        url: `${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Game"],
+    }),
+    updateCoverImage: builder.mutation({
+      query: ({ gameId, formData }) => ({
+        url: `update-cover-image/${gameId}`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: ["Game"],
+    }),
+    updateScreenshots: builder.mutation({
+      query: ({ gameId, formData }) => ({
+        url: `update-screenshots-images/${gameId}`,
+        method: "PATCH",
+        body: formData,
+      }),
+      invalidatesTags: ["Game"],
+    }),
   }),
 });
 
-export const { useGetGameByIdQuery, useBuyGameMutation } = gameApi;
+export const {
+  useGetGameByIdQuery,
+  useBuyGameMutation,
+  useCreateGameMutation,
+  useUpdateGameMutation,
+  useDeleteGameMutation,
+  useGetAllGamesQuery,
+  useIsGameBoughtQuery,
+  useUpdateCoverImageMutation,
+  useUpdateScreenshotsMutation,
+} = gameApi;
