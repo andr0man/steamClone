@@ -11,7 +11,6 @@ const ItemModal = ({
   item = null,
   isLoading = false,
 }) => {
-  console.log("ItemModal rendered with item:", item);
   const [name, setName] = useState(item?.name ?? "");
   const [description, setDescription] = useState(item?.description ?? "");
   const [imageFile, setImageFile] = useState(null);

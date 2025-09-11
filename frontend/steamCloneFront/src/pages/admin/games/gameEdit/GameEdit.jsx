@@ -198,7 +198,6 @@ const GameEdit = () => {
   };
 
   const handleChange = (e) => {
-    console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };

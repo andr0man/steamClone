@@ -3,10 +3,12 @@ import { ConfirmModal } from "../../../../../components/Modals/ConfirmModal";
 import { useGetUserByIdQuery } from "../../../../../services/user/userApi";
 import { useApproveMutation } from "../../../../../services/game/gameApi";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ApproveGameRow = ({ game }) => {
   const { data: { payload: user } = {} } = useGetUserByIdQuery(game.createdBy);
   const [approveGame] = useApproveMutation();
+  const navigate = useNavigate();
 
   const [isApproveModalOpen, setApproveModalOpen] = useState(false);
   const [isRejectModalOpen, setRejectModalOpen] = useState(false);
@@ -49,6 +51,7 @@ const ApproveGameRow = ({ game }) => {
           >
             Approve
           </button>
+          <button className="preview-manage-btn" onClick={() => navigate(`preview/${game.id}`)}>Preview</button>
         </td>
       </tr>
       <ConfirmModal

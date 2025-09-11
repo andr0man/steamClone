@@ -12,6 +12,7 @@ import ManageDevAndPub from "../pages/admin/developersAndPublishers/ManageDevAnd
 import ManageDevAndPubAssociatedUsers from "../pages/admin/developersAndPublishers/associatedUsers/ManageDnPAssociatedUsers";
 import ManageApproveGames from "../pages/admin/games/approveGames/ManageApproveGames";
 import ManageApproveDevPub from "../pages/admin/developersAndPublishers/approveDevPub/ManageApproveDevPub";
+import GamePreviewForApprove from "../pages/admin/games/approveGames/components/GamePreviewForApprove";
 
 const adminRoutes = [
   <Route path="/admin" key="admin">
@@ -77,6 +78,14 @@ const adminRoutes = [
         element={
           <ProtectedRoute>
             <ManageApproveGames />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="approve/preview/:gameId"
+        element={
+          <ProtectedRoute>
+            <GamePreviewForApprove />
           </ProtectedRoute>
         }
       />

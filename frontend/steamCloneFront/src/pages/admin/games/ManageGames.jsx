@@ -27,8 +27,8 @@ const ManageGames = () => {
       >
         <h2 style={{ marginBottom: 24 }}>Manage Games</h2>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button className="approve-game-btn" onClick={() => navigate("/admin/games/approve")}>Games to approve</button>
-          <button onClick={() => navigate("/admin/games/create")} className="create-game-btn">
+          <button className="approve-game-btn" onClick={() => navigate("approve")}>Games to approve</button>
+          <button onClick={() => navigate("create")} className="create-game-btn">
             Create New Game
           </button>
         </div>

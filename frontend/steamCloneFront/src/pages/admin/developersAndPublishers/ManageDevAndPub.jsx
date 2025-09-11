@@ -53,7 +53,7 @@ const ManageDevAndPub = () => {
       >
         <h2 style={{ margin: 0 }}>Manage Developers & Publishers</h2>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button className="approve-game-btn" onClick={() => navigate("/admin/developers-and-publishers/approve")}>To approve</button>
+          <button className="approve-game-btn" onClick={() => navigate("approve")}>To approve</button>
           <button
             className="create-manage-btn"
             onClick={() => setCreateModalOpen(true)}

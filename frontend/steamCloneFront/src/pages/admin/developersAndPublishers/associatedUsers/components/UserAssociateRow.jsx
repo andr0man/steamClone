@@ -8,7 +8,6 @@ const UserAssociateRow = ({ user }) => {
   const { devpubId } = useParams();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [removeUser] = useRemoveAssociatedUserMutation();
-  console.log(user);
 
   const handleDelete = async () => {
     try {

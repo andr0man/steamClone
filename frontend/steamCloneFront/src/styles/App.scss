@@ -290,6 +290,24 @@
     transform: scale(1.04);
   }
 
+  .preview-manage-btn {
+    background: linear-gradient(90deg, #5c54a1 0%, #dba7f7 100%);
+    color: #23232a;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 1px 6px 0 rgba(102, 192, 244, 0.1);
+    transition: filter 0.2s, transform 0.2s;
+
+    &:hover {
+      filter: brightness(1.08);
+      transform: scale(1.04);
+    }
+  }
+
   .edit-manage-btn {
     background: linear-gradient(90deg, #74bff7 0%, #a0f885 100%);
     color: #23232a;

@@ -1,53 +1,64 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ConfirmModal } from "../../components/Modals/ConfirmModal";
-import "../../styles/App.scss";
-import { useGetAllLanguagesQuery } from "../../services/language/languageApi";
+import { ConfirmModal } from "../../../../../components/Modals/ConfirmModal";
 import {
+  useApproveMutation,
   useGetGameByIdQuery,
-  useBuyGameMutation,
-} from "../../services/game/gameApi";
+} from "../../../../../services/game/gameApi";
+import { useGetAllLanguagesQuery } from "../../../../../services/language/languageApi";
+import { useGetUserByIdQuery } from "../../../../../services/user/userApi";
+import "../../../../../styles/App.scss";
+import { ImageCarousel } from "../../../../game/components/ImageCarousel";
+import { SvgComponentMainPanel } from "../../../../game/components/SvgComponentMainPanel";
+import "../../../../game/gamePage.scss";
 import checkMark from "/game-page/checkmark.svg";
-import {
-  useAddToWishlistMutation,
-  useGetIsInWishlistQuery,
-  useRemoveFromWishlistMutation,
-} from "../../services/wishlist/wishlistApi";
-import { SvgComponentMainPanel } from "./components/SvgComponentMainPanel";
-import "./gamePage.scss";
-import { useGetIsInGameLibraryQuery } from "../../services/gameLibrary/gameLibraryApi";
-import { ImageCarousel } from "./components/ImageCarousel";
 
-export const GamePreviewForApprove = () => {
+const GamePreviewForApprove = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
 
-  const { data: gameData, isLoading } = useGetGameByIdQuery(gameId);
-  const { data: isInWishlistData, isLoading: isLoadingWishlist } =
-    useGetIsInWishlistQuery(gameId);
-  const {
-    data: isInLibraryData,
-    isLoading: isLoadingLibrary,
-    refetch: refetchIsInLibrary,
-  } = useGetIsInGameLibraryQuery(gameId);
+  const { data: {payload: gameById} = {}, isLoading } = useGetGameByIdQuery(gameId);
   const {
     data: { payload: languages } = { payload: [] },
     isLoading: languagesLoading,
   } = useGetAllLanguagesQuery();
 
-  const [addToWishlist] = useAddToWishlistMutation();
-  const [removeFromWishlist] = useRemoveFromWishlistMutation();
-  const [buyGame, result] = useBuyGameMutation();
+  const [approveGame] = useApproveMutation();
 
-  // Стан для модального вікна підтвердження купівлі
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isApproveModalOpen, setApproveModalOpen] = useState(false);
+  const [isRejectModalOpen, setRejectModalOpen] = useState(false);
 
-  if (isLoading && isLoadingWishlist && isLoadingLibrary && languagesLoading) {
+  const handleApprove = () => {
+    try {
+      approveGame({ id: gameById.id, isApproved: true }).unwrap();
+      setApproveModalOpen(false);
+      toast.success("Game approved successfully");
+      navigate(-1);
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to approve game");
+    }
+  };
+
+  const handleReject = () => {
+    try {
+      debugger;
+      approveGame({ id: gameById.id, isApproved: false }).unwrap();
+      setRejectModalOpen(false);
+      toast.success("Game rejected successfully");
+      navigate(-1);
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to reject game");
+    }
+  };
+
+  const { data: { payload: user } = {} } = useGetUserByIdQuery(gameById?.createdBy);
+
+   if (isLoading && languagesLoading) {
     return <div className="loading-overlay visible">Loading data...</div>;
   }
 
-  if (!gameData || !isInWishlistData || !isInLibraryData) {
+  if (!gameById) {
     return (
       <h1
         style={{
@@ -62,8 +73,6 @@ export const GamePreviewForApprove = () => {
     );
   }
 
-  const gameById = gameData.payload;
-
   const minimumRequirements = Array.isArray(gameById.systemRequirements)
     ? gameById.systemRequirements.find(
         (req) => req.requirementType === "Minimum" && req.platform === "Windows"
@@ -75,25 +84,6 @@ export const GamePreviewForApprove = () => {
           req.requirementType === "Recommended" && req.platform === "Windows"
       )
     : null;
-
-  const handleBuyingGame = async (gameId) => {
-    try {
-      await buyGame(gameId).unwrap();
-      setIsModalOpen(false);
-      await refetchIsInLibrary();
-      toast.success("Thank you for your purchase!");
-    } catch (err) {
-      const message =
-        err?.data?.message ||
-        err?.message ||
-        "Purchase failed. Please try again.";
-      toast.error(message);
-    }
-  };
-
-  const calculateDiscountedPrice = (price, discount) => {
-    return (price - (price * discount) / 100).toFixed(0);
-  };
 
   const renderSystemRequirements = (title, form) => (
     <>
@@ -206,30 +196,18 @@ export const GamePreviewForApprove = () => {
             <div className="game-description">{gameById.description}</div>
 
             <div style={{ display: "flex", justifyContent: "center" }}>
-              {isInLibraryData.payload ? (
-                <div className="white-outline-for-text" disabled>
-                  <div>In your Library</div>
-                </div>
-              ) : (
-                <button
-                  className={
-                    isInWishlistData.payload ? "white-button" : "rainbow-button"
-                  }
-                  onClick={() => {
-                    if (isInWishlistData.payload) {
-                      removeFromWishlist(gameId);
-                    } else {
-                      addToWishlist(gameId);
-                    }
-                  }}
-                >
-                  <div>
-                    {isInWishlistData.payload
-                      ? "Remove from wishlist"
-                      : "Add to wishlist"}
-                  </div>
-                </button>
-              )}
+              <button
+                className="rainbow-button"
+                onClick={() => {setApproveModalOpen(true)}}
+              >
+                <div>Approve</div>
+              </button>
+              <button
+                className="white-button"
+                onClick={() => {setRejectModalOpen(true)}}
+              >
+                <div>Reject</div>
+              </button>
             </div>
           </div>
         </div>
@@ -299,6 +277,32 @@ export const GamePreviewForApprove = () => {
           </div>
         </div>
       </div>
+      <ConfirmModal
+        title={"Approve Game"}
+        description={
+          <>
+            Are you sure you want to approve the game{" "}
+            <strong>{gameById.name}</strong> by <strong>{user?.email}</strong>?
+          </>
+        }
+        isOpen={isApproveModalOpen}
+        onClose={() => setApproveModalOpen(false)}
+        onConfirm={handleApprove}
+      />
+      <ConfirmModal
+        title={"Reject Game"}
+        description={
+          <>
+            Are you sure you want to reject the game{" "}
+            <strong>{gameById.name}</strong> by <strong>{user?.email}</strong>?
+          </>
+        }
+        isOpen={isRejectModalOpen}
+        onClose={() => setRejectModalOpen(false)}
+        onConfirm={handleReject}
+      />
     </>
   );
 };
+
+export default GamePreviewForApprove;
