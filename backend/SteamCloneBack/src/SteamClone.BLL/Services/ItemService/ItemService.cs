@@ -40,16 +40,16 @@ public class ItemService(
     {
         var item = mapper.Map<Item>(model);
 
-        if (!await itemRepository.IsUniqueNameAsync(model.Name, cancellationToken))
-        {
-            return ServiceResponse.BadRequestResponse($"Name '{model.Name}' already used");
-        }
-
         var game = await gameRepository.GetByIdAsync(model.GameId, cancellationToken);
         
         if (game == null)
         {
             return ServiceResponse.NotFoundResponse("Game not found");
+        }
+        
+        if (!await itemRepository.IsUniqueNameAsync(model.Name, game.Id, cancellationToken))
+        {
+            return ServiceResponse.BadRequestResponse($"Name '{model.Name}' already used");
         }
 
         if (!await HasAccessToGameAsync(game))
