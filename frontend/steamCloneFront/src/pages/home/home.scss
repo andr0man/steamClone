@@ -207,7 +207,18 @@ body {
   .see-all { color: $accent; text-decoration: none; font: 800 14px/1 'Inter'; }
 }
 
-.store-section { margin: 34px 0 46px; }
+.store-section {
+  margin: 34px 0 46px; 
+  .scroll-row__track.two-rows {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  }
+
+  .scroll-row__track .row {
+  overflow: visible;
+  }
+  }
 
 .row.grid.four  { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 1.4vw, 22px); margin-bottom: 22px; }
 .row.grid.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 1.8vw, 35px); }
