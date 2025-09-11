@@ -12,7 +12,7 @@ namespace SteamClone.DAL.Data.Configurations.Auth.Users
 
             
             builder.HasOne(f => f.Sender)
-                .WithMany() 
+                .WithMany(f => f.SentFriendships) 
                 .HasForeignKey(f => f.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
