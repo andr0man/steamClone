@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetAllGamesQuery } from "../../../services/game/gameApi";
+import { useGetAllGamesQuery, useGetWithoutApprovalQuery } from "../../../services/game/gameApi";
 import GameCard from "./components/gameCard/GameCard";
 import "./components/gameCard/GameCard.scss";
 import "../../../styles/App.scss";
@@ -26,9 +26,12 @@ const ManageGames = () => {
         }}
       >
         <h2 style={{ marginBottom: 24 }}>Manage Games</h2>
-        <button onClick={() => navigate("/admin/games/create")} className="create-game-btn">
-          Create New Game
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button className="approve-game-btn" onClick={() => navigate("/admin/games/approve")}>Games to approve</button>
+          <button onClick={() => navigate("/admin/games/create")} className="create-game-btn">
+            Create New Game
+          </button>
+        </div>
       </div>
 
       <div className="games-grid">

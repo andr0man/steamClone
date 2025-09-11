@@ -7,8 +7,10 @@ import {
 import "./ManageDevAndPub.scss";
 import DevPubRow from "./components/DevPubRow";
 import { DevPubModal } from "./components/modal/DevPubModal";
+import { useNavigate } from "react-router-dom";
 
 const ManageDevAndPub = () => {
+  const navigate = useNavigate();
   const {
     data: { payload: devAndPubList } = { payload: [] },
     error,
@@ -50,13 +52,16 @@ const ManageDevAndPub = () => {
         }}
       >
         <h2 style={{ margin: 0 }}>Manage Developers & Publishers</h2>
-        <button
-          className="create-manage-btn"
-          onClick={() => setCreateModalOpen(true)}
-          disabled={isCreating}
-        >
-          {isCreating ? "Creating..." : "Create Developer/Publisher"}
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button className="approve-game-btn" onClick={() => navigate("/admin/developers-and-publishers/approve")}>To approve</button>
+          <button
+            className="create-manage-btn"
+            onClick={() => setCreateModalOpen(true)}
+            disabled={isCreating}
+          >
+            {isCreating ? "Creating..." : "Create"}
+          </button>
+        </div>
       </div>
       <table
         className="manage-table"

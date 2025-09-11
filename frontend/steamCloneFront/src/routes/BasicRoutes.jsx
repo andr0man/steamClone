@@ -19,30 +19,13 @@ import PointsShop from "../pages/store/points-shop/PointsShop.jsx";
 import News from "../pages/store/news/News.jsx";
 import Search from "../pages/home/search/Search.jsx";
 import { GamePage } from "../pages/game/GamePage.jsx";
-import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
 import Purchase from "../pages/store/purchase/Purchase.jsx";
 import MarketHistory from "../pages/market/history/MarketHistory.jsx";
 import ForgotPassword from "../pages/auth/login/ForgotPassword.jsx";
 import Chat from "../pages/chat/Chat.jsx";
 import { useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
-import ManageGenres from "../pages/admin/genres/ManageGenres.jsx";
-import ManageGames from "../pages/admin/games/ManageGames.jsx";
-import GameCreate from "../pages/admin/games/gameCreate/GameCreate.jsx";
-import GameEdit from "../pages/admin/games/gameEdit/GameEdit.jsx";
-import ManageDevAndPub from "../pages/admin/developersAndPublishers/ManageDevAndPub.jsx";
-import ManageGameItems from "../pages/admin/gameItems/ManageGameItems.jsx";
-import ManageGameAssociatedUsers from "../pages/admin/games/associatedUsers/ManageGameAssociatedUsers.jsx";
-import ManageDevAndPubAssociatedUsers from "../pages/admin/developersAndPublishers/associatedUsers/ManageDnPAssociatedUsers.jsx";
-
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("accessToken");
-  const user = token ? jwtDecode(token) : null;
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-};
+import adminRoutes from "./AdminRoutes.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
 
 const UnderConstructionPage = ({ pageName }) => (
   <div style={{ padding: "50px", textAlign: "center", color: "#fff" }}>
@@ -250,84 +233,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
               }
             />
 
-            <Route path="/admin">
-              <Route
-                path="dashboard"
-                element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="genres"
-                element={
-                  <ProtectedRoute>
-                    <ManageGenres />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="games">
-                <Route
-                  index
-                  element={
-                    <ProtectedRoute>
-                      <ManageGames />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="create"
-                  element={
-                    <ProtectedRoute>
-                      <GameCreate />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="edit/:gameId"
-                  element={
-                    <ProtectedRoute>
-                      <GameEdit />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="items/:gameId"
-                  element={
-                    <ProtectedRoute>
-                      <ManageGameItems />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="associated-users/:gameId"
-                  element={
-                    <ProtectedRoute>
-                      <ManageGameAssociatedUsers />
-                    </ProtectedRoute>
-                  }
-                />
-              </Route>
-              <Route path="developers-and-publishers">
-                <Route
-                  index
-                  element={
-                    <ProtectedRoute>
-                      <ManageDevAndPub />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="associated-users/:devpubId"
-                  element={
-                    <ProtectedRoute>
-                      <ManageDevAndPubAssociatedUsers />
-                    </ProtectedRoute>
-                  }
-                />
-              </Route>
-            </Route>
+            {adminRoutes}
 
             <Route
               path="/"

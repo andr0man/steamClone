@@ -19,7 +19,7 @@ import "./gamePage.scss";
 import { useGetIsInGameLibraryQuery } from "../../services/gameLibrary/gameLibraryApi";
 import { ImageCarousel } from "./components/ImageCarousel";
 
-export const GamePage = () => {
+export const GamePreviewForApprove = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
 
@@ -243,47 +243,6 @@ export const GamePage = () => {
             </div>
           </div>
           <div className="game-bottom-right-panel">
-            <div className="buy-game-panel flux-border">
-              <h3>Buy Game</h3>
-              <div className="buy-game-button-section">
-                {gameById.discount ? (
-                  <div className="discount-panel">
-                    <div className="discount-badge">-{gameById.discount}%</div>
-                    <div className="discount-price">
-                      <span className="original-price">{gameById.price}₴</span>
-                      <span className="sale-price">
-                        {calculateDiscountedPrice(
-                          gameById.price,
-                          gameById.discount
-                        )}
-                        ₴
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <span className="no-discount-price">
-                    <b>{gameById.price}₴</b>
-                  </span>
-                )}
-                <div>
-                  {isInLibraryData.payload ? (
-                    <div
-                      className="rainbow-button"
-                      onClick={() => navigate("/library")}
-                    >
-                      <div>Go To Library</div>
-                    </div>
-                  ) : (
-                    <button
-                      className="rainbow-button"
-                      onClick={() => setIsModalOpen(true)}
-                    >
-                      <div>Purchase</div>
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
             <div className="system-requirements flux-border">
               <h3 className="h3-with-bottom-border">System Requirements</h3>
               <div className="system-requirements-content">
@@ -340,23 +299,6 @@ export const GamePage = () => {
           </div>
         </div>
       </div>
-      <ConfirmModal
-        title="Confirm Purchase"
-        description={
-          <>
-            Are you sure you want to purchase <b>{gameById.name}</b> for{" "}
-            <b>
-              {calculateDiscountedPrice(gameById.price, gameById.discount)}₴
-            </b>
-            ?
-          </>
-        }
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={() => {
-          handleBuyingGame(gameById.id);
-        }}
-      />
     </>
   );
 };

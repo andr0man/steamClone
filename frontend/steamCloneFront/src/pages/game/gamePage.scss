@@ -1,5 +1,5 @@
-@use "../../styles/variables";
-@import "../../styles/App.scss";
+@use "../../styles/variables" as variables;
+@use "../../styles/App.scss" as *;
 
 // --- Карусель скріншотів ---
 .screenshots-carousel {
