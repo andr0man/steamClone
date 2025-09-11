@@ -32,6 +32,8 @@ import GameCreate from "../pages/admin/games/gameCreate/GameCreate.jsx";
 import GameEdit from "../pages/admin/games/gameEdit/GameEdit.jsx";
 import ManageDevAndPub from "../pages/admin/developersAndPublishers/ManageDevAndPub.jsx";
 import ManageGameItems from "../pages/admin/gameItems/ManageGameItems.jsx";
+import ManageGameAssociatedUsers from "../pages/admin/games/associatedUsers/ManageGameAssociatedUsers.jsx";
+import ManageDevAndPubAssociatedUsers from "../pages/admin/developersAndPublishers/associatedUsers/ManageDnPAssociatedUsers.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -298,6 +300,14 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="associated-users/:gameId"
+                  element={
+                    <ProtectedRoute>
+                      <ManageGameAssociatedUsers />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
               <Route path="developers-and-publishers">
                 <Route
@@ -305,6 +315,14 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                   element={
                     <ProtectedRoute>
                       <ManageDevAndPub />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="associated-users/:devpubId"
+                  element={
+                    <ProtectedRoute>
+                      <ManageDevAndPubAssociatedUsers />
                     </ProtectedRoute>
                   }
                 />

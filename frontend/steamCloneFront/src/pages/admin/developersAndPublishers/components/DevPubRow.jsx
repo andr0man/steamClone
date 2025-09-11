@@ -6,8 +6,10 @@ import {
 import { ConfirmModal } from "../../../../components/Modals/ConfirmModal";
 import { toast } from "react-toastify";
 import { DevPubModal } from "./modal/DevPubModal";
+import { useNavigate } from "react-router-dom";
 
 const DevPubRow = ({ devpub }) => {
+  const navigate = useNavigate();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [deleteDevPub] = useDeleteDeveloperAndPublisherMutation();
@@ -51,7 +53,16 @@ const DevPubRow = ({ devpub }) => {
           >
             Delete
           </button>
-          <button className="manage-associated-users-btn">Manage access</button>
+          <button
+            className="manage-associated-users-btn"
+            onClick={() =>
+              navigate(
+                `/admin/developers-and-publishers/associated-users/${devpub.id}`
+              )
+            }
+          >
+            Manage access
+          </button>
         </td>
       </tr>
       <ConfirmModal

@@ -155,7 +155,7 @@ public class DeveloperAndPublisherService(
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
         }
 
-        if (await IsOwnerAsync(developerAndPublisherId, token))
+        if (!await IsOwnerAsync(developerAndPublisherId, token))
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to associate users");
         }
@@ -182,7 +182,7 @@ public class DeveloperAndPublisherService(
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
         }
 
-        if (await IsOwnerAsync(developerAndPublisherId, token))
+        if (!await IsOwnerAsync(developerAndPublisherId, token))
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to remove associated users");
         }

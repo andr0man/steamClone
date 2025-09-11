@@ -10,8 +10,24 @@ export const gameApi = createApi({
       query: () => "",
       providesTags: ["Game"],
     }),
+    getIsOwner: builder.query({
+      query: (gameId) => `is-owner/${gameId}`,
+      providesTags: ["Game"],
+    }),
+    getAssociatedUsers: builder.query({
+      query: (gameId) => `get-associated-users/${gameId}`,
+      providesTags: ["Game"],
+    }),
     isGameBought: builder.query({
       query: (gameId) => `is-game-bought/${gameId}`,
+      providesTags: ["Game"],
+    }),
+    byAssociatedUser: builder.query({
+      query: () => "by-associated-user",
+      providesTags: ["Game"],
+    }),
+    getWithoutApproval: builder.query({
+      query: () => "get-without-approval",
       providesTags: ["Game"],
     }),
     getGameById: builder.query({
@@ -64,6 +80,27 @@ export const gameApi = createApi({
       }),
       invalidatesTags: ["Game"],
     }),
+    associateUser: builder.mutation({
+      query: ({ gameId, userId }) => ({
+        url: `associate-user?gameId=${gameId}&userId=${userId}`,
+        method: "PATCH"
+      }),
+      invalidatesTags: ["Game"],
+    }),
+    removeAssociatedUser: builder.mutation({
+      query: ({ gameId, userId }) => ({
+        url: `remove-associated-user?gameId=${gameId}&userId=${userId}`,
+        method: "PATCH"
+      }),
+      invalidatesTags: ["Game"],
+    }),
+    approve: builder.mutation({
+      query: ({ id, isApproved }) => ({
+        url: `approve?id=${id}&isApproved=${isApproved}`,
+        method: "PATCH"
+      }),
+      invalidatesTags: ["Game"],
+    }),
   }),
 });
 
@@ -77,4 +114,13 @@ export const {
   useIsGameBoughtQuery,
   useUpdateCoverImageMutation,
   useUpdateScreenshotsMutation,
+  
+  useGetIsOwnerQuery,
+  useGetAssociatedUsersQuery,
+  useAssociateUserMutation,
+  useRemoveAssociatedUserMutation,
+  useByAssociatedUserQuery,
+
+  useGetWithoutApprovalQuery,
+  useApproveMutation,
 } = gameApi;

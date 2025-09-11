@@ -79,6 +79,7 @@ export const {
   useGetProfileQuery,
   useGetUserByIdQuery,
   useGetUserByEmailQuery,
+  useLazyGetUserByEmailQuery,
   useGetUserByNicknameQuery,
   useGetAllUsersQuery,
   useGetPagedUsersQuery,

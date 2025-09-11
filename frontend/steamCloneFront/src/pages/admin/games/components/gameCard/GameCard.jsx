@@ -66,7 +66,7 @@ const GameCard = ({ game }) => {
                 className="game-card-dropdown-section"
                 onClick={() => {
                   setDropdownOpen(false);
-                  navigate(`/admin/games/access/${game.id}`);
+                  navigate(`/admin/games/associated-users/${game.id}`);
                 }}
               >
                 Manage access
