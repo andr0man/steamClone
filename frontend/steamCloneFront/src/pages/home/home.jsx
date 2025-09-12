@@ -92,11 +92,20 @@ const REC_TOP = [
   { id: 'rec-2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-2@2x.png', price: <RegularPrice value="225₴" /> },
   { id: 'rec-3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-1@2x.png', price: <RegularPrice value="415₴" /> },
   { id: 'rec-4', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-1@2x.png', price: <RegularPrice value="429₴" /> },
+
+  { id: 'rec-8', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-1@2x.png', price: <DiscountPrice off="-15%" from="200₴" to="170₴" /> },
+  { id: 'rec-9', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-2@2x.png', price: <RegularPrice value="510₴" /> },
+  { id: 'rec-10', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-1@2x.png', price: <DiscountPrice off="-40%" from="600₴" to="360₴" /> },
+  { id: 'rec-11', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-1@2x.png', price: <RegularPrice value="180₴" /> },
 ];
 const REC_BOTTOM = [
   { id: 'rec-5', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-1.png', price: <RegularPrice value="Free to play" /> },
   { id: 'rec-6', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-3.png', price: <RegularPrice value="415₴" /> },
   { id: 'rec-7', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-1.png', price: <RegularPrice value="699₴" /> },
+
+  { id: 'rec-12', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-1.png', price: <RegularPrice value="99₴" /> },
+  { id: 'rec-13', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-3.png', price: <RegularPrice value="349₴" /> },
+  { id: 'rec-14', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-1.png', price: <DiscountPrice off="-25%" from="400₴" to="300₴" /> },
 ];
 
 const BEST_TOP = [
@@ -104,11 +113,20 @@ const BEST_TOP = [
   { id: 'best-2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-4@2x.png', price: <RegularPrice value="Free to play" /> },
   { id: 'best-3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-2@2x.png', price: <RegularPrice value="Free to play" /> },
   { id: 'best-4', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-2@2x.png', price: <DiscountPrice off="-20%" from="469₴" to="375₴" /> },
+
+  { id: 'best-8', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-2@2x.png', price: <RegularPrice value="499₴" /> },
+  { id: 'best-9', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-4@2x.png', price: <DiscountPrice off="-35%" from="600₴" to="390₴" /> },
+  { id: 'best-10', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-2@2x.png', price: <RegularPrice value="279₴" /> },
+  { id: 'best-11', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-2@2x.png', price: <RegularPrice value="Free to play" /> },
 ];
 const BEST_BOTTOM = [
   { id: 'best-5', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="159₴" /> },
   { id: 'best-6', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-2.png',price: <RegularPrice value="Free to play" /> },
   { id: 'best-7', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-2.png',price: <RegularPrice value="Free to play" /> },
+
+  { id: 'best-12', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="249₴" /> },
+  { id: 'best-13', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-2.png',price: <DiscountPrice off="-15%" from="199₴" to="169₴" /> },
+  { id: 'best-14', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-2.png',price: <RegularPrice value="349₴" /> },
 ];
 
 const StoreRail = () => {
@@ -216,35 +234,56 @@ const MonthlyDiscounts = () => (
   </section>
 );
 
-const NewAndTrending = () => {
+const HorizontalBlockRow = ({ title, topArr, bottomArr, from }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
-  const totalPages = Math.ceil(Math.max(N_T_TOP.length / 4, N_T_BOTTOM.length / 3));
-  const open = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'new-trending' } });
+  const containerRef = useRef(null);
+  const open = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from } });
+
+  const blocks = [];
+  const maxBlocks = Math.ceil(Math.max(topArr.length / 4, bottomArr.length / 3));
+  for (let i = 0; i < maxBlocks; i++) {
+    blocks.push({
+      top: topArr.slice(i * 4, i * 4 + 4),
+      bottom: bottomArr.slice(i * 3, i * 3 + 3),
+    });
+  }
+
+  const totalPages = blocks.length;
+
   const scroll = (dir) => {
-    if (dir === "left") {
-      setPage((p) => Math.max(p - 1, 0));
-    } else {
-      setPage((p) => Math.min(p + 1, totalPages - 1));
-    }
+    if (dir === "left") setPage((p) => Math.max(p - 1, 0));
+    else setPage((p) => Math.min(p + 1, totalPages - 1));
   };
-  const topSlice = N_T_TOP.slice(page * 4, page * 4 + 4);
-  const bottomSlice = N_T_BOTTOM.slice(page * 3, page * 3 + 3);
 
   return (
     <section className="store-section">
-      <SectionHeader title="New & Trending" to="/store/discover" />
+      <SectionHeader title={title} to="/store/discover" />
       <div className="scroll-row">
         <Arrow dir="left" onClick={() => scroll("left")} className="row-arrow" />
-        <div className="scroll-row__track two-rows">
-          <div className="row grid four">
-            {topSlice.map((g, i) => (
-              <GameCard key={g.id || i} src={g.src} price={g.price} size="sm" onClick={() => open(g.id || `nt-${i}`)} />
-            ))}
-          </div>
-          <div className="row grid three">
-            {bottomSlice.map((g, i) => (
-              <GameCard key={g.id || i} src={g.src} price={g.price} size="wide" onClick={() => open(g.id || `ntb-${i}`)} />
+        <div className="scroll-row__track-wrapper">
+          <div
+            className="scroll-row__track two-rows"
+            ref={containerRef}
+            style={{
+              display: "flex",
+              transition: "transform 0.5s ease",
+              transform: `translateX(-${page * 100}%)`,
+            }}
+          >
+            {blocks.map((block, i) => (
+              <div className="block" key={i} style={{ minWidth: "100%"}}>
+                <div className="row grid four">
+                  {block.top.map((g, idx) => (
+                    <GameCard key={g.id || idx} src={g.src} price={g.price} size="sm" onClick={() => open(g.id || `${from}-top-${i}-${idx}`)} />
+                  ))}
+                </div>
+                <div className="row grid three">
+                  {block.bottom.map((g, idx) => (
+                    <GameCard key={g.id || idx} src={g.src} price={g.price} size="wide" onClick={() => open(g.id || `${from}-bottom-${i}-${idx}`)} />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -254,81 +293,32 @@ const NewAndTrending = () => {
   );
 };
 
-const RecommendedForYou = () => {
-  const navigate = useNavigate();
-  const rowRef = useRef(null);
-  const open = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'recommended' } });
-  const scroll = (dir) => {
-    if (!rowRef.current) return;
-    const amount = dir === "left" ? -640 : 640;
-    rowRef.current.scrollBy({ left: amount, behavior: "smooth" });
-  };
-  return (
-    <section className="store-section">
-      <SectionHeader title="Recommended for you" to="/store/discover" />
-      <div className="scroll-row">
-        <Arrow dir="left" onClick={() => scroll("left")} className="row-arrow" />
-        <div className="scroll-row__track two-rows" ref={rowRef}>
-          <div className="row grid four">
-            {REC_TOP.map((g, i) => (
-              <GameCard key={g.id || i} src={g.src} price={g.price} size="sm" onClick={() => open(g.id || `rec-${i}`)} />
-            ))}
-          </div>
-          <div className="row grid three">
-            {REC_BOTTOM.map((g, i) => (
-              <GameCard key={g.id || i} src={g.src} price={g.price} size="wide" onClick={() => open(g.id || `recb-${i}`)} />
-            ))}
-          </div>
-        </div>
-        <Arrow dir="right" onClick={() => scroll("right")} className="row-arrow" />
-      </div>
-    </section>
-  );
-};
-
-const Bestsellers = () => {
-  const navigate = useNavigate();
-  const rowRef = useRef(null);
-  const open = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'bestsellers' } });
-  const scroll = (dir) => {
-    if (!rowRef.current) return;
-    const amount = dir === "left" ? -640 : 640;
-    rowRef.current.scrollBy({ left: amount, behavior: "smooth" });
-  };
-  return (
-    <section className="store-section">
-      <SectionHeader title="Bestsellers" to="/store/discover" />
-      <div className="scroll-row">
-        <Arrow dir="left" onClick={() => scroll("left")} className="row-arrow" />
-        <div className="scroll-row__track two-rows" ref={rowRef}>
-          <div className="row grid four">
-            {BEST_TOP.map((g, i) => (
-              <GameCard key={g.id || i} src={g.src} price={g.price} size="sm" onClick={() => open(g.id || `best-${i}`)} />
-            ))}
-          </div>
-          <div className="row grid three">
-            {BEST_BOTTOM.map((g, i) => (
-              <GameCard key={g.id || i} src={g.src} price={g.price} size="wide" onClick={() => open(g.id || `bestb-${i}`)} />
-            ))}
-          </div>
-        </div>
-        <Arrow dir="right" onClick={() => scroll("right")} className="row-arrow" />
-      </div>
-    </section>
-  );
-};
-
-const DiscoveryLoopCTA = () => (
-  <section className="loop-cta">
-    <div className="cta-inner">
-      <div className="cta-text">
-        <h4>Find your perfect world through Discovery Loop</h4>
-        <p>Your queue of top-selling, new, and recommended titles</p>
-      </div>
-      <Arrow dir="right" onClick={() => {}} />
-    </div>
-  </section>
+const NewAndTrending = () => (
+  <HorizontalBlockRow title="New & Trending" topArr={N_T_TOP} bottomArr={N_T_BOTTOM} from="new-trending" />
 );
+
+const RecommendedForYou = () => (
+  <HorizontalBlockRow title="Recommended for you" topArr={REC_TOP} bottomArr={REC_BOTTOM} from="recommended" />
+);
+
+const Bestsellers = () => (
+  <HorizontalBlockRow title="Bestsellers" topArr={BEST_TOP} bottomArr={BEST_BOTTOM} from="bestsellers" />
+);
+
+const DiscoveryLoopCTA = () => {
+  const navigate = useNavigate();
+  return(
+    <section className="loop-cta">
+      <div className="cta-inner">
+        <div className="cta-text">
+          <h4>Find your perfect world through Discovery Loop</h4>
+          <p>Your queue of top-selling, new, and recommended titles</p>
+        </div>
+        <Arrow dir="right" onClick={() => {navigate("/store/discover"); window.scrollTo(0, 0);}} />
+      </div>
+    </section>
+  );
+};
 
 const Home = () => {
   return (

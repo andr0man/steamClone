@@ -210,15 +210,23 @@ body {
 .store-section {
   margin: 34px 0 46px; 
   .scroll-row__track.two-rows {
-  display: flex;
-  flex-direction: column;
-  overflow: visible;
+    display: flex;
+    flex-direction: row;
+    overflow: visible;
+    gap: 0px;
   }
-
+  .scroll-row__track-wrapper {
+    overflow: hidden;
+    width: 100%;
+    }
   .scroll-row__track .row {
-  overflow: visible;
+    overflow: visible;
   }
+  .scroll-row__track.two-rows .row {
+    display: grid;
+    transition: transform 0.4s ease; 
   }
+}
 
 .row.grid.four  { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 1.4vw, 22px); margin-bottom: 22px; }
 .row.grid.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 1.8vw, 35px); }
