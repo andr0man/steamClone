@@ -1,34 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate, Link as RouterLink } from "react-router-dom";
 
-import Login from '../pages/auth/login/Login.jsx';
-import Register from '../pages/auth/register/Register.jsx';
-import Home from '../pages/home/home.jsx';
-import Library from '../pages/library/library.jsx';
-import Collections from '../pages/library/collections/Collections.jsx';
-import Market from '../pages/market/market.jsx';
-import Profile from '../pages/profile/Profile.jsx';
-import EditProfile from '../pages/profile/editprofile/EditProfile.jsx';
-import GameInfo from '../pages/library/gameinfo/GameInfo.jsx';
-import Discover from '../pages/store/discover/Discover.jsx';
-import Navbar from '../components/Navbar.jsx';
-import Featured from '../pages/store/featured/Featured.jsx';
-import Stats from '../pages/store/stats/Stats.jsx';
-import Wishlist from '../pages/store/wishlist/Wishlist.jsx';
-import PointsShop from '../pages/store/points-shop/PointsShop.jsx';
-import News from '../pages/store/news/News.jsx';
-import Search from '../pages/home/search/Search.jsx';
-import { GamePage } from '../pages/game/GamePage.jsx';
-import Purchase from '../pages/store/purchase/Purchase.jsx';
-import MarketHistory from '../pages/market/history/MarketHistory.jsx';
-import ForgotPassword from '../pages/auth/login/ForgotPassword.jsx';
-import Chat from '../pages/chat/Chat.jsx';
-import Buy from '../pages/market/buy/Buy.jsx';
-import SellItemModal from '../pages/market/modal/SellItemModal.jsx';
-import Activity from '../pages/profile/activity/Activity.jsx';
-import Badges from '../pages/profile/badges/Badges.jsx';
-import Friends from '../pages/profile/friends/Friends.jsx';
-import Inventory from '../pages/profile/inventory/Inventory.jsx';
 import Login from "../pages/auth/login/Login.jsx";
 import Register from "../pages/auth/register/Register.jsx";
 import Home from "../pages/home/home.jsx";
@@ -58,6 +30,13 @@ import ManageGenres from "../pages/admin/genres/ManageGenres.jsx";
 import ManageGames from "../pages/admin/games/ManageGames.jsx";
 import GameCreate from "../pages/admin/games/gameCreate/GameCreate.jsx";
 import GameEdit from "../pages/admin/games/gameEdit/GameEdit.jsx";
+import Activity from '../pages/profile/activity/Activity.jsx';
+import Badges from '../pages/profile/badges/Badges.jsx';
+import Friends from '../pages/profile/friends/Friends.jsx';
+import Inventory from '../pages/profile/inventory/Inventory.jsx';
+import Buy from '../pages/market/buy/Buy.jsx';
+import Sell from '../pages/market/sell/Sell.jsx';
+import AdminAll from '../pages/admin/all/AdminAll';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("accessToken");
@@ -233,46 +212,6 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             />
             <Route
               path="/market/history"
-              element={<ProtectedRoute isLoggedIn={isLoggedIn}><MarketHistory /></ProtectedRoute>}
-            />
-            <Route
-              path="/market/buy"
-              element={<ProtectedRoute isLoggedIn={isLoggedIn}><Buy /></ProtectedRoute>}
-            />
-            <Route
-              path="/market/sell"
-              element={<ProtectedRoute isLoggedIn={isLoggedIn}><SellItemModal /></ProtectedRoute>}
-            />
-            
-            <Route 
-              path="/profile" 
-              element={<ProtectedRoute isLoggedIn={isLoggedIn}><Profile userData={currentUser} /></ProtectedRoute>}
-            >
-            </Route>
-            <Route 
-              path="/profile/edit" 
-              element={<ProtectedRoute isLoggedIn={isLoggedIn}><EditProfile currentProfileData={currentUser} /></ProtectedRoute>} 
-            />
-              <Route path="/profile/activity" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Activity /></ProtectedRoute>} />
-              <Route path="/profile/badges" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Badges /></ProtectedRoute>} />
-              <Route path="/profile/friends" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Friends /></ProtectedRoute>} />
-              <Route path="/profile/inventory" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Inventory /></ProtectedRoute>} />
-            
-            <Route 
-              path="/community" 
-              element={<ProtectedRoute isLoggedIn={isLoggedIn}><UnderConstructionPage pageName="Community" /></ProtectedRoute>} 
-            />
-            <Route 
-              path="/community/:subpage" 
-              element={<ProtectedRoute isLoggedIn={isLoggedIn}><UnderConstructionPage pageName="Community Section" /></ProtectedRoute>} 
-            />
-            
-            <Route 
-              path="/" 
-              element={isLoggedIn ? <Navigate to="/store" replace /> : <Navigate to="/login" replace />} 
-            />
-            <Route 
-              path="*" 
               element={
                 <ProtectedRoute>
                   <MarketHistory />
@@ -296,7 +235,12 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
-
+              <Route path="/profile/activity" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Activity /></ProtectedRoute>} />
+              <Route path="/profile/badges" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Badges /></ProtectedRoute>} />
+              <Route path="/profile/friends" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Friends /></ProtectedRoute>} />
+              <Route path="/profile/inventory" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Inventory /></ProtectedRoute>} />
+              <Route path="/market/buy" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Buy /></ProtectedRoute>} />
+              <Route path="/market/sell" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Sell /></ProtectedRoute>} />
             <Route
               path="/community"
               element={
@@ -313,7 +257,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
-
+            <Route path="/admin/all" element={<AdminAll />} />
             <Route path="/admin">
               <Route
                 path="dashboard"

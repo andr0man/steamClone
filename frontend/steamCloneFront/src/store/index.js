@@ -12,6 +12,15 @@ import { gameSystemRequirementsApi } from "../services/gameSystemRequirements/ga
 import { languageApi } from "../services/language/languageApi";
 import { countryApi } from "../services/country/countryApi";
 import { gameLocalizationApi } from "../services/gameLocalization/gameLocalizationApi";
+import { searchApi } from "../services/search/searchApi";
+import { inventoryApi } from "../services/inventory/inventoryApi";
+import { profileApi } from "../services/profile/profileApi";
+import { friendsApi } from "../services/friends/friendsApi";
+import { marketApi } from "../services/market/marketApi";
+import { marketBuyApi } from "../services/market/marketBuyApi";
+import { marketSellApi } from "../services/market/marketSellApi";
+import { marketHistoryApi } from "../services/market/marketHistoryApi";
+import { homeApi } from "../services/home/homeApi";
 
 const middlewares = [
   authApi.middleware,
@@ -25,6 +34,15 @@ const middlewares = [
   languageApi.middleware,
   countryApi.middleware,
   gameLocalizationApi.middleware,
+  searchApi.middleware,
+  inventoryApi.middleware,
+  profileApi.middleware,
+  friendsApi.middleware,
+  marketApi.middleware,
+  marketBuyApi.middleware,
+  marketSellApi.middleware,
+  marketHistoryApi.middleware,
+  homeApi.middleware,
 ];
 
 export const store = configureStore({

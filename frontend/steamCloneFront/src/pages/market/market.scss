@@ -1,22 +1,17 @@
 @use 'sass:color';
 
 $font: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-
 $ink: #ffffff;
 $bg: #141320;
-
 $panel-bg: #121117;
 $panel-border: #9277C4;
 $panel-shadow: 0px 10px 24px #7C72DB33;
-
 $text-1: #f0f4f8;
 $text-2: #c8d0d8;
 $text-3: #9aa6b3;
 $text-muted: #565558;
-
 $violet: #9277C5;
 $accent: #A178EB;
-$green: #3dffb3;
 
 :root { --navbar-h: 64px; }
 
@@ -122,6 +117,29 @@ body {
 .mk-enter-game { margin-top: 8px; }
 .mk-input.small { max-width: 320px; }
 .mk-input.small input { padding-right: 24px; }
+
+.mk-tags-panel .mk-checks {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.mk-check {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #fff; font-size: 14px;
+}
+.mk-check input {
+  appearance: none;
+  width: 16px; height: 16px; border-radius: 3px;
+  border: 1px solid rgba(255,255,255,.35);
+  background: transparent;
+  display: inline-block; position: relative; cursor: pointer;
+}
+.mk-check input:checked {
+  background: #33244a; border-color: rgba(161,120,235,.7);
+}
+.mk-check input:checked::after {
+  content: ''; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-55%) rotate(45deg);
+  width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0;
+}
+.mk-check span { line-height: 1; }
 
 .mk-records .records { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .mk-records .records li button {
@@ -241,6 +259,69 @@ body {
 .market-empty {
   color: #9aa6b3; text-align: center; padding: 20px 0;
 }
+
+.ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.market-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+}
+.market-modal .market-modal-card {
+  width: min(860px, 96vw);
+  background: $panel-bg;
+  border: 1px solid $panel-border;
+  border-radius: 8px;
+  box-shadow: $panel-shadow;
+  padding: 16px;
+  position: relative;
+  color: #fff;
+}
+.market-modal .market-modal-card .x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+}
+.mm-body {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 16px;
+}
+@media (max-width: 820px) { .mm-body { grid-template-columns: 1fr; } }
+
+.mm-left .thumb {
+  width: 100%;
+  aspect-ratio: 1/.85;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.12);
+  overflow: hidden;
+  background: #0f1016;
+}
+.mm-left .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.mm-right .name { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+.mm-right .sub { color: #a4a4a4; font-size: 13px; margin-bottom: 12px; }
+.mm-right .sub .dot { margin: 0 6px; opacity: .6; }
+
+.mm-right .price-line { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.mm-right .price { font-weight: 900; font-size: 18px; }
+.mm-right .sold { color: #ff9999; font-size: 13px; }
+
+.mm-right .actions { display: flex; gap: 8px; justify-content: flex-end; }
 
 @media (max-width: 1100px) {
   .market-page-container { grid-template-columns: 1fr; }

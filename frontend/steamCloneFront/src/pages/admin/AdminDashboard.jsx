@@ -24,6 +24,11 @@ const AdminDashboard = () => {
           <Link to="/admin/games" className="admin-btn">Go to Manage Games</Link>
         </div>
         <div className="admin-card flux-border">
+          <h3>Manage All</h3>
+          <p>One page to manage everything from Swagger.</p>
+          <Link to="/admin/all" className="admin-btn">Open All</Link>
+          </div>
+        <div className="admin-card flux-border">
           <h3>Manage Genres</h3>
           <p>Add or manage game genres.</p>
           <Link to="/admin/genres" className="admin-btn">Go to Manage Genres</Link>

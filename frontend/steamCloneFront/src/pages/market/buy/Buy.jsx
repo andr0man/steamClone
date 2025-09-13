@@ -1,72 +1,22 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import './buy.scss';
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "./buy.scss";
+import Notification from "../../../components/Notification";
+import { useBuyMarketItemMutation } from "../../../services/market/marketApi";
+import { useGetBalanceQuery } from "../../../services/profile/profileApi";
 
-const BALANCE_KEY = 'flux-balance-v1';
-const HISTORY_KEY = 'mh-data-v1';
-const ITEM_SKEY = 'BUY_ITEM_CACHE';
+const ITEM_SKEY = "BUY_ITEM_CACHE";
 
 const fmtUAH = (n) => {
   const num = Number(n) || 0;
   const digits = Number.isInteger(num) ? 0 : 2;
-  return `${num.toLocaleString('uk-UA', { minimumFractionDigits: digits, maximumFractionDigits: digits })}₴`;
+  return `${num.toLocaleString("uk-UA", { minimumFractionDigits: digits, maximumFractionDigits: digits })}₴`;
 };
-
-function loadBalance() {
-  try {
-    const raw = localStorage.getItem(BALANCE_KEY);
-    const v = raw ? parseFloat(raw) : 1200;
-    return Number.isFinite(v) ? v : 1200;
-  } catch {
-    return 1200;
-  }
-}
-function saveBalance(v) {
-  try { localStorage.setItem(BALANCE_KEY, String(v)); } catch {}
-}
-
-function ensureArr(a) { return Array.isArray(a) ? a : []; }
-function loadHistory() {
-  try {
-    const raw = localStorage.getItem(HISTORY_KEY);
-    if (!raw) return { hold: [], sell: [], buy: [] };
-    const parsed = JSON.parse(raw);
-    return {
-      hold: ensureArr(parsed.hold),
-      sell: ensureArr(parsed.sell),
-      buy: ensureArr(parsed.buy),
-    };
-  } catch {
-    return { hold: [], sell: [], buy: [] };
-  }
-}
-function saveHistory(data) {
-  try {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify({
-      hold: ensureArr(data.hold),
-      sell: ensureArr(data.sell),
-      buy: ensureArr(data.buy),
-    }));
-  } catch {}
-}
-function appendBuyRecord({ title, game, img, price }) {
-  const data = loadHistory();
-  const rec = {
-    id: `buy-${Date.now()}`,
-    title,
-    game,
-    img,
-    price: Number(price) || 0,
-    createdAt: new Date().toISOString(),
-  };
-  data.buy = [rec, ...data.buy];
-  saveHistory(data);
-  return rec;
-}
 
 export default function Buy() {
   const { state } = useLocation();
   const navigate = useNavigate();
+
   const [item, setItem] = useState(() => {
     if (state?.item) {
       try { sessionStorage.setItem(ITEM_SKEY, JSON.stringify(state.item)); } catch {}
@@ -75,18 +25,24 @@ export default function Buy() {
     try {
       const raw = sessionStorage.getItem(ITEM_SKEY);
       return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   });
 
-  const [balance, setBalance] = useState(loadBalance);
+  const { data: balRes, refetch: refetchBalance } = useGetBalanceQuery();
+  const balance =
+    balRes?.payload?.balance ??
+    balRes?.payload?.amount ??
+    balRes?.balance ??
+    balRes?.amount ?? 0;
+
+  const [buyMarketItem, { isLoading: buying }] = useBuyMarketItemMutation();
+
   const [price, setPrice] = useState(() => Number(item?.priceUAH || 0));
   const [qty, setQty] = useState(1);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [notif, setNotif] = useState(null);
 
   useEffect(() => { setPrice(Number(item?.priceUAH || 0)); }, [item]);
-  useEffect(() => { saveBalance(balance); }, [balance]);
 
   const total = useMemo(() => {
     const p = Math.max(0, Number(price) || 0);
@@ -94,40 +50,32 @@ export default function Buy() {
     return Math.round(p * q * 100) / 100;
   }, [price, qty]);
 
-  const insufficient = balance < total;
+  const insufficient = Number(balance) < total;
   const valid = !!item && total > 0 && qty >= 1;
 
-  const topUp = () => {
-    const input = prompt('Top up balance (UAH):', '200');
-    const sum = Number(input);
-    if (Number.isFinite(sum) && sum > 0) setBalance(b => Math.max(0, b + sum));
-  };
+  const placeOrder = async () => {
+    setError(""); setNotif(null);
+    if (!valid) return setError("Fill price and quantity correctly.");
+    if (insufficient) return setError("Insufficient balance. Please top up.");
+    if (!item?.id) return setError("No market item id.");
 
-  const placeOrder = () => {
-    setError('');
-    if (!valid) return setError('Fill price and quantity correctly.');
-    if (insufficient) return setError('Insufficient balance. Please top up.');
-
-    if (balance < total) return setError('Insufficient balance.');
-    setBalance(b => b - total);
-
-    appendBuyRecord({
-      title: item.name,
-      game: item.game,
-      img: item.imageUrl,
-      price: total,
-    });
-
-    navigate('/market', { replace: true });
+    try {
+      await buyMarketItem({ marketItemId: item.id }).unwrap();
+      await refetchBalance();
+      setNotif({ type: "success", msg: `Purchased "${item.name}" for ${fmtUAH(total)}` });
+      setTimeout(() => navigate("/market", { replace: true }), 700);
+    } catch (e) {
+      setError(e?.data?.message || e?.error || "Purchase failed");
+    }
   };
 
   if (!item) {
     return (
-      <div className="buy-page">
-        <div className="top-rail">
-          <span className="nav-link">Inventory</span>
-          <span className="nav-link">Market History</span>
-          <span className="balance">Balance:{fmtUAH(balance)}</span>
+      <div className="buyx-page">
+        <div className="buyx-top">
+          <Link className="nav-link" to="/inventory">Inventory</Link>
+          <Link className="nav-link" to="/market/history">Market History</Link>
+          <span className="balance">Balance: {fmtUAH(balance)}</span>
         </div>
         <div className="checkout missing">
           <div className="title">Checkout</div>
@@ -139,12 +87,17 @@ export default function Buy() {
   }
 
   return (
-    <div className="buy-page">
-      {/* Верхній рейл */}
-      <div className="top-rail">
-        <button className="nav-link" onClick={() => navigate('/inventory')}>Inventory</button>
-        <button className="nav-link" onClick={() => navigate('/market/history')}>Market History</button>
-        <span className="balance">Balance:{fmtUAH(balance)}</span>
+    <div className="buyx-page">
+      <Notification
+        message={error || notif?.msg || null}
+        type={error ? "error" : "success"}
+        onClose={() => { setError(""); setNotif(null); }}
+      />
+
+      <div className="buyx-top">
+        <button className="nav-link" onClick={() => navigate("/inventory")}>Inventory</button>
+        <button className="nav-link" onClick={() => navigate("/market/history")}>Market History</button>
+        <span className="balance">Balance: {fmtUAH(balance)}</span>
       </div>
 
       <div className="checkout">
@@ -152,17 +105,8 @@ export default function Buy() {
           <div className="left">
             <div className="title">Checkout</div>
 
-            <div className="pay-method">
-              Payment method: Flux balance ({fmtUAH(balance)})
-              <button className="svg-btn" onClick={topUp} title="Top up balance">
-                <img src="/authbc/topupbalance.svg" alt="Top up balance" />
-              </button>
-            </div>
-
             <label className="field">
-              <span className="label">
-                Wanted price to pay per item ({fmtUAH(item.priceUAH)})
-              </span>
+              <span className="label">Price per item (market: {fmtUAH(item.priceUAH)})</span>
               <input
                 type="number"
                 min="0"
@@ -178,7 +122,7 @@ export default function Buy() {
             </label>
 
             <label className="field">
-              <span className="label">Quantity of items (×{qty || 1})</span>
+              <span className="label">Quantity of items</span>
               <input
                 type="number"
                 min="1"
@@ -191,10 +135,10 @@ export default function Buy() {
 
             <div className="place-row">
               <button
-                className={`svg-btn big ${!valid || insufficient ? 'disabled' : ''}`}
+                className={`svg-btn big ${!valid || insufficient || buying ? "disabled" : ""}`}
                 onClick={placeOrder}
-                disabled={!valid || insufficient}
-                title={insufficient ? 'Insufficient balance' : 'Place order'}
+                disabled={!valid || insufficient || buying}
+                title={insufficient ? "Insufficient balance" : "Place order"}
               >
                 <img src="/authbc/placeorder.svg" alt="Place order" />
               </button>
@@ -204,7 +148,7 @@ export default function Buy() {
                   Not enough balance for {fmtUAH(total)}. Top up to proceed.
                 </div>
               )}
-              {!!error && <div className="hint error">{error}</div>}
+              {buying && <div className="hint">Processing…</div>}
             </div>
           </div>
 
@@ -242,13 +186,8 @@ export default function Buy() {
             <p className="legal">
               You are placing an order for a digital license for this product.
               For full terms, see purchase policy. By selecting ‘Place Order’ below,
-              you certify that you are over 18 and an authorized user of this payment method,
-              and agree to the Flux Subscriber Agreement.
+              you agree to the Flux Subscriber Agreement.
             </p>
-
-            <div className="help">
-              Need Help? <button className="link" onClick={() => alert('Support coming soon')}>Contact Us</button>
-            </div>
           </div>
         </div>
       </div>

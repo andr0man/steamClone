@@ -28,3 +28,32 @@
 }
 .ghost:hover { filter: brightness(1.06); }
 .empty { color: #9aa6b3; text-align: center; padding: 12px 0; }
+.requests-panel { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+.rp-head { color: #fff; font-weight: 800; font-size: 14px; opacity: .9; }
+.requests-list { display: flex; flex-direction: column; gap: 8px; }
+.request-card {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: #0f1016; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 10px;
+}
+.request-card .left { display: inline-flex; gap: 10px; align-items: center; }
+.request-card img { width: 44px; height: 44px; object-fit: cover; border-radius: 50%; border: 1px solid rgba(255,255,255,.12); }
+.request-card .name { color: #fff; font-weight: 900; }
+.request-card .sub { color: #c8d0d8; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
+.pill { color: #c8d0d8; border: 1px dashed rgba(255,255,255,.25); border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+.ghost.ok { border-color: #3dffb3; color: #3dffb3; }
+.ghost.bad { border-color: #ff6d6d; color: #ff6d6d; }
+.people-panel { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+.people-list { display: flex; flex-direction: column; gap: 8px; }
+.avatar-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #2a2a2a;
+  border: 1px solid rgba(255,255,255,.12);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 16px;
+  flex: 0 0 auto;
+}
