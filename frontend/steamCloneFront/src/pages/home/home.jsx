@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import './Home.scss';
 import ArrowLeft from "../../../src/assets/ArrowLeft.svg";
 import ArrowRight from "../../../src/assets/ArrowRight.svg";
-
+import {Footer} from "../../components/Footer/Footer";
 
 
 const Arrow = ({ dir = 'right', onClick, className = '' }) => (
@@ -76,6 +76,11 @@ const N_T_TOP = [
   { id: 'card-9', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33@2x.png', price: <DiscountPrice off="-50%" from="400₴" to="200₴" /> },
   { id: 'card-10', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36@2x.png', price: <RegularPrice value="349₴" /> },
   { id: 'card-11', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37@2x.png', price: <RegularPrice value="120₴" /> },
+
+  { id: 'card-15', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29@2x.png', price: <RegularPrice value="199₴" /> },
+  { id: 'card-16', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33@2x.png', price: <DiscountPrice off="-50%" from="400₴" to="200₴" /> },
+  { id: 'card-17', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36@2x.png', price: <RegularPrice value="349₴" /> },
+  { id: 'card-18', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37@2x.png', price: <RegularPrice value="120₴" /> },
 ];
 const N_T_BOTTOM = [
   { id: 'card-5', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="159₴" /> },
@@ -85,6 +90,10 @@ const N_T_BOTTOM = [
   { id: 'card-12', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="649₴" /> },
   { id: 'card-13', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-1.png',price: <DiscountPrice off="-30%" from="300₴" to="210₴" /> },
   { id: 'card-14', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32.png',  price: <RegularPrice value="90₴" /> },
+
+  { id: 'card-19', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="649₴" /> },
+  { id: 'card-20', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-1.png',price: <DiscountPrice off="-30%" from="300₴" to="210₴" /> },
+  { id: 'card-21', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32.png',  price: <RegularPrice value="90₴" /> },
 ];
 
 const REC_TOP = [
@@ -252,9 +261,12 @@ const HorizontalBlockRow = ({ title, topArr, bottomArr, from }) => {
   const totalPages = blocks.length;
 
   const scroll = (dir) => {
-    if (dir === "left") setPage((p) => Math.max(p - 1, 0));
-    else setPage((p) => Math.min(p + 1, totalPages - 1));
-  };
+  if (dir === "left") {
+    setPage((p) => (p - 1 + totalPages) % totalPages);
+  } else {
+    setPage((p) => (p + 1) % totalPages);
+  }
+};
 
   return (
     <section className="store-section">
@@ -288,6 +300,15 @@ const HorizontalBlockRow = ({ title, topArr, bottomArr, from }) => {
           </div>
         </div>
         <Arrow dir="right" onClick={() => scroll("right")} className="row-arrow" />
+      </div>
+      <div className="dots">
+        {blocks.map((_, i) => (
+          <span
+            key={i}
+            className={`dot ${i === page ? "active" : ""}`}
+            onClick={() => setPage(i)}
+          />
+        ))}
       </div>
     </section>
   );
@@ -332,6 +353,7 @@ const Home = () => {
         <Bestsellers />
         <DiscoveryLoopCTA />
       </main>
+      <Footer/>
     </div>
   );
 };

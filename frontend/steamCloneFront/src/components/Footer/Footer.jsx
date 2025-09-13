@@ -1,24 +1,19 @@
 import React from "react";
 import "./Footer.scss";
 
-const ToThePageStart = ({
-  className,
-  vector = "https://c.animaapp.com/tpw3XJzh/img/vector-3-1.svg",
-}) => {
+const ToThePageStart = ({ className }) => {
   return (
-    <div className={`to-the-page-start ${className}`}>
-      <img
-        className="vector-image"
-        alt="Vector"
-        src={vector}
-      />
+    <div
+      className={`to-the-page-start ${className}`}
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+    >
+      <img src="/src/assets/To-the-page-start.svg" alt="arrow up" className="footer-arrow" />
     </div>
   );
 };
 
 export const Footer = ({
   frame = "https://c.animaapp.com/tpw3XJzh/img/frame-5264.svg",
-  toThePageStartVector = "https://c.animaapp.com/tpw3XJzh/img/vector-3.svg",
   assetFlux = "https://c.animaapp.com/tpw3XJzh/img/asset-2-flux-1.svg",
 }) => {
   return (
@@ -46,11 +41,7 @@ export const Footer = ({
               </div>
             </div>
           </div>
-
-          <ToThePageStart
-            className="page-start-button"
-            vector={toThePageStartVector}
-          />
+          <ToThePageStart className="page-start-button" />
         </div>
 
         <img

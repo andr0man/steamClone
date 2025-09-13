@@ -158,13 +158,13 @@ body {
 
   .dots {
     display: flex; gap: 24px; justify-content: center; margin: 14px 0 0;
-    .dot { width: 50px; height: 7px; background: $inactive; border-radius: 6px; }
+    .dot { width: 50px; height: 7px; background: $inactive; border-radius: 0px; }
     .dot.active { background: #fff; }
   }
 }
 
 .game-card {
-  position: relative; border-radius: 16px; overflow: hidden;
+  position: relative; border-radius: 5px !important; overflow: hidden;
   background: none !important; border: 1px solid rgba(255,255,255,.06);
   box-shadow: 0 8px 22px rgba(0,0,0,.18);
   padding: 0; cursor: pointer;
@@ -226,6 +226,11 @@ body {
     display: grid;
     transition: transform 0.4s ease; 
   }
+  .dots {
+    display: flex; gap: 24px; justify-content: center; margin: 25px 0 0;
+    .dot { width: 50px; height: 7px; background: $inactive; border-radius: 0px; }
+    .dot.active { background: #fff; }
+  }
 }
 
 .row.grid.four  { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 1.4vw, 22px); margin-bottom: 22px; }
@@ -256,11 +261,25 @@ body {
 .loop-cta {
   margin: 30px 0 54px;
   .cta-inner {
+    position: relative;
     display: flex; align-items: center; justify-content: space-between;
     padding: 16px 18px;
-    background: linear-gradient(90deg, rgba(41,32,53,1) 0%, rgba(31,24,40,0) 100%);
-    border-radius: 12px; border: 1px solid rgba(255,255,255,.06);
+    background: linear-gradient(90deg, rgba(41,32,53,1) 10%, rgba(31,24,40,0) 100%) 100% 100% no-repeat;
+    
+    z-index: 1;
+    overflow: hidden;
+    &::before {
+      content: '';
+      position: absolute;
+    
+      inset: 0;
+      background: url("src/assets/Frame 5.svg") top / 200px 235% repeat-x;
+      opacity: 0.1;
+      z-index: 0;
+    }
   }
+  
+  
   .cta-text {
     h4 { margin: 0 0 4px; font: 800 clamp(18px, 1.6vw, 20px)/1.2 'Exo 2'; text-shadow: 0 1px 4.5px #b835ff; }
     p  { margin: 0; color: #e9e9f2; font: 500 15px/1.5 'Exo 2'; opacity: .9; }
@@ -301,6 +320,7 @@ body {
   height: 100%;
   padding: 0 50px;
 }
+
 
 
 @media (max-width: 1280px) {
