@@ -335,7 +335,7 @@ const DiscoveryLoopCTA = () => {
           <h4>Find your perfect world through Discovery Loop</h4>
           <p>Your queue of top-selling, new, and recommended titles</p>
         </div>
-        <Arrow dir="right" onClick={() => {navigate("/store/discover"); window.scrollTo(0, 0);}} />
+        <Arrow dir="right" onClick={() => {navigate("/store/discover"); window.scrollTo(0, 0);}} className='arrow'/>
       </div>
     </section>
   );

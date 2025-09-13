@@ -278,7 +278,11 @@ body {
       z-index: 0;
     }
   }
-  
+  .cta-inner .arrow {
+    position: relative;
+    pointer-events: auto; 
+    z-index: 10;
+  }
   
   .cta-text {
     h4 { margin: 0 0 4px; font: 800 clamp(18px, 1.6vw, 20px)/1.2 'Exo 2'; text-shadow: 0 1px 4.5px #b835ff; }
