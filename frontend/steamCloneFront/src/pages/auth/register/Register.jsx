@@ -6,7 +6,7 @@ import { useRegisterMutation } from '../../../services/auth/authApi';
 const Register = () => {
   const [formData, setFormData] = useState({
     email: '',
-    login: '',
+    nickname: '',
     password: '',
     confirmPassword: '',
     humanVerificationAnswer: '',
@@ -70,8 +70,8 @@ const Register = () => {
       alert('Please enter a valid email address.');
       return;
     }
-    if (!formData.login.trim()) {
-      alert('Please enter your desired login name.');
+    if (!formData.nickname.trim()) {
+      alert('Please enter your desired nickname.');
       return;
     }
     if (formData.password.length < 8) {
@@ -94,7 +94,7 @@ const Register = () => {
     try {
       const payload = {
         email: formData.email,
-        login: formData.login,
+        nickname: formData.nickname,
         password: formData.password,
         confirmPassword: formData.confirmPassword
       };
@@ -130,7 +130,7 @@ const Register = () => {
           </div>
           <div className="flux-form-group">
             <div className="flux-input-wrapper">
-              <input type="text" name="login" value={formData.login} onChange={handleChange} required placeholder="Your unique login name" autoComplete="username" />
+              <input type="text" name="nickname" value={formData.nickname} onChange={handleChange} required placeholder="Your unique nickname" autoComplete="username" />
             </div>
           </div>
           <div className="flux-form-group">

@@ -108,7 +108,7 @@ const Login = () => {
                 value={formData.identity}
                 onChange={handleChange}
                 required
-                placeholder="Login or Email"
+                placeholder="Nickname or Email"
                 autoComplete="username"
               />
             </div>
