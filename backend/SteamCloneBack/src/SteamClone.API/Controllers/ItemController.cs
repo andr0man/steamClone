@@ -22,4 +22,11 @@ public class ItemController(IItemService itemService)
         var response = await itemService.UpdateImageAsync(id, image, cancellationToken);
         return GetResult(response);
     }
+
+    [HttpGet("by-game/{gameId}")]
+    public async Task<IActionResult> GetByGameIdAsync([FromRoute] string gameId, CancellationToken cancellationToken)
+    {
+        var response = await itemService.GetByGameIdAsync(gameId, cancellationToken);
+        return GetResult(response);
+    }
 }

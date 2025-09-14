@@ -1,9 +1,9 @@
-import { createApi} from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
 export const userApi = createApi({
   reducerPath: "userApi",
-  baseQuery: baseQueryWithRefresh,
+  baseQuery: baseQueryWithRefresh(),
   tagTypes: ["User"],
   endpoints: (builder) => ({
     getProfile: builder.query({
@@ -30,7 +30,8 @@ export const userApi = createApi({
     }),
 
     getPagedUsers: builder.query({
-      query: ({ page = 1, pageSize = 10 }) => `/users/paged?page=${page}&pageSize=${pageSize}`,
+      query: ({ page = 1, pageSize = 10 }) =>
+        `/users/paged?page=${page}&pageSize=${pageSize}`,
     }),
 
     getUsersByRole: builder.query({
@@ -64,20 +65,21 @@ export const userApi = createApi({
     }),
     uploadAvatar: builder.mutation({
       query: (formData) => ({
-        url: '/users/avatar',
-        method: 'POST',
+        url: "/users/avatar",
+        method: "POST",
         body: formData,
         formData: true,
       }),
-      invalidatesTags: ['User'],
+      invalidatesTags: ["User"],
     }),
   }),
 });
 
-export const { 
+export const {
   useGetProfileQuery,
   useGetUserByIdQuery,
   useGetUserByEmailQuery,
+  useLazyGetUserByEmailQuery,
   useGetUserByNicknameQuery,
   useGetAllUsersQuery,
   useGetPagedUsersQuery,
@@ -85,5 +87,5 @@ export const {
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
-  useUploadAvatarMutation
+  useUploadAvatarMutation,
 } = userApi;

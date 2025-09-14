@@ -100,7 +100,6 @@ const Discover = () => {
   };
   
   const handleQueueAction = (action, gameId) => {
-    console.log(`${action} game ${gameId}`);
     if (action !== 'viewDetails') {
         handleNextInQueue(); 
     }

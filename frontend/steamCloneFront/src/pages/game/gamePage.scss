@@ -1,4 +1,5 @@
-@use "../../styles/variables";
+@use "../../styles/variables" as variables;
+@use "../../styles/App.scss" as *;
 
 // --- Карусель скріншотів ---
 .screenshots-carousel {
@@ -73,6 +74,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  max-height: 470px;
 }
 
 .game-main-content svg {
@@ -137,13 +139,18 @@
 .game-description {
   font-size: 13px;
   padding: 10px;
+  overflow-x: auto;
+  margin-top: 10px;
 }
 
 .game-main-content-left {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
+  flex-direction: row;
+  padding: 1rem;
   gap: 10px;
+  overflow-x: auto;
 }
 
 .game-release-info a {
@@ -181,14 +188,14 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 70%;
+  width: 65%;
 }
 
 .game-bottom-right-panel {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 30%;
+  width: 35%;
 }
 
 // screenshots
@@ -303,17 +310,17 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin: 15px 0;
+
+  .no-discount-price {
+    font-size: 1.3rem;
+    color: #fff;
+    font-weight: 500;
+    margin-left: 10px;
+  }
 }
 
 .buy-game-button-section .rainbow-button {
-  margin: 0;
-  flex: 1;
-  text-align: center;
-  padding: 7px 20px;
-  font-size: 1rem;
-}
-
-.buy-game-button-section .white-outline-for-text {
   margin: 0;
   flex: 1;
   text-align: center;
@@ -327,6 +334,12 @@
   gap: 10px;
   justify-content: space-around;
   margin-top: 10px;
+
+  strong {
+    font-weight: 600;
+    color: #90879a;
+    margin-right: 5px;
+  }
 }
 
 .system-requirements-content ul {
@@ -354,4 +367,97 @@
 
 .recommended-requirements {
   width: 100%;
+}
+
+.discount-panel {
+  display: flex;
+  align-items: stretch;
+
+  * {
+    border-radius: 5px;
+  }
+
+  .discount-badge {
+    @extend .flux-border;
+    padding: 10px;
+    box-shadow: none;
+    background: linear-gradient(
+      28deg,
+      #fff 6.34%,
+      #8c8c8c 15.53%,
+      #ff9584 20.36%,
+      #dfed43 26.4%,
+      #a0f885 31.24%,
+      #74bff7 35.98%,
+      #7c72db 40.06%,
+      #8681a8 44.13%,
+      #fff 56.62%
+    );
+    background-clip: text;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  .original-price {
+    text-decoration: line-through;
+    color: #a5a5a5;
+    opacity: 0.8;
+  }
+
+  .discount-price {
+    padding: 10px;
+    background-color: #292035;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
+}
+
+.game-page-localizations {
+  padding: 20px;
+  min-height: 50px;
+}
+
+.localizations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 15px;
+
+  .thead {
+    border-radius: 6px;
+  }
+  .tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .tr {
+    @extend .h3-with-bottom-border;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+    padding: 0 0 5px 0;
+    width: 100%;
+  }
+
+  .th {
+    font-weight: 700;
+    font-size: medium;
+    color: #d6d6e0;
+  }
+  .td {
+    color: #e9e9f0;
+  }
+
+  img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+    display: block;
+  }
 }

@@ -13,9 +13,9 @@ $platform-h: 668px;
 
 :root { --navbar-h: 64px; }
 
-*,
-*::before,
-*::after { box-sizing: border-box; }
+// *,
+// *::before,
+// *::after { box-sizing: border-box; }
 
 html, body, #root { min-height: 100%; height: auto; }
 

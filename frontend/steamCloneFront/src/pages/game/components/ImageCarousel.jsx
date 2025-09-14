@@ -43,7 +43,6 @@ export const ImageCarousel = ({ title, images }) => {
     if (!trackRef.current || slideWidth === 0) return 0;
 
     const track = trackRef.current;
-    console.log("track:", track.scrollWidth);
 
     const containerWidth = track.parentElement.offsetWidth;
     const allSlides = Array.from(track.children);

@@ -1,0 +1,17 @@
+.manage-associated-users-btn {
+    background: linear-gradient(90deg, #dd8eff 0%, #8099ff 100%);
+    color: #23232a;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 1px 6px 0 rgba(142, 231, 255, 0.1);
+    transition: filter 0.2s, transform 0.2s;
+
+    &:hover {
+      filter: brightness(1.08);
+      transform: scale(1.04);
+    }
+}
