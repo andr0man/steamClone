@@ -40,16 +40,16 @@ public class ItemService(
     {
         var item = mapper.Map<Item>(model);
 
-        if (!await itemRepository.IsUniqueNameAsync(model.Name, cancellationToken))
-        {
-            return ServiceResponse.BadRequestResponse($"Name '{model.Name}' already used");
-        }
-
         var game = await gameRepository.GetByIdAsync(model.GameId, cancellationToken);
         
         if (game == null)
         {
             return ServiceResponse.NotFoundResponse("Game not found");
+        }
+        
+        if (!await itemRepository.IsUniqueNameAsync(model.Name, game.Id, cancellationToken))
+        {
+            return ServiceResponse.BadRequestResponse($"Name '{model.Name}' already used");
         }
 
         if (!await HasAccessToGameAsync(game))
@@ -157,7 +157,21 @@ public class ItemService(
             return ServiceResponse.BadRequestResponse(e.Message);
         }
     }
-    
+
+    public async Task<ServiceResponse> GetByGameIdAsync(string gameId, CancellationToken cancellationToken)
+    {
+        var game = await gameRepository.GetByIdAsync(gameId, cancellationToken);
+        
+        if (game == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+        
+        var items = (await itemRepository.GetAllAsync(cancellationToken)).Where(x => x.GameId == gameId).ToList();
+        
+        return ServiceResponse.OkResponse("Items retrieved successfully", items);
+    }
+
     private async Task<bool> HasAccessToGameAsync(Game game)
     {
         var userRole = userProvider.GetUserRole();

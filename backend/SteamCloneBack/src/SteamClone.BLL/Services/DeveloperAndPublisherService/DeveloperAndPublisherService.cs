@@ -6,6 +6,7 @@ using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Common.Interfaces;
 using SteamClone.Domain.Models.DevelopersAndPublishers;
 using SteamClone.Domain.ViewModels.DevelopersAndPublishers;
+using SteamClone.Domain.ViewModels.Users;
 
 namespace SteamClone.BLL.Services.DeveloperAndPublisherService;
 
@@ -87,7 +88,7 @@ public class DeveloperAndPublisherService(
         {
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
         }
-        
+
         var userRole = userProvider.GetUserRole();
         var userId = await userProvider.GetUserId();
 
@@ -154,9 +155,7 @@ public class DeveloperAndPublisherService(
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
         }
 
-        var userRole = userProvider.GetUserRole();
-
-        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
+        if (!await IsOwnerAsync(developerAndPublisherId, token))
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to associate users");
         }
@@ -183,9 +182,7 @@ public class DeveloperAndPublisherService(
             return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
         }
 
-        var userRole = userProvider.GetUserRole();
-
-        if (!(developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId)) && userRole != Settings.Roles.AdminRole)
+        if (!await IsOwnerAsync(developerAndPublisherId, token))
         {
             return ServiceResponse.ForbiddenResponse("You don't have permission to remove associated users");
         }
@@ -242,6 +239,31 @@ public class DeveloperAndPublisherService(
             mapper.Map<List<DeveloperAndPublisherVM>>(developers));
     }
 
+    public async Task<ServiceResponse> GetAssociatedUsersAsync(string devAndPubId, CancellationToken token)
+    {
+        var developerAndPublisher = await developerAndPublisherRepository.GetByIdAsync(devAndPubId, token);
+
+        if (developerAndPublisher == null)
+        {
+            return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
+        }
+
+        return ServiceResponse.OkResponse("Associated users retrieved successfully",
+            mapper.Map<List<UserVM>>(developerAndPublisher.AssociatedUsers.Where(x =>
+                FilterAssociatedUsersAsync(devAndPubId, x.Id, x.RoleId, token).Result)));
+    }
+
+    public async Task<ServiceResponse> IsDevOrPubOwnerAsync(string devAndPubId, CancellationToken token)
+    {
+        if (await developerAndPublisherRepository.GetByIdAsync(devAndPubId, token, true) == null)
+        {
+            return ServiceResponse.NotFoundResponse("Developer Or Publisher not found");
+        }
+
+        return ServiceResponse.OkResponse("Developer Or Publisher owner status retrieved successfully",
+            await IsOwnerAsync(devAndPubId, token));
+    }
+
     private async Task<ServiceResponse> UpdateDeveloperAndPublisherAsync(DeveloperAndPublisher developerAndPublisher,
         string successMessage,
         CancellationToken cancellationToken)
@@ -255,5 +277,59 @@ public class DeveloperAndPublisherService(
         {
             throw new Exception(e.Message);
         }
+    }
+
+    private async Task<bool> IsOwnerAsync(string devAndPubId, CancellationToken token = default)
+    {
+        var userRole = userProvider.GetUserRole();
+        var userId = await userProvider.GetUserId();
+        var developerAndPublisher = await developerAndPublisherRepository.GetByIdAsync(devAndPubId, token);
+
+        if (userRole == Settings.Roles.AdminRole)
+            return true;
+
+        if (developerAndPublisher!.CreatedBy == userId)
+        {
+            return true;
+        }
+
+        var creator = await userRepository.GetByIdAsync(developerAndPublisher.CreatedBy!, token);
+
+        if (creator!.RoleId == Settings.Roles.AdminRole &&
+            developerAndPublisher.AssociatedUsers.Any(x => x.Id == userId))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private async Task<bool> FilterAssociatedUsersAsync(string devAndPubId, string userId, string userRole,
+        CancellationToken token = default)
+    {
+        if (userRole == Settings.Roles.AdminRole)
+        {
+            return false;
+        }
+
+        if (userProvider.GetUserRole() != Settings.Roles.AdminRole)
+        {
+            var developerAndPublisher = await developerAndPublisherRepository.GetByIdAsync(devAndPubId, token);
+
+            if (developerAndPublisher!.CreatedBy == userId)
+            {
+                return false;
+            }
+
+            var currentUserId = await userProvider.GetUserId();
+
+            if (developerAndPublisher.CreatedBy != currentUserId)
+            {
+                if (currentUserId == userId)
+                    return false;
+            }
+        }
+
+        return true;
     }
 }

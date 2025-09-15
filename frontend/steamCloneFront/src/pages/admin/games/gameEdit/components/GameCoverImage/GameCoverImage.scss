@@ -1,0 +1,37 @@
+.game-cover-image {
+  padding: 18px 0;
+}
+
+.game-cover-image input[type="file"] {
+  display: block;
+  margin: 18px 0;
+  background: #23232a;
+  color: #fff;
+  border: 1px solid #353545;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.cover-image-preview {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  img {
+    width: 100%;
+    height: auto;
+    max-height: 50vh;
+    object-fit: contain;
+    background-color: #23232a;
+  }
+
+  h4 {
+    position: absolute;
+    background: #23232ace;
+    margin: 0;
+    padding: 4px 8px;
+    border-radius: 0 0 6px 0;
+  }
+}

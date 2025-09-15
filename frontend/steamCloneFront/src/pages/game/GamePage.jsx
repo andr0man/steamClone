@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ConfirmModal } from "../../components/ConfirmModal";
+import { ConfirmModal } from "../../components/Modals/ConfirmModal";
 import "../../styles/App.scss";
+import { useGetAllLanguagesQuery } from "../../services/language/languageApi";
 import {
   useGetGameByIdQuery,
   useBuyGameMutation,
 } from "../../services/game/gameApi";
+import checkMark from "/game-page/checkmark.svg";
 import {
   useAddToWishlistMutation,
   useGetIsInWishlistQuery,
@@ -14,11 +16,12 @@ import {
 } from "../../services/wishlist/wishlistApi";
 import { SvgComponentMainPanel } from "./components/SvgComponentMainPanel";
 import "./gamePage.scss";
-import { useGetIsInGameLibraryQuery } from "../../services/game-library/gameLibraryApi";
+import { useGetIsInGameLibraryQuery } from "../../services/gameLibrary/gameLibraryApi";
 import { ImageCarousel } from "./components/ImageCarousel";
 
 export const GamePage = () => {
   const { gameId } = useParams();
+  const navigate = useNavigate();
 
   const { data: gameData, isLoading } = useGetGameByIdQuery(gameId);
   const { data: isInWishlistData, isLoading: isLoadingWishlist } =
@@ -28,6 +31,10 @@ export const GamePage = () => {
     isLoading: isLoadingLibrary,
     refetch: refetchIsInLibrary,
   } = useGetIsInGameLibraryQuery(gameId);
+  const {
+    data: { payload: languages } = { payload: [] },
+    isLoading: languagesLoading,
+  } = useGetAllLanguagesQuery();
 
   const [addToWishlist] = useAddToWishlistMutation();
   const [removeFromWishlist] = useRemoveFromWishlistMutation();
@@ -36,12 +43,23 @@ export const GamePage = () => {
   // Стан для модального вікна підтвердження купівлі
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (isLoading && isLoadingWishlist && isLoadingLibrary) {
-    return <div>Loading...</div>;
+  if (isLoading && isLoadingWishlist && isLoadingLibrary && languagesLoading) {
+    return <div className="loading-overlay visible">Loading data...</div>;
   }
 
   if (!gameData || !isInWishlistData || !isInLibraryData) {
-    return <div>Game not found</div>;
+    return (
+      <h1
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignContent: "center",
+          height: "100vh",
+        }}
+      >
+        Game not found
+      </h1>
+    );
   }
 
   const gameById = gameData.payload;
@@ -60,22 +78,71 @@ export const GamePage = () => {
 
   const handleBuyingGame = async (gameId) => {
     try {
-      const payload = await buyGame(gameId).unwrap();
+      await buyGame(gameId).unwrap();
       setIsModalOpen(false);
       await refetchIsInLibrary();
       toast.success("Thank you for your purchase!");
-      console.log("Buy game response:", payload);
     } catch (err) {
       const message =
         err?.data?.message ||
         err?.message ||
         "Purchase failed. Please try again.";
       toast.error(message);
-      console.log("Buy game error:", err);
     }
   };
 
-  console.log("Current Game:", gameById);
+  const calculateDiscountedPrice = (price, discount) => {
+    return (price - (price * discount) / 100).toFixed(0);
+  };
+
+  const renderSystemRequirements = (title, form) => (
+    <>
+      <span>{title}:</span>
+      <ul>
+        {form ? (
+          <>
+            {form.os ? (
+              <li>
+                <strong>OS:</strong> {form.os}
+              </li>
+            ) : null}
+            {form.processor ? (
+              <li>
+                <strong>Processor:</strong> {form.processor}
+              </li>
+            ) : null}
+            {form.memory ? (
+              <li>
+                <strong>Memory:</strong> {form.memory}
+              </li>
+            ) : null}
+            {form.graphics ? (
+              <li>
+                <strong>Graphics:</strong> {form.graphics}
+              </li>
+            ) : null}
+            {form.directX ? (
+              <li>
+                <strong>DirectX:</strong> {form.directX}
+              </li>
+            ) : null}
+            {form.network ? (
+              <li>
+                <strong>Network:</strong> {form.network}
+              </li>
+            ) : null}
+            {form.storage ? (
+              <li>
+                <strong>Storage:</strong> {form.storage}
+              </li>
+            ) : null}
+          </>
+        ) : (
+          <span>No requirements specified</span>
+        )}
+      </ul>
+    </>
+  );
 
   return (
     <>
@@ -132,29 +199,37 @@ export const GamePage = () => {
             </div>
           </div>
           <div className="game-main-content">
-            <SvgComponentMainPanel rotate={false} />
+            <div>
+              <SvgComponentMainPanel rotate={false} />
+            </div>
 
             <div className="game-description">{gameById.description}</div>
 
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <button
-                className={
-                  isInWishlistData.payload ? "white-button" : "rainbow-button"
-                }
-                onClick={() => {
-                  if (isInWishlistData.payload) {
-                    removeFromWishlist(gameId);
-                  } else {
-                    addToWishlist(gameId);
-                  }
-                }}
-              >
-                <div>
-                  {isInWishlistData.payload
-                    ? "Remove from wishlist"
-                    : "Add to wishlist"}
+              {isInLibraryData.payload ? (
+                <div className="white-outline-for-text" disabled>
+                  <div>In your Library</div>
                 </div>
-              </button>
+              ) : (
+                <button
+                  className={
+                    isInWishlistData.payload ? "white-button" : "rainbow-button"
+                  }
+                  onClick={() => {
+                    if (isInWishlistData.payload) {
+                      removeFromWishlist(gameId);
+                    } else {
+                      addToWishlist(gameId);
+                    }
+                  }}
+                >
+                  <div>
+                    {isInWishlistData.payload
+                      ? "Remove from wishlist"
+                      : "Add to wishlist"}
+                  </div>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -166,18 +241,37 @@ export const GamePage = () => {
                 images={gameById.screenshotUrls}
               />
             </div>
-            {/* <div className="special-editions flux-border">123</div>
-                      <div className="about-game flux-border">123</div> */}
           </div>
           <div className="game-bottom-right-panel">
             <div className="buy-game-panel flux-border">
               <h3>Buy Game</h3>
               <div className="buy-game-button-section">
-                <span>{gameById.price}₴</span>
+                {gameById.discount ? (
+                  <div className="discount-panel">
+                    <div className="discount-badge">-{gameById.discount}%</div>
+                    <div className="discount-price">
+                      <span className="original-price">{gameById.price}₴</span>
+                      <span className="sale-price">
+                        {calculateDiscountedPrice(
+                          gameById.price,
+                          gameById.discount
+                        )}
+                        ₴
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="no-discount-price">
+                    <b>{gameById.price}₴</b>
+                  </span>
+                )}
                 <div>
                   {isInLibraryData.payload ? (
-                    <div className="white-outline-for-text" disabled>
-                      <div>In your Library</div>
+                    <div
+                      className="rainbow-button"
+                      onClick={() => navigate("/library")}
+                    >
+                      <div>Go To Library</div>
                     </div>
                   ) : (
                     <button
@@ -194,74 +288,55 @@ export const GamePage = () => {
               <h3 className="h3-with-bottom-border">System Requirements</h3>
               <div className="system-requirements-content">
                 <div className="minimum-requirements">
-                  <span>Minimum:</span>
-                  <ul>
-                    {minimumRequirements ? (
-                      <>
-                        {minimumRequirements.os ? (
-                          <li>OS: {minimumRequirements.os}</li>
-                        ) : null}
-                        {minimumRequirements.processor ? (
-                          <li>Processor: {minimumRequirements.processor}</li>
-                        ) : null}
-                        {minimumRequirements.memory ? (
-                          <li>Memory: {minimumRequirements.memory}</li>
-                        ) : null}
-                        {minimumRequirements.graphics ? (
-                          <li>Graphics: {minimumRequirements.graphics}</li>
-                        ) : null}
-                        {minimumRequirements.directX ? (
-                          <li>DirectX: {minimumRequirements.directX}</li>
-                        ) : null}
-                        {minimumRequirements.network ? (
-                          <li>Network: {minimumRequirements.network}</li>
-                        ) : null}
-                        {minimumRequirements.storage ? (
-                          <li>Storage: {minimumRequirements.storage}</li>
-                        ) : null}
-                      </>
-                    ) : (
-                      <span>No minimum requirements found</span>
-                    )}
-                  </ul>
+                  {renderSystemRequirements("Minimum", minimumRequirements)}
                 </div>
                 <div className="recommended-requirements">
-                  <span>Recommended:</span>
-                  <ul>
-                    {recommendedRequirements ? (
-                      <>
-                        {recommendedRequirements.os ? (
-                          <li>OS: {recommendedRequirements.os}</li>
-                        ) : null}
-                        {recommendedRequirements.processor ? (
-                          <li>
-                            Processor: {recommendedRequirements.processor}
-                          </li>
-                        ) : null}
-                        {recommendedRequirements.memory ? (
-                          <li>Memory: {recommendedRequirements.memory}</li>
-                        ) : null}
-                        {recommendedRequirements.graphics ? (
-                          <li>Graphics: {recommendedRequirements.graphics}</li>
-                        ) : null}
-                        {recommendedRequirements.directX ? (
-                          <li>DirectX: {recommendedRequirements.directX}</li>
-                        ) : null}
-                        {recommendedRequirements.network ? (
-                          <li>Network: {recommendedRequirements.network}</li>
-                        ) : null}
-                        {recommendedRequirements.storage ? (
-                          <li>Storage: {recommendedRequirements.storage}</li>
-                        ) : null}
-                      </>
-                    ) : (
-                      <span>No recommended requirements found</span>
-                    )}
-                  </ul>
+                  {renderSystemRequirements(
+                    "Recommended",
+                    recommendedRequirements
+                  )}
                 </div>
               </div>
             </div>
-            {/* <div className="age-req flux-border">123</div> */}
+            <div
+              className="game-page-localizations flux-border"
+              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+            >
+              <h3 className="h3-with-bottom-border">Game Localizations</h3>
+              {gameById.localizations.length !== 0 ? (
+                <div className="localizations-list">
+                  <div className="thead">
+                    <div className="tr">
+                      <div className="th"></div>
+                      <div className="th">Interface</div>
+                      <div className="th">Full audio</div>
+                      <div className="th">Subtitles</div>
+                    </div>
+                  </div>
+                  {gameById.localizations.map((loc) => (
+                    <div className="tr" key={loc.id}>
+                      <div className="td lang-name">
+                        {
+                          languages.find((lang) => lang.id === loc.languageId)
+                            ?.name
+                        }
+                      </div>
+                      <div className="td">
+                        {loc.interface ? <img src={checkMark} alt="Yes" /> : ""}
+                      </div>
+                      <div className="td">
+                        {loc.fullAudio ? <img src={checkMark} alt="Yes" /> : ""}
+                      </div>
+                      <div className="td">
+                        {loc.subtitles ? <img src={checkMark} alt="Yes" /> : ""}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span>No localizations specified</span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -270,7 +345,10 @@ export const GamePage = () => {
         description={
           <>
             Are you sure you want to purchase <b>{gameById.name}</b> for{" "}
-            <b>{gameById.price}₴</b>?
+            <b>
+              {calculateDiscountedPrice(gameById.price, gameById.discount)}₴
+            </b>
+            ?
           </>
         }
         isOpen={isModalOpen}

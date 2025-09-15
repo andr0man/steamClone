@@ -18,7 +18,7 @@ public class UserProvider(IHttpContextAccessor context, AppDbContext appDbContex
             throw new InvalidOperationException("User ID claim not found.");
         }
 
-        if (await appDbContext.Users
+        if (await appDbContext.Users.AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == userIdStr, CancellationToken.None) == null)
         {
             throw new InvalidOperationException("User does not exist.");

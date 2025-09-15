@@ -31,15 +31,16 @@
   justify-content: space-between;
   position: absolute;
   top: 121px;
-  left: 119px;
-  background-color: var(--bg, rgba(18, 18, 24, 1));
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
 }
 
 .footer-text-section {
   display: flex;
   width: 667px;
   align-items: flex-start;
-  gap: 884px;
+  gap: 24px;
   position: relative;
 }
 
@@ -57,7 +58,7 @@
   position: relative;
   align-self: stretch;
   margin-top: -1px;
-  font-family: 'Inter', Helvetica;
+  font-family: "Inter", Helvetica;
   font-weight: var(--inter-common-font-weight, 400);
   color: var(--inactivegrey, rgba(165, 165, 165, 1));
   font-size: var(--inter-common-font-size, 16px);
@@ -78,7 +79,7 @@
   position: relative;
   width: fit-content;
   margin-top: -1px;
-  font-family: 'Inter', Helvetica;
+  font-family: "Inter", Helvetica;
   font-weight: 500;
   color: #ffffff;
   font-size: 15px;
@@ -86,7 +87,7 @@
   line-height: 22.5px;
   white-space: nowrap;
   cursor: pointer;
-  
+
   &:hover {
     opacity: 0.8;
   }
@@ -128,6 +129,15 @@
   }
 }
 
+.asset-flux-image {
+  position: absolute;
+  width: 303px;
+  height: 250px;
+  top: 75px;
+  right: 100px;
+  left: auto;
+}
+
 .vector-image {
   position: absolute;
   width: 61px;
@@ -138,7 +148,6 @@
   aspect-ratio: 0.57;
 }
 
-
 :root {
   --bg: rgba(18, 18, 24, 1);
   --button-purpl: rgba(161, 120, 235, 1);
@@ -148,7 +157,7 @@
   --lightpurpl: rgba(146, 119, 197, 1);
   --red: rgba(225, 37, 37, 1);
   --white: rgba(255, 255, 255, 1);
-  
+
   --inter-common-font-family: "Inter", Helvetica;
   --inter-common-font-size: 16px;
   --inter-common-font-style: normal;

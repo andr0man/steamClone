@@ -51,7 +51,6 @@ public class UserGameLibraryRepository(AppDbContext appDbContext) : IUserGameLib
     public async Task<List<UserGameLibrary>> GetAllByGameIdAsync(string gameId, CancellationToken token)
     {
         return await appDbContext.UserGameLibraries
-            // .Include(ugl => ugl.Game)
             .Where(ugl => ugl.GameId == gameId)
             .ToListAsync(token);
     }
