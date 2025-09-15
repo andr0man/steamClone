@@ -24,29 +24,16 @@ import MarketHistory from "../pages/market/history/MarketHistory.jsx";
 import ForgotPassword from "../pages/auth/login/ForgotPassword.jsx";
 import Chat from "../pages/chat/Chat.jsx";
 import { useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
-import ManageGenres from "../pages/admin/genres/ManageGenres.jsx";
-import ManageGames from "../pages/admin/games/ManageGames.jsx";
-import GameCreate from "../pages/admin/games/gameCreate/GameCreate.jsx";
-import GameEdit from "../pages/admin/games/gameEdit/GameEdit.jsx";
-import Activity from '../pages/profile/activity/Activity.jsx';
-import Badges from '../pages/profile/badges/Badges.jsx';
-import Friends from '../pages/profile/friends/Friends.jsx';
-import Inventory from '../pages/profile/inventory/Inventory.jsx';
-import Buy from '../pages/market/buy/Buy.jsx';
-import Sell from '../pages/market/sell/Sell.jsx';
-import AdminAll from '../pages/admin/all/AdminAll';
-
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("accessToken");
-  const user = token ? jwtDecode(token) : null;
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-};
-import adminRoutes from "./AdminRoutes.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
+import adminRoutes from "./AdminRoutes.jsx";
+import AdminAll from "../pages/admin/all/AdminAll.jsx";
+
+import Activity from "../pages/profile/activity/Activity.jsx";
+import Badges from "../pages/profile/badges/Badges.jsx";
+import Friends from "../pages/profile/friends/Friends.jsx";
+import Inventory from "../pages/profile/inventory/Inventory.jsx";
+import Buy from "../pages/market/buy/Buy.jsx";
+import Sell from "../pages/market/sell/Sell.jsx";
 
 const UnderConstructionPage = ({ pageName }) => (
   <div style={{ padding: "50px", textAlign: "center", color: "#fff" }}>
@@ -63,6 +50,7 @@ const UnderConstructionPage = ({ pageName }) => (
 
 const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
   const currentUser = useSelector((state) => state.user.user);
+
   return (
     <div className="app-container">
       {isLoggedIn && <Navbar onLogout={handleLogout} />}
@@ -73,11 +61,18 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/register" element={<Register />} />
-
+            <Route
+              path="/admin/all"
+              element={
+                <ProtectedRoute>
+                  <AdminAll />
+                </ProtectedRoute>
+              }
+              />     
             <Route
               path="/store/game/:gameId"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <GamePage />
                 </ProtectedRoute>
               }
@@ -85,7 +80,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route
               path="/store/featured"
               element={
-                <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <ProtectedRoute>
                   <Featured />
                 </ProtectedRoute>
               }
@@ -131,6 +126,14 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
               }
             />
             <Route
+              path="/store/purchase"
+              element={
+                <ProtectedRoute>
+                  <Purchase />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/store/:subpage"
               element={
                 <ProtectedRoute>
@@ -146,6 +149,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/chat"
               element={
@@ -154,14 +158,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/store/purchase"
-              element={
-                <ProtectedRoute>
-                  <Purchase />
-                </ProtectedRoute>
-              }
-            />
+
             <Route
               path="/home/search"
               element={
@@ -170,6 +167,8 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
+
+            {/* Library */}
             <Route
               path="/library"
               element={
@@ -202,7 +201,6 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/market"
               element={
@@ -219,7 +217,22 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
-
+            <Route
+              path="/market/buy"
+              element={
+                <ProtectedRoute>
+                  <Buy />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/market/sell"
+              element={
+                <ProtectedRoute>
+                  <Sell />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/profile"
               element={
@@ -227,7 +240,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                   <Profile userData={currentUser} />
                 </ProtectedRoute>
               }
-            ></Route>
+            />
             <Route
               path="/profile/edit"
               element={
@@ -236,12 +249,38 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
-              <Route path="/profile/activity" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Activity /></ProtectedRoute>} />
-              <Route path="/profile/badges" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Badges /></ProtectedRoute>} />
-              <Route path="/profile/friends" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Friends /></ProtectedRoute>} />
-              <Route path="/profile/inventory" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Inventory /></ProtectedRoute>} />
-              <Route path="/market/buy" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Buy /></ProtectedRoute>} />
-              <Route path="/market/sell" element={<ProtectedRoute isLoggedIn={isLoggedIn}><Sell /></ProtectedRoute>} />
+            <Route
+              path="/profile/activity"
+              element={
+                <ProtectedRoute>
+                  <Activity />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile/badges"
+              element={
+                <ProtectedRoute>
+                  <Badges />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile/friends"
+              element={
+                <ProtectedRoute>
+                  <Friends />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile/inventory"
+              element={
+                <ProtectedRoute>
+                  <Inventory />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/community"
               element={
@@ -258,54 +297,8 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 </ProtectedRoute>
               }
             />
-            <Route path="/admin/all" element={<AdminAll />} />
-            <Route path="/admin">
-              <Route
-                path="dashboard"
-                element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="genres"
-                element={
-                  <ProtectedRoute>
-                    <ManageGenres />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="games">
-                <Route
-                  index
-                  element={
-                    <ProtectedRoute>
-                      <ManageGames />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="create"
-                  element={
-                    <ProtectedRoute>
-                      <GameCreate />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="edit/:gameId"
-                  element={
-                    <ProtectedRoute>
-                      <GameEdit />
-                    </ProtectedRoute>
-                  }
-                />
-              </Route>
-            </Route>
 
             {adminRoutes}
-
             <Route
               path="/"
               element={

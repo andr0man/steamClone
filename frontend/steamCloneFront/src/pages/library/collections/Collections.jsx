@@ -5,7 +5,7 @@ import Notification from '../../../components/Notification';
 import CreateCollectionModal from './CreateCollectionModal';
 import CollectionDetailsModal from './CollectionDetailsModal';
 import { Layers, Plus, MoreHorizontal, Pencil, Eye, Trash2, Edit3 } from 'lucide-react';
-import { useGetGameLibraryQuery } from '../../../services/game-library/gameLibraryApi';
+import { useGetGameLibraryQuery } from '../../../services/gamelibrary/gameLibraryApi';
 
 const LS_KEYS = {
   COL: 'mock:collections',

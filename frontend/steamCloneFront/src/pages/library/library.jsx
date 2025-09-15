@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./library.scss";
 import Notification from "../../components/Notification";
 import { Search as SearchIcon } from "lucide-react";
-import { useGetGameLibraryQuery } from "../../services/game-library/gameLibraryApi";
+import { useGetGameLibraryQuery } from "../../services/gamelibrary/gameLibraryApi";
 
 const DEFAULT_TAGS = ["Indie", "Singleplayer", "Casual", "Action", "Adventure"];
 const STATUS_LIST = ["Played", "Not played", "Non-installed"];
