@@ -20,8 +20,7 @@ const AdminDashboard = () => {
       <div className="admin-dashboard-cards">
         <div className="admin-card flux-border">
           <h3>Manage Games</h3>
-          <p>Add new games to the store.</p>
-          <Link to="/admin/games" className="admin-btn">Go to Manage Games</Link>
+          <Link to="/admin/games" className="admin-btn">Go to Manage Page</Link>
         </div>
         <div className="admin-card flux-border">
           <h3>Manage All</h3>
@@ -30,8 +29,11 @@ const AdminDashboard = () => {
           </div>
         <div className="admin-card flux-border">
           <h3>Manage Genres</h3>
-          <p>Add or manage game genres.</p>
-          <Link to="/admin/genres" className="admin-btn">Go to Manage Genres</Link>
+          <Link to="/admin/genres" className="admin-btn">Go to Manage Page</Link>
+        </div>
+        <div className="admin-card flux-border">
+          <h3>Manage Developers and Publishers</h3>
+          <Link to="/admin/developers-and-publishers" className="admin-btn">Go to Manage Page</Link>
         </div>
         <div className="admin-card flux-border">
           <h3>Other Management</h3>

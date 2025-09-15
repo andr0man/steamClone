@@ -56,4 +56,18 @@ public class DeveloperAndPublisherController(IDeveloperAndPublisherService devel
         var result = await developerAndPublisherService.GetWithoutApprovalAsync(token);
         return GetResult(result);
     }
+    
+    [HttpGet("get-associated-users/{devAndPubId}")]
+    public async Task<IActionResult> GetAssociatedUsersAsync(string devAndPubId, CancellationToken token = default)
+    {
+        var result = await developerAndPublisherService.GetAssociatedUsersAsync(devAndPubId, token);
+        return GetResult(result);
+    }
+
+    [HttpGet("is-owner/{devAndPubId}")]
+    public async Task<IActionResult> IsOwnerAsync([FromRoute] string devAndPubId, CancellationToken token = default)
+    {
+        var result = await developerAndPublisherService.IsDevOrPubOwnerAsync(devAndPubId, token);
+        return GetResult(result);
+    }
 }

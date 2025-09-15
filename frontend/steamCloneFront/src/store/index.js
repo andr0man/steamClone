@@ -5,7 +5,7 @@ import { userApi } from "../services/user/userApi";
 import { rootReducer } from "./rootReducer";
 import { gameApi } from "../services/game/gameApi";
 import { wishlistApi } from "../services/wishlist/wishlistApi";
-import { gameLibraryApi } from "../services/game-library/gameLibraryApi";
+import { gameLibraryApi } from "../services/gameLibrary/gameLibraryApi";
 import { genreApi } from "../services/genre/genreApi";
 import { developerAndPublisherApi } from "../services/developerAndPublisher/developerAndPublisherApi";
 import { gameSystemRequirementsApi } from "../services/gameSystemRequirements/gameSystemRequrementsApi";
@@ -21,6 +21,7 @@ import { marketBuyApi } from "../services/market/marketBuyApi";
 import { marketSellApi } from "../services/market/marketSellApi";
 import { marketHistoryApi } from "../services/market/marketHistoryApi";
 import { homeApi } from "../services/home/homeApi";
+import { gameItemApi } from "../services/gameItem/gameItemApi";
 
 const middlewares = [
   authApi.middleware,
@@ -43,6 +44,7 @@ const middlewares = [
   marketSellApi.middleware,
   marketHistoryApi.middleware,
   homeApi.middleware,
+  gameItemApi.middleware,
 ];
 
 export const store = configureStore({

@@ -14,3 +14,25 @@
   filter: brightness(1.1);
   transform: scale(1.04);
 }
+
+.approve-game-btn {
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #477764, #74bff7 40%, #7c72db);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:hover {
+    filter: brightness(1.1);
+    transform: scale(1.04);
+  }
+}

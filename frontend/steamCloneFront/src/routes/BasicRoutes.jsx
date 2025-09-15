@@ -19,7 +19,6 @@ import PointsShop from "../pages/store/points-shop/PointsShop.jsx";
 import News from "../pages/store/news/News.jsx";
 import Search from "../pages/home/search/Search.jsx";
 import { GamePage } from "../pages/game/GamePage.jsx";
-import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
 import Purchase from "../pages/store/purchase/Purchase.jsx";
 import MarketHistory from "../pages/market/history/MarketHistory.jsx";
 import ForgotPassword from "../pages/auth/login/ForgotPassword.jsx";
@@ -46,6 +45,8 @@ const ProtectedRoute = ({ children }) => {
   }
   return children;
 };
+import adminRoutes from "./AdminRoutes.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
 
 const UnderConstructionPage = ({ pageName }) => (
   <div style={{ padding: "50px", textAlign: "center", color: "#fff" }}>
@@ -302,6 +303,8 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
                 />
               </Route>
             </Route>
+
+            {adminRoutes}
 
             <Route
               path="/"

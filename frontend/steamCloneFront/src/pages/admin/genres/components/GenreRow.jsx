@@ -3,7 +3,7 @@ import {
   useDeleteGenreMutation,
   useUpdateGenreMutation,
 } from "../../../../services/genre/genreApi";
-import { ConfirmModal } from "../../../../components/ConfirmModal";
+import { ConfirmModal } from "../../../../components/Modals/ConfirmModal";
 import { toast } from "react-toastify";
 import { GenreModal } from "./modals/GenreModal";
 
@@ -43,14 +43,14 @@ const GenreRow = ({ genre }) => {
         <td style={{ padding: "8px" }}>{genre.name}</td>
         <td style={{ padding: "8px", textAlign: "center" }}>
           <button
-            className="edit-genre-btn"
+            className="edit-manage-btn"
             style={{ marginRight: 8 }}
             onClick={() => setEditModalOpen(true)}
           >
             Edit
           </button>
           <button
-            className="delete-genre-btn"
+            className="delete-manage-btn"
             onClick={() => setDeleteModalOpen(true)}
           >
             Delete

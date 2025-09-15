@@ -22,6 +22,10 @@ const ManageGenres = () => {
     return <div className="loading-overlay visible">Loading data...</div>;
   if (isError) return <div>Error loading genres</div>;
 
+  const handleClose = () => {
+    setCreateModalOpen(false);
+    modalReset();
+  };
 
   const handleCreateGenre = async (genreData) => {
     try {
@@ -35,7 +39,7 @@ const ManageGenres = () => {
   };
 
   return (
-    <div className="manage-genres-container flux-border">
+    <div className="manage-container flux-border" style={{ maxWidth: "600px" }}>
       <div
         style={{
           display: "flex",
@@ -46,7 +50,7 @@ const ManageGenres = () => {
       >
         <h2 style={{ margin: 0 }}>Manage Genres</h2>
         <button
-          className="create-genre-btn"
+          className="create-manage-btn"
           onClick={() => setCreateModalOpen(true)}
           disabled={isCreating}
         >
@@ -54,7 +58,7 @@ const ManageGenres = () => {
         </button>
       </div>
       <table
-        className="genres-table"
+        className="manage-table"
         style={{ width: "100%", borderCollapse: "collapse" }}
       >
         <thead>
@@ -66,14 +70,20 @@ const ManageGenres = () => {
           </tr>
         </thead>
         <tbody>
-          {genres.map((genre) => (
+          {genres.length > 0 ? genres.map((genre) => (
             <GenreRow key={genre.id} genre={genre} />
-          ))}
+          )) : (
+            <tr>
+              <td colSpan={2} style={{ textAlign: "center", padding: "8px" }}>
+                No genres available
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
       <GenreModal
         isOpen={isCreateModalOpen}
-        onClose={() => setCreateModalOpen(false)}
+        onClose={handleClose}
         onSubmit={handleCreateGenre}
         titleText="Create Genre"
         confirmText="Create"

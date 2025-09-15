@@ -5,7 +5,7 @@ import "./GameCreate.scss";
 import "../components/common/StylesForGameForm.scss";
 import { toast } from "react-toastify";
 import Select from "react-select";
-import selectStyles from "../components/common/selectStyles";
+import selectStyles from "../../common/selectStyles";
 import { useGetAllDevelopersAndPublishersQuery } from "../../../../services/developerAndPublisher/developerAndPublisherApi";
 import { useNavigate } from "react-router-dom";
 
@@ -47,7 +47,7 @@ const GameCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createGame({
+      const {payload: created} = await createGame({
         ...form,
         price: Number(form.price),
         releaseDate: new Date(form.releaseDate).toISOString(),
@@ -62,7 +62,7 @@ const GameCreate = () => {
         publisherId: "",
         genresIds: [],
       });
-      navigate("/admin/games");
+      navigate(`/admin/games/edit/${created.id}`);
     } catch (err) {
       toast.error(err?.data?.message || "Failed to create game");
     }
@@ -128,7 +128,7 @@ const GameCreate = () => {
               <label>Release Date</label>
               <input
                 name="releaseDate"
-                type="datetime-local"
+                type="date"
                 value={form.releaseDate}
                 onChange={handleChange}
                 required

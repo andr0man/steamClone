@@ -1,0 +1,90 @@
+@use "../../styles/variables.scss" as variables;
+
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(21, 21, 24, 0.85);
+  display: flex;
+  backdrop-filter: blur(3px);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-with-border-content {
+  position: relative;
+  background: #121218;
+  color: #fff;
+  padding: 32px 50px 20px 50px;
+  text-align: center;
+  // полігональна форма
+  clip-path: variables.$polygon-shape;
+
+  h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    text-shadow: 0 1px 4.5px #b835ff;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #fff;
+    }
+  }
+}
+
+.confirm-modal-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0 6px;
+  line-height: 1;
+  transition: color 0.2s;
+
+  &:hover {
+    filter: brightness(1.2);
+  }
+}
+
+.modal-with-border-content h2 {
+  margin-bottom: 18px;
+  font-size: 1.5rem;
+  font-family: inherit;
+  text-shadow: 0 1px 4.5px #b835ff;
+}
+
+.modal-with-border-content p {
+  margin-bottom: 24px;
+  font-size: 1.1rem;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+}

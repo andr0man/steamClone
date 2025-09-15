@@ -21,3 +21,16 @@ $rainbow-stops: #ffffff 0.54%, #8c8c8c 18.71%, #ff9584 28.28%, #dfed43 40.23%,
 }
 
 $button-rotation-degree: 15deg;
+
+$polygon-border-value: 27px;
+
+$polygon-shape: polygon(
+  $polygon-border-value 0%,
+  calc(100% - $polygon-border-value) 0%,
+  100% $polygon-border-value,
+  100% calc(100% - $polygon-border-value),
+  calc(100% - $polygon-border-value) 100%,
+  $polygon-border-value 100%,
+  0% calc(100% - $polygon-border-value),
+  0% $polygon-border-value
+);

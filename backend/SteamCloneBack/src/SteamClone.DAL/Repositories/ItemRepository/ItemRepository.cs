@@ -10,8 +10,8 @@ public class ItemRepository(AppDbContext appDbContext, IUserProvider userProvide
     : Repository<Item, string>(appDbContext, userProvider), IItemRepository
 {
     private readonly AppDbContext _appDbContext = appDbContext;
-    public async Task<bool> IsUniqueNameAsync(string name, CancellationToken token)
+    public async Task<bool> IsUniqueNameAsync(string name, string gameId, CancellationToken token)
     {
-        return await _appDbContext.Items.FirstOrDefaultAsync(g => g.Name == name, token) == null;
+        return await _appDbContext.Items.FirstOrDefaultAsync(g => g.Name == name && g.GameId == gameId, token) == null;
     }
 }

@@ -43,4 +43,6 @@ public interface IGameService : IServiceCRUD<string, CreateGameVM, UpdateGameVM>
     Task<ServiceResponse> GetWithoutApprovalAsync(CancellationToken token);
     Task<ServiceResponse> BuyGameAsync(string id, CancellationToken token);
     Task<ServiceResponse> IsGameBoughtAsync(string gameId, CancellationToken token);
+    Task<ServiceResponse> GetAssociatedUsersAsync(string gameId, CancellationToken token);
+    Task<ServiceResponse> IsGameOwnerAsync(string gameId, CancellationToken token);
 }

@@ -23,4 +23,5 @@ public class GameVM
     public DeveloperAndPublisherVM Publisher { get; set; } = new();
     public DeveloperAndPublisherVM Developer { get; set; } = new();
     public int? Discount { get; set; }
+    public string? CreatedBy { get; set; }
 }

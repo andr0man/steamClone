@@ -1,6 +1,6 @@
 import React from "react";
 import Select from "react-select";
-import selectStyles from "../../components/common/selectStyles";
+import selectStyles from "../../../common/selectStyles";
 import { useGetAllGenresQuery } from "../../../../../services/genre/genreApi";
 import { useGetAllDevelopersAndPublishersQuery } from "../../../../../services/developerAndPublisher/developerAndPublisherApi";
 
@@ -70,7 +70,7 @@ const GameMainInformation = ({
             <input
               id="releaseDate"
               name="releaseDate"
-              type="datetime-local"
+              type="date"
               value={form?.releaseDate}
               onChange={handleChange}
               required
