@@ -3,8 +3,10 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import './Home.scss';
 import ArrowLeft from "../../../src/assets/ArrowLeft.svg";
 import ArrowRight from "../../../src/assets/ArrowRight.svg";
-import {Footer} from "../../components/Footer/Footer";
+import { useGetAllGamesQuery } from "../../services/game/gameApi";
+import {Footer} from "../../components/Footer/Footer.jsx";
 
+const FALLBACK_IMG = "https://via.placeholder.com/640x360/1c232c/ffffff.png?text=Game";
 
 const Arrow = ({ dir = 'right', onClick, className = '' }) => (
   <button
@@ -49,104 +51,84 @@ const SectionHeader = ({ title, to }) => (
   </div>
 );
 
-const HERO = [
-  { id: 'rdr2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-18.png',    price: <DiscountPrice off="-75%" from="2599₴" to="649₴" /> },
-  { id: 'delta-force', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-22@2x.png', price: <RegularPrice value="Free to play" /> },
-  { id: 'expedition-33', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-20@2x.png', price: <RegularPrice value="1499₴" /> },
-];
+const fmt = (n) => {
+  if (n == null) return '-';
+  const v = Number(n);
+  if (Number.isNaN(v)) return String(n);
+  return `${Math.round(v)}₴`;
+};
 
-const MONTHLY = [
-  { id: 'vrising', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-24.png',    price: <DiscountPrice off="-50%" from="700₴" to="350₴" /> },
-  { id: 'room',    src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-18-1.png',  price: <DiscountPrice off="-75%" from="124-379₴" to="31-94₴" /> },
-  { id: 'payday3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-20-1.png',  price: <DiscountPrice off="-70%" from="799₴" to="239₴" /> },
-  { id: 'ffxvi',   src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-23@2x.png', price: <DiscountPrice off="-35%" from="1399₴" to="909₴" /> },
-  { id: 'cyberpunk2077', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-40.png', price: <DiscountPrice off="-60%" from="1299₴" to="519₴" /> },
-  { id: 'halo-infinite', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-41.png', price: <RegularPrice value="Free to play" /> },
-  { id: 'elden-ring', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-42.png', price: <DiscountPrice off="-30%" from="1999₴" to="1399₴" /> },
-  { id: 'minecraft', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-43.png', price: <RegularPrice value="649₴" /> },
-];
+const slugify = (s) =>
+  String(s || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
 
-const N_T_TOP = [
-  { id: 'card-1', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29@2x.png', price: <DiscountPrice off="-20%" from="124₴" to="99₴" /> },
-  { id: 'card-2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33@2x.png', price: <DiscountPrice off="-10%" from="225₴" to="202₴" /> },
-  { id: 'card-3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36@2x.png', price: <RegularPrice value="949₴" /> },
-  { id: 'card-4', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37@2x.png', price: <DiscountPrice off="-10%" from="259₴" to="233₴" /> },
+const nnum = (v) => (v == null ? null : Number(v));
 
-  { id: 'card-8', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29@2x.png', price: <RegularPrice value="199₴" /> },
-  { id: 'card-9', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33@2x.png', price: <DiscountPrice off="-50%" from="400₴" to="200₴" /> },
-  { id: 'card-10', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36@2x.png', price: <RegularPrice value="349₴" /> },
-  { id: 'card-11', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37@2x.png', price: <RegularPrice value="120₴" /> },
+const normalizeGames = (resp) => {
+  const list = resp?.payload ?? resp ?? [];
+  if (!Array.isArray(list)) return [];
+  return list.map((row) => {
+    const g = row?.game ?? row?.gameDto ?? row?.gameDetails ?? row;
+    const idRaw = g?.slug ?? g?.id ?? row?.gameId ?? row?.id ?? g?.name ?? g?.title;
+    const id = String(idRaw ?? "").trim() || slugify(g?.name ?? g?.title ?? crypto.randomUUID());
+    const imageUrl =
+      g?.coverImageUrl ??
+      g?.coverImage ??
+      (Array.isArray(g?.screenshots) ? g.screenshots[0] : null) ??
+      null;
 
-  { id: 'card-15', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29@2x.png', price: <RegularPrice value="199₴" /> },
-  { id: 'card-16', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33@2x.png', price: <DiscountPrice off="-50%" from="400₴" to="200₴" /> },
-  { id: 'card-17', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36@2x.png', price: <RegularPrice value="349₴" /> },
-  { id: 'card-18', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37@2x.png', price: <RegularPrice value="120₴" /> },
-];
-const N_T_BOTTOM = [
-  { id: 'card-5', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="159₴" /> },
-  { id: 'card-6', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-1.png',price: <RegularPrice value="Free to play" /> },
-  { id: 'card-7', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32.png',  price: <RegularPrice value="1079₴" /> },
+    return {
+      id: id,
+      title: g?.name ?? g?.title ?? "Game",
+      imageUrl: imageUrl || FALLBACK_IMG,
+      price: nnum(g?.price ?? 0),
+      discount: nnum(g?.discount ?? 0),
+      isFree: Boolean(g?.isFree ?? (Number(g?.finalPrice ?? g?.price) === 0)),
+      releaseDate: g?.releaseDate ?? g?.createdAt ?? g?.publishDate ?? null,
+      popularity: nnum(g?.percentageOfPositiveReviews) ?? 0,
+      genres: Array.isArray(g?.genres) ? g.genres.map((x) => x?.name ?? x) : [],
+    };
+  });
+};
 
-  { id: 'card-12', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="649₴" /> },
-  { id: 'card-13', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-1.png',price: <DiscountPrice off="-30%" from="300₴" to="210₴" /> },
-  { id: 'card-14', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32.png',  price: <RegularPrice value="90₴" /> },
+const calculateDiscountedPrice = (price, discount) => {
+    return (price - (price * discount) / 100).toFixed(0);
+  };
 
-  { id: 'card-19', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="649₴" /> },
-  { id: 'card-20', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-1.png',price: <DiscountPrice off="-30%" from="300₴" to="210₴" /> },
-  { id: 'card-21', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32.png',  price: <RegularPrice value="90₴" /> },
-];
+const discountOf = (g) => {
+  return nnum(g?.discount) || 0;
+};
 
-const REC_TOP = [
-  { id: 'rec-1', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-1@2x.png', price: <RegularPrice value="325₴" /> },
-  { id: 'rec-2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-2@2x.png', price: <RegularPrice value="225₴" /> },
-  { id: 'rec-3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-1@2x.png', price: <RegularPrice value="415₴" /> },
-  { id: 'rec-4', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-1@2x.png', price: <RegularPrice value="429₴" /> },
+const priceBadge = (g) => {
+  const disc = discountOf(g);
 
-  { id: 'rec-8', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-1@2x.png', price: <DiscountPrice off="-15%" from="200₴" to="170₴" /> },
-  { id: 'rec-9', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-2@2x.png', price: <RegularPrice value="510₴" /> },
-  { id: 'rec-10', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-1@2x.png', price: <DiscountPrice off="-40%" from="600₴" to="360₴" /> },
-  { id: 'rec-11', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-1@2x.png', price: <RegularPrice value="180₴" /> },
-];
-const REC_BOTTOM = [
-  { id: 'rec-5', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-1.png', price: <RegularPrice value="Free to play" /> },
-  { id: 'rec-6', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-3.png', price: <RegularPrice value="415₴" /> },
-  { id: 'rec-7', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-1.png', price: <RegularPrice value="699₴" /> },
+  if (g?.isFree) return <RegularPrice value="Free to play" />;
+  
+  const originalPrice = g.price;
+  if (disc > 0) {
+    const discountedPrice = calculateDiscountedPrice(originalPrice, disc);
+    return <DiscountPrice off={`-${disc}%`} from={fmt(originalPrice)} to={fmt(discountedPrice)} />;
+  }
+  return <RegularPrice value={fmt(originalPrice)} />;
+};
 
-  { id: 'rec-12', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-1.png', price: <RegularPrice value="99₴" /> },
-  { id: 'rec-13', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-3.png', price: <RegularPrice value="349₴" /> },
-  { id: 'rec-14', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-1.png', price: <DiscountPrice off="-25%" from="400₴" to="300₴" /> },
-];
-
-const BEST_TOP = [
-  { id: 'best-1', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-2@2x.png', price: <RegularPrice value="Free to play" /> },
-  { id: 'best-2', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-4@2x.png', price: <RegularPrice value="Free to play" /> },
-  { id: 'best-3', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-2@2x.png', price: <RegularPrice value="Free to play" /> },
-  { id: 'best-4', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-2@2x.png', price: <DiscountPrice off="-20%" from="469₴" to="375₴" /> },
-
-  { id: 'best-8', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-2@2x.png', price: <RegularPrice value="499₴" /> },
-  { id: 'best-9', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-4@2x.png', price: <DiscountPrice off="-35%" from="600₴" to="390₴" /> },
-  { id: 'best-10', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-2@2x.png', price: <RegularPrice value="279₴" /> },
-  { id: 'best-11', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-2@2x.png', price: <RegularPrice value="Free to play" /> },
-];
-const BEST_BOTTOM = [
-  { id: 'best-5', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="159₴" /> },
-  { id: 'best-6', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-2.png',price: <RegularPrice value="Free to play" /> },
-  { id: 'best-7', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-2.png',price: <RegularPrice value="Free to play" /> },
-
-  { id: 'best-12', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-35.png',  price: <RegularPrice value="249₴" /> },
-  { id: 'best-13', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-2.png',price: <DiscountPrice off="-15%" from="199₴" to="169₴" /> },
-  { id: 'best-14', src: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-34-2.png',price: <RegularPrice value="349₴" /> },
-];
+const toCard = (g) => ({
+  id: g.id,
+  src: g.imageUrl || FALLBACK_IMG,
+  price: priceBadge(g),
+});
 
 const StoreRail = () => {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
-
   const doSearch = () => {
     if (!q.trim()) return;
     navigate(`/store/search?q=${encodeURIComponent(q.trim())}`);
   };
-
   return (
     <div className="store-rail">
       <svg className="store-rail-bg" width="100%" height="80" viewBox="0 0 500 80" preserveAspectRatio="none">
@@ -155,7 +137,7 @@ const StoreRail = () => {
       <div className="rail-frame">
         <div className="rail-inner">
           <div className="rail-left">
-            <NavLink to="/store/points-shop" className="rail-link">Points Shop</NavLink>
+
             <NavLink to="/chat" className="rail-link">Chat</NavLink>
             <NavLink to="/store/wishlist" className="rail-link">Wishlist</NavLink>
           </div>
@@ -192,24 +174,37 @@ const StoreRailWrapper = () => {
   );
 };
 
-const Hero = () => {
+const Hero = ({ items }) => {
   const navigate = useNavigate();
   const [idx, setIdx] = useState(0);
-  const ordered = useMemo(() => [idx, (idx + 1) % HERO.length, (idx + 2) % HERO.length], [idx]);
-
+  const cards = (items || []).slice(0, 3).map(toCard);
+  const len = Math.max(1, cards.length);
+  const ordered = useMemo(() => [idx % len, (idx + 1) % len, (idx + 2) % len], [idx, len]);
   const openGame = (slug) => navigate(`/store/game/${slug}`, { state: { slug, from: 'home-hero' } });
+
+  if (!cards.length) {
+    return (
+      <section className="hero">
+        <div className="hero-cards">
+          <GameCard size="lg" src={FALLBACK_IMG} alt="Hero" price={<RegularPrice value="-" />} onClick={() => {}} />
+          <GameCard size="md" src={FALLBACK_IMG} alt="Hero" price={<RegularPrice value="-" />} onClick={() => {}} />
+          <GameCard size="md" src={FALLBACK_IMG} alt="Hero" price={<RegularPrice value="-" />} onClick={() => {}} />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="hero">
-      <Arrow dir="left" onClick={() => setIdx((p) => (p + HERO.length - 1) % HERO.length)} />
+      <Arrow dir="left" onClick={() => setIdx((p) => (p + len - 1) % len)} />
       <div className="hero-cards">
-        <GameCard size="lg"   src={HERO[ordered[0]].src} alt="Hero 1" price={HERO[ordered[0]].price} onClick={() => openGame(HERO[ordered[0]].id)} />
-        <GameCard size="md"   src={HERO[ordered[1]].src} alt="Hero 2" price={HERO[ordered[1]].price} onClick={() => openGame(HERO[ordered[1]].id)} />
-        <GameCard size="md"   src={HERO[ordered[2]].src} alt="Hero 3" price={HERO[ordered[2]].price} onClick={() => openGame(HERO[ordered[2]].id)} />
+        <GameCard size="lg"   src={cards[ordered[0]].src} alt="Hero 1" price={cards[ordered[0]].price} onClick={() => openGame(cards[ordered[0]].id)} />
+        {cards[1] && <GameCard size="md"   src={cards[ordered[1]].src} alt="Hero 2" price={cards[ordered[1]].price} onClick={() => openGame(cards[ordered[1]].id)} />}
+        {cards[2] && <GameCard size="md"   src={cards[ordered[2]].src} alt="Hero 3" price={cards[ordered[2]].price} onClick={() => openGame(cards[ordered[2]].id)} />}
       </div>
-      <Arrow dir="right" onClick={() => setIdx((p) => (p + 1) % HERO.length)} />
+      <Arrow dir="right" onClick={() => setIdx((p) => (p + 1) % len)} />
       <div className="dots">
-        {HERO.map((_, i) => (
+        {cards.map((_, i) => (
           <span key={i} className={`dot ${i === idx ? 'active' : ''}`} />
         ))}
       </div>
@@ -221,7 +216,7 @@ const ScrollRow = ({ items, size = 'xl' }) => {
   const navigate = useNavigate();
   const ref = useRef(null);
   const scrollBy = (d) => ref.current?.scrollBy({ left: d, behavior: 'smooth' });
-  const openGame = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from: 'home-row' } });
+  const openGame = (slug) => navigate(`/store/game/${slug}`, { state: { slug, from: 'home-row' } });
 
   return (
     <div className="scroll-row">
@@ -236,21 +231,14 @@ const ScrollRow = ({ items, size = 'xl' }) => {
   );
 };
 
-const MonthlyDiscounts = () => (
-  <section className="store-section">
-    <SectionHeader title="Monthly discounts" to="/store/featured" />
-    <ScrollRow items={MONTHLY} size="xl" />
-  </section>
-);
-
 const HorizontalBlockRow = ({ title, topArr, bottomArr, from }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const containerRef = useRef(null);
-  const open = (slug) => navigate(`/library/gameinfo/${slug}`, { state: { slug, from } });
+  const open = (slug) => navigate(`/store/game/${slug}`, { state: { slug, from } });
 
   const blocks = [];
-  const maxBlocks = Math.ceil(Math.max(topArr.length / 4, bottomArr.length / 3));
+  const maxBlocks = Math.ceil(Math.max((topArr.length || 0) / 4, (bottomArr.length || 0) / 3));
   for (let i = 0; i < maxBlocks; i++) {
     blocks.push({
       top: topArr.slice(i * 4, i * 4 + 4),
@@ -259,14 +247,15 @@ const HorizontalBlockRow = ({ title, topArr, bottomArr, from }) => {
   }
 
   const totalPages = blocks.length;
+  if (!totalPages) return null;
 
   const scroll = (dir) => {
-  if (dir === "left") {
-    setPage((p) => (p - 1 + totalPages) % totalPages);
-  } else {
-    setPage((p) => (p + 1) % totalPages);
-  }
-};
+    if (dir === "left") {
+      setPage((p) => (p - 1 + totalPages) % totalPages);
+    } else {
+      setPage((p) => (p + 1) % totalPages);
+    }
+  };
 
   return (
     <section className="store-section">
@@ -314,44 +303,71 @@ const HorizontalBlockRow = ({ title, topArr, bottomArr, from }) => {
   );
 };
 
-const NewAndTrending = () => (
-  <HorizontalBlockRow title="New & Trending" topArr={N_T_TOP} bottomArr={N_T_BOTTOM} from="new-trending" />
-);
-
-const RecommendedForYou = () => (
-  <HorizontalBlockRow title="Recommended for you" topArr={REC_TOP} bottomArr={REC_BOTTOM} from="recommended" />
-);
-
-const Bestsellers = () => (
-  <HorizontalBlockRow title="Bestsellers" topArr={BEST_TOP} bottomArr={BEST_BOTTOM} from="bestsellers" />
-);
-
-const DiscoveryLoopCTA = () => {
-  const navigate = useNavigate();
-  return(
-    <section className="loop-cta">
-      <div className="cta-inner">
-        <div className="cta-text">
-          <h4>Find your perfect world through Discovery Loop</h4>
-          <p>Your queue of top-selling, new, and recommended titles</p>
-        </div>
-        <Arrow dir="right" onClick={() => {navigate("/store/discover"); window.scrollTo(0, 0);}} className='arrow'/>
-      </div>
-    </section>
-  );
+const splitTopBottom = (items) => {
+  const topArr = [];
+  const bottomArr = [];
+  for (let i = 0; i < items.length; i += 7) {
+    const pageSlice = items.slice(i, i + 7);
+    topArr.push(...pageSlice.slice(0, 4));
+    bottomArr.push(...pageSlice.slice(4, 7));
+  }
+  return { topArr, bottomArr };
 };
 
 const Home = () => {
+  const { data } = useGetAllGamesQuery();
+  const games = useMemo(() => normalizeGames(data), [data]);
+
+  const heroItems = useMemo(() => {
+    return [...games].sort((a, b) => discountOf(b) - discountOf(a)).slice(0, 3);
+  }, [games]);
+
+  const monthlyDiscountsItems = useMemo(() => {
+    return [...games].filter((g) => discountOf(g) > 0).sort((a, b) => discountOf(b) - discountOf(a)).slice(0, 8).map(toCard);
+  }, [games]);
+
+  const newTrendingCards = useMemo(() => {
+    const parseDate = (d) => (d ? new Date(d).getTime() : 0);
+    return [...games]
+      .sort((a, b) => (parseDate(b.releaseDate) - parseDate(a.releaseDate)) || String(b.id).localeCompare(String(a.id)))
+      .slice(0, 28)
+      .map(toCard);
+  }, [games]);
+
+  const recommendedCards = useMemo(() => {
+    const score = (g) => (g.popularity || 0) * 2 + discountOf(g);
+    return [...games].sort((a, b) => score(b) - score(a)).slice(0, 28).map(toCard);
+  }, [games]);
+
+  const bestsellersCards = useMemo(() => {
+    return [...games].sort((a, b) => (b.popularity || 0) - (a.popularity || 0)).slice(0, 28).map(toCard);
+  }, [games]);
+
+  const nt = useMemo(() => splitTopBottom(newTrendingCards), [newTrendingCards]);
+  const rec = useMemo(() => splitTopBottom(recommendedCards), [recommendedCards]);
+  const best = useMemo(() => splitTopBottom(bestsellersCards), [bestsellersCards]);
+
   return (
     <div className="store-home">
       <main className="page-inset">
         <StoreRailWrapper />
-        <Hero />
-        <MonthlyDiscounts />
-        <NewAndTrending />
-        <RecommendedForYou />
-        <Bestsellers />
-        <DiscoveryLoopCTA />
+        <Hero items={heroItems} />
+        <section className="store-section">
+          <SectionHeader title="Monthly discounts" to="/store/featured" />
+          <ScrollRow items={monthlyDiscountsItems} size="xl" />
+        </section>
+        <HorizontalBlockRow title="New & Trending" topArr={nt.topArr} bottomArr={nt.bottomArr} from="new-trending" />
+        <HorizontalBlockRow title="Recommended for you" topArr={rec.topArr} bottomArr={rec.bottomArr} from="recommended" />
+        <HorizontalBlockRow title="Bestsellers" topArr={best.topArr} bottomArr={best.bottomArr} from="bestsellers" />
+        <section className="loop-cta">
+          <div className="cta-inner">
+            <div className="cta-text">
+              <h4>Find your perfect world through Discovery Loop</h4>
+              <p>Your queue of top-selling, new, and recommended titles</p>
+            </div>
+            <Arrow dir="right" onClick={() => {window.scrollTo(0, 0); location.assign("/store/discover");}} className='arrow'/>
+          </div>
+        </section>
       </main>
       <Footer/>
     </div>
