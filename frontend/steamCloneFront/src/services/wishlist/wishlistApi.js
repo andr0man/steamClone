@@ -7,26 +7,44 @@ export const wishlistApi = createApi({
   tagTypes: ["Wishlist"],
   endpoints: (builder) => ({
     getWishlistByUser: builder.query({
-      query: () => `by-user`,
-      providesTags: ["Wishlist"],
+      query: () => "by-user",
+      providesTags: (res) => {
+        const list = (res?.payload ?? res ?? []);
+        const itemTags = Array.isArray(list)
+          ? list.map((row) => ({
+              type: "Wishlist",
+              id: String(row?.game?.id ?? row?.gameId ?? row?.id),
+            }))
+          : [];
+        return [{ type: "Wishlist", id: "LIST" }, ...itemTags];
+      },
     }),
     getIsInWishlist: builder.query({
       query: (gameId) => `is-in-wishlist?gameId=${gameId}`,
-      providesTags: ["Wishlist"],
+      providesTags: (res, err, arg) => [
+        { type: "Wishlist", id: "LIST" },
+        { type: "Wishlist", id: String(arg) },
+      ],
     }),
     addToWishlist: builder.mutation({
       query: (gameId) => ({
         url: `?gameId=${gameId}`,
         method: "POST",
       }),
-      invalidatesTags: ["Wishlist"],
+      invalidatesTags: (res, err, arg) => [
+        { type: "Wishlist", id: "LIST" },
+        { type: "Wishlist", id: String(arg) },
+      ],
     }),
     removeFromWishlist: builder.mutation({
       query: (gameId) => ({
         url: `?gameId=${gameId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Wishlist"],
+      invalidatesTags: (res, err, arg) => [
+        { type: "Wishlist", id: "LIST" },
+        { type: "Wishlist", id: String(arg) },
+      ],
     }),
   }),
 });

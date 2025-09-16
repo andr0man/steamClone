@@ -1,0 +1,68 @@
+.buyx-page {
+  padding: 20px clamp(16px, 3vw, 32px);
+  color: #fff;
+  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.buyx-top {
+  display: flex; align-items: center; gap: 10px; justify-content: flex-end;
+  margin-bottom: 12px;
+}
+.nav-link {
+  background: transparent; border: 1px solid rgba(255,255,255,.2);
+  color: #fff; border-radius: 6px; padding: 6px 10px; cursor: pointer;
+}
+.balance { margin-left: auto; border: 1px solid #9277C4; padding: 6px 10px; border-radius: 6px; }
+
+.checkout.missing {
+  background: #121117; border: 1px solid #9277C4; border-radius: 8px; padding: 16px; text-align: center;
+}
+.checkout.missing .title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+.checkout.missing .msg { color: #A4A4A4; margin-bottom: 10px; }
+.btn-back {
+  display: inline-block; border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 8px 12px; border-radius: 6px;
+}
+
+.checkout .panel {
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px;
+  background: #121117; border: 1px solid #9277C4; border-radius: 8px; padding: 16px;
+}
+@media (max-width: 980px) {
+  .checkout .panel { grid-template-columns: 1fr; }
+}
+
+.title { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+
+.field { display: block; margin: 10px 0; }
+.field .label { color: #9277C4; font-weight: 700; margin-bottom: 6px; display: block; }
+.field input {
+  width: 100%; background: transparent; color: #fff;
+  border: 0; outline: 0; font-size: 16px; padding: 6px 0;
+}
+.field .underline { display: block; height: 1px; background: rgba(255,255,255,.2); }
+
+.place-row { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+.svg-btn {
+  background: transparent; border: 1px solid rgba(255,255,255,.25); color: #fff;
+  border-radius: 6px; padding: 6px; cursor: pointer;
+}
+.svg-btn.big img { width: 160px; height: 44px; }
+.svg-btn.disabled { opacity: .6; cursor: not-allowed; }
+
+.hint { color: #c9c3ef; }
+.hint.warn { color: #ffb26b; }
+
+.right-head { font-weight: 800; margin-bottom: 8px; }
+.summary { display: flex; align-items: center; gap: 10px; }
+.summary .thumb img {
+  width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,.1);
+}
+.summary .meta .name { font-weight: 800; }
+.summary .meta .game { color: #A4A4A4; font-size: 12px; }
+
+.line { height: 1px; background: rgba(255,255,255,.12); margin: 10px 0; }
+
+.kv { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; }
+.kv.total { font-weight: 800; }
+
+.legal { color: #A4A4A4; font-size: 12px; margin-top: 8px; }

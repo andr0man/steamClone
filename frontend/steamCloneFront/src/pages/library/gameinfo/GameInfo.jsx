@@ -1,105 +1,164 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import './GameInfo.scss';
 import Notification from '../../../components/Notification';
-import { ArrowLeft, PlayCircle, DownloadCloud, ShoppingCart, Tag, CalendarDays, Users, CheckCircle, XCircle, Image as ImageIcon, Video, Info as InfoIcon, ServerCrash } from 'lucide-react';
+import {
+  ArrowLeft,
+  PlayCircle,
+  DownloadCloud,
+  ShoppingCart,
+  Image as ImageIcon,
+  Video,
+  Info as InfoIcon,
+  ServerCrash
+} from 'lucide-react';
+import {
+  useGetGameByIdQuery,
+  useBuyGameMutation,
+} from '../../../services/game/gameApi';
+import {
+  useGetIsInGameLibraryQuery,
+} from '../../../services/game-library/gameLibraryApi';
 
-const API_BASE_URL = '';
+const FALLBACK_HEADER = 'https://via.placeholder.com/1200x400/10171F/5FA8F4?text=Game+Header';
+const FALLBACK_COVER = 'https://via.placeholder.com/300x400/1A2838/66c0f4?text=Game';
+const moneyUAH = (n) => `${Math.round(Number(n || 0))}₴`;
+const nnum = (v) => (v == null ? null : Number(v));
 
-const initialGameDetailsState = {
-  title: 'Loading Game...',
-  tagline: '',
-  headerImageUrl: 'https://via.placeholder.com/1200x400/10171F/5FA8F4?Text=Loading+Game',
-  coverImageUrl: 'https://via.placeholder.com/300x400/1A2838/66c0f4?Text=Game',
-  description: 'Loading description...',
-  longDescription: 'Please wait while we fetch the full game details.',
-  releaseDate: 'N/A',
-  developer: 'N/A',
-  publisher: 'N/A',
-  genres: [],
-  tags: [],
-  price: null,
-  discountPrice: null,
-  storePageUrl: '',
-  screenshots: [],
-  videos: [],
-  systemRequirements: { minimum: 'Loading...', recommended: 'Loading...' },
-  isInstalled: false,
-  isOwned: false, 
-  hoursPlayed: 0,
+const mapGame = (resp) => {
+  const g = resp?.payload ?? resp ?? {};
+  const title = g?.name ?? g?.title ?? 'Game';
+  const headerImageUrl =
+    g?.headerImageUrl ??
+    g?.coverImageUrl ??
+    (Array.isArray(g?.screenshots) && g.screenshots[0]) ??
+    FALLBACK_HEADER;
+  const coverImageUrl =
+    g?.coverImageUrl ??
+    (Array.isArray(g?.screenshots) && g.screenshots[0]) ??
+    FALLBACK_COVER;
+
+  const basePrice = nnum(g?.originalPrice ?? g?.basePrice ?? g?.standardPrice ?? g?.price ?? g?.finalPrice);
+  const nowPrice = nnum(g?.finalPrice ?? g?.price ?? basePrice);
+  let discountPercent = nnum(g?.discountPercent ?? g?.discount);
+  if (discountPercent == null && basePrice != null && nowPrice != null && nowPrice < basePrice && basePrice > 0) {
+    discountPercent = Math.round((1 - nowPrice / basePrice) * 100);
+  }
+
+  const genres = Array.isArray(g?.genres) ? g.genres.map((x) => x?.name ?? x).filter(Boolean) : [];
+  const tags = Array.isArray(g?.tags) ? g.tags.map((x) => x?.name ?? x).filter(Boolean) : [];
+
+  let minReq = '';
+  let recReq = '';
+  const sr = g?.systemRequirements;
+  if (sr && typeof sr === 'object' && !Array.isArray(sr)) {
+    minReq = sr.minimum || '';
+    recReq = sr.recommended || '';
+  } else if (Array.isArray(sr)) {
+    const toBlock = (arr) =>
+      arr
+        .map((r) => {
+          const key = r?.requirementType ?? r?.type ?? r?.level ?? '';
+          const lines = [
+            r?.os && `OS: ${r.os}`,
+            r?.processor && `Processor: ${r.processor}`,
+            r?.memory && `Memory: ${r.memory}`,
+            r?.graphics && `Graphics: ${r.graphics}`,
+            r?.storage && `Storage: ${r.storage}`,
+            r?.notes && `Notes: ${r.notes}`,
+          ].filter(Boolean);
+          return { key: String(key).toLowerCase(), text: lines.join('\n') };
+        })
+        .filter((x) => x.text);
+    const blocks = toBlock(sr);
+    minReq = blocks.find((b) => b.key.includes('min'))?.text || '';
+    recReq = blocks.find((b) => b.key.includes('rec'))?.text || '';
+  }
+
+  const screenshots = Array.isArray(g?.screenshots) ? g.screenshots : [];
+  const videos = Array.isArray(g?.videos) ? g.videos : [];
+
+  return {
+    id: g?.id ?? g?.slug ?? '',
+    title,
+    tagline: g?.tagline ?? '',
+    headerImageUrl,
+    coverImageUrl,
+    description: g?.description ?? g?.shortDescription ?? '',
+    longDescription: g?.longDescription ?? g?.description ?? '',
+    releaseDate: g?.releaseDate ?? g?.createdAt ?? null,
+    developer: g?.developer?.name ?? g?.developerName ?? g?.developer ?? null,
+    publisher: g?.publisher?.name ?? g?.publisherName ?? g?.publisher ?? null,
+    genres,
+    tags,
+    basePrice,
+    nowPrice,
+    discountPercent,
+    screenshots,
+    videos,
+    systemRequirements: {
+      minimum: minReq || 'Not specified.',
+      recommended: recReq || 'Not specified.',
+    },
+  };
+};
+
+const boolish = (val) => {
+  if (typeof val === 'boolean') return val;
+  if (val && typeof val === 'object') {
+    if ('payload' in val) return !!val.payload;
+    if ('isInLibrary' in val) return !!val.isInLibrary;
+    if ('inLibrary' in val) return !!val.inLibrary;
+    if ('bought' in val) return !!val.bought;
+    if ('value' in val) return !!val.value;
+  }
+  return !!val;
+};
+
+const fmtDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  const d = new Date(dateString);
+  return isNaN(d.getTime())
+    ? 'N/A'
+    : d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
 };
 
 const GameInfo = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
-  const [gameDetails, setGameDetails] = useState(initialGameDetailsState);
-  const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState(null);
+
+  const { data, isFetching, isError, error, refetch } = useGetGameByIdQuery(gameId, { skip: !gameId });
+  const { data: inLibData, refetch: refetchInLib } = useGetIsInGameLibraryQuery(gameId, { skip: !gameId });
+  const [buyGame, { isLoading: buying }] = useBuyGameMutation();
+
   const [activeMediaTab, setActiveMediaTab] = useState('screenshots');
+  const [apiError, setApiError] = useState(null);
+  const [notice, setNotice] = useState(null);
 
-  const fetchGameDetails = useCallback(async (id) => {
-    setLoading(true);
+  const details = useMemo(() => mapGame(data), [data]);
+  const isOwned = useMemo(() => boolish(inLibData), [inLibData]);
+  const isInstalled = false;
+  const hoursPlayed = 0;
+
+  const handleBuy = async () => {
+    if (!details?.id) return;
     setApiError(null);
-    setGameDetails(initialGameDetailsState); 
+    setNotice(null);
     try {
-      // const token = localStorage.getItem('authToken'); 
-      // const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-      // const response = await fetch(`${API_BASE_URL}/api/games/${id}`, { headers });
-
-      // Симуляція API запиту
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const mockResponses = {
-        '1': { ok: true, json: async () => ({ id: 1, title: 'CyberRevolt 2088', tagline: 'The future is a neon-drenched battleground.', headerImageUrl: 'https://via.placeholder.com/1200x450/10171F/5FA8F4?Text=CyberRevolt+Header', coverImageUrl: 'https://via.placeholder.com/300x400/1A2838/66c0f4?Text=CyberRevolt', description: 'Dive into the dystopian Neo-Kyoto of 2088. As a renegade cyber-enhanced mercenary, navigate a web of corporate espionage, underground rebellion, and high-octane combat. Your choices will shape the fate of the city. Features deep customization, a branching narrative, and visceral first-person action. Explore vast cityscapes, engage in thrilling shootouts, and upgrade your cybernetics to become the ultimate urban legend.', releaseDate: '2025-10-27', developer: 'SynthCore Games', publisher: 'Fluxi Interactive', genres: ['RPG', 'Cyberpunk', 'Open World', 'FPS'], tags: ['Singleplayer', 'Story Rich', 'Atmospheric', 'Sci-fi', 'Action'], price: 59.99, discountPrice: 39.99, storePageUrl: '/store/game/1', screenshots: ['https://via.placeholder.com/800x450/1A2838/C7D0D8?Text=CR+Screenshot+1', 'https://via.placeholder.com/800x450/1A2838/A6ADC8?Text=CR+Screenshot+2', 'https://via.placeholder.com/800x450/1A2838/9AA6B3?Text=CR+Screenshot+3'], videos: [{ id: 'vid_cr1', type: 'youtube', videoId: 'U_t5pXoAGqY', name: 'Official Gameplay Trailer' }], systemRequirements: { minimum: "OS: Windows 10 (64-bit)\nProcessor: Intel Core i5-8700K\nMemory: 16 GB RAM\nGraphics: NVIDIA GeForce GTX 1070\nStorage: 150 GB", recommended: "OS: Windows 11 (64-bit)\nProcessor: Intel Core i7-10700K\nMemory: 32 GB RAM\nGraphics: NVIDIA GeForce RTX 3070\nStorage: 150 GB (SSD Recommended)"}, isInstalled: true, isOwned: true, hoursPlayed: 120 }) },
-        '2': { ok: true, json: async () => ({ id: 2, title: 'The Witcher 3: Wild Hunt', tagline: 'Slay monsters. Choose your fate.', headerImageUrl: 'https://via.placeholder.com/1200x450/10171F/c0392b?Text=Witcher+3+Header', coverImageUrl: 'https://via.placeholder.com/300x400/FF0000/FFFFFF?Text=Witcher+3', description: 'The Witcher: Wild Hunt is a story-driven open world RPG set in a visually stunning fantasy universe full of meaningful choices and impactful consequences. In The Witcher, you play as professional monster hunter Geralt of Rivia tasked with finding a child of prophecy in a vast open world rich with merchant cities, pirate islands, dangerous mountain passes, and forgotten caverns to explore.', releaseDate: '2015-05-19', developer: 'CD PROJEKT RED', publisher: 'CD PROJEKT RED', genres: ['RPG', 'Fantasy', 'Open World'], tags: ['Story Rich', 'Mature', 'Great Soundtrack', 'Multiple Endings'], price: 39.99, discountPrice: null, storePageUrl: '/store/game/2', screenshots: ['https://via.placeholder.com/800x450/1A2838/C7D0D8?Text=W3+Screenshot+1', 'https://via.placeholder.com/800x450/1A2838/A6ADC8?Text=W3+Screenshot+2'], videos: [], systemRequirements: { minimum: "OS: Windows 7 (64-bit)\nProcessor: Intel Core i5-2500K\nMemory: 6 GB RAM\nGraphics: NVIDIA GeForce GTX 660\nStorage: 35 GB", recommended: "OS: Windows 10 (64-bit)\nProcessor: Intel Core i7-3770\nMemory: 8 GB RAM\nGraphics: NVIDIA GeForce GTX 770\nStorage: 35 GB"}, isInstalled: false, isOwned: false, hoursPlayed: 350 })},
-        'nonexistent': { ok: false, status: 404, json: async () => ({ message: 'Game with this ID was not found on the server.' }) }
-      };
-      const response = mockResponses[id] || mockResponses['nonexistent'];
-
-      if (!response.ok) {
-        let errorMessage = `Failed to fetch game details. Status: ${response.status}`;
-        try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorMessage;
-        } catch (e) {}
-        throw new Error(errorMessage);
-      }
-      const data = await response.json();
-      setGameDetails(prev => ({ ...initialGameDetailsState, ...data }));
-
-    } catch (err) {
-      console.error(`Error fetching details for game ${id}:`, err);
-      setApiError(err.message || `Could not load details for game ID ${id}.`);
-      setGameDetails({ ...initialGameDetailsState, title: 'Error Loading Game', description: `Failed to load game details. ${err.message}` });
-    } finally {
-      setLoading(false);
+      await buyGame(details.id).unwrap();
+      setNotice('Game purchased and added to your library');
+      await Promise.all([refetchInLib(), refetch()]);
+    } catch (e) {
+      setApiError(e?.data?.message || 'Purchase failed');
     }
-  }, []);
-
-  useEffect(() => {
-    if (gameId) {
-      fetchGameDetails(gameId);
-    } else {
-      setApiError('No game ID specified in the URL.');
-      setLoading(false);
-      setGameDetails({ ...initialGameDetailsState, title: 'Invalid Game Request', description: 'No game ID was provided to display.' });
-    }
-  }, [gameId, fetchGameDetails]);
-  
-  const formatGameDate = (dateString) => {
-    if (!dateString || dateString === 'N/A') return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
-  if (loading) {
-    return <div className="gameinfo-loading-page"><div className="spinner-xl-gi"></div>Loading Game Details...</div>;
-  }
-
-  if (apiError || !gameDetails || gameDetails.title === 'Game Not Found' || gameDetails.title === 'Error Loading Game' || gameDetails.title === 'Invalid Game Request') {
+  if (!gameId) {
     return (
       <div className="gameinfo-error-state">
         <ServerCrash size={64} />
-        <h2>{gameDetails?.title === 'Game Not Found' ? 'Game Not Found' : 'Error Loading Game Data'}</h2>
-        <p>{apiError || gameDetails?.description || 'The requested game details could not be retrieved or the game does not exist.'}</p>
+        <h2>Error Loading Game Data</h2>
+        <p>No game ID specified in the URL.</p>
         <button onClick={() => navigate(-1)} className="action-button-gi back-button-gi">
           <ArrowLeft size={18} /> Go Back
         </button>
@@ -107,128 +166,214 @@ const GameInfo = () => {
     );
   }
 
-  const { title, tagline, headerImageUrl, coverImageUrl, description, longDescription, releaseDate, developer, publisher, genres, tags, price, discountPrice, storePageUrl, screenshots, videos, systemRequirements, isInstalled, isOwned, hoursPlayed } = gameDetails;
+  if (isFetching) {
+    return (
+      <div className="gameinfo-loading-page">
+        <div className="spinner-xl-gi"></div>
+        Loading Game Details...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="gameinfo-error-state">
+        <ServerCrash size={64} />
+        <h2>Error Loading Game Data</h2>
+        <p>{error?.data?.message || 'Failed to load game details.'}</p>
+        <button onClick={() => navigate(-1)} className="action-button-gi back-button-gi">
+          <ArrowLeft size={18} /> Go Back
+        </button>
+      </div>
+    );
+  }
+
+  const {
+    id,
+    title,
+    tagline,
+    headerImageUrl,
+    coverImageUrl,
+    description,
+    longDescription,
+    releaseDate,
+    developer,
+    publisher,
+    genres,
+    tags,
+    basePrice,
+    nowPrice,
+    discountPercent,
+    screenshots,
+    videos,
+    systemRequirements,
+  } = details;
+
+  const hasPrice = basePrice != null || nowPrice != null;
+  const showDiscount = discountPercent != null && discountPercent > 0 && basePrice != null && nowPrice != null && nowPrice < basePrice;
 
   return (
     <div className="gameinfo-page-wrapper">
+      <Notification message={apiError} type="error" onClose={() => setApiError(null)} />
+      <Notification message={notice} type="success" onClose={() => setNotice(null)} />
+
       <button onClick={() => navigate(-1)} className="gameinfo-back-button">
         <ArrowLeft size={20} /> Back
       </button>
 
-      <header className="gameinfo-header" style={{backgroundImage: `linear-gradient(to top, rgba(21,26,33,1) 10%, rgba(21,26,33,0.7) 50%, rgba(21,26,33,0.3) 80%, transparent 100%), url(${headerImageUrl})`}}>
+      <header
+        className="gameinfo-header"
+        style={{
+          backgroundImage: `linear-gradient(to top, rgba(21,26,33,1) 10%, rgba(21,26,33,0.7) 50%, rgba(21,26,33,0.3) 80%, transparent 100%), url(${headerImageUrl || FALLBACK_HEADER})`,
+        }}
+      >
         <div className="gameinfo-header-content">
-            <div className="gameinfo-cover-art">
-                <img src={coverImageUrl} alt={`${title} Cover Art`} />
+          <div className="gameinfo-cover-art">
+            <img src={coverImageUrl || FALLBACK_COVER} alt={`${title} Cover Art`} />
+          </div>
+          <div className="gameinfo-title-meta">
+            <h1>{title}</h1>
+            {tagline && <p className="gameinfo-tagline">{tagline}</p>}
+            <div className="gameinfo-quick-details">
+              {developer && <span><strong>Developer:</strong> {developer}</span>}
+              {publisher && <span><strong>Publisher:</strong> {publisher}</span>}
+              {releaseDate && <span><strong>Released:</strong> {fmtDate(releaseDate)}</span>}
             </div>
-            <div className="gameinfo-title-meta">
-                <h1>{title}</h1>
-                {tagline && <p className="gameinfo-tagline">{tagline}</p>}
-                <div className="gameinfo-quick-details">
-                    {developer && <span><strong>Developer:</strong> {developer}</span>}
-                    {publisher && <span><strong>Publisher:</strong> {publisher}</span>}
-                    {releaseDate !== 'N/A' && <span><strong>Released:</strong> {formatGameDate(releaseDate)}</span>}
-                </div>
-            </div>
-            <div className="gameinfo-actions-header">
-                {isOwned ? (
-                    <button className="action-button-gi primary">
-                        {isInstalled ? <PlayCircle size={20}/> : <DownloadCloud size={20}/>}
-                        {isInstalled ? `Play (${hoursPlayed}h)` : 'Install'}
-                    </button>
-                ) : price !== null ? (
-                    <Link to={storePageUrl || `/store/game/${gameDetails.id}`} className="action-button-gi store-link">
-                        <ShoppingCart size={20}/> 
-                        {discountPrice ? (
-                            <> <span className="original-price">${price.toFixed(2)}</span> ${discountPrice.toFixed(2)} </>
-                        ) : `$${price.toFixed(2)}`}
-                    </Link>
+          </div>
+          <div className="gameinfo-actions-header">
+            {isOwned ? (
+              <button className="action-button-gi primary">
+                {isInstalled ? <PlayCircle size={20} /> : <DownloadCloud size={20} />}
+                {isInstalled ? `Play (${hoursPlayed}h)` : 'Install'}
+              </button>
+            ) : hasPrice ? (
+              <button className="action-button-gi store-link" disabled={buying} onClick={handleBuy}>
+                <ShoppingCart size={20} />
+                {showDiscount ? (
+                  <>
+                    <span className="original-price">{moneyUAH(basePrice)}</span> {moneyUAH(nowPrice)}
+                  </>
                 ) : (
-                  <span className="price-not-available">Not available for purchase</span>
+                  moneyUAH(nowPrice ?? basePrice)
                 )}
-            </div>
+              </button>
+            ) : (
+              <span className="price-not-available">Not available for purchase</span>
+            )}
+            {!isOwned && (
+              <Link to={`/store/game/${id}`} className="action-button-gi secondary">
+                View Store Page
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 
       <main className="gameinfo-main-content-area">
         <div className="gameinfo-left-column">
-            <section className="gameinfo-section media-gallery">
-                <h2>Media</h2>
-                <div className="media-tabs">
-                    <button className={`media-tab-button ${activeMediaTab === 'screenshots' ? 'active' : ''}`} onClick={() => setActiveMediaTab('screenshots')}>
-                       <ImageIcon size={18}/> Screenshots ({(screenshots || []).length})
-                    </button>
-                    <button className={`media-tab-button ${activeMediaTab === 'videos' ? 'active' : ''}`} onClick={() => setActiveMediaTab('videos')}>
-                        <Video size={18}/> Videos ({(videos || []).length})
-                    </button>
-                </div>
-                {activeMediaTab === 'screenshots' && (
-                    <div className="screenshots-grid">
-                        {(screenshots && screenshots.length > 0) ? screenshots.map((src, index) => (
-                            <a href={src} target="_blank" rel="noopener noreferrer" key={index} className="screenshot-link">
-                               <img src={src} alt={`Screenshot ${index + 1}`} />
-                            </a>
-                        )) : <p className="no-media">No screenshots available.</p>}
-                    </div>
+          <section className="gameinfo-section media-gallery">
+            <h2>Media</h2>
+            <div className="media-tabs">
+              <button
+                className={`media-tab-button ${activeMediaTab === 'screenshots' ? 'active' : ''}`}
+                onClick={() => setActiveMediaTab('screenshots')}
+              >
+                <ImageIcon size={18} /> Screenshots ({(screenshots || []).length})
+              </button>
+              <button
+                className={`media-tab-button ${activeMediaTab === 'videos' ? 'active' : ''}`}
+                onClick={() => setActiveMediaTab('videos')}
+              >
+                <Video size={18} /> Videos ({(videos || []).length})
+              </button>
+            </div>
+            {activeMediaTab === 'screenshots' && (
+              <div className="screenshots-grid">
+                {(screenshots && screenshots.length > 0) ? (
+                  screenshots.map((src, index) => (
+                    <a href={src} target="_blank" rel="noopener noreferrer" key={index} className="screenshot-link">
+                      <img src={src} alt={`Screenshot ${index + 1}`} />
+                    </a>
+                  ))
+                ) : (
+                  <p className="no-media">No screenshots available.</p>
                 )}
-                {activeMediaTab === 'videos' && (
-                    <div className="videos-list">
-                        {(videos && videos.length > 0) ? videos.map((video) => (
-                           <div key={video.id || video.videoId} className="video-item">
-                             {video.type === 'youtube' && (
-                                <iframe 
-                                    width="100%" 
-                                    src={`https://www.youtube.com/embed/${video.videoId}`}
-                                    title={video.name || 'Game Video'}
-                                    frameBorder="0" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowFullScreen>
-                                </iframe>
-                             )}
-                             <p className="video-title">{video.name || 'Game Trailer'}</p>
-                           </div>
-                        )) : <p className="no-media">No videos available.</p>}
+              </div>
+            )}
+            {activeMediaTab === 'videos' && (
+              <div className="videos-list">
+                {(videos && videos.length > 0) ? (
+                  videos.map((video) => (
+                    <div key={video.id || video.videoId} className="video-item">
+                      {video.type === 'youtube' && (
+                        <iframe
+                          width="100%"
+                          src={`https://www.youtube.com/embed/${video.videoId}`}
+                          title={video.name || 'Game Video'}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      )}
+                      <p className="video-title">{video.name || 'Game Trailer'}</p>
                     </div>
+                  ))
+                ) : (
+                  <p className="no-media">No videos available.</p>
                 )}
-            </section>
-            
-            <section className="gameinfo-section description-section">
-                <h2><InfoIcon size={20}/> About This Game</h2>
-                <div className="game-description-text" dangerouslySetInnerHTML={{ __html: longDescription?.replace(/\n/g, '<br />') || description || '<p>No detailed description provided.</p>' }} />
-            </section>
+              </div>
+            )}
+          </section>
+
+          <section className="gameinfo-section description-section">
+            <h2><InfoIcon size={20} /> About This Game</h2>
+            <div
+              className="game-description-text"
+              dangerouslySetInnerHTML={{
+                __html:
+                  (longDescription || description || 'No detailed description provided.')
+                    .replace(/\n/g, '<br />'),
+              }}
+            />
+          </section>
         </div>
 
         <aside className="gameinfo-right-sidebar">
-            <section className="gameinfo-section details-list">
-                <h2>Game Details</h2>
-                <ul>
-                    {genres && genres.length > 0 && (
-                        <li><strong>Genres:</strong> {genres.join(', ')}</li>
-                    )}
-                    {tags && tags.length > 0 && (
-                        <li><strong>Tags:</strong> 
-                            <div className="tags-container">
-                                {tags.map(tag => <span key={tag} className="detail-tag">{tag}</span>)}
-                            </div>
-                        </li>
-                    )}
-                     <li><strong>Developer:</strong> {developer || 'N/A'}</li>
-                     <li><strong>Publisher:</strong> {publisher || 'N/A'}</li>
-                     <li><strong>Release Date:</strong> {formatGameDate(releaseDate)}</li>
-                </ul>
-            </section>
-            <section className="gameinfo-section sys-req-section">
-                <h2>System Requirements</h2>
-                <div className="sys-req-columns">
-                    <div>
-                        <h3>Minimum</h3>
-                        <pre>{systemRequirements?.minimum || 'Not specified.'}</pre>
-                    </div>
-                    <div>
-                        <h3>Recommended</h3>
-                        <pre>{systemRequirements?.recommended || 'Not specified.'}</pre>
-                    </div>
-                </div>
-            </section>
+          <section className="gameinfo-section details-list">
+            <h2>Game Details</h2>
+            <ul>
+              {!!genres?.length && (
+                <li><strong>Genres:</strong> {genres.join(', ')}</li>
+              )}
+              {!!tags?.length && (
+                <li>
+                  <strong>Tags:</strong>
+                  <div className="tags-container">
+                    {tags.map((t) => (
+                      <span key={t} className="detail-tag">{t}</span>
+                    ))}
+                  </div>
+                </li>
+              )}
+              <li><strong>Developer:</strong> {developer || 'N/A'}</li>
+              <li><strong>Publisher:</strong> {publisher || 'N/A'}</li>
+              <li><strong>Release Date:</strong> {fmtDate(releaseDate)}</li>
+            </ul>
+          </section>
+
+          <section className="gameinfo-section sys-req-section">
+            <h2>System Requirements</h2>
+            <div className="sys-req-columns">
+              <div>
+                <h3>Minimum</h3>
+                <pre>{systemRequirements?.minimum || 'Not specified.'}</pre>
+              </div>
+              <div>
+                <h3>Recommended</h3>
+                <pre>{systemRequirements?.recommended || 'Not specified.'}</pre>
+              </div>
+            </div>
+          </section>
         </aside>
       </main>
     </div>

@@ -4,7 +4,6 @@ import './Home.scss';
 import ArrowLeft from "../../../src/assets/ArrowLeft.svg";
 import ArrowRight from "../../../src/assets/ArrowRight.svg";
 import { useGetAllGamesQuery } from "../../services/game/gameApi";
-import {Footer} from "../../components/Footer/Footer.jsx";
 
 const FALLBACK_IMG = "https://via.placeholder.com/640x360/1c232c/ffffff.png?text=Game";
 
