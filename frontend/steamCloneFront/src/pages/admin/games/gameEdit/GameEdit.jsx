@@ -54,7 +54,7 @@ const GameEdit = () => {
   const [minReqForm, setMinReqForm] = useState(null);
   const [recReqForm, setRecReqForm] = useState(null);
 
-    useEffect(() => {
+  useEffect(() => {
     if (!isGameLoading && game) {
       setForm({
         name: game.name,
@@ -118,6 +118,11 @@ const GameEdit = () => {
 
   const onFileSelectionChange = (e) => {
     setSelectedFiles(Array.from(e.target.files));
+  };
+
+  const cancelCoverImageChange = () => {
+    setCoverImageFile(null);
+    setCoverImagePreview(game.coverImageUrl);
   };
 
   const onCoverImageChange = (e) => {
@@ -185,6 +190,11 @@ const GameEdit = () => {
       toast.error(err?.data?.message || "Failed to update screenshots");
       return false;
     }
+  };
+
+  const cancelScreenshotsChange = () => {
+    setSelectedFiles([]);
+    setImagesToDelete([]);
   };
 
   const handleChange = (e) => {
@@ -435,8 +445,12 @@ const GameEdit = () => {
           markImageForDeletion={markImageForDeletion}
           imagesToDelete={imagesToDelete}
           handleUpdate={handleUpdateScreenshots}
+          selectedFiles={selectedFiles}
+          cancelScreenshotsChange={cancelScreenshotsChange}
         />
         <GameCoverImage
+          cancelCoverImageChange={cancelCoverImageChange}
+          coverImageFile={coverImageFile}
           handleFileChange={onCoverImageChange}
           coverImagePreview={coverImagePreview}
           handleUpdate={handleCoverImageUpload}
