@@ -1,5 +1,7 @@
+using System.ComponentModel;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
+using SteamClone.API.Converters;
 using SteamClone.API.Modules;
 using SteamClone.API.Services.UserProvider;
 using SteamClone.BLL;
@@ -13,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
+TypeDescriptor.AddAttributes(typeof(bool?), new TypeConverterAttribute(typeof(NullableBoolTypeConverter)));
 
 builder.Services.AddCors(options =>
 {

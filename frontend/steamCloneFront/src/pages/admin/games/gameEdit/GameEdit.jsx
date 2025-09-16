@@ -71,16 +71,6 @@ const GameEdit = () => {
 
   useEffect(() => {
     if (!isGameLoading && game) {
-      // setForm({
-      //   name: game.name,
-      //   description: game.description,
-      //   price: game.price,
-      //   discount: game.discount || 0,
-      //   releaseDate: formatDateForInput(game.releaseDate),
-      //   developerId: game.developerId || "",
-      //   publisherId: game.publisherId || "",
-      //   genresIds: game.genres ? game.genres.map((g) => g.id) : [],
-      // });
       setCoverImagePreview(game.coverImageUrl);
       // Initialize system requirements forms
       const sysReqs = Array.isArray(game.systemRequirements)

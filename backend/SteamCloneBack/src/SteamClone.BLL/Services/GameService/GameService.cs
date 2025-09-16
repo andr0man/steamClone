@@ -44,7 +44,7 @@ public class GameService(
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var games = (await gameRepository.GetAllAsync(cancellationToken))
-            .Where(x => x.IsApproved.HasValue && x.IsApproved.Value);
+            .Where(x => x.IsApproved == true);
 
         return ServiceResponse.OkResponse("Games retrieved successfully", mapper.Map<List<GameVM>>(games));
     }
@@ -543,18 +543,18 @@ public class GameService(
         return await UpdateGameAsync(game, "User association removed successfully", token);
     }
 
-    public async Task<ServiceResponse> GetByAssociatedUserAsync(CancellationToken token)
+    public async Task<ServiceResponse> GetByAssociatedUserAsync(bool? isApproved = true, CancellationToken token = default)
     {
         var userId = await userProvider.GetUserId();
 
-        return await GetByAssociatedUserIdAsync(userId, token);
+        return await GetByAssociatedUserIdAsync(isApproved, userId, token);
     }
 
-    public async Task<ServiceResponse> GetByAssociatedUserIdAsync(string id, CancellationToken token)
+    private async Task<ServiceResponse> GetByAssociatedUserIdAsync(bool? isApproved, string id, CancellationToken token)
     {
         var games = await gameRepository.GetAllAsync(token);
         var gamesByAssociatedUser = games
-            .Where(d => d.AssociatedUsers.Any(u => u.Id == id) && (d.IsApproved.HasValue && d.IsApproved.Value));
+            .Where(d => d.AssociatedUsers.Any(u => u.Id == id) && d.IsApproved == isApproved);
 
         return ServiceResponse.OkResponse("Games by associated user retrieved successfully",
             mapper.Map<List<GameVM>>(gamesByAssociatedUser));

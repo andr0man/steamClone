@@ -180,9 +180,6 @@ const GameCreate = () => {
                 name="genresIds"
                 isMulti
                 options={genres.map((g) => ({ value: g.id, label: g.name }))}
-                // value={genres
-                //   .filter((g) => form.genresIds.includes(g.id))
-                //   .map((g) => ({ value: g.id, label: g.name }))}
                 isLoading={genresLoading}
                 onChange={handleGenresChange}
                 styles={selectStyles}

@@ -64,9 +64,9 @@ public class GameController(IGameService gameService)
 
     [Authorize(Policy = Settings.Roles.AdminOrManager)]
     [HttpGet("by-associated-user")]
-    public async Task<IActionResult> GetByAssociatedUserIdAsync(CancellationToken token)
+    public async Task<IActionResult> GetByAssociatedUserIdAsync(bool? isApproved, CancellationToken token = default)
     {
-        var result = await gameService.GetByAssociatedUserAsync(token);
+        var result = await gameService.GetByAssociatedUserAsync(isApproved, token);
         return GetResult(result);
     }
 

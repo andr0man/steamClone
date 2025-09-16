@@ -1,4 +1,3 @@
-// selectStyles.js
 const selectStyles = {
   control: (styles) => ({
     ...styles,

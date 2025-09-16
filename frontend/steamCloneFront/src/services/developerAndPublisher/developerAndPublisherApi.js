@@ -19,7 +19,7 @@ export const developerAndPublisherApi = createApi({
       providesTags: ["DeveloperAndPublisher"],
     }),
     byAssociatedUser: builder.query({
-      query: () => "by-associated-user",
+      query: (isApproved) => `by-associated-user?isApproved=${isApproved}`,
       providesTags: ["DeveloperAndPublisher"],
     }),
     getWithoutApproval: builder.query({

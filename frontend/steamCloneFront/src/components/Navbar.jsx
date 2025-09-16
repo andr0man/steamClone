@@ -116,6 +116,50 @@ const Navbar = ({ onLogout }) => {
       id: "admin",
       label: "ADMIN",
       path: "/admin/dashboard",
+      subItems: [
+        {
+          id: "manage-games",
+          label: "MANAGE GAMES",
+          path: "/admin/games",
+        },
+        {
+          id: "manage-genres",
+          label: "MANAGE GENRES",
+          path: "/admin/genres",
+        },
+        {
+          id: "manage-devpubs",
+          label: "MANAGE DEV/PUB",
+          path: "/admin/developers-and-publishers",
+        }
+      ],
+    },
+    {
+      id: "manager",
+      label: "MANAGER",
+      // path: "/manager/dashboard",
+      subItems: [
+        {
+          id: "my-games",
+          label: "MY GAMES",
+          path: "/manager/my-games",
+        },
+        {
+          id: "my-devpubs",
+          label: "MY DEV/PUBS",
+          path: "/manager/my-developers-and-publishers",
+        },
+        // {
+        //   id: "game-submission",
+        //   label: "GAME SUBMISSION",
+        //   path: "/manager/game-submission",
+        // },
+        // {
+        //   id: "devpub-submission",
+        //   label: "DEV/PUB SUBMISSION",
+        //   path: "/manager/devpub-submission",
+        // },
+      ],
     },
   ];
 
@@ -189,8 +233,10 @@ const Navbar = ({ onLogout }) => {
             {navItems
               .filter(
                 (item) =>
-                  item.id !== "admin" ||
-                  (user && user.roleName.includes("admin"))
+                  (item.id !== "admin" ||
+                  (user && user.roleName.includes("admin"))) &&
+                  (item.id !== "manager" ||
+                  (user && user.roleName.includes("manager")))
               )
               .map((item) => {
                 // Визначаємо базовий шлях для вкладки
