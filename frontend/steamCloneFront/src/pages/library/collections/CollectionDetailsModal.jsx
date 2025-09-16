@@ -36,7 +36,7 @@ const CollectionDetailsModal = ({ collection, userLibrary, onClose, onRemoveGame
                   <button
                     className="thumb"
                     title={g.title}
-                    onClick={() => navigate(`/library/game/${g.id}`)}
+                    onClick={() => navigate(`../store/game/${g.id}`)}
                   >
                     <img src={g.imageUrl} alt={g.title} />
                     <span className="title">{g.title}</span>

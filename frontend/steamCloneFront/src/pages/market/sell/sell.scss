@@ -1,0 +1,48 @@
+.sellx-page {
+  padding: 20px clamp(16px, 3vw, 32px);
+  color: #fff;
+  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.sellx-top {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+}
+.sellx-top .title { font-size: 20px; font-weight: 800; }
+.sellx-top .spacer { flex: 1; }
+.ghost {
+  background: transparent; border: 1px solid rgba(255,255,255,.2); color: #fff; border-radius: 6px; padding: 6px 10px; cursor: pointer;
+}
+
+.sellx-card {
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px;
+  background: #121117; border: 1px solid #9277C4; border-radius: 8px; padding: 16px;
+}
+@media (max-width: 980px) {
+  .sellx-card { grid-template-columns: 1fr; }
+}
+
+.left .row {
+  display: grid; grid-template-columns: 160px 1fr; align-items: center; gap: 8px;
+  margin: 8px 0;
+}
+.left .row span { color: #c9c3ef; }
+.left .row input, .left .row select {
+  background: transparent; border: 1px solid rgba(255,255,255,.18); color: #fff; border-radius: 6px; padding: 8px 10px; outline: none;
+}
+
+.net { margin-top: 8px; color: #c9c3ef; }
+.actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+.btn { padding: 8px 12px; border-radius: 6px; cursor: pointer; border: 1px solid rgba(255,255,255,.2); background: transparent; color: #fff; }
+.btn.primary { background: #292035; border-color: rgba(255,255,255,.32); font-weight: 800; }
+.btn.ghost:hover { background: rgba(255,255,255,.08); }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.right .head { font-weight: 800; margin-bottom: 8px; }
+.preview { display: flex; align-items: center; gap: 10px; }
+.preview .thumb img {
+  width: 96px; height: 96px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,.12);
+}
+.preview .meta .name { font-weight: 800; }
+.preview .meta .game { color: #A4A4A4; font-size: 12px; }
+.line { height: 1px; background: rgba(255,255,255,.12); margin: 10px 0; }
+.kv { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; }

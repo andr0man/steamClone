@@ -1,18 +1,26 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './EditProfile.scss';
-import Notification from '../../../components/Notification';
-import { User, Shield, BarChart3, Users, Gift, UploadCloud, Plus, X, ArrowLeft } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./EditProfile.scss";
+import Notification from "../../../components/Notification";
+import {
+  User,
+  Shield,
+  BarChart3,
+  Users,
+  Gift,
+  UploadCloud,
+  Plus,
+  X,
+  ArrowLeft,
+} from "lucide-react";
+
 import {
   useGetProfileQuery,
-  useUpdateUserMutation,
-  useUploadAvatarMutation,
-} from '../../../services/user/userApi';
+  useUpdateUserPutMutation,   // PUT /Users/{id}
+  useUploadAvatarMutation,   // POST /Users/avatar (FormData)
+} from "../../../services/profile/profileApi";
 
-const COUNTRIES_LIST = [
-  'Ukraine', 'United States', 'Canada', 'United Kingdom', 'Germany',
-  'France', 'Poland', 'Australia', 'Japan', 'South Korea', 'Other'
-];
+import { useGetAllCountrysQuery } from "../../../services/country/countryApi";
 
 const BIO_MAX = 280;
 const USERNAME_MAX = 32;
@@ -21,17 +29,24 @@ const EditProfile = () => {
   const navigate = useNavigate();
 
   const { data, isLoading, error } = useGetProfileQuery();
-  const [updateUser, { isLoading: isSaving }] = useUpdateUserMutation();
+  const [updateUserPut, { isLoading: isSaving }] = useUpdateUserPutMutation();
   const [uploadAvatar, { isLoading: isUploadingAvatar }] = useUploadAvatarMutation();
+  const { data: countriesRes } = useGetAllCountrysQuery();
 
-  const server = useMemo(() => (data?.payload || data || {}), [data]);
+  const server = useMemo(() => data?.payload || data || {}, [data]);
+  const countries = useMemo(() => {
+    const raw = countriesRes?.payload ?? countriesRes;
+    return Array.isArray(raw) ? raw : [];
+  }, [countriesRes]);
 
-  const [username, setUsername] = useState('Username');
-  const [country, setCountry] = useState(COUNTRIES_LIST[0]);
-  const [bio, setBio] = useState('This user has not set up a bio yet.');
-  const [avatarUrl, setAvatarUrl] = useState('https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User');
+  const [username, setUsername] = useState("Username");
+  const [countryId, setCountryId] = useState(null);
+  const [bio, setBio] = useState("This user has not set up a bio yet.");
+  const [avatarUrl, setAvatarUrl] = useState(
+    "https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User"
+  );
   const [level, setLevel] = useState(0);
-  const [memberSince, setMemberSince] = useState('N/A');
+  const [memberSince, setMemberSince] = useState("N/A");
   const [friendsCount, setFriendsCount] = useState(0);
   const [badges, setBadges] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
@@ -41,28 +56,39 @@ const EditProfile = () => {
   const [apiError, setApiError] = useState(null);
   const [apiSuccess, setApiSuccess] = useState(null);
 
-  const [newFavTitle, setNewFavTitle] = useState('');
-  const [newFavImage, setNewFavImage] = useState('');
+  const [newFavTitle, setNewFavTitle] = useState("");
+  const [newFavImage, setNewFavImage] = useState("");
 
   const fileInputRef = useRef(null);
   const originRef = useRef(null);
 
   useEffect(() => {
-    if (error) setApiError(error?.data?.message || 'Could not load profile data.');
+    if (error) setApiError(error?.data?.message || "Could not load profile data.");
   }, [error]);
 
-  useEffect(() => {
-    if (!server) return;
-    const sFavWorlds = Array.isArray(server.favoriteWorlds) ? server.favoriteWorlds : [];
-    const sFavGame = server.favoriteGame && server.favoriteGame.title && server.favoriteGame.imageUrl
-      ? [server.favoriteGame] : [];
 
-    setUsername(server.username || 'Username');
-    setCountry(server.country || COUNTRIES_LIST[0]);
-    setBio(server.bio || 'This user has not set up a bio yet.');
-    setAvatarUrl(server.avatarUrl || 'https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User');
+  useEffect(() => {
+    if (!server || !Object.keys(server).length) return;
+
+    const sFavWorlds = Array.isArray(server.favoriteWorlds) ? server.favoriteWorlds : [];
+    const sFavGame =
+      server.favoriteGame && server.favoriteGame.title && server.favoriteGame.imageUrl
+        ? [server.favoriteGame]
+        : [];
+
+    const name =
+      server.username || server.userName || server.nickName || server.nickname || "Username";
+    const cId = server.country?.id ?? server.countryId ?? null;
+    const ms = server.memberSince || server.createdAt || server.registeredAt || "N/A";
+
+    setUsername(name);
+    setCountryId(cId);
+    setBio(server.bio || "This user has not set up a bio yet.");
+    setAvatarUrl(
+      server.avatarUrl || "https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User"
+    );
     setLevel(server.level ?? 0);
-    setMemberSince(server.memberSince || 'N/A');
+    setMemberSince(typeof ms === "string" ? ms : new Date(ms).toLocaleDateString());
     setFriendsCount(server.friendsCount ?? 0);
     setBadges(Array.isArray(server.badges) ? server.badges : []);
     setRecentActivity(Array.isArray(server.recentActivity) ? server.recentActivity : []);
@@ -70,10 +96,11 @@ const EditProfile = () => {
     setFavoriteGame(server.favoriteGame || null);
 
     originRef.current = {
-      username: server.username || 'Username',
-      country: server.country || COUNTRIES_LIST[0],
-      bio: server.bio || 'This user has not set up a bio yet.',
-      avatarUrl: server.avatarUrl || 'https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User',
+      username: name,
+      countryId: cId,
+      bio: server.bio || "This user has not set up a bio yet.",
+      avatarUrl:
+        server.avatarUrl || "https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User",
       favoriteWorlds: sFavWorlds.length ? sFavWorlds : sFavGame,
     };
   }, [server]);
@@ -84,48 +111,59 @@ const EditProfile = () => {
     return [];
   }, [favoriteWorlds, favoriteGame]);
 
-  const normalizedCurrent = useMemo(() => ({
-    username,
-    country,
-    bio,
-    avatarUrl,
-    favoriteWorlds: favEditable.map(f => ({ title: f.title, imageUrl: f.imageUrl })),
-  }), [username, country, bio, avatarUrl, favEditable]);
+  const normalizedCurrent = useMemo(
+    () => ({
+      username,
+      countryId,
+      bio,
+      avatarUrl,
+      favoriteWorlds: favEditable.map((f) => ({
+        title: f.title,
+        imageUrl: f.imageUrl,
+      })),
+    }),
+    [username, countryId, bio, avatarUrl, favEditable]
+  );
 
   const dirty = useMemo(() => {
     const o = originRef.current;
     if (!o) return false;
     const toMin = (v) => JSON.stringify(v);
-    return toMin({
-      username: o.username,
-      country: o.country,
-      bio: o.bio,
-      avatarUrl: o.avatarUrl,
-      favoriteWorlds: (o.favoriteWorlds || []).map(f => ({ title: f.title, imageUrl: f.imageUrl }))
-    }) !== toMin(normalizedCurrent);
+    return (
+      toMin({
+        username: o.username,
+        countryId: o.countryId,
+        bio: o.bio,
+        avatarUrl: o.avatarUrl,
+        favoriteWorlds: (o.favoriteWorlds || []).map((f) => ({
+          title: f.title,
+          imageUrl: f.imageUrl,
+        })),
+      }) !== toMin(normalizedCurrent)
+    );
   }, [normalizedCurrent]);
 
   useEffect(() => {
     const beforeUnload = (e) => {
       if (!dirty) return;
       e.preventDefault();
-      e.returnValue = '';
+      e.returnValue = "";
     };
-    window.addEventListener('beforeunload', beforeUnload);
-    return () => window.removeEventListener('beforeunload', beforeUnload);
+    window.addEventListener("beforeunload", beforeUnload);
+    return () => window.removeEventListener("beforeunload", beforeUnload);
   }, [dirty]);
 
   const handleAddFavorite = () => {
     if (!newFavTitle.trim() || !newFavImage.trim()) return;
     const id = (crypto?.randomUUID && crypto.randomUUID()) || `fav-${Date.now()}`;
     const newItem = { id, title: newFavTitle.trim(), imageUrl: newFavImage.trim() };
-    setFavoriteWorlds(prev => [...(Array.isArray(prev) ? prev : []), newItem]);
-    setNewFavTitle('');
-    setNewFavImage('');
+    setFavoriteWorlds((prev) => [...(Array.isArray(prev) ? prev : []), newItem]);
+    setNewFavTitle("");
+    setNewFavImage("");
   };
 
   const handleRemoveFavorite = (id) => {
-    setFavoriteWorlds(prev => (prev || []).filter(item => (item.id || item.title) !== id));
+    setFavoriteWorlds((prev) => (prev || []).filter((item) => (item.id || item.title) !== id));
   };
 
   const handleAvatarPick = () => fileInputRef.current?.click();
@@ -135,21 +173,21 @@ const EditProfile = () => {
     if (!file) return;
     try {
       const fd = new FormData();
-      fd.append('file', file);
+      fd.append("file", file);
       const res = await uploadAvatar(fd).unwrap();
-      const url = res?.payload?.url || res?.url;
+      const url = res?.payload?.url || res?.url || res?.payload || null;
       if (url) setAvatarUrl(url);
-      setApiSuccess('Avatar updated');
+      setApiSuccess("Avatar updated");
     } catch (err) {
-      setApiError(err?.data?.message || 'Avatar upload failed');
+      setApiError(err?.data?.message || "Avatar upload failed");
     } finally {
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
   const validate = () => {
     if (!username.trim()) {
-      setApiError('Username cannot be empty.');
+      setApiError("Username cannot be empty.");
       return false;
     }
     if (username.length > USERNAME_MAX) {
@@ -160,6 +198,10 @@ const EditProfile = () => {
       setApiError(`Bio must be under ${BIO_MAX} characters.`);
       return false;
     }
+    if (!countryId) {
+      setApiError("Please select a country.");
+      return false;
+    }
     return true;
   };
 
@@ -168,45 +210,54 @@ const EditProfile = () => {
     setApiSuccess(null);
     if (!validate()) return;
 
+    const userId = server?.id ?? server?.userId;
+    if (!userId) {
+      setApiError("User ID not found. Reload the page.");
+      return;
+    }
+
     const payload = {
-      username: username.trim(),
+      nickName: username.trim(),
       bio,
-      country,
+      countryId,
       avatarUrl,
-      favoriteWorlds: favEditable,
     };
+
     try {
-      await updateUser(payload).unwrap();
+      await updateUserPut({ id: userId, ...payload }).unwrap();
       originRef.current = {
-        username: payload.username,
+        username: payload.nickName,
         bio: payload.bio,
-        country: payload.country,
+        countryId: payload.countryId,
         avatarUrl: payload.avatarUrl,
-        favoriteWorlds: payload.favoriteWorlds,
+        favoriteWorlds: favEditable,
       };
-      setApiSuccess('Profile saved');
-      setTimeout(() => navigate('/profile'), 650);
+      setApiSuccess("Profile saved");
+      setTimeout(() => navigate("/profile"), 650);
     } catch (err) {
-      setApiError(err?.data?.message || 'Could not save profile');
+      setApiError(err?.data?.message || "Could not save profile");
     }
   };
 
   const handleCancel = () => {
-    if (dirty && !confirm('Discard unsaved changes?')) return;
-    navigate('/profile');
+    if (dirty && !confirm("Discard unsaved changes?")) return;
+    navigate("/profile");
   };
 
   const resetToOrigin = () => {
     const o = originRef.current;
     if (!o) return;
     setUsername(o.username);
-    setCountry(o.country);
+    setCountryId(o.countryId ?? null);
     setBio(o.bio);
     setAvatarUrl(o.avatarUrl);
     setFavoriteWorlds(o.favoriteWorlds || []);
     setApiError(null);
     setApiSuccess(null);
   };
+
+  const countryNameById = (id) =>
+    countries.find((c) => String(c.id) === String(id))?.name || "—";
 
   return (
     <div className="profile-page-container edit-mode">
@@ -217,7 +268,7 @@ const EditProfile = () => {
 
       {(isLoading || isSaving) && (
         <div className="profile-loading-overlay visible">
-          {isSaving ? 'Saving...' : 'Loading data...'}
+          {isSaving ? "Saving..." : "Loading data..."}
         </div>
       )}
 
@@ -228,9 +279,11 @@ const EditProfile = () => {
         </button>
         <div className="topbar-actions">
           {dirty && <span className="unsaved-dot" title="Unsaved changes"></span>}
-          <button className="ghost-btn" onClick={resetToOrigin} disabled={!dirty || isSaving}>Reset</button>
+          <button className="ghost-btn" onClick={resetToOrigin} disabled={!dirty || isSaving}>
+            Reset
+          </button>
           <button className="save-btn" onClick={handleSave} disabled={!dirty || isSaving}>
-            {isSaving ? 'Saving…' : 'Save changes'}
+            {isSaving ? "Saving…" : "Save changes"}
           </button>
         </div>
       </div>
@@ -258,13 +311,13 @@ const EditProfile = () => {
             <label className="stack-label">Username</label>
             <div className="input-with-counter">
               <input
-                className={`profile-username-input ${username.length > USERNAME_MAX ? 'error' : ''}`}
+                className={`profile-username-input ${username.length > USERNAME_MAX ? "error" : ""}`}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Username"
                 maxLength={USERNAME_MAX + 5}
               />
-              <span className={`counter ${username.length > USERNAME_MAX ? 'over' : ''}`}>
+              <span className={`counter ${username.length > USERNAME_MAX ? "over" : ""}`}>
                 {username.length}/{USERNAME_MAX}
               </span>
             </div>
@@ -276,11 +329,21 @@ const EditProfile = () => {
 
           <div className="sidebar-field">
             <label>Country</label>
-            <select value={country} onChange={(e) => setCountry(e.target.value)}>
-              {COUNTRIES_LIST.map(c => (
-                <option key={c} value={c}>{c}</option>
+            <select value={countryId ?? ""} onChange={(e) => setCountryId(Number(e.target.value) || null)}>
+              <option value="" disabled>
+                Select country
+              </option>
+              {countries.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
               ))}
             </select>
+            {!countryId && (
+              <div className="muted" style={{ marginTop: 4 }}>
+                Current: {countryNameById(server.country?.id || server.countryId) || "—"}
+              </div>
+            )}
           </div>
 
           <div className="sidebar-field readonly">
@@ -289,19 +352,31 @@ const EditProfile = () => {
           </div>
 
           <div className="profile-navigation">
-            <a href="#activity" className="profile-nav-link"><BarChart3 size={18} /> Activity</a>
-            <a href="#badges" className="profile-nav-link"><Shield size={18} /> Badges</a>
-            <a href="#friends" className="profile-nav-link"><Users size={18} /> Friends ({friendsCount})</a>
-            <a href="#inventory" className="profile-nav-link"><Gift size={18} /> Inventory</a>
+            <a href="#activity" className="profile-nav-link">
+              <BarChart3 size={18} /> Activity
+            </a>
+            <a href="#badges" className="profile-nav-link">
+              <Shield size={18} /> Badges
+            </a>
+            <a href="#friends" className="profile-nav-link">
+              <Users size={18} /> Friends ({friendsCount})
+            </a>
+            <a href="#inventory" className="profile-nav-link">
+              <Gift size={18} /> Inventory
+            </a>
           </div>
         </div>
 
         <div className="profile-details-column">
           <div className="profile-section profile-bio editable">
             <div className="section-header">
-              <h3><User size={22} /> About me</h3>
+              <h3>
+                <User size={22} /> About me
+              </h3>
               <div className="counter-wrap">
-                <span className={`counter ${bio.length > BIO_MAX ? 'over' : ''}`}>{bio.length}/{BIO_MAX}</span>
+                <span className={`counter ${bio.length > BIO_MAX ? "over" : ""}`}>
+                  {bio.length}/{BIO_MAX}
+                </span>
               </div>
             </div>
             <textarea
@@ -325,7 +400,11 @@ const EditProfile = () => {
                 <div className="favorite-card edit" key={g.id || `${g.title}-${i}`}>
                   <img src={g.imageUrl} alt={g.title} />
                   <div className="fav-title">{g.title}</div>
-                  <button className="remove-fav" onClick={() => handleRemoveFavorite(g.id || g.title)} title="Remove">
+                  <button
+                    className="remove-fav"
+                    onClick={() => handleRemoveFavorite(g.id || g.title)}
+                    title="Remove"
+                  >
                     <X size={14} />
                   </button>
                 </div>
@@ -356,14 +435,19 @@ const EditProfile = () => {
 
           <div className="profile-section profile-badges">
             <div className="section-header">
-              <h3><Shield size={22} /> Badges ({(badges && badges.length) || 0})</h3>
+              <h3>
+                <Shield size={22} /> Badges ({(badges && badges.length) || 0})
+              </h3>
               <span className="muted">Managed automatically</span>
             </div>
             {badges && badges.length > 0 ? (
               <div className="badges-grid">
                 {badges.map((badge, index) => (
                   <div key={badge.id || index} className="badge-item" data-title={badge.name}>
-                    <img src={badge.iconUrl || 'https://via.placeholder.com/60/CCCCCC/000000?Text=B'} alt={badge.name || 'Badge'} />
+                    <img
+                      src={badge.iconUrl || "https://via.placeholder.com/60/CCCCCC/000000?Text=B"}
+                      alt={badge.name || "Badge"}
+                    />
                   </div>
                 ))}
               </div>
@@ -374,7 +458,9 @@ const EditProfile = () => {
 
           <div className="profile-section profile-recent-activity" id="activity">
             <div className="section-header">
-              <h3><BarChart3 size={22} /> Recent Activity</h3>
+              <h3>
+                <BarChart3 size={22} /> Recent Activity
+              </h3>
               <span className="muted">Read-only</span>
             </div>
             {recentActivity && recentActivity.length > 0 ? (
@@ -392,9 +478,11 @@ const EditProfile = () => {
           </div>
 
           <div className="footer-actions">
-            <button className="ghost-btn" onClick={resetToOrigin} disabled={!dirty || isSaving}>Reset</button>
+            <button className="ghost-btn" onClick={resetToOrigin} disabled={!dirty || isSaving}>
+              Reset
+            </button>
             <button className="save-btn" onClick={handleSave} disabled={!dirty || isSaving}>
-              {isSaving ? 'Saving…' : 'Save changes'}
+              {isSaving ? "Saving…" : "Save changes"}
             </button>
           </div>
         </div>

@@ -1,3 +1,4 @@
+
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithRefresh } from "../api/baseQueryWithRefresh";
 
@@ -8,11 +9,14 @@ export const gameLibraryApi = createApi({
   endpoints: (builder) => ({
     getGameLibrary: builder.query({
       query: () => `by-user`,
-      providesTags: ["GameLibrary"],
+      providesTags: () => [{ type: "GameLibrary", id: "LIST" }],
     }),
     getIsInGameLibrary: builder.query({
       query: (gameId) => `is-in-library/${gameId}`,
-      providesTags: ["GameLibrary"],
+      providesTags: (res, err, arg) => [
+        { type: "GameLibrary", id: "LIST" },
+        { type: "GameLibrary", id: String(arg) },
+      ],
     }),
   }),
 });
