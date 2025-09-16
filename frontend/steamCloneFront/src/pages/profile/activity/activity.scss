@@ -1,0 +1,13 @@
+.activity-container { display: flex; flex-direction: column; gap: 12px; }
+.activity-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.activity-head h3 { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
+.tabs { display: inline-flex; gap: 8px; }
+.tab { background: transparent; border: 1px solid rgba(255,255,255,.18); color: #fff; border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+.tab.active { background: rgba(161,120,235,.15); border-color: rgba(161,120,235,.5); }
+
+.feed { display: flex; flex-direction: column; gap: 10px; }
+.event { display: flex; gap: 10px; background: #0f1016; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 10px; }
+.event .ico { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; color: #fff; background: #121117; }
+.event .text { color: #fff; font-weight: 800; }
+.event .meta { color: #c8d0d8; font-size: 12px; }
+.empty { color: #9aa6b3; text-align: center; padding: 12px 0; }

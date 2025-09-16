@@ -5,23 +5,11 @@ import Notification from '../../../components/Notification';
 import CreateCollectionModal from './CreateCollectionModal';
 import CollectionDetailsModal from './CollectionDetailsModal';
 import { Layers, Plus, MoreHorizontal, Pencil, Eye, Trash2, Edit3 } from 'lucide-react';
+import { useGetGameLibraryQuery } from '../../../services/game-library/gameLibraryApi';
 
 const LS_KEYS = {
-  LIB: 'mock:library-games',
   COL: 'mock:collections',
 };
-
-const DEFAULT_LIBRARY = [
-  { id: 'obs', title: 'PEKA', imageUrl: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-33-3.png', tags: ['Tool'], category: 'Fav', isInstalled: true, hoursPlayed: 12, lastPlayed: '2025-08-05' },
-  { id: 'stray', title: 'Rust', imageUrl: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-32-1.png', tags: ['Adventure'], category: 'RPG', isInstalled: true, hoursPlayed: 4, lastPlayed: '2025-08-02' },
-  { id: 'bg3', title: 'Baldur’s Gate 3', imageUrl: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-1@2x.png', tags: ['RPG'], category: 'RPG', isInstalled: false, hoursPlayed: 0, lastPlayed: '' },
-  { id: 'ln2', title: 'Phasmophobia', imageUrl: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-1@2x.png', tags: ['Indie'], category: 'Fav', isInstalled: true, hoursPlayed: 9, lastPlayed: '2025-07-30' },
-  { id: 'cult', title: 'Cult of the Lamb', imageUrl: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-37-2@2x.png', tags: ['Indie', 'Action'], category: 'Strategies', isInstalled: true, hoursPlayed: 20, lastPlayed: '2025-07-29' },
-  { id: 'hades', title: 'Hades', imageUrl: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-36-2@2x.png', tags: ['Action', 'Indie'], category: 'Fav', isInstalled: true, hoursPlayed: 51, lastPlayed: '2025-07-28' },
-  { id: 'witcher3', title: 'Counter Strike 2', imageUrl: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-2@2x.png', tags: ['RPG'], category: 'RPG', isInstalled: false, hoursPlayed: 120, lastPlayed: '2025-06-15' },
-  { id: 'disco', title: 'Disco Elysium', imageUrl: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-29-1@2x.png', tags: ['RPG', 'Indie'], category: 'Strategies', isInstalled: true, hoursPlayed: 33, lastPlayed: '2025-07-20' },
-  { id: 'rdr2', title: 'Red Dead Redemption 2', imageUrl: 'https://c.animaapp.com/tF1DKM3X/img/rectangle-18.png', tags: ['Action', 'Adventure'], category: 'Fav', isInstalled: false, hoursPlayed: 0, lastPlayed: '' },
-];
 
 function readLS(key, fallback) {
   try {
@@ -34,6 +22,24 @@ function readLS(key, fallback) {
 function writeLS(key, value) {
   try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
 }
+
+const mapFromApi = (resp) => {
+  const list = resp?.payload ?? resp ?? [];
+  if (!Array.isArray(list)) return [];
+  return list.map((row) => {
+    const g = row?.game ?? row?.gameDto ?? row?.gameDetails ?? row;
+    return {
+      id: g?.id ?? row?.gameId ?? row?.id,
+      title: g?.name ?? g?.title ?? 'Game',
+      imageUrl: g?.coverImageUrl ?? g?.coverImage ?? '/common/gameNoImage.png',
+      tags: Array.isArray(g?.genres) ? g.genres.map((x) => x?.name ?? x) : [],
+      category: Array.isArray(g?.genres) && g.genres[0] ? g.genres[0].name : 'General',
+      isInstalled: false,
+      hoursPlayed: row?.hoursPlayed ?? g?.hoursPlayed ?? 0,
+      lastPlayed: row?.lastPlayed ?? g?.lastPlayed ?? null,
+    };
+  });
+};
 
 function shapeCollections(rawList, library) {
   const map = new Map(library.map(g => [g.id, g]));
@@ -51,15 +57,18 @@ function shapeCollections(rawList, library) {
 }
 
 const Collections = () => {
-  const [collections, setCollections] = useState([]);
-  const [userLibrary, setUserLibrary] = useState([]);
+  const { data: libData, isFetching: loadingLibrary, isError: libIsError, error: libErr } = useGetGameLibraryQuery();
+  const userLibrary = useMemo(() => mapFromApi(libData), [libData]);
+
+  const [rawCollections, setRawCollections] = useState([]);
+  const collections = useMemo(() => shapeCollections(rawCollections, userLibrary), [rawCollections, userLibrary]);
+
   const [loading, setLoading] = useState(true);
-  const [loadingLibrary, setLoadingLibrary] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [notice, setNotice] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('create'); 
+  const [modalMode, setModalMode] = useState('create');
   const [editingCollection, setEditingCollection] = useState(null);
   const [saving, setSaving] = useState(false);
 
@@ -90,22 +99,19 @@ const Collections = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (libIsError) setApiError(libErr?.data?.message || 'Failed to load library');
+  }, [libIsError, libErr]);
+
   const plural = (n) => (n === 1 ? 'game' : 'games');
 
-  const loadCollections = useCallback(async () => {
+  const loadCollections = useCallback(() => {
     setLoading(true);
     setApiError(null);
     try {
-      let lib = readLS(LS_KEYS.LIB, null);
-      if (!lib || !Array.isArray(lib) || lib.length === 0) {
-        lib = DEFAULT_LIBRARY;
-        writeLS(LS_KEYS.LIB, lib);
-      }
       const rawCols = readLS(LS_KEYS.COL, []);
-      const shaped = shapeCollections(rawCols, lib);
-      setUserLibrary(lib);
-      setCollections(shaped);
-    } catch (err) {
+      setRawCollections(Array.isArray(rawCols) ? rawCols : []);
+    } catch {
       setApiError('Failed to load local data.');
     } finally {
       setLoading(false);
@@ -116,35 +122,17 @@ const Collections = () => {
     loadCollections();
   }, [loadCollections]);
 
-  const ensureLibraryLoaded = useCallback(async () => {
-    if (userLibrary.length) return;
-    setLoadingLibrary(true);
-    try {
-      let lib = readLS(LS_KEYS.LIB, null);
-      if (!lib || !Array.isArray(lib) || lib.length === 0) {
-        lib = DEFAULT_LIBRARY;
-        writeLS(LS_KEYS.LIB, lib);
-      }
-      setUserLibrary(lib);
-    } finally {
-      setLoadingLibrary(false);
-    }
-  }, [userLibrary.length]);
-
   useEffect(() => {
     if (loading) return;
     const toCreate = params.get('create');
     const toOpen = params.get('open');
     if (toCreate === '1') {
-      (async () => {
-        await ensureLibraryLoaded();
-        setModalMode('create');
-        setEditingCollection(null);
-        setIsModalOpen(true);
-        const next = new URLSearchParams(params);
-        next.delete('create');
-        setParams(next, { replace: true });
-      })();
+      setModalMode('create');
+      setEditingCollection(null);
+      setIsModalOpen(true);
+      const next = new URLSearchParams(params);
+      next.delete('create');
+      setParams(next, { replace: true });
     } else if (toOpen) {
       const col = collections.find(c => c.id === toOpen);
       if (col) {
@@ -155,17 +143,15 @@ const Collections = () => {
         setParams(next, { replace: true });
       }
     }
-  }, [loading, params, collections, ensureLibraryLoaded, setParams]);
+  }, [loading, params, collections, setParams]);
 
-  const openCreateModal = async () => {
-    await ensureLibraryLoaded();
+  const openCreateModal = () => {
     setModalMode('create');
     setEditingCollection(null);
     setIsModalOpen(true);
   };
 
-  const openEditModal = async (collection) => {
-    await ensureLibraryLoaded();
+  const openEditModal = (collection) => {
     setModalMode('edit');
     setEditingCollection(collection);
     setIsModalOpen(true);
@@ -173,9 +159,8 @@ const Collections = () => {
 
   const closeModal = () => setIsModalOpen(false);
 
-  const persistCollections = (list) => {
-    setCollections(list);
-    const raw = list.map(c => ({ id: c.id, name: c.name, gameIds: c.gameIds }));
+  const persistCollections = (raw) => {
+    setRawCollections(raw);
     writeLS(LS_KEYS.COL, raw);
   };
 
@@ -184,27 +169,23 @@ const Collections = () => {
     try {
       if (modalMode === 'create') {
         const id = 'col_' + Date.now();
-        const previewGames = userLibrary.filter(g => gameIds.includes(g.id)).slice(0,4);
-        const newCol = { id, name, gameIds, gameCount: gameIds.length, previewGames };
-        persistCollections([newCol, ...collections]);
+        const nextRaw = [{ id, name, gameIds }, ...rawCollections];
+        persistCollections(nextRaw);
         setNotice('Collection created');
       } else if (modalMode === 'edit' && editingCollection) {
         const id = editingCollection.id;
-        const previewGames = userLibrary.filter(g => gameIds.includes(g.id)).slice(0,4);
-        const next = collections.map(c => c.id === id
-          ? { ...c, name, gameIds, gameCount: gameIds.length, previewGames }
-          : c
-        );
-        persistCollections(next);
-        setNotice('Collection updated');
+        const nextRaw = rawCollections.map(c => c.id === id ? { ...c, name, gameIds } : c);
+        persistCollections(nextRaw);
+        const shaped = shapeCollections(nextRaw, userLibrary);
         if (detailsCollection?.id === id) {
-          setDetailsCollection(next.find(c => c.id === id));
+          setDetailsCollection(shaped.find(c => c.id === id) || null);
         }
+        setNotice('Collection updated');
       }
       setIsModalOpen(false);
-    } catch (err) {
+    } catch {
       setApiError('Failed to save collection.');
-      await loadCollections();
+      loadCollections();
     } finally {
       setSaving(false);
     }
@@ -214,16 +195,16 @@ const Collections = () => {
     const ok = window.confirm(`Delete collection "${collection.name}"?`);
     if (!ok) return;
     try {
-      const next = collections.filter(c => c.id !== collection.id);
-      persistCollections(next);
+      const nextRaw = rawCollections.filter(c => c.id !== collection.id);
+      persistCollections(nextRaw);
       setNotice('Collection deleted');
       if (detailsCollection?.id === collection.id) {
         setDetailsOpen(false);
         setDetailsCollection(null);
       }
-    } catch (err) {
+    } catch {
       setApiError('Failed to delete collection.');
-      await loadCollections();
+      loadCollections();
     }
   };
 
@@ -238,18 +219,18 @@ const Collections = () => {
 
   const handleRemoveGameFromDetails = async (collectionId, gameId) => {
     try {
-      const next = collections.map(c => {
+      const nextRaw = rawCollections.map(c => {
         if (c.id !== collectionId) return c;
-        const gameIds = c.gameIds.filter(id => id !== gameId);
-        const previewGames = userLibrary.filter(g => gameIds.includes(g.id)).slice(0,4);
-        return { ...c, gameIds, gameCount: gameIds.length, previewGames };
+        return { ...c, gameIds: (c.gameIds || []).filter(id => id !== gameId) };
       });
-      persistCollections(next);
-      const updated = next.find(c => c.id === collectionId);
-      if (detailsCollection?.id === collectionId) setDetailsCollection(updated);
-    } catch (err) {
+      persistCollections(nextRaw);
+      const shaped = shapeCollections(nextRaw, userLibrary);
+      if (detailsCollection?.id === collectionId) {
+        setDetailsCollection(shaped.find(c => c.id === collectionId) || null);
+      }
+    } catch {
       setApiError('Failed to remove game from collection.');
-      await loadCollections();
+      loadCollections();
     }
   };
 
@@ -271,15 +252,16 @@ const Collections = () => {
       const newName = window.prompt('New collection name:', collection.name);
       if (!newName || newName.trim() === '' || newName === collection.name) return;
       try {
-        const next = collections.map(c => (c.id === collection.id ? { ...c, name: newName.trim() } : c));
-        persistCollections(next);
-        setNotice('Collection renamed');
+        const nextRaw = rawCollections.map(c => (c.id === collection.id ? { ...c, name: newName.trim() } : c));
+        persistCollections(nextRaw);
+        const shaped = shapeCollections(nextRaw, userLibrary);
         if (detailsCollection?.id === collection.id) {
-          setDetailsCollection(next.find(c => c.id === collection.id));
+          setDetailsCollection(shaped.find(c => c.id === collection.id) || null);
         }
-      } catch (err) {
+        setNotice('Collection renamed');
+      } catch {
         setApiError('Failed to rename collection.');
-        await loadCollections();
+        loadCollections();
       }
     } else if (action === 'edit') {
       openEditModal(collection);

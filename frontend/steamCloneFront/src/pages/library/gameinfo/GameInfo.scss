@@ -44,6 +44,24 @@ $transition-base-gi: all 0.25s ease-out;
   }
 }
 
+.gameinfo-error-state {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: $text-primary-gi;
+  font-family: $font-gi;
+  display: grid;
+  gap: 1rem;
+  svg { color: $accent-red-gi; margin-inline: auto; }
+  h2 { color: $text-lightest-gi; margin: 0; }
+  p { margin: 0; color: $text-secondary-gi; }
+  .back-button-gi {
+    margin: 0 auto;
+    max-width: 220px;
+  }
+}
+
 .gameinfo-page-wrapper {
   max-width: 1300px;
   margin: 0 auto;
@@ -77,7 +95,7 @@ $transition-base-gi: all 0.25s ease-out;
 }
 
 .gameinfo-header {
-  height: 400px;
+  min-height: 360px;
   background-size: cover;
   background-position: center 30%;
   border-radius: $radius-large-gi;
@@ -108,6 +126,7 @@ $transition-base-gi: all 0.25s ease-out;
     border: 3px solid $bg-element-light-gi;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     flex-shrink: 0;
+    background: #0f141a;
   }
 }
 
@@ -173,30 +192,20 @@ $transition-base-gi: all 0.25s ease-out;
   &.primary {
     background-color: $accent-green-gi;
     color: $bg-main;
-    
-    &:hover { 
-      background-color: #7bd89c; 
-    }
+    &:hover { background-color: #7bd89c; }
   }
   
   &.secondary {
     background-color: $bg-element-light-gi;
     color: $text-lightest-gi;
     border: 1px solid $border-strong-gi;
-    
-    &:hover { 
-      background-color: #313d49; 
-    }
+    &:hover { background-color: #313d49; }
   }
   
   &.store-link {
     background-color: $accent-primary-gi;
     color: $text-lightest-gi;
-    
-    &:hover { 
-      background-color: #4a94d4; 
-    }
-    
+    &:hover { background-color: #4a94d4; }
     .original-price {
       text-decoration: line-through;
       opacity: 0.7;
@@ -394,7 +403,6 @@ $transition-base-gi: all 0.25s ease-out;
   }
   
   .gameinfo-header {
-    height: auto;
     min-height: 300px;
     padding-bottom: 1.5rem;
   }
@@ -421,6 +429,7 @@ $transition-base-gi: all 0.25s ease-out;
     align-items: center; 
     padding-left: 0; 
     margin-top: 1rem;
+    width: 100%;
   }
 }
 
@@ -452,10 +461,7 @@ $transition-base-gi: all 0.25s ease-out;
   
   .gameinfo-section { 
     padding: 1.25rem; 
-    
-    h2 { 
-      font-size: 1.2rem; 
-    }
+    h2 { font-size: 1.2rem; }
   }
   
   .screenshots-grid { 

@@ -63,7 +63,6 @@ const Navbar = ({ onLogout }) => {
       label: "STORE",
       path: "/store",
       subItems: [
-        { id: "store-featured", label: "FEATURED", path: "/store/featured" },
         { id: "store-discover", label: "DISCOVER", path: "/store/discover" },
         { id: "store-wishlist", label: "WISHLIST", path: "/store/wishlist" },
         {
@@ -71,8 +70,6 @@ const Navbar = ({ onLogout }) => {
           label: "POINTS SHOP",
           path: "/store/points-shop",
         },
-        { id: "store-news", label: "NEWS", path: "/store/news" },
-        { id: "store-stats", label: "STATS", path: "/store/stats" },
       ],
     },
     {
@@ -92,25 +89,7 @@ const Navbar = ({ onLogout }) => {
       id: "community",
       label: "COMMUNITY",
       path: "/community",
-      subItems: [
-        { id: "community-home", label: "HOME", path: "/community" },
-        {
-          id: "community-discussions",
-          label: "DISCUSSIONS",
-          path: "/community/discussions",
-        },
-        {
-          id: "community-workshop",
-          label: "WORKSHOP",
-          path: "/community/workshop",
-        },
-        { id: "community-market", label: "MARKET", path: "/market" },
-        {
-          id: "community-broadcasts",
-          label: "BROADCASTS",
-          path: "/community/broadcasts",
-        },
-      ],
+      subItems: [{ id: "community-market", label: "MARKET", path: "/market" }],
     },
     {
       id: "admin",
@@ -173,9 +152,7 @@ const Navbar = ({ onLogout }) => {
   ];
 
   const updateBubblePosition = useCallback(() => {
-    // Визначаємо базовий шлях, наприклад /admin
     const currentBase = "/" + location.pathname.split("/")[1];
-    // Для admin також враховуємо /admin/dashboard
     const activeItem = navItems.find(
       (i) =>
         currentBase.startsWith(i.path.split("/")[1]) ||
@@ -239,9 +216,7 @@ const Navbar = ({ onLogout }) => {
                   (user && user.roleName.includes("manager")))
               )
               .map((item) => {
-                // Визначаємо базовий шлях для вкладки
                 const basePath = "/" + location.pathname.split("/")[1];
-                // Вкладка активна, якщо basePath === базовому шляху вкладки або для admin якщо basePath === "/admin"
                 const isActive =
                   basePath === item.path ||
                   basePath.startsWith(item.path) ||

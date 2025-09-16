@@ -10,7 +10,7 @@ $panel-radius: 5px;
 :root { --navbar-h: 64px; }
 
 html, body, #root { min-height: 100%; height: auto; }
-body { margin: 0; background-color: $flux-bg-main; overflow-x: hidden; }
+body { margin: 0; background-color: $flux-bg-main; overflow-x: hidden; color-scheme: dark; }
 
 .store-search-page {
   min-height: 100svh;
@@ -160,14 +160,31 @@ body { margin: 0; background-color: $flux-bg-main; overflow-x: hidden; }
 }
 .sort-box span { color: #fff; font-weight: 600; }
 .sort-box select {
-  background: transparent;
+  background-color: #20172e;
   color: #fff;
   border: 1px solid rgba(255,255,255,.25);
-  border-radius: 5px;
-  padding: 8px 10px;
+  border-radius: 6px;
+  padding: 8px 28px 8px 10px;
   outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #b9b9c7 50%), linear-gradient(135deg, #b9b9c7 50%, transparent 50%);
+  background-position: calc(100% - 14px) 55%, calc(100% - 8px) 55%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
 }
-.sort-box option { color: #000; }
+.sort-box select:focus {
+  border-color: rgba(146,119,197,.6);
+  box-shadow: 0 0 0 3px rgba(146,119,197,.22);
+}
+.sort-box select option {
+  background-color: #1a1426;
+  color: #fff;
+}
+.sort-box select option:checked {
+  background-color: #33244a;
+  color: #fff;
+}
 
 .results-list { padding-top: 18px; }
 
