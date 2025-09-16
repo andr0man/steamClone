@@ -1,18 +1,17 @@
-import React from "react";
-import AdminDashboard from "../pages/admin/AdminDashboard";
 import { Route } from "react-router-dom";
-import ProtectedRoute from "./ProtectedRoute";
-import ManageGenres from "../pages/admin/genres/ManageGenres";
+import ManageDevAndPub from "../pages/admin/developersAndPublishers/ManageDevAndPub";
+import ManageApproveDevPub from "../pages/admin/developersAndPublishers/approveDevPub/ManageApproveDevPub";
+import ManageDevAndPubAssociatedUsers from "../pages/admin/developersAndPublishers/associatedUsers/ManageDnPAssociatedUsers";
+import ManageGameItems from "../pages/admin/gameItems/ManageGameItems";
 import ManageGames from "../pages/admin/games/ManageGames";
+import ManageApproveGames from "../pages/admin/games/approveGames/ManageApproveGames";
+import GamePreviewForApprove from "../pages/admin/games/approveGames/components/GamePreviewForApprove";
+import ManageGameAssociatedUsers from "../pages/admin/games/associatedUsers/ManageGameAssociatedUsers";
 import GameCreate from "../pages/admin/games/gameCreate/GameCreate";
 import GameEdit from "../pages/admin/games/gameEdit/GameEdit";
-import ManageGameItems from "../pages/admin/gameItems/ManageGameItems";
-import ManageGameAssociatedUsers from "../pages/admin/games/associatedUsers/ManageGameAssociatedUsers";
-import ManageDevAndPub from "../pages/admin/developersAndPublishers/ManageDevAndPub";
-import ManageDevAndPubAssociatedUsers from "../pages/admin/developersAndPublishers/associatedUsers/ManageDnPAssociatedUsers";
-import ManageApproveGames from "../pages/admin/games/approveGames/ManageApproveGames";
-import ManageApproveDevPub from "../pages/admin/developersAndPublishers/approveDevPub/ManageApproveDevPub";
-import GamePreviewForApprove from "../pages/admin/games/approveGames/components/GamePreviewForApprove";
+import ManageGenres from "../pages/admin/genres/ManageGenres";
+import ProtectedRoute from "./ProtectedRoute";
+import AdminDashboard from "../pages/admin/AdminDashboard"
 
 const adminRoutes = [
   <Route path="/admin" key="admin">

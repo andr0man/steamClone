@@ -1,50 +1,35 @@
-import React from "react";
-import { Routes, Route, Navigate, Link as RouterLink } from "react-router-dom";
+import { Navigate, Route, Link as RouterLink, Routes } from "react-router-dom";
 
+import { useSelector } from "react-redux";
+import Navbar from "../components/Navbar.jsx";
+import AdminAll from '../pages/admin/all/AdminAll';
+import ForgotPassword from "../pages/auth/login/ForgotPassword.jsx";
 import Login from "../pages/auth/login/Login.jsx";
 import Register from "../pages/auth/register/Register.jsx";
-import Home from "../pages/home/home.jsx";
-import Library from "../pages/library/library.jsx";
-import Collections from "../pages/library/collections/Collections.jsx";
-import Market from "../pages/market/market.jsx";
-import Profile from "../pages/profile/profile.jsx";
-import EditProfile from "../pages/profile/editprofile/EditProfile.jsx";
-import GameInfo from "../pages/library/gameinfo/GameInfo.jsx";
-import Discover from "../pages/store/discover/Discover.jsx";
-import Navbar from "../components/Navbar.jsx";
-import Featured from "../pages/store/featured/Featured.jsx";
-import Stats from "../pages/store/stats/Stats.jsx";
-import Wishlist from "../pages/store/wishlist/Wishlist.jsx";
-import PointsShop from "../pages/store/points-shop/PointsShop.jsx";
-import News from "../pages/store/news/News.jsx";
-import Search from "../pages/home/search/Search.jsx";
-import { GamePage } from "../pages/game/GamePage.jsx";
-import Purchase from "../pages/store/purchase/Purchase.jsx";
-import MarketHistory from "../pages/market/history/MarketHistory.jsx";
-import ForgotPassword from "../pages/auth/login/ForgotPassword.jsx";
 import Chat from "../pages/chat/Chat.jsx";
-import { useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
-import ManageGenres from "../pages/admin/genres/ManageGenres.jsx";
-import ManageGames from "../pages/admin/games/ManageGames.jsx";
-import GameCreate from "../pages/admin/games/gameCreate/GameCreate.jsx";
-import GameEdit from "../pages/admin/games/gameEdit/GameEdit.jsx";
+import { GamePage } from "../pages/game/GamePage.jsx";
+import Home from "../pages/home/home.jsx";
+import Search from "../pages/home/search/Search.jsx";
+import Collections from "../pages/library/collections/Collections.jsx";
+import GameInfo from "../pages/library/gameinfo/GameInfo.jsx";
+import Library from "../pages/library/library.jsx";
+import Buy from '../pages/market/buy/Buy.jsx';
+import MarketHistory from "../pages/market/history/MarketHistory.jsx";
+import Market from "../pages/market/market.jsx";
+import Sell from '../pages/market/sell/Sell.jsx';
 import Activity from '../pages/profile/activity/Activity.jsx';
 import Badges from '../pages/profile/badges/Badges.jsx';
+import EditProfile from "../pages/profile/editprofile/EditProfile.jsx";
 import Friends from '../pages/profile/friends/Friends.jsx';
 import Inventory from '../pages/profile/inventory/Inventory.jsx';
-import Buy from '../pages/market/buy/Buy.jsx';
-import Sell from '../pages/market/sell/Sell.jsx';
-import AdminAll from '../pages/admin/all/AdminAll';
-
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("accessToken");
-  const user = token ? jwtDecode(token) : null;
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-};
+import Profile from "../pages/profile/profile.jsx";
+import Discover from "../pages/store/discover/Discover.jsx";
+import Featured from "../pages/store/featured/Featured.jsx";
+import News from "../pages/store/news/News.jsx";
+import PointsShop from "../pages/store/points-shop/PointsShop.jsx";
+import Purchase from "../pages/store/purchase/Purchase.jsx";
+import Stats from "../pages/store/stats/Stats.jsx";
+import Wishlist from "../pages/store/wishlist/Wishlist.jsx";
 import adminRoutes from "./AdminRoutes.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
@@ -259,50 +244,6 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
               }
             />
             <Route path="/admin/all" element={<AdminAll />} />
-            <Route path="/admin">
-              <Route
-                path="dashboard"
-                element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="genres"
-                element={
-                  <ProtectedRoute>
-                    <ManageGenres />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="games">
-                <Route
-                  index
-                  element={
-                    <ProtectedRoute>
-                      <ManageGames />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="create"
-                  element={
-                    <ProtectedRoute>
-                      <GameCreate />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="edit/:gameId"
-                  element={
-                    <ProtectedRoute>
-                      <GameEdit />
-                    </ProtectedRoute>
-                  }
-                />
-              </Route>
-            </Route>
 
             {adminRoutes}
 
