@@ -16,5 +16,11 @@ namespace SteamClone.API.Controllers;
 public class GameGenreController(IGenreService genreService)
     : GenericController<int, CreateUpdateGenreVM, CreateUpdateGenreVM>(genreService)
 {
-    
+    [AllowAnonymous]
+    [HttpGet]
+    public override async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var response = await genreService.GetAllAsync(cancellationToken);
+        return GetResult(response);
+    }
 }

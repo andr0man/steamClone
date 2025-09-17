@@ -32,6 +32,7 @@ import Stats from "../pages/store/stats/Stats.jsx";
 import Wishlist from "../pages/store/wishlist/Wishlist.jsx";
 import adminRoutes from "./AdminRoutes.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
+import managerRoutes from "./ManagerRoutes.jsx";
 
 const UnderConstructionPage = ({ pageName }) => (
   <div style={{ padding: "50px", textAlign: "center", color: "#fff" }}>
@@ -246,6 +247,8 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route path="/admin/all" element={<AdminAll />} />
 
             {adminRoutes}
+
+            {managerRoutes}
 
             <Route
               path="/"

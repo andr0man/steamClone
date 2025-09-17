@@ -11,7 +11,7 @@ import GameCreate from "../pages/admin/games/gameCreate/GameCreate";
 import GameEdit from "../pages/admin/games/gameEdit/GameEdit";
 import ManageGenres from "../pages/admin/genres/ManageGenres";
 import ProtectedRoute from "./ProtectedRoute";
-import AdminDashboard from "../pages/admin/AdminDashboard"
+import AdminDashboard from "../pages/admin/AdminDashboard";
 
 const adminRoutes = [
   <Route path="/admin" key="admin">
