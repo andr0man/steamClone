@@ -4,7 +4,7 @@
 
 $font: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
 $violet: #9277C5;
-$dropdown-bg: #1b1e27;
+$dropdown-bg:rgba(47, 36, 62, 0.90);
 $dropdown-border: #2c3140;
 $dropdown-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
 
@@ -136,18 +136,19 @@ $bubble-ease: .35s cubic-bezier(.22,.9,.3,1);
   top: 100%;
   left: 0;
   background-color: $dropdown-bg;
+  backdrop-filter: blur(6px);
   border: 1px solid $dropdown-border;
   box-shadow: $dropdown-shadow;
   z-index: 1400;
   min-width: 230px;
-  max-height: calc(100vh - var(--navbar-h) - 30px);
-  overflow-y: auto;
+  max-height: none;
+  overflow-y: visible;
   padding: 10px 0;
   opacity: 0;
   visibility: hidden;
   transform: translateY(0);
   transition: opacity $ease, visibility $ease;
-  border-radius: 10px;
+  border-radius: 0px;
 }
 .fluxi-dropdown.store-dropdown { min-width: 280px; }
 
