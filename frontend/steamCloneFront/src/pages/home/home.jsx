@@ -84,34 +84,35 @@ const normalizeGames = (resp) => {
       id: id,
       title: g?.name ?? g?.title ?? "Game",
       imageUrl: imageUrl || FALLBACK_IMG,
-      basePrice: nnum(g?.originalPrice ?? g?.basePrice ?? g?.standardPrice ?? g?.price),
-      finalPrice: nnum(g?.finalPrice ?? g?.price),
-      discountPercent: nnum(g?.discountPercent),
+      price: nnum(g?.price ?? 0),
+      discount: nnum(g?.discount ?? 0),
       isFree: Boolean(g?.isFree ?? (Number(g?.finalPrice ?? g?.price) === 0)),
       releaseDate: g?.releaseDate ?? g?.createdAt ?? g?.publishDate ?? null,
-      popularity: nnum(g?.popularity ?? g?.sales ?? g?.rating) ?? 0,
+      popularity: nnum(g?.percentageOfPositiveReviews) ?? 0,
       genres: Array.isArray(g?.genres) ? g.genres.map((x) => x?.name ?? x) : [],
     };
   });
 };
 
+const calculateDiscountedPrice = (price, discount) => {
+    return (price - (price * discount) / 100).toFixed(0);
+  };
+
 const discountOf = (g) => {
-  if (g?.discountPercent != null) return Math.max(0, Math.round(g.discountPercent));
-  if (g?.basePrice && g?.finalPrice && g.basePrice > 0) {
-    return Math.max(0, Math.round((1 - Number(g.finalPrice) / Number(g.basePrice)) * 100));
-  }
-  return 0;
+  return nnum(g?.discount) || 0;
 };
 
 const priceBadge = (g) => {
-  if (g?.isFree) return <RegularPrice value="Free to play" />;
-  const base = g?.basePrice;
-  const now = g?.finalPrice ?? base;
   const disc = discountOf(g);
-  if (disc > 0 && base != null && now != null && now < base) {
-    return <DiscountPrice off={`-${disc}%`} from={fmt(base)} to={fmt(now)} />;
+
+  if (g?.isFree) return <RegularPrice value="Free to play" />;
+  
+  const originalPrice = g.price;
+  if (disc > 0) {
+    const discountedPrice = calculateDiscountedPrice(originalPrice, disc);
+    return <DiscountPrice off={`-${disc}%`} from={fmt(originalPrice)} to={fmt(discountedPrice)} />;
   }
-  return <RegularPrice value={fmt(now)} />;
+  return <RegularPrice value={fmt(originalPrice)} />;
 };
 
 const toCard = (g) => ({
@@ -135,7 +136,7 @@ const StoreRail = () => {
       <div className="rail-frame">
         <div className="rail-inner">
           <div className="rail-left">
-            <NavLink to="/store/points-shop" className="rail-link">Points Shop</NavLink>
+
             <NavLink to="/chat" className="rail-link">Chat</NavLink>
             <NavLink to="/store/wishlist" className="rail-link">Wishlist</NavLink>
           </div>
@@ -333,12 +334,12 @@ const Home = () => {
   }, [games]);
 
   const recommendedCards = useMemo(() => {
-    return [...games].sort((a, b) => (b.popularity || 0) - (a.popularity || 0)).slice(0, 28).map(toCard);
+    const score = (g) => (g.popularity || 0) * 2 + discountOf(g);
+    return [...games].sort((a, b) => score(b) - score(a)).slice(0, 28).map(toCard);
   }, [games]);
 
   const bestsellersCards = useMemo(() => {
-    const score = (g) => (g.popularity || 0) * 2 + discountOf(g);
-    return [...games].sort((a, b) => score(b) - score(a)).slice(0, 28).map(toCard);
+    return [...games].sort((a, b) => (b.popularity || 0) - (a.popularity || 0)).slice(0, 28).map(toCard);
   }, [games]);
 
   const nt = useMemo(() => splitTopBottom(newTrendingCards), [newTrendingCards]);

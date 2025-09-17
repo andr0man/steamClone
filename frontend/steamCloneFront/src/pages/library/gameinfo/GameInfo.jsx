@@ -18,7 +18,7 @@ import {
 } from '../../../services/game/gameApi';
 import {
   useGetIsInGameLibraryQuery,
-} from '../../../services/game-library/gameLibraryApi';
+} from '../../../services/gameLibrary/gameLibraryApi';
 
 const FALLBACK_HEADER = 'https://via.placeholder.com/1200x400/10171F/5FA8F4?text=Game+Header';
 const FALLBACK_COVER = 'https://via.placeholder.com/300x400/1A2838/66c0f4?text=Game';

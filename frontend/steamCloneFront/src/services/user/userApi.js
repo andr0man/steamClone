@@ -48,10 +48,10 @@ export const userApi = createApi({
     }),
 
     updateUser: builder.mutation({
-      query: (userData) => ({
+      query: (partialUserData) => ({
         url: "/users",
-        method: "PUT",
-        body: userData,
+        method: "PATCH",
+        body: partialUserData,
       }),
       invalidatesTags: ["User"],
     }),

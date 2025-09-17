@@ -36,15 +36,15 @@ import Inventory from '../pages/profile/inventory/Inventory.jsx';
 import Buy from '../pages/market/buy/Buy.jsx';
 import Sell from '../pages/market/sell/Sell.jsx';
 import AdminAll from '../pages/admin/all/AdminAll';
-
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("accessToken");
-  const user = token ? jwtDecode(token) : null;
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-};
+import AdminDashboard from "../pages/admin/AdminDashboard.jsx";
+// const ProtectedRoute = ({ children }) => {
+//   const token = localStorage.getItem("accessToken");
+//   const user = token ? jwtDecode(token) : null;
+//   if (!user) {
+//     return <Navigate to="/login" replace />;
+//   }
+//   return children;
+// };
 import adminRoutes from "./AdminRoutes.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 
