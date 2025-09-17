@@ -256,6 +256,8 @@
     overflow: hidden;
     background: #23232a;
     box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.08);
+    width: 100%;
+    border-collapse: collapse;
   }
 
   .manage-table th {
@@ -343,9 +345,8 @@
   }
 
   .actions-td {
-    text-align: center;
-    padding: 8px;
     display: flex;
+    text-align: center;
     justify-content: center;
     gap: 8px;
   }

@@ -36,7 +36,7 @@ public interface IGameService : IServiceCRUD<string, CreateGameVM, UpdateGameVM>
     
     Task<ServiceResponse> RemoveAssociatedUserAsync(string gameId, string userId, CancellationToken token);
     
-    Task<ServiceResponse> GetByAssociatedUserAsync(CancellationToken token);
+    Task<ServiceResponse> GetByAssociatedUserAsync(bool? isApproved = true, CancellationToken token = default);
     
     Task<ServiceResponse> ApproveAsync(string id, bool isApproved, CancellationToken token);
     

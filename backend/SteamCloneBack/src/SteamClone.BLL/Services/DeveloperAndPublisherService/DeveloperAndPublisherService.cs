@@ -20,7 +20,7 @@ public class DeveloperAndPublisherService(
     public async Task<ServiceResponse> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var developers = (await developerAndPublisherRepository.GetAllAsync(cancellationToken))
-            .Where(x => x.IsApproved.HasValue && x.IsApproved.Value);
+            .Where(x => x.IsApproved == true);
 
         return ServiceResponse.OkResponse("Developers Or Publishers retrieved successfully",
             mapper.Map<List<DeveloperAndPublisherVM>>(developers));
@@ -193,18 +193,18 @@ public class DeveloperAndPublisherService(
             token);
     }
 
-    public async Task<ServiceResponse> GetByAssociatedUserAsync(CancellationToken token)
+    public async Task<ServiceResponse> GetByAssociatedUserAsync(bool? isApproved, CancellationToken token = default)
     {
         var userId = await userProvider.GetUserId();
 
-        return await GetByAssociatedUserIdAsync(userId, token);
+        return await GetByAssociatedUserIdAsync(isApproved, userId, token);
     }
 
-    public async Task<ServiceResponse> GetByAssociatedUserIdAsync(string id, CancellationToken token)
+    private async Task<ServiceResponse> GetByAssociatedUserIdAsync(bool? isApproved, string id, CancellationToken token)
     {
         var developers = await developerAndPublisherRepository.GetAllAsync(token);
         var developersByAssociatedUser = developers
-            .Where(d => d.AssociatedUsers.Any(u => u.Id == id) && (d.IsApproved.HasValue && d.IsApproved.Value));
+            .Where(d => d.AssociatedUsers.Any(u => u.Id == id) && d.IsApproved == isApproved);
 
         return ServiceResponse.OkResponse("Developers Or Publishers by associated user retrieved successfully",
             mapper.Map<List<DeveloperAndPublisherVM>>(developersByAssociatedUser));

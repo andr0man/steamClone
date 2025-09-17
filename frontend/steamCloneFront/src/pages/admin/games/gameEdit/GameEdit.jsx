@@ -54,7 +54,7 @@ const GameEdit = () => {
   const [minReqForm, setMinReqForm] = useState(null);
   const [recReqForm, setRecReqForm] = useState(null);
 
-    useEffect(() => {
+  useEffect(() => {
     if (!isGameLoading && game) {
       setForm({
         name: game.name,
@@ -71,16 +71,6 @@ const GameEdit = () => {
 
   useEffect(() => {
     if (!isGameLoading && game) {
-      // setForm({
-      //   name: game.name,
-      //   description: game.description,
-      //   price: game.price,
-      //   discount: game.discount || 0,
-      //   releaseDate: formatDateForInput(game.releaseDate),
-      //   developerId: game.developerId || "",
-      //   publisherId: game.publisherId || "",
-      //   genresIds: game.genres ? game.genres.map((g) => g.id) : [],
-      // });
       setCoverImagePreview(game.coverImageUrl);
       // Initialize system requirements forms
       const sysReqs = Array.isArray(game.systemRequirements)
@@ -128,6 +118,11 @@ const GameEdit = () => {
 
   const onFileSelectionChange = (e) => {
     setSelectedFiles(Array.from(e.target.files));
+  };
+
+  const cancelCoverImageChange = () => {
+    setCoverImageFile(null);
+    setCoverImagePreview(game.coverImageUrl);
   };
 
   const onCoverImageChange = (e) => {
@@ -195,6 +190,11 @@ const GameEdit = () => {
       toast.error(err?.data?.message || "Failed to update screenshots");
       return false;
     }
+  };
+
+  const cancelScreenshotsChange = () => {
+    setSelectedFiles([]);
+    setImagesToDelete([]);
   };
 
   const handleChange = (e) => {
@@ -445,8 +445,12 @@ const GameEdit = () => {
           markImageForDeletion={markImageForDeletion}
           imagesToDelete={imagesToDelete}
           handleUpdate={handleUpdateScreenshots}
+          selectedFiles={selectedFiles}
+          cancelScreenshotsChange={cancelScreenshotsChange}
         />
         <GameCoverImage
+          cancelCoverImageChange={cancelCoverImageChange}
+          coverImageFile={coverImageFile}
           handleFileChange={onCoverImageChange}
           coverImagePreview={coverImagePreview}
           handleUpdate={handleCoverImageUpload}

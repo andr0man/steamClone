@@ -23,8 +23,15 @@ const UserAssociateRow = ({ user }) => {
     <>
       <tr key={user.id}>
         <td style={{ padding: "8px" }}>{user.email}</td>
-        <td className="actions-td">
-          <button className="delete-manage-btn" onClick={() => setDeleteModalOpen(true)}>Delete</button>
+        <td>
+          <div className="actions-td">
+            <button
+              className="delete-manage-btn"
+              onClick={() => setDeleteModalOpen(true)}
+            >
+              Delete
+            </button>
+          </div>
         </td>
       </tr>
       <ConfirmModal

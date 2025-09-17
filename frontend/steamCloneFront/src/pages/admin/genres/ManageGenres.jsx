@@ -59,7 +59,6 @@ const ManageGenres = () => {
       </div>
       <table
         className="manage-table"
-        style={{ width: "100%", borderCollapse: "collapse" }}
       >
         <thead>
           <tr>
