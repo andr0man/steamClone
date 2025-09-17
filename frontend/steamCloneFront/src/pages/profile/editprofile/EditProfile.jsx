@@ -16,8 +16,8 @@ import {
 
 import {
   useGetProfileQuery,
-  useUpdateUserPutMutation,   // PUT /Users/{id}
-  useUploadAvatarMutation,   // POST /Users/avatar (FormData)
+  useUpdateUserPutMutation, // PUT /Users/{id}
+  useUploadAvatarMutation, // POST /Users/avatar (FormData)
 } from "../../../services/profile/profileApi";
 
 import { useGetAllCountrysQuery } from "../../../services/country/countryApi";
@@ -30,7 +30,8 @@ const EditProfile = () => {
 
   const { data, isLoading, error } = useGetProfileQuery();
   const [updateUserPut, { isLoading: isSaving }] = useUpdateUserPutMutation();
-  const [uploadAvatar, { isLoading: isUploadingAvatar }] = useUploadAvatarMutation();
+  const [uploadAvatar, { isLoading: isUploadingAvatar }] =
+    useUploadAvatarMutation();
   const { data: countriesRes } = useGetAllCountrysQuery();
 
   const server = useMemo(() => data?.payload || data || {}, [data]);
@@ -42,9 +43,7 @@ const EditProfile = () => {
   const [username, setUsername] = useState("Username");
   const [countryId, setCountryId] = useState(null);
   const [bio, setBio] = useState("This user has not set up a bio yet.");
-  const [avatarUrl, setAvatarUrl] = useState(
-    "https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User"
-  );
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [level, setLevel] = useState(0);
   const [memberSince, setMemberSince] = useState("N/A");
   const [friendsCount, setFriendsCount] = useState(0);
@@ -63,35 +62,46 @@ const EditProfile = () => {
   const originRef = useRef(null);
 
   useEffect(() => {
-    if (error) setApiError(error?.data?.message || "Could not load profile data.");
+    if (error)
+      setApiError(error?.data?.message || "Could not load profile data.");
   }, [error]);
-
 
   useEffect(() => {
     if (!server || !Object.keys(server).length) return;
 
-    const sFavWorlds = Array.isArray(server.favoriteWorlds) ? server.favoriteWorlds : [];
+    const sFavWorlds = Array.isArray(server.favoriteWorlds)
+      ? server.favoriteWorlds
+      : [];
     const sFavGame =
-      server.favoriteGame && server.favoriteGame.title && server.favoriteGame.imageUrl
+      server.favoriteGame &&
+      server.favoriteGame.title &&
+      server.favoriteGame.imageUrl
         ? [server.favoriteGame]
         : [];
 
     const name =
-      server.username || server.userName || server.nickName || server.nickname || "Username";
+      server.username ||
+      server.userName ||
+      server.nickName ||
+      server.nickname ||
+      "Username";
     const cId = server.country?.id ?? server.countryId ?? null;
-    const ms = server.memberSince || server.createdAt || server.registeredAt || "N/A";
+    const ms =
+      server.memberSince || server.createdAt || server.registeredAt || "N/A";
 
     setUsername(name);
     setCountryId(cId);
     setBio(server.bio || "This user has not set up a bio yet.");
-    setAvatarUrl(
-      server.avatarUrl || "https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User"
-    );
+    setAvatarUrl(server.avatarUrl);
     setLevel(server.level ?? 0);
-    setMemberSince(typeof ms === "string" ? ms : new Date(ms).toLocaleDateString());
+    setMemberSince(
+      typeof ms === "string" ? ms : new Date(ms).toLocaleDateString()
+    );
     setFriendsCount(server.friendsCount ?? 0);
     setBadges(Array.isArray(server.badges) ? server.badges : []);
-    setRecentActivity(Array.isArray(server.recentActivity) ? server.recentActivity : []);
+    setRecentActivity(
+      Array.isArray(server.recentActivity) ? server.recentActivity : []
+    );
     setFavoriteWorlds(sFavWorlds);
     setFavoriteGame(server.favoriteGame || null);
 
@@ -100,13 +110,15 @@ const EditProfile = () => {
       countryId: cId,
       bio: server.bio || "This user has not set up a bio yet.",
       avatarUrl:
-        server.avatarUrl || "https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User",
+        server.avatarUrl ||
+        "https://via.placeholder.com/150/CCCCCC/FFFFFF?Text=User",
       favoriteWorlds: sFavWorlds.length ? sFavWorlds : sFavGame,
     };
   }, [server]);
 
   const favEditable = useMemo(() => {
-    if (Array.isArray(favoriteWorlds) && favoriteWorlds.length) return favoriteWorlds;
+    if (Array.isArray(favoriteWorlds) && favoriteWorlds.length)
+      return favoriteWorlds;
     if (favoriteGame?.title && favoriteGame?.imageUrl) return [favoriteGame];
     return [];
   }, [favoriteWorlds, favoriteGame]);
@@ -155,15 +167,25 @@ const EditProfile = () => {
 
   const handleAddFavorite = () => {
     if (!newFavTitle.trim() || !newFavImage.trim()) return;
-    const id = (crypto?.randomUUID && crypto.randomUUID()) || `fav-${Date.now()}`;
-    const newItem = { id, title: newFavTitle.trim(), imageUrl: newFavImage.trim() };
-    setFavoriteWorlds((prev) => [...(Array.isArray(prev) ? prev : []), newItem]);
+    const id =
+      (crypto?.randomUUID && crypto.randomUUID()) || `fav-${Date.now()}`;
+    const newItem = {
+      id,
+      title: newFavTitle.trim(),
+      imageUrl: newFavImage.trim(),
+    };
+    setFavoriteWorlds((prev) => [
+      ...(Array.isArray(prev) ? prev : []),
+      newItem,
+    ]);
     setNewFavTitle("");
     setNewFavImage("");
   };
 
   const handleRemoveFavorite = (id) => {
-    setFavoriteWorlds((prev) => (prev || []).filter((item) => (item.id || item.title) !== id));
+    setFavoriteWorlds((prev) =>
+      (prev || []).filter((item) => (item.id || item.title) !== id)
+    );
   };
 
   const handleAvatarPick = () => fileInputRef.current?.click();
@@ -259,11 +281,21 @@ const EditProfile = () => {
   const countryNameById = (id) =>
     countries.find((c) => String(c.id) === String(id))?.name || "—";
 
+  console.log(avatarUrl);
+
   return (
     <div className="profile-page-container edit-mode">
       <div className="notification-global-top">
-        <Notification message={apiError} type="error" onClose={() => setApiError(null)} />
-        <Notification message={apiSuccess} type="success" onClose={() => setApiSuccess(null)} />
+        <Notification
+          message={apiError}
+          type="error"
+          onClose={() => setApiError(null)}
+        />
+        <Notification
+          message={apiSuccess}
+          type="success"
+          onClose={() => setApiSuccess(null)}
+        />
       </div>
 
       {(isLoading || isSaving) && (
@@ -278,11 +310,21 @@ const EditProfile = () => {
           Back to Profile
         </button>
         <div className="topbar-actions">
-          {dirty && <span className="unsaved-dot" title="Unsaved changes"></span>}
-          <button className="ghost-btn" onClick={resetToOrigin} disabled={!dirty || isSaving}>
+          {dirty && (
+            <span className="unsaved-dot" title="Unsaved changes"></span>
+          )}
+          <button
+            className="ghost-btn"
+            onClick={resetToOrigin}
+            disabled={!dirty || isSaving}
+          >
             Reset
           </button>
-          <button className="save-btn" onClick={handleSave} disabled={!dirty || isSaving}>
+          <button
+            className="save-btn"
+            onClick={handleSave}
+            disabled={!dirty || isSaving}
+          >
             {isSaving ? "Saving…" : "Save changes"}
           </button>
         </div>
@@ -292,8 +334,19 @@ const EditProfile = () => {
         <div className="profile-sidebar editable">
           <div className="avatar-edit-wrap">
             <div className="avatar-frame">
-              <img src={avatarUrl} alt={`${username}'s avatar`} className="profile-avatar" />
-              <button type="button" className="avatar-change-fab" onClick={handleAvatarPick} title="Change avatar">
+              <div className="profile-avatar">
+                <img
+                  src={avatarUrl ?? "/common/icon_profile.svg"}
+                  alt={`${username}'s avatar`}
+                  style={{ padding: avatarUrl ? 0 : 40 }}
+                />
+              </div>
+              <button
+                type="button"
+                className="avatar-change-fab"
+                onClick={handleAvatarPick}
+                title="Change avatar"
+              >
                 <UploadCloud size={16} />
               </button>
             </div>
@@ -304,20 +357,28 @@ const EditProfile = () => {
               className="hidden-file"
               onChange={handleAvatarChange}
             />
-            {isUploadingAvatar && <span className="uploading-hint">Uploading...</span>}
+            {isUploadingAvatar && (
+              <span className="uploading-hint">Uploading...</span>
+            )}
           </div>
 
           <div className="stack">
             <label className="stack-label">Username</label>
             <div className="input-with-counter">
               <input
-                className={`profile-username-input ${username.length > USERNAME_MAX ? "error" : ""}`}
+                className={`profile-username-input ${
+                  username.length > USERNAME_MAX ? "error" : ""
+                }`}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Username"
                 maxLength={USERNAME_MAX + 5}
               />
-              <span className={`counter ${username.length > USERNAME_MAX ? "over" : ""}`}>
+              <span
+                className={`counter ${
+                  username.length > USERNAME_MAX ? "over" : ""
+                }`}
+              >
                 {username.length}/{USERNAME_MAX}
               </span>
             </div>
@@ -329,7 +390,10 @@ const EditProfile = () => {
 
           <div className="sidebar-field">
             <label>Country</label>
-            <select value={countryId ?? ""} onChange={(e) => setCountryId(Number(e.target.value) || null)}>
+            <select
+              value={countryId ?? ""}
+              onChange={(e) => setCountryId(Number(e.target.value) || null)}
+            >
               <option value="" disabled>
                 Select country
               </option>
@@ -341,7 +405,8 @@ const EditProfile = () => {
             </select>
             {!countryId && (
               <div className="muted" style={{ marginTop: 4 }}>
-                Current: {countryNameById(server.country?.id || server.countryId) || "—"}
+                Current:{" "}
+                {countryNameById(server.country?.id || server.countryId) || "—"}
               </div>
             )}
           </div>
@@ -374,7 +439,9 @@ const EditProfile = () => {
                 <User size={22} /> About me
               </h3>
               <div className="counter-wrap">
-                <span className={`counter ${bio.length > BIO_MAX ? "over" : ""}`}>
+                <span
+                  className={`counter ${bio.length > BIO_MAX ? "over" : ""}`}
+                >
                   {bio.length}/{BIO_MAX}
                 </span>
               </div>
@@ -397,7 +464,10 @@ const EditProfile = () => {
 
             <div className="favorites-row editable-grid">
               {favEditable.slice(0, 8).map((g, i) => (
-                <div className="favorite-card edit" key={g.id || `${g.title}-${i}`}>
+                <div
+                  className="favorite-card edit"
+                  key={g.id || `${g.title}-${i}`}
+                >
                   <img src={g.imageUrl} alt={g.title} />
                   <div className="fav-title">{g.title}</div>
                   <button
@@ -443,9 +513,16 @@ const EditProfile = () => {
             {badges && badges.length > 0 ? (
               <div className="badges-grid">
                 {badges.map((badge, index) => (
-                  <div key={badge.id || index} className="badge-item" data-title={badge.name}>
+                  <div
+                    key={badge.id || index}
+                    className="badge-item"
+                    data-title={badge.name}
+                  >
                     <img
-                      src={badge.iconUrl || "https://via.placeholder.com/60/CCCCCC/000000?Text=B"}
+                      src={
+                        badge.iconUrl ||
+                        "https://via.placeholder.com/60/CCCCCC/000000?Text=B"
+                      }
                       alt={badge.name || "Badge"}
                     />
                   </div>
@@ -456,7 +533,10 @@ const EditProfile = () => {
             )}
           </div>
 
-          <div className="profile-section profile-recent-activity" id="activity">
+          <div
+            className="profile-section profile-recent-activity"
+            id="activity"
+          >
             <div className="section-header">
               <h3>
                 <BarChart3 size={22} /> Recent Activity
@@ -478,10 +558,18 @@ const EditProfile = () => {
           </div>
 
           <div className="footer-actions">
-            <button className="ghost-btn" onClick={resetToOrigin} disabled={!dirty || isSaving}>
+            <button
+              className="ghost-btn"
+              onClick={resetToOrigin}
+              disabled={!dirty || isSaving}
+            >
               Reset
             </button>
-            <button className="save-btn" onClick={handleSave} disabled={!dirty || isSaving}>
+            <button
+              className="save-btn"
+              onClick={handleSave}
+              disabled={!dirty || isSaving}
+            >
               {isSaving ? "Saving…" : "Save changes"}
             </button>
           </div>

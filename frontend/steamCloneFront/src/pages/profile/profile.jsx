@@ -4,11 +4,15 @@ import "./profile.scss";
 import Notification from "../../components/Notification";
 import { User, Shield, BarChart3, Users, Gift, Wallet } from "lucide-react";
 // import { useGetProfileQuery, useGetBalanceQuery } from "../../services/profileApi";
-import { useGetProfileQuery, useGetBalanceQuery } from "../../services/profile/profileApi";
+import {
+  useGetProfileQuery,
+  useGetBalanceQuery,
+} from "../../services/profile/profileApi";
+import { formatDateForInput } from "../admin/common/formatDateForInput";
 
 const initialProfileState = {
   username: "Username",
-  avatarUrl: "https://via.placeholder.com/180/CCCCCC/FFFFFF?Text=User",
+  avatarUrl: null,
   level: 0,
   country: "Country",
   memberSince: "N/A",
@@ -30,7 +34,11 @@ const Profile = ({ userData }) => {
   const navigate = useNavigate();
 
   const { data, isLoading, error } = useGetProfileQuery();
-  const { data: balRes, isLoading: balLoading, error: balErr } = useGetBalanceQuery();
+  const {
+    data: balRes,
+    isLoading: balLoading,
+    error: balErr,
+  } = useGetBalanceQuery();
 
   useEffect(() => setLoading(isLoading || balLoading), [isLoading, balLoading]);
 
@@ -62,11 +70,7 @@ const Profile = ({ userData }) => {
       p.username || p.userName || p.nickName || p.nickname || "Username";
     const countryName =
       p.country?.name || p.countryName || p.country || "Country";
-    const memberSince =
-      p.memberSince ||
-      p.createdAt ||
-      p.registeredAt ||
-      "N/A";
+    const memberSince = p.memberSince || p.createdAt || p.registeredAt || "N/A";
 
     setProfileData((prev) => ({
       ...prev,
@@ -83,8 +87,7 @@ const Profile = ({ userData }) => {
         ? p.recentActivity
         : prev.recentActivity || [],
       badges: Array.isArray(p.badges) ? p.badges : prev.badges || [],
-      friendsCount:
-        p.friendsCount ?? prev.friendsCount ?? 0,
+      friendsCount: p.friendsCount ?? prev.friendsCount ?? 0,
       favoriteWorlds: Array.isArray(p.favoriteWorlds)
         ? p.favoriteWorlds
         : prev.favoriteWorlds || [],
@@ -143,11 +146,13 @@ const Profile = ({ userData }) => {
         <div className="profile-page-container">
           <div className="profile-main-content">
             <aside className="profile-sidebar">
-              <img
-                src={avatarUrl}
-                alt={`${username}'s avatar`}
-                className="profile-avatar"
-              />
+              <div className="profile-avatar">
+                <img
+                  src={avatarUrl ?? "/common/icon_profile.svg"}
+                  alt={`${username}'s avatar`}
+                  style={{ padding: avatarUrl ? 0 : 40 }}
+                />
+              </div>
               <h1 className="profile-username">{username}</h1>
 
               <p className="profile-level">
@@ -155,7 +160,7 @@ const Profile = ({ userData }) => {
               </p>
               <p className="profile-country">{country}</p>
               <p className="profile-member-since">
-                Member since: {memberSince}
+                Member since: {formatDateForInput(memberSince)}
               </p>
 
               <div
@@ -244,7 +249,8 @@ const Profile = ({ userData }) => {
               <div className="profile-section profile-badges" id="badges">
                 <div className="section-header">
                   <h3>
-                    <Shield size={22} /> Badges ({(badges && badges.length) || 0})
+                    <Shield size={22} /> Badges (
+                    {(badges && badges.length) || 0})
                   </h3>
                   <NavLink to="/profile/badges" className="section-action">
                     See all
@@ -273,7 +279,10 @@ const Profile = ({ userData }) => {
                 )}
               </div>
 
-              <div className="profile-section profile-recent-activity" id="activity">
+              <div
+                className="profile-section profile-recent-activity"
+                id="activity"
+              >
                 <div className="section-header">
                   <h3>
                     <BarChart3 size={22} /> Recent Activity
