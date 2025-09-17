@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   useCreateDeveloperAndPublisherMutation,
@@ -39,6 +39,12 @@ const ManageMyDevPubs = () => {
 
   const [activeTab, setActiveTab] = useState("approved");
 
+  useEffect(() => {
+    refetchApproved();
+    refetchPending();
+    refetchRejected();
+  }, []);
+
   const tabConfig = [
     { key: "approved", label: "Approved", count: approvedDevsAndPubs.length },
     { key: "pending", label: "Pending", count: pendingDevsAndPubs.length },
@@ -49,10 +55,6 @@ const ManageMyDevPubs = () => {
   if (activeTab === "approved") itemsToShow = approvedDevsAndPubs;
   else if (activeTab === "pending") itemsToShow = pendingDevsAndPubs;
   else if (activeTab === "rejected") itemsToShow = rejectedDevsAndPubs;
-
-  if (isApprovedLoading || isPendingLoading || isRejectedLoading)
-    return <div className="loading-overlay visible">Loading data...</div>;
-  if (error) return <div>Error loading developers and publishers</div>;
 
   const handleClose = () => {
     setCreateModalOpen(false);
@@ -69,6 +71,10 @@ const ManageMyDevPubs = () => {
       toast.error(err?.data?.message || "Failed to create");
     }
   };
+
+  if (isApprovedLoading || isPendingLoading || isRejectedLoading)
+    return <div className="loading-overlay visible">Loading data...</div>;
+  if (error) return <div>Error loading developers and publishers</div>;
 
   return (
     <div className="manage-container flux-border">
@@ -91,20 +97,22 @@ const ManageMyDevPubs = () => {
           </button>
         </div>
       </div>
-       <div className="tabs" style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          {tabConfig.map((tab) => (
-            <button
-              key={tab.key}
-              className={`tab-btn${activeTab === tab.key ? " active" : ""}`}
-              onClick={() => setActiveTab(tab.key)}
-            >
-              {tab.label} ({tab.count})
-            </button>
-          ))}
-        </div>
+      <div
+        className="tabs"
+        style={{ display: "flex", gap: "10px", justifyContent: "center" }}
+      >
+        {tabConfig.map((tab) => (
+          <button
+            key={tab.key}
+            className={`tab-btn${activeTab === tab.key ? " active" : ""}`}
+            onClick={() => setActiveTab(tab.key)}
+          >
+            {tab.label} ({tab.count})
+          </button>
+        ))}
+      </div>
       <table
         className="manage-table"
-        style={{ width: "100%", borderCollapse: "collapse" }}
       >
         <thead>
           <tr>
@@ -117,10 +125,12 @@ const ManageMyDevPubs = () => {
         </thead>
         <tbody>
           {itemsToShow.length > 0 ? (
-            itemsToShow.map((item) => <DevPubRow key={item.id} devpub={item} user={user} />)
+            itemsToShow.map((item) => (
+              <DevPubRow key={item.id} devpub={item} user={user} />
+            ))
           ) : (
             <tr>
-              <td colSpan={2} style={{ textAlign: "center", padding: "8px" }}>
+              <td colSpan={3} style={{ textAlign: "center", padding: "8px" }}>
                 No developers or publishers available
               </td>
             </tr>

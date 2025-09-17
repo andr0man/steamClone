@@ -38,20 +38,27 @@ const ApproveGameRow = ({ game }) => {
       <tr key={game.id}>
         <td style={{ padding: "8px" }}>{game.name}</td>
         <td style={{ padding: "8px" }}>{user?.email}</td>
-        <td className="actions-td">
-          <button
-            className="delete-manage-btn"
-            onClick={() => setRejectModalOpen(true)}
-          >
-            Reject
-          </button>
-          <button
-            className="edit-manage-btn"
-            onClick={() => setApproveModalOpen(true)}
-          >
-            Approve
-          </button>
-          <button className="preview-manage-btn" onClick={() => navigate(`preview/${game.id}`)}>Preview</button>
+        <td>
+          <div className="actions-td">
+            <button
+              className="delete-manage-btn"
+              onClick={() => setRejectModalOpen(true)}
+            >
+              Reject
+            </button>
+            <button
+              className="edit-manage-btn"
+              onClick={() => setApproveModalOpen(true)}
+            >
+              Approve
+            </button>
+            <button
+              className="preview-manage-btn"
+              onClick={() => navigate(`preview/${game.id}`)}
+            >
+              Preview
+            </button>
+          </div>
         </td>
       </tr>
       <ConfirmModal
