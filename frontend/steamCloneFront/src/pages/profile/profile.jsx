@@ -32,6 +32,10 @@ const Profile = ({ userData }) => {
   const { data, isLoading, error } = useGetProfileQuery();
   const { data: balRes, isLoading: balLoading, error: balErr } = useGetBalanceQuery();
 
+  useEffect(() => {
+    setProfileData(initialProfileState);
+  }, [userData?.id]);
+
   useEffect(() => setLoading(isLoading || balLoading), [isLoading, balLoading]);
 
   useEffect(() => {
@@ -52,6 +56,16 @@ const Profile = ({ userData }) => {
       setApiError(null);
     }
   }, [error, balErr, userData]);
+
+  const formatDate = (date) => {
+    if (!date) return "N/A";
+    const d = new Date(date);
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }).format(d); 
+  };
 
   useEffect(() => {
     if (!data) return;
@@ -74,10 +88,9 @@ const Profile = ({ userData }) => {
       avatarUrl: p.avatarUrl || prev.avatarUrl,
       level: p.level ?? prev.level ?? 0,
       country: countryName,
-      memberSince:
-        typeof memberSince === "string"
-          ? memberSince
-          : new Date(memberSince).toLocaleDateString(),
+      memberSince: typeof memberSince === "string"
+        ? formatDate(memberSince)
+        : formatDate(memberSince),
       bio: p.bio || prev.bio,
       recentActivity: Array.isArray(p.recentActivity)
         ? p.recentActivity
@@ -119,11 +132,13 @@ const Profile = ({ userData }) => {
       : [];
 
   const balance =
-    balRes?.payload?.balance ??
-    balRes?.payload?.amount ??
-    balRes?.balance ??
-    balRes?.amount ??
-    0;
+  typeof balRes?.payload === "number"
+    ? balRes.payload
+    : balRes?.payload?.balance ??
+      balRes?.payload?.amount ??
+      balRes?.balance ??
+      balRes?.amount ??
+      0;
 
   return (
     <>

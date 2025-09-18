@@ -23,8 +23,12 @@ const ProfileLayout = ({ children }) => {
     const country = p.country?.name || p.countryName || p.country || '—';
     const msRaw = p.memberSince || p.createdAt || p.registeredAt || null;
     const memberSince = msRaw
-      ? (typeof msRaw === 'string' ? msRaw : new Date(msRaw).toLocaleDateString())
-      : '—';
+  ? new Date(msRaw).toLocaleDateString('en-GB', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : '—';
 
     return {
       username,
@@ -37,11 +41,13 @@ const ProfileLayout = ({ children }) => {
   }, [profileRes]);
 
   const balance =
-    balRes?.payload?.balance ??
-    balRes?.payload?.amount ??
-    balRes?.balance ??
-    balRes?.amount ??
-    0;
+  typeof balRes?.payload === "number"
+    ? balRes.payload
+    : balRes?.payload?.balance ??
+      balRes?.payload?.amount ??
+      balRes?.balance ??
+      balRes?.amount ??
+      0;
 
   return (
     <div id="page-top" className="profile-page-wrapper">

@@ -16,7 +16,7 @@ import {
 
 import {
   useGetProfileQuery,
-  useUpdateUserPutMutation,   // PUT /Users/{id}
+  useUpdateUserMutation,   // PUT /Users/{id}
   useUploadAvatarMutation,   // POST /Users/avatar (FormData)
 } from "../../../services/profile/profileApi";
 
@@ -29,7 +29,7 @@ const EditProfile = () => {
   const navigate = useNavigate();
 
   const { data, isLoading, error } = useGetProfileQuery();
-  const [updateUserPut, { isLoading: isSaving }] = useUpdateUserPutMutation();
+  const [updateUser, { isLoading: isSaving }] = useUpdateUserMutation();
   const [uploadAvatar, { isLoading: isUploadingAvatar }] = useUploadAvatarMutation();
   const { data: countriesRes } = useGetAllCountrysQuery();
 
@@ -117,12 +117,12 @@ const EditProfile = () => {
       countryId,
       bio,
       avatarUrl,
-      favoriteWorlds: favEditable.map((f) => ({
+      favoriteWorlds: (favoriteWorlds || []).map((f) => ({
         title: f.title,
         imageUrl: f.imageUrl,
       })),
     }),
-    [username, countryId, bio, avatarUrl, favEditable]
+    [username, countryId, bio, avatarUrl, favoriteWorlds]
   );
 
   const dirty = useMemo(() => {
@@ -173,7 +173,8 @@ const EditProfile = () => {
     if (!file) return;
     try {
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("UserId", server?.id ?? server?.userId);
+      fd.append("Image", file);
       const res = await uploadAvatar(fd).unwrap();
       const url = res?.payload?.url || res?.url || res?.payload || null;
       if (url) setAvatarUrl(url);
@@ -185,59 +186,84 @@ const EditProfile = () => {
     }
   };
 
-  const validate = () => {
-    if (!username.trim()) {
-      setApiError("Username cannot be empty.");
-      return false;
-    }
-    if (username.length > USERNAME_MAX) {
-      setApiError(`Username must be under ${USERNAME_MAX} characters.`);
-      return false;
-    }
-    if (bio.length > BIO_MAX) {
-      setApiError(`Bio must be under ${BIO_MAX} characters.`);
-      return false;
-    }
-    if (!countryId) {
-      setApiError("Please select a country.");
-      return false;
-    }
-    return true;
-  };
+  // const validate = () => {
+  //   if (!username.trim()) {
+  //     setApiError("Username cannot be empty.");
+  //     return false;
+  //   }
+  //   if (username.length > USERNAME_MAX) {
+  //     setApiError(`Username must be under ${USERNAME_MAX} characters.`);
+  //     return false;
+  //   }
+  //   if (bio.length > BIO_MAX) {
+  //     setApiError(`Bio must be under ${BIO_MAX} characters.`);
+  //     return false;
+  //   }
+  //   if (!countryId) {
+  //     setApiError("Please select a country.");
+  //     return false;
+  //   }
+  //   return true; 
+  // };
 
   const handleSave = async () => {
-    setApiError(null);
-    setApiSuccess(null);
-    if (!validate()) return;
+  setApiError(null);
+  setApiSuccess(null);
 
-    const userId = server?.id ?? server?.userId;
-    if (!userId) {
-      setApiError("User ID not found. Reload the page.");
-      return;
-    }
+  if (!dirty) return;
 
-    const payload = {
-      nickName: username.trim(),
-      bio,
-      countryId,
-      avatarUrl,
+  const payload = {};
+  if (originRef.current.username !== username.trim()) payload.nickName = username.trim();
+  if (originRef.current.bio !== bio) payload.bio = bio;
+  if (originRef.current.countryId !== countryId) payload.countryId = countryId;
+  if (originRef.current.avatarUrl !== avatarUrl) payload.avatarUrl = avatarUrl;
+  if (JSON.stringify(originRef.current.favoriteWorlds) !== JSON.stringify(favEditable)) {
+    payload.favoriteWorlds = favEditable.map(f => ({ title: f.title, imageUrl: f.imageUrl }));
+  }
+
+  if (Object.keys(payload).length === 0) {
+    setApiError("No changes to save.");
+    return;
+  }
+
+  // Валідація лише тих полів, які змінилися
+  if ("nickName" in payload && !payload.nickName.trim()) {
+    setApiError("Username cannot be empty.");
+    return;
+  }
+  if ("nickName" in payload && payload.nickName.length > USERNAME_MAX) {
+    setApiError(`Username must be under ${USERNAME_MAX} characters.`);
+    return;
+  }
+  if ("bio" in payload && payload.bio.length > BIO_MAX) {
+    setApiError(`Bio must be under ${BIO_MAX} characters.`);
+    return;
+  }
+  if ("countryId" in payload && !payload.countryId) {
+    setApiError("Please select a country.");
+    return;
+  }
+
+  const userId = server?.id;
+  if (!userId) {
+    setApiError("User ID not found. Reload the page.");
+    return;
+  }
+
+  try {
+    await updateUser({ id: userId, ...payload }).unwrap();
+
+    originRef.current = {
+      ...originRef.current,
+      ...payload,
     };
 
-    try {
-      await updateUserPut({ id: userId, ...payload }).unwrap();
-      originRef.current = {
-        username: payload.nickName,
-        bio: payload.bio,
-        countryId: payload.countryId,
-        avatarUrl: payload.avatarUrl,
-        favoriteWorlds: favEditable,
-      };
-      setApiSuccess("Profile saved");
-      setTimeout(() => navigate("/profile"), 650);
-    } catch (err) {
-      setApiError(err?.data?.message || "Could not save profile");
-    }
-  };
+    setApiSuccess("Profile saved");
+    setTimeout(() => navigate("/profile"), 650);
+  } catch (err) {
+    setApiError(err?.data?.message || "Could not save profile");
+  }
+};
 
   const handleCancel = () => {
     if (dirty && !confirm("Discard unsaved changes?")) return;

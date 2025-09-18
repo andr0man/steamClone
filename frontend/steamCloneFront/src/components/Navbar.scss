@@ -218,6 +218,13 @@ $bubble-ease: .35s cubic-bezier(.22,.9,.3,1);
   cursor: pointer;
   transition: transform .15s ease, filter .15s ease, background-color .15s ease, box-shadow .15s ease;
   box-shadow: 0 6px 18px rgba(124,114,219,.18);
+
+  .user-avatar {
+  width: 32px;  
+  height: 32px;
+  border-radius: 50%;   
+  object-fit: cover;    
+  }
 }
 .avatar-button:hover { filter: brightness(1.08); transform: translateY(-1px); }
 .avatar-button.active { background: rgba(146,119,197,.18); }

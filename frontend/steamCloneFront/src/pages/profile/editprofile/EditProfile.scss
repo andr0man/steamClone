@@ -203,13 +203,20 @@ $card-radius: 10px;
   margin: 8px 0;
   label { color: #e6e3f1; font-weight: 600; font-size: .95rem; }
   select {
-    width: 100%;
-    background: transparent;
+    background: rgba(47,36,62,0.9);
     border: 1px solid rgba(146,119,197,.35);
     color: #e0ddeb;
     border-radius: 10px;
     padding: 10px 12px;
-    &:focus { outline: none; border-color: rgba(146,119,197,.8); background: rgba(0,0,0,.15); }
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: rgba(146,119,197,.8);
+      background: rgba(31,24,41,1);
+    }
   }
   &.readonly .readonly-chip {
     border: 1px dashed rgba(146,119,197,.35);

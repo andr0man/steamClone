@@ -235,7 +235,15 @@ const Navbar = ({ onLogout }) => {
               aria-expanded={activeDropdown === "user-menu"}
               aria-controls="user-menu-dropdown"
             >
-              <UserIcon size={18} />
+              {user?.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={`${user.nickname}'s avatar`}
+                  className="user-avatar"
+                />
+              ) : (
+                <UserIcon size={18} />
+              )}
             </button>
 
             {activeDropdown === "user-menu" && (
