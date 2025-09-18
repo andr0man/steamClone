@@ -1,17 +1,18 @@
-﻿using System.Net;
-using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.IdentityModel.JsonWebTokens;
 using SteamClone.BLL.Services.JwtService;
 using SteamClone.BLL.Services.MailService;
 using SteamClone.BLL.Services.PasswordHasher;
 using SteamClone.DAL;
+using SteamClone.DAL.Data;
 using SteamClone.DAL.Repositories.BalanceRepository;
 using SteamClone.DAL.Repositories.RefreshTokenRepository;
 using SteamClone.DAL.Repositories.UserRepository;
 using SteamClone.Domain.Models.Auth.Users;
 using SteamClone.Domain.ViewModels;
 using SteamClone.Domain.ViewModels.Auth;
+using System.Net;
+using System.Security.Claims;
 
 namespace SteamClone.BLL.Services.AccountService;
 
@@ -22,7 +23,8 @@ public class AccountService(
     IPasswordHasher passwordHasher,
     IRefreshTokenRepository refreshTokenRepository,
     IMailService mailService,
-    IBalanceRepository balanceRepository) : IAccountService
+    IBalanceRepository balanceRepository,
+    AppDbContext appDbContext) : IAccountService
 {
     public async Task<ServiceResponse> SignInAsync(SignInVM model, CancellationToken token = default)
     {
@@ -171,7 +173,9 @@ public class AccountService(
                 return ServiceResponse.BadRequestResponse("Email вже підтверджено");
 
             user.EmailConfirmed = true;
-            await userRepository.UpdateAsync(user, CancellationToken.None);
+
+            appDbContext.Set<User>().Update(user);
+            await appDbContext.SaveChangesAsync(CancellationToken.None);
 
             return ServiceResponse.OkResponse("Email підтверджено успішно!");
         }
