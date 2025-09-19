@@ -1,12 +1,12 @@
-@use 'sass:color';
+@use "sass:color";
 
-$flux-border-color: #9277C5;
+$flux-border-color: #9277c5;
 $flux-text-primary: #e0ddeb;
 $flux-text-secondary: #a099c2;
 $flux-text-muted: #6a6391;
 
-$bubble-bg-primary: #121117; 
-$bubble-bg-card: #141320;    
+$bubble-bg-primary: #121117;
+$bubble-bg-card: #141320;
 $bubble-bg-elements-lighter: #1b1826;
 
 $bubble-text-bright: #ffffff;
@@ -14,17 +14,17 @@ $bubble-text-primary: #c8d0d8;
 $bubble-text-secondary: #9aa6b3;
 $bubble-text-muted: #7b8591;
 
-$bubble-accent-home-primary: #A178EB;
-$bubble-border-soft: rgba(255,255,255,0.15);
-$bubble-border-medium: rgba(255,255,255,0.28);
-$bubble-font-primary: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$bubble-accent-home-primary: #a178eb;
+$bubble-border-soft: rgba(255, 255, 255, 0.15);
+$bubble-border-medium: rgba(255, 255, 255, 0.28);
+$bubble-font-primary: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+  Helvetica, Arial, sans-serif;
 
 $bubble-radius-sm: 10px;
 $bubble-radius-md: 12px;
 $bubble-radius-lg: 24px;
-$bubble-shadow-soft: 0 10px 24px 0px #7C72DB33;
+$bubble-shadow-soft: 0 10px 24px 0px #7c72db33;
 $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-
 
 .collections-page-container {
   background-color: $bubble-bg-primary;
@@ -80,7 +80,7 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
-  overflow: visible; 
+  overflow: visible;
 }
 
 .collection-card {
@@ -88,7 +88,8 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   aspect-ratio: 4 / 3;
   border-radius: $bubble-radius-md;
   cursor: pointer;
-  transition: transform $bubble-transition-fast, box-shadow $bubble-transition-fast;
+  transition: transform $bubble-transition-fast,
+    box-shadow $bubble-transition-fast;
   overflow: visible;
 
   .card-inner {
@@ -96,7 +97,7 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
     height: 100%;
     border-radius: $bubble-radius-md;
-    overflow: hidden; 
+    overflow: hidden;
     background-color: $bubble-bg-card;
     border: 1px solid $flux-border-color;
     box-shadow: $bubble-shadow-soft;
@@ -105,7 +106,12 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   &:hover {
     transform: translateY(-2px);
     .collection-card-overlay {
-      background: linear-gradient(to top, rgba(18,21,27,0.85) 0%, rgba(18,21,27,0.55) 35%, transparent 100%);
+      background: linear-gradient(
+        to top,
+        rgba(18, 21, 27, 0.85) 0%,
+        rgba(18, 21, 27, 0.55) 35%,
+        transparent 100%
+      );
     }
   }
 
@@ -134,7 +140,12 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 .collection-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(18,21,27,0.8) 0%, rgba(18,21,27,0.5) 30%, transparent 80%);
+  background: linear-gradient(
+    to top,
+    rgba(18, 21, 27, 0.8) 0%,
+    rgba(18, 21, 27, 0.5) 30%,
+    transparent 80%
+  );
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -149,13 +160,13 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 800;
     color: $bubble-text-bright;
     margin: 0 0 0.1rem 0;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
   }
 
   .collection-game-count {
     font-size: 0.95rem;
     color: $bubble-text-secondary;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     margin: 0;
   }
 }
@@ -166,9 +177,9 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .action-menu-btn {
-  background-color: rgba(255,255,255,0.08);
+  background-color: rgba(255, 255, 255, 0.08);
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -178,7 +189,9 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   transition: all $bubble-transition-fast;
   backdrop-filter: blur(4px);
 
-  &:hover { background-color: rgba(255,255,255,0.18); }
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+  }
   &:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px rgba(161, 120, 235, 0.35);
@@ -192,7 +205,7 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   background: #171623;
   border: 1px solid $flux-border-color;
   border-radius: 10px;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   min-width: 180px;
   z-index: 8;
@@ -207,13 +220,24 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     background: transparent;
     border: 0;
     cursor: pointer;
-    transition: background $bubble-transition-fast, color $bubble-transition-fast;
+    transition: background $bubble-transition-fast,
+      color $bubble-transition-fast;
 
-    &:hover { background: rgba(255,255,255,0.06); color: $bubble-text-bright; }
-    &.danger:hover { background: rgba(225, 37, 37, 0.12); color: #ffb3b3; }
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: $bubble-text-bright;
+    }
+    &.danger:hover {
+      background: rgba(225, 37, 37, 0.12);
+      color: #ffb3b3;
+    }
 
-    svg { opacity: 0.9; }
-    span { font-weight: 600; }
+    svg {
+      opacity: 0.9;
+    }
+    span {
+      font-weight: 600;
+    }
   }
 }
 
@@ -232,7 +256,7 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   .spinner {
     width: 50px;
     height: 50px;
-    border: 5px solid rgba(255,255,255,0.15);
+    border: 5px solid rgba(255, 255, 255, 0.15);
     border-top-color: $bubble-accent-home-primary;
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -245,7 +269,11 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .modal-overlay {
   position: fixed;
@@ -269,10 +297,12 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   overflow: hidden;
 
-  &.large { max-width: 900px; }
+  &.large {
+    max-width: 900px;
+  }
 }
 
 .modal-header {
@@ -300,7 +330,9 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     transition: transform $bubble-transition-fast;
 
-    &:hover { transform: translateY(-1px); }
+    &:hover {
+      transform: translateY(-1px);
+    }
     &:focus-visible {
       outline: none;
       box-shadow: 0 0 0 3px rgba(161, 120, 235, 0.35);
@@ -319,7 +351,7 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   transition: all $bubble-transition-fast;
 
   &:hover {
-    background-color: rgba(255,255,255,0.08);
+    background-color: rgba(255, 255, 255, 0.08);
     color: $bubble-text-bright;
   }
 
@@ -335,30 +367,30 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-}
 
+  .form-group {
+    label {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-weight: 700;
+      color: $bubble-text-secondary;
+    }
 
-.form-group {
-  label {
-    display: block;
-    margin-bottom: 0.6rem;
-    font-weight: 700;
-    color: $bubble-text-secondary;
-  }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid $bubble-border-medium;
+      border-radius: 10px;
+      color: $bubble-text-primary;
+      font-size: 1rem;
+      transition: border-color $bubble-transition-fast,
+        box-shadow $bubble-transition-fast;
 
-  input[type="text"] {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid $bubble-border-medium;
-    border-radius: 10px;
-    color: $bubble-text-primary;
-    font-size: 1rem;
-    transition: border-color $bubble-transition-fast, box-shadow $bubble-transition-fast;
-
-    &:focus {
-      outline: none;
-      border-color: $bubble-accent-home-primary;
-      box-shadow: 0 0 0 3px rgba(161, 120, 235, 0.2);
+      &:focus {
+        outline: none;
+        border-color: $bubble-accent-home-primary;
+        box-shadow: 0 0 0 3px rgba(161, 120, 235, 0.2);
+      }
     }
   }
 }
@@ -374,7 +406,9 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     color: $bubble-text-muted;
   }
 
-  input { padding-left: 2.5rem; }
+  input {
+    padding-left: 2.5rem;
+  }
 }
 
 .modal-toolbar {
@@ -385,10 +419,19 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   align-items: center;
   gap: 12px;
 
-  .sel-info { color: $bubble-text-secondary; }
-  .sel-info b { color: $bubble-text-bright; }
-  .sel-info .dim { opacity: .75; }
-  .toolbar-actions { display: inline-flex; gap: 8px; }
+  .sel-info {
+    color: $bubble-text-secondary;
+  }
+  .sel-info b {
+    color: $bubble-text-bright;
+  }
+  .sel-info .dim {
+    opacity: 0.75;
+  }
+  .toolbar-actions {
+    display: inline-flex;
+    gap: 8px;
+  }
 }
 
 .tiny-btn {
@@ -402,13 +445,20 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   transition: all $bubble-transition-fast;
 
-  &:hover { background: color.adjust($bubble-bg-elements-lighter, $lightness: 4%); }
-  &:disabled { opacity: .55; cursor: not-allowed; }
+  &:hover {
+    background: color.adjust($bubble-bg-elements-lighter, $lightness: 4%);
+  }
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
 
   &.ghost {
     background: transparent;
     border-color: $bubble-border-soft;
-    &:hover { background: rgba(255,255,255,0.06); }
+    &:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
   }
 }
 
@@ -438,7 +488,9 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       place-items: center;
       padding: 0;
       cursor: pointer;
-      &:hover { color: $bubble-text-bright; }
+      &:hover {
+        color: $bubble-text-bright;
+      }
       &:focus-visible {
         outline: none;
         box-shadow: 0 0 0 3px rgba(161, 120, 235, 0.35);
@@ -446,7 +498,10 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       }
     }
 
-    &.more { opacity: .8; font-weight: 600; }
+    &.more {
+      opacity: 0.8;
+      font-weight: 600;
+    }
   }
 }
 
@@ -458,8 +513,16 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0.5rem;
   margin-top: 0.5rem;
 
-  .list-loading { text-align: center; padding: 2rem; color: $bubble-text-secondary; }
-  .list-empty { text-align: center; color: $bubble-text-secondary; padding: 1.5rem 0; }
+  .list-loading {
+    text-align: center;
+    padding: 2rem;
+    color: $bubble-text-secondary;
+  }
+  .list-empty {
+    text-align: center;
+    color: $bubble-text-secondary;
+    padding: 1.5rem 0;
+  }
 }
 
 .modal-footer {
@@ -500,7 +563,7 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border-color: $bubble-border-medium;
 
   &:hover {
-    background-color: rgba(255,255,255,0.06);
+    background-color: rgba(255, 255, 255, 0.06);
     border-color: $bubble-border-medium;
     color: $bubble-text-bright;
   }
@@ -515,7 +578,7 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   background-color: $bubble-accent-home-primary;
   color: $bubble-text-bright;
   border-color: color.adjust($bubble-accent-home-primary, $lightness: -6%);
-  min-width: 170px; 
+  min-width: 170px;
 
   &:hover:not(:disabled) {
     background-color: color.adjust($bubble-accent-home-primary, $lightness: 5%);
@@ -529,9 +592,9 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   &:disabled {
-    background-color: rgba(255,255,255,0.12);
+    background-color: rgba(255, 255, 255, 0.12);
     color: $bubble-text-muted;
-    border-color: rgba(255,255,255,0.14);
+    border-color: rgba(255, 255, 255, 0.14);
     cursor: not-allowed;
     box-shadow: none;
     filter: saturate(0.7) opacity(0.9);
@@ -547,19 +610,36 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   transition: background-color $bubble-transition-fast;
 
-  &:hover { background-color: rgba(255,255,255,0.06); }
-
-  &.selected {
-    background-color: rgba(161,120,235, 0.15);
-    .checkbox-icon { color: $bubble-accent-home-primary; }
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.06);
   }
 
-  .checkbox-icon { color: $bubble-text-muted; flex-shrink: 0; }
-  img { width: 80px; height: 45px; object-fit: cover; border-radius: 6px; }
-  span { color: $bubble-text-primary; font-weight: 700; }
+  &.selected {
+    background-color: rgba(161, 120, 235, 0.15);
+    .checkbox-icon {
+      color: $bubble-accent-home-primary;
+    }
+  }
+
+  .checkbox-icon {
+    color: $bubble-text-muted;
+    flex-shrink: 0;
+  }
+  img {
+    width: 80px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  span {
+    color: $bubble-text-primary;
+    font-weight: 700;
+  }
 }
 
-.details-body { padding: 1rem 1.25rem 1.25rem; }
+.details-body {
+  padding: 1rem 1.25rem 1.25rem;
+}
 
 .details-grid {
   display: grid;
@@ -569,7 +649,7 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
 .details-tile {
   position: relative;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   overflow: hidden;
   background: #0f1016;
@@ -585,7 +665,12 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     background: transparent;
     padding: 0;
 
-    img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
 
     .title {
       position: absolute;
@@ -594,7 +679,7 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       color: #fff;
       font-weight: 800;
       font-size: 13px;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
   }
 
@@ -607,13 +692,17 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 50%;
     display: grid;
     place-items: center;
-    background: rgba(225,37,37,0.2);
+    background: rgba(225, 37, 37, 0.2);
     color: #ffd2d2;
-    border: 1px solid rgba(225,37,37,0.35);
+    border: 1px solid rgba(225, 37, 37, 0.35);
     cursor: pointer;
-    transition: transform $bubble-transition-fast, filter $bubble-transition-fast;
+    transition: transform $bubble-transition-fast,
+      filter $bubble-transition-fast;
 
-    &:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    &:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
     &:focus-visible {
       outline: none;
       box-shadow: 0 0 0 3px rgba(225, 37, 37, 0.35);
@@ -622,7 +711,13 @@ $bubble-transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (max-width: 560px) {
-  .collections-page-container { padding: 64px 16px 28px; }
-  .collections-grid { grid-template-columns: 1fr; }
-  .modal-content.large { max-width: 96vw; }
+  .collections-page-container {
+    padding: 64px 16px 28px;
+  }
+  .collections-grid {
+    grid-template-columns: 1fr;
+  }
+  .modal-content.large {
+    max-width: 96vw;
+  }
 }

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./SystemRequirements.scss";
 import { ConfirmModal } from "../../../../../../components/Modals/ConfirmModal";
 
 const Row = ({ label, name, value, onChange, readOnly }) => (

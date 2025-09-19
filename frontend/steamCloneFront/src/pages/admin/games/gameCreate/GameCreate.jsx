@@ -100,6 +100,7 @@ const GameCreate = () => {
                 value={form.name}
                 onChange={handleChange}
                 required
+                placeholder="Enter game name..."
               />
             </div>
             <div className="form-group">
@@ -110,6 +111,7 @@ const GameCreate = () => {
                 onChange={handleChange}
                 required
                 rows={3}
+                placeholder="Enter game description..."
               />
             </div>
             <div className="form-group">
@@ -122,6 +124,7 @@ const GameCreate = () => {
                 value={form.price}
                 onChange={handleChange}
                 required
+                placeholder="Enter game price..."
               />
             </div>
             <div className="form-group">
