@@ -8,6 +8,7 @@ import {
   useGetProfileQuery,
   useGetBalanceQuery,
 } from "../../services/profile/profileApi";
+import { useGetFriendsCountQuery } from "../../services/friends/friendsApi";
 import { formatDateForInput } from "../admin/common/formatDateForInput";
 
 const initialProfileState = {
@@ -32,6 +33,7 @@ const Profile = ({ userData }) => {
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
   const navigate = useNavigate();
+  const { data: friendsCountData } = useGetFriendsCountQuery();
 
   const { data, isLoading, error } = useGetProfileQuery();
   const {
@@ -100,13 +102,13 @@ const Profile = ({ userData }) => {
         ? p.recentActivity
         : prev.recentActivity || [],
       badges: Array.isArray(p.badges) ? p.badges : prev.badges || [],
-      friendsCount: p.friendsCount ?? prev.friendsCount ?? 0,
+      friendsCount: friendsCountData?.payload ?? (p.friendsCount ?? 0),
       favoriteWorlds: Array.isArray(p.favoriteWorlds)
         ? p.favoriteWorlds
         : prev.favoriteWorlds || [],
       favoriteGame: p.favoriteGame || prev.favoriteGame || null,
     }));
-  }, [data]);
+  }, [data, friendsCountData]);
 
   const displayData =
     loading && !profileData.username ? initialProfileState : profileData;
