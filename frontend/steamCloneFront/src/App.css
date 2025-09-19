@@ -1,6 +1,5 @@
 :root {
-  --font-family-main: "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif, "Exo 2";
+  --font-family-main: "Exo 2";
   --color-bg-deep-space: hsl(250, 30%, 8%);
   --color-bg-primary: #121218;
   --color-bg-element: hsl(250, 25%, 18%);

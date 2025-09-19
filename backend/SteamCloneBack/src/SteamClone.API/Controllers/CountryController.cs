@@ -13,5 +13,11 @@ namespace SteamClone.API.Controllers;
 public class CountryController(ICountryService countryService)
     : GenericController<int, CreateUpdateCountryVM, CreateUpdateCountryVM>(countryService)
 {
-    
+    [AllowAnonymous]
+    [HttpGet]
+    public override async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var response = await countryService.GetAllAsync(cancellationToken);
+        return GetResult(response);
+    }
 }
