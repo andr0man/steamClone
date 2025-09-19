@@ -42,6 +42,7 @@ const MyGameMainInformation = ({
               value={form?.name}
               onChange={handleChange}
               required
+              placeholder="Enter game name..."
             />
           </div>
           <div className="form-group">
@@ -53,6 +54,7 @@ const MyGameMainInformation = ({
               onChange={handleChange}
               required
               rows={4}
+              placeholder="Enter game description..."
             />
           </div>
           <div className="form-group">
@@ -66,6 +68,7 @@ const MyGameMainInformation = ({
               value={form?.price}
               onChange={handleChange}
               required
+              placeholder="Enter game price..."
             />
           </div>
           <div className="form-group">
@@ -92,6 +95,7 @@ const MyGameMainInformation = ({
               value={form?.discount}
               onChange={handleChange}
               required
+              placeholder="Enter game discount..."
             />
           </div>
           <div className="form-group">

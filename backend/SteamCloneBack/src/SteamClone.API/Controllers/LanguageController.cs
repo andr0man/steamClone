@@ -15,5 +15,11 @@ namespace SteamClone.API.Controllers;
 public class LanguageController(ILanguageService languageService)
     : GenericController<int, CreateUpdateLanguageVM, CreateUpdateLanguageVM>(languageService)
 {
-    
+    [AllowAnonymous]
+    [HttpGet]
+    public override async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var response = await languageService.GetAllAsync(cancellationToken);
+        return GetResult(response);
+    }
 }

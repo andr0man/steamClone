@@ -1,3 +1,5 @@
+import { bool } from "prop-types";
+
 const selectStyles = {
   control: (styles, { isDisabled }) => ({
     ...styles,
@@ -51,11 +53,15 @@ const selectStyles = {
       color: "#fff",
     },
   }),
-  input: (styles) => ({ ...styles, color: "#fff", fontFamily: "inherit" }),
+  input: (styles) => ({
+    ...styles,
+    color: "#fff",
+    fontFamily: "inherit",
+  }),
   placeholder: (styles) => ({
     ...styles,
-    color: "#625874ff",
     fontFamily: "inherit",
+    fontWeight: "500",
   }),
   singleValue: (styles, { isDisabled }) => ({
     ...styles,

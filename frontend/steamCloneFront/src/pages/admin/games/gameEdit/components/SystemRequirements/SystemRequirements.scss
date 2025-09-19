@@ -24,17 +24,29 @@
   flex-direction: column;
 }
 .req-row label {
-  font-size: 0.9rem;
-  color: #c9c9d1;
-  margin-bottom: 6px;
+  font-size: 1rem;
+  color: #a178eb;
+  font-weight: 500;
+  padding: 0;
+  margin: 0;
 }
-.req-row input {
+.req-row input,
+.req-row textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #353545;
   background: #23232a;
   color: #fff;
-  border: 1px solid #353545;
-  border-radius: 6px;
-  padding: 8px 10px;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: none;
+}
+
+.req-row input:focus,
+.req-row textarea:focus {
+  outline: none;
+  border-color: #a178eb;
 }
 
 .req-actions {
