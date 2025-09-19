@@ -4,77 +4,9 @@ import "../styles/auth.scss";
 import { useRegisterMutation } from "../../../services/auth/authApi";
 import { useGetAllCountrysQuery } from "../../../services/country/countryApi";
 import Select from "react-select";
+import { countrySelectStyles } from "../register/Register";
 
-// custom styles for react-select in register
-export const countrySelectStyles = {
-  control: (styles) => ({
-    ...styles,
-    backgroundColor: "transparent",
-    border: "none",
-    color: "#fff",
-    "&:hover": {
-      borderBottom: "1px solid #6a6391",
-    },
-    boxShadow: "none",
-    borderRadius: "0",
-    minHeight: "38px",
-    fontSize: "1rem",
-    borderBottom: "1px solid #6a6391",
-    marginLeft: "0",
-    paddingLeft: "0",
-  }),
-  menu: (styles) => ({
-    ...styles,
-    backgroundColor: "#4f3c69ff",
-    borderRadius: "8px",
-    color: "#fff",
-    fontFamily: "inherit",
-    fontSize: "1rem",
-  }),
-  option: (styles, { isFocused, isSelected, isDisabled }) => ({
-    ...styles,
-    backgroundColor: isDisabled
-      ? "#c57777ff"
-      : isSelected
-      ? "linear-gradient(90deg, #a178eb 0%, #66c0f4 100%)"
-      : isFocused
-      ? "#6a6391"
-      : "#2F243E",
-    color: isDisabled ? "#888" : "#fff",
-    cursor: isDisabled ? "not-allowed" : "pointer",
-    fontFamily: "inherit",
-    opacity: isDisabled ? 0.6 : 1,
-    fontSize: "1rem",
-    zIndex: 100,
-  }),
-  input: (styles) => ({
-    ...styles,
-    color: "#fff",
-  }),
-  singleValue: (styles) => ({
-    ...styles,
-    color: "#fff",
-    fontFamily: "inherit",
-    fontSize: "1rem",
-  }),
-  placeholder: (styles) => ({
-    ...styles,
-    color: "#a099c2",
-    opacity: 0.8,
-    fontFamily: "inherit",
-    fontWeight: "400",
-    fontSize: "1rem",
-  }),
-  dropdownIndicator: (styles) => ({ ...styles, color: "#a178eb" }),
-  indicatorSeparator: (styles) => ({ ...styles, backgroundColor: "#353545" }),
-  clearIndicator: (styles) => ({ ...styles, color: "#a178eb" }),
-  valueContainer: (styles) => ({
-    ...styles,
-    padding: "3px 5px", // padding 0 for css-hlgwow
-  }),
-};
-
-const Register = () => {
+const RegisterManager = () => {
   const {
     data: { payload: countries } = { payload: [] },
     isLoading: isLoadingCountries,
@@ -208,6 +140,7 @@ const Register = () => {
         password: formData.password,
         confirmPassword: formData.confirmPassword,
         countryId: Number(selectedCountryId),
+        isManager: true,
       };
       await register(payload).unwrap();
       alert("Account creation successful!");
@@ -242,7 +175,7 @@ const Register = () => {
     <div className="flux-auth-container">
       <div className="flux-auth-box register">
         <div className="flux-header">
-          <h2>Create an Account</h2>
+          <h2>Create an Account as Game Manager</h2>
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
@@ -370,8 +303,7 @@ const Register = () => {
               required
             />
             <label htmlFor="ageConfirmed">
-              By pressing the button below you confirm that you're 13 years of
-              age or older and agree to the terms of the Flux{" "}
+              By pressing the button below you confirm that you are at least 13 years old, agree to the{" "}
               <Link to="/terms" className="flux-link">
                 Subscriber Agreement
               </Link>{" "}
@@ -379,7 +311,7 @@ const Register = () => {
               <Link to="/privacy" className="flux-link">
                 Privacy Policy
               </Link>
-              .
+              . As a Game Manager, you also agree to comply with all applicable laws and regulations, and acknowledge that your account may be subject to additional review and requirements.
             </label>
           </div>
 
@@ -395,12 +327,6 @@ const Register = () => {
           Already have an account?
           <Link to="/login" className="flux-link">
             Sign In
-          </Link>
-        </div>
-        <div className="flux-switch-form">
-          Want to register as game manager?
-          <Link to="/register-manager" className="flux-link">
-            Register Here
           </Link>
         </div>
       </div>
@@ -440,4 +366,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterManager;

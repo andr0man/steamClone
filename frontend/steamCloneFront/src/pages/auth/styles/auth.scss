@@ -12,9 +12,8 @@ $flux-blur: 24px;
 .flux-auth-container {
   position: fixed;
   inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  place-items: center;
   padding: 1rem;
   background-color: $flux-bg-main;
   background-image: url('/authbc/BG_grey.svg');

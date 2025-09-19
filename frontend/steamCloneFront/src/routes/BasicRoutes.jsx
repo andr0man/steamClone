@@ -33,6 +33,7 @@ import Wishlist from "../pages/store/wishlist/Wishlist.jsx";
 import adminRoutes from "./AdminRoutes.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import managerRoutes from "./ManagerRoutes.jsx";
+import RegisterManager from "../pages/auth/register-manager/RegisterManager.jsx";
 
 const UnderConstructionPage = ({ pageName }) => (
   <div style={{ padding: "50px", textAlign: "center", color: "#fff" }}>
@@ -59,6 +60,7 @@ const BasicRoutes = ({ isLoggedIn, handleLogout }) => {
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/register-manager" element={<RegisterManager />} />
 
             <Route
               path="/store/game/:gameId"
