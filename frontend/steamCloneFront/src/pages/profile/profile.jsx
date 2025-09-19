@@ -8,6 +8,7 @@ import {
   useGetProfileQuery,
   useGetBalanceQuery,
 } from "../../services/profile/profileApi";
+import { useGetFriendsCountQuery } from "../../services/friends/friendsApi";
 import { formatDateForInput } from "../admin/common/formatDateForInput";
 
 const initialProfileState = {
@@ -32,6 +33,7 @@ const Profile = ({ userData }) => {
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
   const navigate = useNavigate();
+  const { data: friendsCountData } = useGetFriendsCountQuery();
 
   const { data, isLoading, error } = useGetProfileQuery();
   const {
@@ -39,6 +41,10 @@ const Profile = ({ userData }) => {
     isLoading: balLoading,
     error: balErr,
   } = useGetBalanceQuery();
+
+  useEffect(() => {
+    setProfileData(initialProfileState);
+  }, [userData?.id]);
 
   useEffect(() => setLoading(isLoading || balLoading), [isLoading, balLoading]);
 
@@ -61,6 +67,16 @@ const Profile = ({ userData }) => {
     }
   }, [error, balErr, userData]);
 
+  const formatDate = (date) => {
+    if (!date) return "N/A";
+    const d = new Date(date);
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }).format(d); 
+  };
+
   useEffect(() => {
     if (!data) return;
     const p = data?.payload || data || {};
@@ -78,22 +94,21 @@ const Profile = ({ userData }) => {
       avatarUrl: p.avatarUrl || prev.avatarUrl,
       level: p.level ?? prev.level ?? 0,
       country: countryName,
-      memberSince:
-        typeof memberSince === "string"
-          ? memberSince
-          : new Date(memberSince).toLocaleDateString(),
+      memberSince: typeof memberSince === "string"
+        ? formatDate(memberSince)
+        : formatDate(memberSince),
       bio: p.bio || prev.bio,
       recentActivity: Array.isArray(p.recentActivity)
         ? p.recentActivity
         : prev.recentActivity || [],
       badges: Array.isArray(p.badges) ? p.badges : prev.badges || [],
-      friendsCount: p.friendsCount ?? prev.friendsCount ?? 0,
+      friendsCount: friendsCountData?.payload ?? (p.friendsCount ?? 0),
       favoriteWorlds: Array.isArray(p.favoriteWorlds)
         ? p.favoriteWorlds
         : prev.favoriteWorlds || [],
       favoriteGame: p.favoriteGame || prev.favoriteGame || null,
     }));
-  }, [data]);
+  }, [data, friendsCountData]);
 
   const displayData =
     loading && !profileData.username ? initialProfileState : profileData;
@@ -122,11 +137,13 @@ const Profile = ({ userData }) => {
       : [];
 
   const balance =
-    balRes?.payload?.balance ??
-    balRes?.payload?.amount ??
-    balRes?.balance ??
-    balRes?.amount ??
-    0;
+  typeof balRes?.payload === "number"
+    ? balRes.payload
+    : balRes?.payload?.balance ??
+      balRes?.payload?.amount ??
+      balRes?.balance ??
+      balRes?.amount ??
+      0;
 
   return (
     <>

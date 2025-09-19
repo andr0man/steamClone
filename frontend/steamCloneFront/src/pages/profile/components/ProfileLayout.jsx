@@ -3,6 +3,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { BarChart3, Shield, Users, Gift, Wallet } from 'lucide-react';
 import Notification from '../../../components/Notification';
 import { useGetProfileQuery, useGetBalanceQuery } from '../../../services/profile/profileApi';
+import { useGetFriendsCountQuery } from '../../../services/friends/friendsApi';
+import { formatDateForInput } from '../../admin/common/formatDateForInput';
 import '../profile.scss';
 
 const linkCls = ({ isActive }) => `profile-nav-link ${isActive ? 'active' : ''}`;
@@ -13,6 +15,7 @@ const ProfileLayout = ({ children }) => {
 
   const { data: profileRes, isLoading: loadingProfile, error: profileErr } = useGetProfileQuery();
   const { data: balRes, isLoading: loadingBal, error: balErr } = useGetBalanceQuery();
+  const { data: friendsCountData } = useGetFriendsCountQuery();
 
   const apiError = profileErr?.data?.message || balErr?.data?.message || null;
   const loading = loadingProfile || loadingBal;
@@ -22,31 +25,30 @@ const ProfileLayout = ({ children }) => {
     const username = p.username || p.userName || p.nickName || p.nickname || '—';
     const country = p.country?.name || p.countryName || p.country || '—';
     const msRaw = p.memberSince || p.createdAt || p.registeredAt || null;
-    const memberSince = msRaw
-      ? (typeof msRaw === 'string' ? msRaw : new Date(msRaw).toLocaleDateString())
-      : '—';
-
+    const memberSince = msRaw ? formatDateForInput(msRaw) : '—';  
     return {
       username,
-      avatarUrl: p.avatarUrl || '/common/avatarPlaceholder.png',
+      avatarUrl: p.avatarUrl || null,
       level: p.level ?? 0,
       country,
       memberSince,
-      friendsCount: p.friendsCount ?? 0,
+      friendsCount: friendsCountData?.payload ?? (p.friendsCount ?? 0),
     };
-  }, [profileRes]);
+  }, [profileRes, friendsCountData]);
 
   const balance =
-    balRes?.payload?.balance ??
-    balRes?.payload?.amount ??
-    balRes?.balance ??
-    balRes?.amount ??
-    0;
+    typeof balRes?.payload === 'number'
+      ? balRes.payload
+      : balRes?.payload?.balance ??
+        balRes?.payload?.amount ??
+        balRes?.balance ??
+        balRes?.amount ??
+        0;
 
   return (
     <div id="page-top" className="profile-page-wrapper">
       <div className="notification-global-top">
-        <Notification message={apiError} type="error" onClose={() => {}} />
+        {apiError && <Notification message={apiError} type="error" onClose={() => {}} />}
       </div>
 
       {loading && <div className="profile-loading-overlay visible">Loading data...</div>}
@@ -54,7 +56,13 @@ const ProfileLayout = ({ children }) => {
       <div className="profile-page-container">
         <div className="profile-main-content">
           <aside className="profile-sidebar">
-            <img src={pd.avatarUrl} alt={`${pd.username}'s avatar`} className="profile-avatar" />
+            <div className="profile-avatar">
+              <img
+                src={pd.avatarUrl || "/common/icon_profile.svg"}
+                alt={`${pd.username}'s avatar`}
+                style={{ padding: pd.avatarUrl ? 0 : 40 }}
+              />
+            </div>
             <h1 className="profile-username">{pd.username}</h1>
             <p className="profile-level">
               Level <span className="level-badge">{pd.level}</span>
@@ -85,9 +93,7 @@ const ProfileLayout = ({ children }) => {
             </nav>
           </aside>
 
-          <section className="profile-details-column">
-            {children}
-          </section>
+          <section className="profile-details-column">{children}</section>
         </div>
       </div>
     </div>

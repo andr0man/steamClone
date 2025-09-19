@@ -44,47 +44,63 @@ const normalizeName = (u) =>
   u?.name ||
   (u?.email ? u.email.split("@")[0] : "User");
 
-const mapFriends = (res) => {
+const mapFriends = (res, allUsers, myId) => {
   const list = res?.payload ?? res ?? [];
   if (!Array.isArray(list)) return [];
-  return list.map((row) => {
-    const f = row?.friend ?? row?.user ?? row;
+
+  const usersMap = new Map(allUsers.map(u => [u.id, u]));
+
+  return list.map(row => {
+    
+    const otherId = row.senderId === myId ? row.receiverId : row.senderId;
+    const user = usersMap.get(otherId);
+
     return {
-      id: f?.id ?? row?.id,
-      name: normalizeName(f),
-      status: f?.status || f?.onlineStatus || "offline",
-      level: f?.level ?? 0,
-      game: f?.currentGame || null,
-      lastOnline: f?.lastOnline || row?.lastOnline || null,
+      id: otherId,
+      name: normalizeName(user), 
+      status: user?.status || "offline",
+      level: user?.level ?? 0,
+      game: user?.currentGame || null,
+      lastOnline: user?.lastOnline || null,
     };
   });
 };
 
-const mapRequestsReceived = (res) => {
+const mapRequestsReceived = (res, allUsers) => {
   const list = res?.payload ?? res ?? [];
   if (!Array.isArray(list)) return [];
+
+  const usersMap = new Map((allUsers ?? []).map(u => [u.id, u]));
+
   return list.map((r) => {
     const reqId = r?.id ?? r?.requestId ?? r?.request?.id;
-    const from = r?.sender ?? r?.from ?? r?.requester ?? r?.userFrom ?? r?.user ?? {};
+    const fromId = r?.senderId;
+    const user = usersMap.get(fromId);
+
     return {
       requestId: reqId,
-      fromId: from?.id,
-      name: normalizeName(from),
+      fromId,
+      name: normalizeName(user),
       createdAt: r?.createdAt || null,
     };
   });
 };
 
-const mapRequestsSent = (res) => {
+const mapRequestsSent = (res, allUsers) => {
   const list = res?.payload ?? res ?? [];
   if (!Array.isArray(list)) return [];
+
+  const usersMap = new Map((allUsers ?? []).map(u => [u.id, u]));
+
   return list.map((r) => {
     const reqId = r?.id ?? r?.requestId ?? r?.request?.id;
-    const to = r?.receiver ?? r?.to ?? r?.userTo ?? r?.user ?? {};
+    const toId = r?.receiverId;
+    const user = usersMap.get(toId);
+
     return {
       requestId: reqId,
-      toId: to?.id,
-      name: normalizeName(to),
+      toId,
+      name: normalizeName(user),
       createdAt: r?.createdAt || null,
     };
   });
@@ -154,11 +170,11 @@ const Friends = () => {
   const [peopleQ, setPeopleQ] = useState("");
   const [uiError, setUiError] = useState(null);
   const [uiSuccess, setUiSuccess] = useState(null);
-
-  const friends = useMemo(() => mapFriends(friendsRes), [friendsRes]);
-  const requestsReceived = useMemo(() => mapRequestsReceived(recRes), [recRes]);
-  const requestsSent = useMemo(() => mapRequestsSent(sentRes), [sentRes]);
   const allUsers = useMemo(() => mapUsers(allUsersRes), [allUsersRes]);
+  const friends = useMemo(() => mapFriends(friendsRes, allUsers, myId), [friendsRes, allUsers, myId]);
+  const requestsReceived = useMemo(() => mapRequestsReceived(recRes, allUsers), [recRes, allUsers]);
+  const requestsSent = useMemo(() => mapRequestsSent(sentRes, allUsers), [sentRes, allUsers]);
+  
 
   const totalCount =
     cntRes?.payload?.count ?? cntRes?.count ?? friends?.length ?? 0;
@@ -188,6 +204,7 @@ const Friends = () => {
   // всі користувачі з пошуком + статуси
   const people = useMemo(() => {
     const s = peopleQ.trim().toLowerCase();
+    if (!s) return [];
     const base = allUsers
       .filter((u) => u.id && u.id !== myId)
       .map((u) => {
@@ -393,7 +410,9 @@ const Friends = () => {
           <div className="people-list">
             {usersLoading ? (
               <div className="empty">Loading users…</div>
-            ) : people.length ? (
+            ) : peopleQ.trim() && people.length === 0 ? (
+              <div className="empty">No users found</div>
+            ) : (
               people.map((u) => (
                 <div key={u.id} className="friend-card">
                   <div className="left">
@@ -435,8 +454,6 @@ const Friends = () => {
                   </div>
                 </div>
               ))
-            ) : (
-              <div className="empty">No users found</div>
             )}
           </div>
         </div>
