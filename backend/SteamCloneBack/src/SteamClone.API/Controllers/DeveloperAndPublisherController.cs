@@ -35,9 +35,9 @@ public class DeveloperAndPublisherController(IDeveloperAndPublisherService devel
     }
 
     [HttpGet("by-associated-user")]
-    public async Task<IActionResult> GetByAssociatedUserIdAsync(CancellationToken token)
+    public async Task<IActionResult> GetByAssociatedUserIdAsync(bool? isApproved, CancellationToken token = default)
     {
-        var result = await developerAndPublisherService.GetByAssociatedUserAsync(token);
+        var result = await developerAndPublisherService.GetByAssociatedUserAsync(isApproved, token);
         return GetResult(result);
     }
     

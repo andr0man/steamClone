@@ -1,0 +1,21 @@
+@use "../../../styles/variables.scss" as var;
+
+.manage-my-games-container {
+    
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    padding: 10px 16px;
+    cursor: pointer;
+    color: #888;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+
+    &.active {
+        color: #fff;
+        border-color: var.$panel-border;
+    }
+}

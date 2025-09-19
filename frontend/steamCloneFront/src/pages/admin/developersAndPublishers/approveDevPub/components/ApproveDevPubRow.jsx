@@ -36,19 +36,21 @@ const ApproveDevPubRow = ({ devPub }) => {
       <tr key={devPub.id}>
         <td style={{ padding: "8px" }}>{devPub.name}</td>
         <td style={{ padding: "8px" }}>{user?.email}</td>
-        <td className="actions-td">
-          <button
-            className="delete-manage-btn"
-            onClick={() => setRejectModalOpen(true)}
-          >
-            Reject
-          </button>
-          <button
-            className="edit-manage-btn"
-            onClick={() => setApproveModalOpen(true)}
-          >
-            Approve
-          </button>
+        <td>
+          <div className="actions-td">
+            <button
+              className="delete-manage-btn"
+              onClick={() => setRejectModalOpen(true)}
+            >
+              Reject
+            </button>
+            <button
+              className="edit-manage-btn"
+              onClick={() => setApproveModalOpen(true)}
+            >
+              Approve
+            </button>
+          </div>
         </td>
       </tr>
       <ConfirmModal

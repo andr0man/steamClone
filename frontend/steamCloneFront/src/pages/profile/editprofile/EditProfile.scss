@@ -9,7 +9,7 @@ $flux-blur: 24px;
 
 $max-width: 1360px;
 $sidebar-w: 320px;
-$avatar-size: 180px;
+$avatar-size: 150px;
 $card-radius: 10px;
 
 @mixin flux-card($pad: 24px) {
@@ -123,16 +123,16 @@ $card-radius: 10px;
   position: relative;
   display: grid;
   justify-items: center;
+  z-index: 0;
 }
+
 .profile-sidebar.editable .profile-avatar {
   width: $avatar-size;
   height: $avatar-size;
-  border-radius: 50%;
-  border: 6px solid #4caf50;
   object-fit: cover;
-  background: rgba(0,0,0,.2);
   box-shadow: 0 6px 20px rgba(0,0,0,0.4);
 }
+
 .avatar-change-fab {
   position: absolute;
   right: 6px;

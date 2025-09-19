@@ -23,7 +23,7 @@ export const gameApi = createApi({
       providesTags: ["Game"],
     }),
     byAssociatedUser: builder.query({
-      query: () => "by-associated-user",
+      query: (isApproved) => `by-associated-user?isApproved=${isApproved}`,
       providesTags: ["Game"],
     }),
     getWithoutApproval: builder.query({

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useRef } from "react";
 import "./GameScreenshots.scss";
 
 const GameScreenshots = ({
@@ -6,19 +6,40 @@ const GameScreenshots = ({
   handleFileChange,
   markImageForDeletion,
   imagesToDelete,
-  handleUpdate
+  handleUpdate,
+  selectedFiles,
+  cancelScreenshotsChange
 }) => {
   var visibleScreenshots = game.screenshotUrls.filter(
     (img) => !imagesToDelete.includes(img)
   );
+
+  const inputRef = useRef();
+
+  const handleCancel = () => {
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+    cancelScreenshotsChange();
+  };
   return (
-    <div className="game-form-container flux-border">
+    <div className="game-form-container flux-border" style={{ width: "60%" }}>
       <div className="game-screenshots">
         <div className="header-with-action">
           <h3>Game Screenshots</h3>
-          <button className="game-save-image" onClick={handleUpdate}>Save</button>
+          <div style={{ gap: "10px", display: "flex" }}>
+            {selectedFiles.length > 0 && (
+              <button className="cancel-button" onClick={handleCancel}>
+                Cancel
+              </button>
+            )}
+            <button className="game-save-image" onClick={handleUpdate}>
+              Save
+            </button>
+          </div>
         </div>
         <input
+          ref={inputRef}
           type="file"
           accept="image/png, image/jpeg, image/jpg, image/gif"
           multiple

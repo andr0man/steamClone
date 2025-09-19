@@ -40,29 +40,31 @@ const DevPubRow = ({ devpub }) => {
     <>
       <tr key={devpub.id}>
         <td style={{ padding: "8px" }}>{devpub.name}</td>
-        <td className="actions-td">
-          <button
-            className="edit-manage-btn"
-            onClick={() => setEditModalOpen(true)}
-          >
-            Edit
-          </button>
-          <button
-            className="delete-manage-btn"
-            onClick={() => setDeleteModalOpen(true)}
-          >
-            Delete
-          </button>
-          <button
-            className="manage-associated-users-btn"
-            onClick={() =>
-              navigate(
-                `/admin/developers-and-publishers/associated-users/${devpub.id}`
-              )
-            }
-          >
-            Manage access
-          </button>
+        <td>
+          <div className="actions-td">
+            <button
+              className="edit-manage-btn"
+              onClick={() => setEditModalOpen(true)}
+            >
+              Edit
+            </button>
+            <button
+              className="delete-manage-btn"
+              onClick={() => setDeleteModalOpen(true)}
+            >
+              Delete
+            </button>
+            <button
+              className="manage-associated-users-btn"
+              onClick={() =>
+                navigate(
+                  `/admin/developers-and-publishers/associated-users/${devpub.id}`
+                )
+              }
+            >
+              Manage access
+            </button>
+          </div>
         </td>
       </tr>
       <ConfirmModal

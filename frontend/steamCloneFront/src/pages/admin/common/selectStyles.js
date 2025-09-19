@@ -1,10 +1,9 @@
-// selectStyles.js
 const selectStyles = {
-  control: (styles) => ({
+  control: (styles, { isDisabled }) => ({
     ...styles,
-    backgroundColor: "#23232a",
-    borderColor: "#353545",
-    color: "#fff",
+    backgroundColor: isDisabled ? "#23232a" : "#23232a",
+    borderColor: isDisabled ? "#353545" : "#353545",
+    color: isDisabled ? "#888" : "#fff",
     boxShadow: "none",
     borderRadius: "6px",
     minHeight: "38px",
@@ -17,16 +16,19 @@ const selectStyles = {
     color: "#fff",
     fontFamily: "inherit",
   }),
-  option: (styles, { isFocused, isSelected }) => ({
+  option: (styles, { isFocused, isSelected, isDisabled }) => ({
     ...styles,
-    backgroundColor: isSelected
+    backgroundColor: isDisabled
+      ? "#23232a"
+      : isSelected
       ? "linear-gradient(90deg, #a178eb 0%, #66c0f4 100%)"
       : isFocused
       ? "#353545"
       : "#23232a",
-    color: isSelected ? "#fff" : "#fff",
-    cursor: "pointer",
+    color: isDisabled ? "#888" : "#fff",
+    cursor: isDisabled ? "not-allowed" : "pointer",
     fontFamily: "inherit",
+    opacity: isDisabled ? 0.6 : 1,
     zIndex: 100,
   }),
   multiValue: (styles) => ({
@@ -55,10 +57,13 @@ const selectStyles = {
     color: "#625874ff",
     fontFamily: "inherit",
   }),
-  singleValue: (styles) => ({
+  singleValue: (styles, { isDisabled }) => ({
     ...styles,
-    color: "#fff",
+    color: isDisabled ? "#8888887e" : "#fff",
+    backgroundColor: isDisabled ? "#23232a" : "#23232a",
+    borderColor: isDisabled ? "#353545" : "#353545",
     fontFamily: "inherit",
+    cursor: isDisabled ? "not-allowed" : "pointer",
   }),
   indicatorSeparator: (styles) => ({ ...styles, backgroundColor: "#353545" }),
   dropdownIndicator: (styles) => ({ ...styles, color: "#a178eb" }),

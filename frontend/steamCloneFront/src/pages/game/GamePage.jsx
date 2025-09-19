@@ -170,12 +170,12 @@ export const GamePage = () => {
             <SvgComponentMainPanel rotate={true} />
           </div>
           <div className="game-main-content">
-            <img
-              src={gameById.coverImageUrl ?? "/common/gameNoImage.png"}
-              alt="Game Cover"
-              className="rgb-border"
-              loading="lazy"
-            />
+            <div className="game-page-cover-image">
+              <img
+                src={gameById.coverImageUrl ?? "/common/gameNoImage.png"}
+                alt="Game Cover"
+              />
+            </div>
             <div className="game-main-content-center">
               <h1>{gameById.name}</h1>
               <div className="game-release-info">

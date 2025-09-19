@@ -1,10 +1,9 @@
-import React from "react";
-import { useGetAllGamesQuery, useGetWithoutApprovalQuery } from "../../../services/game/gameApi";
+import { useNavigate } from "react-router-dom";
+import { useGetAllGamesQuery } from "../../../services/game/gameApi";
+import "../../../styles/App.scss";
 import GameCard from "./components/gameCard/GameCard";
 import "./components/gameCard/GameCard.scss";
-import "../../../styles/App.scss";
 import "./ManageGames.scss";
-import { Link, useNavigate } from "react-router-dom";
 
 const ManageGames = () => {
   const navigate = useNavigate();
