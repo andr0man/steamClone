@@ -6,4 +6,5 @@ namespace SteamClone.DAL.Repositories.DeveloperAndPublisherRepository;
 public interface IDeveloperAndPublisherRepository : IRepository<DeveloperAndPublisher, string>
 {
     public Task<bool> IsUniqueNameAsync(string name, CancellationToken token);
+    public Task<bool> IsUniqueNameAsync(string name, string id, CancellationToken token);
 }

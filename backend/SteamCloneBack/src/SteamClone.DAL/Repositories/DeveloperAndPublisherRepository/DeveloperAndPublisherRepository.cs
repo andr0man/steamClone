@@ -15,13 +15,20 @@ public class DeveloperAndPublisherRepository(AppDbContext appDbContext, IUserPro
     {
         return await _appDbContext.DevelopersAndPublishers.FirstOrDefaultAsync(g => g.Name == name, token) == null;
     }
-    
-    public override async Task<DeveloperAndPublisher?> GetByIdAsync(string id, CancellationToken token, bool asNoTracking = false)
+
+    public async Task<bool> IsUniqueNameAsync(string name, string id, CancellationToken token)
+    {
+        return await _appDbContext.DevelopersAndPublishers.FirstOrDefaultAsync(g => g.Name == name && g.Id != id,
+            token) == null;
+    }
+
+    public override async Task<DeveloperAndPublisher?> GetByIdAsync(string id, CancellationToken token,
+        bool asNoTracking = false)
     {
         return await GetByIdAsync(id, token, asNoTracking,
             x => x.AssociatedUsers);
     }
-    
+
     public override async Task<IEnumerable<DeveloperAndPublisher>> GetAllAsync(CancellationToken token) =>
         await GetAllAsync(token,
             x => x.AssociatedUsers);

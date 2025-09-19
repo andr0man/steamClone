@@ -19,7 +19,7 @@ import "./gamePage.scss";
 import { useGetIsInGameLibraryQuery } from "../../services/gameLibrary/gameLibraryApi";
 import { ImageCarousel } from "./components/ImageCarousel";
 
-export const GamePage = () => {
+const GamePage = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
 
@@ -181,13 +181,13 @@ export const GamePage = () => {
               <div className="game-release-info">
                 <span>
                   Publisher:{" "}
-                  <a href={gameById.publisher.website}>
+                  <a href={gameById.publisher.website === "" ? null : gameById.publisher.website}>
                     {gameById.publisher.name}
                   </a>
                 </span>
                 <span>
                   Developer:{" "}
-                  <a href={gameById.developer.website}>
+                  <a href={gameById.developer.website === "" ? null : gameById.developer.website}>
                     {gameById.developer.name}
                   </a>
                 </span>
@@ -360,3 +360,5 @@ export const GamePage = () => {
     </>
   );
 };
+
+export default GamePage;
