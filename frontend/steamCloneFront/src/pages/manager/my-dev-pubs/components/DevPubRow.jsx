@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useDeleteDeveloperAndPublisherMutation,
   useUpdateDeveloperAndPublisherMutation,
@@ -9,16 +9,22 @@ import { DevPubModal } from "./modal/DevPubModal";
 import { useNavigate } from "react-router-dom";
 import { useGetIsOwnerQuery } from "../../../../services/developerAndPublisher/developerAndPublisherApi";
 
-
 const DevPubRow = ({ devpub, user }) => {
   const navigate = useNavigate();
-  const { data: { payload: isOwner } = {}, isLoading: isOwnerLoading } =
-      useGetIsOwnerQuery(devpub.id);
+  const {
+    data: { payload: isOwner } = {},
+    isLoading: isOwnerLoading,
+    refetch: refetchIsOwner,
+  } = useGetIsOwnerQuery(devpub.id);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [deleteDevPub] = useDeleteDeveloperAndPublisherMutation();
   const [updateDevPub] = useUpdateDeveloperAndPublisherMutation();
   const [modalReset, setModalReset] = useState(() => () => {});
+
+  useEffect(() => {
+    refetchIsOwner();
+  }, [user]);
 
   const handleDeleteDevPub = async (id) => {
     try {
@@ -43,13 +49,15 @@ const DevPubRow = ({ devpub, user }) => {
   return (
     <>
       <tr key={devpub.id}>
-        <td>{isOwnerLoading
+        <td>
+          {isOwnerLoading
             ? "Loading..."
             : isOwner
             ? devpub.createdBy === user.id
               ? "Creator"
               : "Full access"
-            : "Partial access"}</td>
+            : "Partial access"}
+        </td>
         <td style={{ padding: "8px" }}>{devpub.name}</td>
         <td>
           <div className="actions-td">
@@ -65,16 +73,14 @@ const DevPubRow = ({ devpub, user }) => {
             >
               Delete
             </button>
-            <button
-              className="manage-associated-users-btn"
-              onClick={() =>
-                navigate(
-                  `associated-users/${devpub.id}`
-                )
-              }
-            >
-              Manage access
-            </button>
+            {isOwner && (
+              <button
+                className="manage-associated-users-btn"
+                onClick={() => navigate(`associated-users/${devpub.id}`)}
+              >
+                Manage access
+              </button>
+            )}
           </div>
         </td>
       </tr>

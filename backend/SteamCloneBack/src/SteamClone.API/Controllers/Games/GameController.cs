@@ -114,4 +114,11 @@ public class GameController(IGameService gameService)
         var result = await gameService.IsGameOwnerAsync(gameId, token);
         return GetResult(result);
     }
+
+    [HttpGet("is-approved/{gameId}")]
+    public async Task<IActionResult> IsApprovedAsync([FromRoute] string gameId, CancellationToken token = default)
+    {
+        var result = await gameService.IsGameApprovedAsync(gameId, token);
+        return GetResult(result);
+    }
 }

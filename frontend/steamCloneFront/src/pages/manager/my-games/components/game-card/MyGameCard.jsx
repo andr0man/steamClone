@@ -14,7 +14,7 @@ const MyGameCard = ({ game, user }) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteGame] = useDeleteGameMutation();
   const { data: { payload: isBought } = {} } = useIsGameBoughtQuery(game.id);
-  const { data: { payload: isOwner } = {}, isLoading: isOwnerLoading } =
+  const { data: { payload: isOwner } = {}, isLoading: isOwnerLoading, refetch: refetchIsOwner } =
     useGetIsOwnerQuery(game.id);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -30,6 +30,10 @@ const MyGameCard = ({ game, user }) => {
   };
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    refetchIsOwner();
+  }, [user, refetchIsOwner]);
 
   // Close dropdown on outside click
   useEffect(() => {

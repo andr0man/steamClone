@@ -77,7 +77,7 @@ const ManageGameItems = () => {
   return (
     <div
       className="manage-container flux-border game-items-manage"
-      style={{ maxWidth: "600px" }}
+      style={{ maxWidth: "700px" }}
     >
       <div
         style={{

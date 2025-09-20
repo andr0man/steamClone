@@ -6,7 +6,8 @@ import {
   useUpdateItemImageMutation,
 } from "../../../../services/gameItem/gameItemApi";
 import ItemModal from "./modal/ItemModal";
-import {ConfirmModal} from "../../../../components/Modals/ConfirmModal";
+import { ConfirmModal } from "../../../../components/Modals/ConfirmModal";
+import GiveItemToUserModal from "../../../common/components/game-item/GiveItemToUserModal";
 
 const ItemRow = ({ item, refetch }) => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -14,6 +15,7 @@ const ItemRow = ({ item, refetch }) => {
   const [modalReset, setModalReset] = useState(() => () => {});
   const [isModalLoading, setModalLoading] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
+  const [isGiveItemModalOpen, setGiveItemModalOpen] = useState(false);
 
   const [updateGameItem] = useUpdateGameItemMutation();
   const [updateItemImage] = useUpdateItemImageMutation();
@@ -85,6 +87,12 @@ const ItemRow = ({ item, refetch }) => {
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </button>
+            <button
+              className="give-item-btn"
+              onClick={() => setGiveItemModalOpen(true)}
+            >
+              Give Item
+            </button>
           </div>
         </td>
       </tr>
@@ -96,6 +104,12 @@ const ItemRow = ({ item, refetch }) => {
         confirmText="Save"
         item={item}
         setModalReset={setModalReset}
+        isLoading={isModalLoading}
+      />
+      <GiveItemToUserModal
+        isOpen={isGiveItemModalOpen}
+        onClose={() => setGiveItemModalOpen(false)}
+        item={item}
         isLoading={isModalLoading}
       />
       <ConfirmModal

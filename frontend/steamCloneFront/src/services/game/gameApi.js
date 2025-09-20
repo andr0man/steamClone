@@ -34,6 +34,11 @@ export const gameApi = createApi({
       query: (id) => `${id}`,
       providesTags: ["Game"],
     }),
+    getIsApproved: builder.query({
+      query: (gameId) => `is-approved/${gameId}`,
+      providesTags: ["Game"],
+    }),
+
     buyGame: builder.mutation({
       query: (gameId) => ({
         url: `buy/${gameId}`,
@@ -105,6 +110,7 @@ export const gameApi = createApi({
 });
 
 export const {
+  useGetIsApprovedQuery,
   useGetGameByIdQuery,
   useBuyGameMutation,
   useCreateGameMutation,
