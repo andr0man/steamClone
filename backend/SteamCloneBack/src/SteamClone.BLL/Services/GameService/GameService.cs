@@ -626,6 +626,13 @@ public class GameService(
                 GameId = id
             }, token);
 
+            var buyer = await userRepository.GetByIdAsync(buyerId, token);
+            if (buyer != null)
+            {
+                buyer.Level += 1;
+                await userRepository.UpdateAsync(buyer, token);
+            }
+
             return ServiceResponse.OkResponse("Game bought successfully");
         }
         catch (Exception e)
