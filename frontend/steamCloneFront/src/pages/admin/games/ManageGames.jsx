@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useSearchFilter } from "../../../components/Search/useSearchFilter";
 import { useGetAllGamesQuery } from "../../../services/game/gameApi";
 import "../../../styles/App.scss";
 import GameCard from "./components/gameCard/GameCard";
@@ -10,7 +11,12 @@ const ManageGames = () => {
   const { data: gamesResponse, isLoading, error } = useGetAllGamesQuery();
   const games = gamesResponse?.payload;
 
-  if (isLoading) return <div className="loading-overlay visible">Loading data...</div>;
+  const { query, filteredList: filteredGames, handleSearch } = useSearchFilter(
+    games,
+    (item, query) => item.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  if (isLoading || !filteredGames) return <div className="loading-overlay visible">Loading data...</div>;
   if (error) return <div>Error loading games</div>;
 
   return (
@@ -32,9 +38,17 @@ const ManageGames = () => {
           </button>
         </div>
       </div>
+      <div className="search-bar-games">
+        <input
+          type="text"
+          placeholder="Search game items by name..."
+          onChange={handleSearch}
+          value={query}
+        />
+      </div>
 
       <div className="games-grid">
-        {games.length > 0 ? games.map((game) => (
+        {filteredGames.length > 0 ? filteredGames.map((game) => (
           <GameCard key={game.id} game={game} />
         )) : <div>No games available</div>}
       </div>

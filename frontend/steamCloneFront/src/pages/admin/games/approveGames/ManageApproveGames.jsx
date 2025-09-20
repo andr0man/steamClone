@@ -2,6 +2,7 @@ import React from "react";
 import { useGetWithoutApprovalQuery } from "../../../../services/game/gameApi";
 import { useNavigate } from "react-router-dom";
 import ApproveGameRow from "./components/ApproveGameRow";
+import { useSearchFilter } from "../../../../components/Search/useSearchFilter";
 
 const ManageApproveGames = () => {
   const navigate = useNavigate();
@@ -10,6 +11,14 @@ const ManageApproveGames = () => {
     isLoading: isLoadingUnapproved,
     error: errorUnapproved,
   } = useGetWithoutApprovalQuery();
+
+  const {
+      query,
+      filteredList: filteredGames,
+      handleSearch,
+    } = useSearchFilter(unapprovedGamesResponse, (item, query) =>
+      item.name.toLowerCase().includes(query.toLowerCase())
+    );
 
   if (isLoadingUnapproved)
     return <div className="loading-overlay visible">Loading data...</div>;
@@ -31,6 +40,14 @@ const ManageApproveGames = () => {
           </button>
         </div>
       </div>
+      <div className="manage-search-bar">
+        <input
+          type="text"
+          placeholder="Search games by name..."
+          value={query}
+          onChange={handleSearch}
+        />
+      </div>
       <table
         className="manage-table"
       >
@@ -44,8 +61,8 @@ const ManageApproveGames = () => {
           </tr>
         </thead>
         <tbody>
-          {unapprovedGamesResponse.length > 0 ? (
-            unapprovedGamesResponse.map((game) => (
+          {filteredGames.length > 0 ? (
+            filteredGames.map((game) => (
               <ApproveGameRow key={game.id} game={game} />
             ))
           ) : (

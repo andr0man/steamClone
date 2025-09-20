@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   useCreateGameItemMutation,
@@ -9,6 +9,7 @@ import ItemRow from "./components/ItemRow";
 import ItemModal from "./components/modal/ItemModal";
 import "./ManageGameItems.scss";
 import { useParams, useNavigate } from "react-router-dom";
+import { useSearchFilter } from "../../../components/Search/useSearchFilter";
 
 const ManageGameItems = () => {
   const { gameId } = useParams();
@@ -26,6 +27,14 @@ const ManageGameItems = () => {
   const [modalReset, setModalReset] = useState(() => () => {});
   const [isModalLoading, setModalLoading] = useState(false);
   const [updateItemImage] = useUpdateItemImageMutation();
+
+  const {
+    query,
+    filteredList: filteredItems,
+    handleSearch,
+  } = useSearchFilter(gameItems, (item, query) =>
+    item.name.toLowerCase().includes(query.toLowerCase())
+  );
 
   const handleClose = () => {
     setCreateModalOpen(false);
@@ -66,7 +75,10 @@ const ManageGameItems = () => {
   if (error) return <div>Error loading game items</div>;
 
   return (
-    <div className="manage-container flux-border" style={{ maxWidth: "600px" }}>
+    <div
+      className="manage-container flux-border game-items-manage"
+      style={{ maxWidth: "600px" }}
+    >
       <div
         style={{
           display: "flex",
@@ -77,19 +89,27 @@ const ManageGameItems = () => {
       >
         <h2 style={{ margin: 0 }}>Manage Game Items</h2>
         <div className="button-items-group">
-            <button className="back-button" onClick={() => navigate(-1)}>Back</button>
-            <button
-              className="create-manage-btn"
-              onClick={() => setCreateModalOpen(true)}
-              disabled={isCreating || isModalLoading}
-            >
-              {isCreating || isModalLoading ? "Creating..." : "Create Game Item"}
-            </button>
+          <button className="back-button" onClick={() => navigate(-1)}>
+            Back
+          </button>
+          <button
+            className="create-manage-btn"
+            onClick={() => setCreateModalOpen(true)}
+            disabled={isCreating || isModalLoading}
+          >
+            {isCreating || isModalLoading ? "Creating..." : "Create Game Item"}
+          </button>
         </div>
       </div>
-      <table
-        className="manage-table"
-      >
+      <div className="manage-search-bar">
+        <input
+          type="text"
+          placeholder="Search game items by name..."
+          onChange={handleSearch}
+          value={query}
+        />
+      </div>
+      <table className="manage-table">
         <thead>
           <tr>
             <th style={{ textAlign: "left", padding: "8px", width: "150px" }}>
@@ -102,8 +122,10 @@ const ManageGameItems = () => {
           </tr>
         </thead>
         <tbody>
-          {gameItems.length > 0 ? (
-            gameItems.map((item) => <ItemRow key={item.id} item={item} refetch={refetch} />)
+          {filteredItems.length > 0 ? (
+            filteredItems.map((item) => (
+              <ItemRow key={item.id} item={item} refetch={refetch} />
+            ))
           ) : (
             <tr>
               <td colSpan={3} style={{ textAlign: "center", padding: "8px" }}>

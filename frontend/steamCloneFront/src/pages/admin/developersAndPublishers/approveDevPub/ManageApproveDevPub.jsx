@@ -2,6 +2,7 @@ import React from "react";
 import { useGetWithoutApprovalQuery } from "../../../../services/developerAndPublisher/developerAndPublisherApi";
 import { useNavigate } from "react-router-dom";
 import ApproveDevPubRow from "./components/ApproveDevPubRow";
+import { useSearchFilter } from "../../../../components/Search/useSearchFilter";
 
 const ManageApproveDevPub = () => {
   const navigate = useNavigate();
@@ -10,6 +11,14 @@ const ManageApproveDevPub = () => {
     isLoading: isLoadingUnapproved,
     error: errorUnapproved,
   } = useGetWithoutApprovalQuery();
+
+    const {
+      query,
+      filteredList: filteredDevAndPubList,
+      handleSearch,
+    } = useSearchFilter(unapprovedDevPubResponse, (item, query) =>
+      item.name.toLowerCase().includes(query.toLowerCase())
+    );
 
   if (isLoadingUnapproved)
     return <div className="loading-overlay visible">Loading data...</div>;
@@ -25,11 +34,19 @@ const ManageApproveDevPub = () => {
             width: "100%",
           }}
         >
-          <h2 style={{ margin: 0 }}>Manage Associated Users</h2>
+          <h2 style={{ margin: 0 }}>Manage Unapproved Developers & Publishers</h2>
           <button className="back-button" onClick={() => navigate(-1)}>
             Back
           </button>
         </div>
+      </div>
+      <div className="manage-search-bar">
+        <input
+          type="text"
+          placeholder="Search developers & publishers by name..."
+          value={query}
+          onChange={handleSearch}
+        />
       </div>
       <table
         className="manage-table"
@@ -44,8 +61,8 @@ const ManageApproveDevPub = () => {
           </tr>
         </thead>
         <tbody>
-          {unapprovedDevPubResponse.length > 0 ? (
-            unapprovedDevPubResponse.map((game) => (
+          {filteredDevAndPubList.length > 0 ? (
+            filteredDevAndPubList.map((game) => (
               <ApproveDevPubRow key={game.id} devPub={game} />
             ))
           ) : (
