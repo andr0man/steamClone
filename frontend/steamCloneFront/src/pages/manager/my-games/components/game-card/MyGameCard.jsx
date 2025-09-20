@@ -33,7 +33,7 @@ const MyGameCard = ({ game, user }) => {
 
   useEffect(() => {
     refetchIsOwner();
-  }, [user]);
+  }, [user, refetchIsOwner]);
 
   // Close dropdown on outside click
   useEffect(() => {

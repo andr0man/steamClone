@@ -543,7 +543,8 @@ public class GameService(
         return await UpdateGameAsync(game, "User association removed successfully", token);
     }
 
-    public async Task<ServiceResponse> GetByAssociatedUserAsync(bool? isApproved = true, CancellationToken token = default)
+    public async Task<ServiceResponse> GetByAssociatedUserAsync(bool? isApproved = true,
+        CancellationToken token = default)
     {
         var userId = await userProvider.GetUserId();
 
@@ -658,7 +659,7 @@ public class GameService(
         return ServiceResponse.OkResponse("Associated users retrieved successfully",
             mapper.Map<List<UserVM>>(
                 game.AssociatedUsers
-                .Where(x => FilterAssociatedUsersAsync(gameId, x.Id, x.RoleId, token).Result)
+                    .Where(x => FilterAssociatedUsersAsync(gameId, x.Id, x.RoleId, token).Result)
             ));
     }
 
@@ -671,6 +672,21 @@ public class GameService(
 
         return ServiceResponse.OkResponse("Game owner status retrieved successfully",
             await IsOwnerAsync(gameId, token));
+    }
+
+    public async Task<ServiceResponse> IsGameApprovedAsync(string gameId, CancellationToken token)
+    {
+        if (await gameRepository.GetByIdAsync(gameId, token, true) == null)
+        {
+            return ServiceResponse.NotFoundResponse("Game not found");
+        }
+
+        var gameApprovedField = (await gameRepository.GetByIdAsync(gameId, token))!.IsApproved;
+        
+        var isApproved = gameApprovedField ?? false;
+
+        return ServiceResponse.OkResponse("Game approved status retrieved successfully",
+            isApproved);
     }
 
     private async Task<ServiceResponse> UpdateGameAsync(Game game, string successMessage,
@@ -759,7 +775,7 @@ public class GameService(
             }
 
             var currentUserId = await userProvider.GetUserId();
-            
+
             if (game.CreatedBy != currentUserId)
             {
                 if (currentUserId == userId)
