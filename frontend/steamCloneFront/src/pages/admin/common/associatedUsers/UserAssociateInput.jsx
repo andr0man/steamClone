@@ -8,8 +8,7 @@ const UserAssociateInput = ({ handleAddUser }) => {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [user, setUser] = useState(null);
-  const [fetchUserByEmail, { data: userData, isFetching }] =
-    useLazyGetUserByEmailQuery();
+  const [fetchUserByEmail] = useLazyGetUserByEmailQuery();
 
   const handleInputChange = (e) => {
     setUserEmail(e.target.value);

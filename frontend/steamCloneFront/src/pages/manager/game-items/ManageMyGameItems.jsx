@@ -75,7 +75,7 @@ const ManageMyGameItems = () => {
   if (error) return <div>Error loading game items</div>;
 
   return (
-    <div className="manage-container flux-border" style={{ maxWidth: "600px" }}>
+    <div className="manage-container flux-border" style={{ maxWidth: "700px" }}>
       <div
         style={{
           display: "flex",
