@@ -9,6 +9,7 @@ import DevPubRow from "./components/DevPubRow";
 import { DevPubModal } from "./components/modal/DevPubModal";
 import { useNavigate } from "react-router-dom";
 import { useGetProfileQuery } from "../../../services/user/userApi";
+import { useSearchFilter } from "../../../components/Search/useSearchFilter";
 
 const ManageMyDevPubs = () => {
   const navigate = useNavigate();
@@ -32,12 +33,27 @@ const ManageMyDevPubs = () => {
     isLoading: isRejectedLoading,
     refetch: refetchRejected,
   } = useByAssociatedUserQuery(false);
+
+  const [activeTab, setActiveTab] = useState("approved");
+
+  // Select the correct list for the active tab
+  let itemsToShow = [];
+  if (activeTab === "approved") itemsToShow = approvedDevsAndPubs;
+  else if (activeTab === "pending") itemsToShow = pendingDevsAndPubs;
+  else if (activeTab === "rejected") itemsToShow = rejectedDevsAndPubs;
+
+  // Use a single search input and hook for the current tab
+  const {
+    query: searchQuery,
+    filteredList: filteredItemsToShow,
+    handleSearch,
+  } = useSearchFilter(itemsToShow, (item, query) =>
+    item.name.toLowerCase().includes(query.toLowerCase())
+  );
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [createDevPub, { isLoading: isCreating }] =
     useCreateDeveloperAndPublisherMutation();
   const [modalReset, setModalReset] = useState(() => () => {});
-
-  const [activeTab, setActiveTab] = useState("approved");
 
   useEffect(() => {
     refetchApproved();
@@ -50,11 +66,6 @@ const ManageMyDevPubs = () => {
     { key: "pending", label: "Pending", count: pendingDevsAndPubs.length },
     { key: "rejected", label: "Rejected", count: rejectedDevsAndPubs.length },
   ];
-
-  let itemsToShow = [];
-  if (activeTab === "approved") itemsToShow = approvedDevsAndPubs;
-  else if (activeTab === "pending") itemsToShow = pendingDevsAndPubs;
-  else if (activeTab === "rejected") itemsToShow = rejectedDevsAndPubs;
 
   const handleClose = () => {
     setCreateModalOpen(false);
@@ -97,6 +108,14 @@ const ManageMyDevPubs = () => {
           </button>
         </div>
       </div>
+      <div className="manage-search-bar">
+        <input
+          type="text"
+          placeholder={`Search ${activeTab} developers & publishers...`}
+          onChange={handleSearch}
+          value={searchQuery}
+        />
+      </div>
       <div
         className="tabs"
         style={{ display: "flex", gap: "10px", justifyContent: "center" }}
@@ -111,9 +130,7 @@ const ManageMyDevPubs = () => {
           </button>
         ))}
       </div>
-      <table
-        className="manage-table"
-      >
+      <table className="manage-table">
         <thead>
           <tr>
             <th style={{ textAlign: "left", padding: "8px" }}>Status</th>
@@ -124,8 +141,8 @@ const ManageMyDevPubs = () => {
           </tr>
         </thead>
         <tbody>
-          {itemsToShow.length > 0 ? (
-            itemsToShow.map((item) => (
+          {filteredItemsToShow.length > 0 ? (
+            filteredItemsToShow.map((item) => (
               <DevPubRow key={item.id} devpub={item} user={user} />
             ))
           ) : (

@@ -4,6 +4,7 @@ import "./ManageMyGames.scss";
 import MyGameCard from "./components/game-card/MyGameCard";
 import { useEffect, useState } from "react";
 import { useGetProfileQuery } from "../../../services/user/userApi";
+import { useSearchFilter } from "../../../components/Search/useSearchFilter";
 
 const ManageMyGames = () => {
   const navigate = useNavigate();
@@ -46,6 +47,14 @@ const ManageMyGames = () => {
   else if (activeTab === "pending") gamesToShow = pendingGames;
   else if (activeTab === "rejected") gamesToShow = rejectedGames;
 
+  const {
+    query,
+    filteredList: filteredGames,
+    handleSearch,
+  } = useSearchFilter(gamesToShow, (item, query) =>
+    item.name.toLowerCase().includes(query.toLowerCase())
+  );
+
   if (
     isApprovedLoading ||
     isPendingLoading ||
@@ -79,9 +88,20 @@ const ManageMyGames = () => {
           </button>
         </div>
       </div>
+      <div className="search-bar-games">
+        <input
+          type="text"
+          placeholder={`Search ${activeTab} game by name...`}
+          onChange={handleSearch}
+          value={query}
+        />
+      </div>
+
       <div className="games-grid">
-        {gamesToShow.length > 0 ? (
-          gamesToShow.map((game) => <MyGameCard key={game.id} game={game} user={user} />)
+        {filteredGames.length > 0 ? (
+          filteredGames.map((game) => (
+            <MyGameCard key={game.id} game={game} user={user} />
+          ))
         ) : (
           <div>No games available</div>
         )}

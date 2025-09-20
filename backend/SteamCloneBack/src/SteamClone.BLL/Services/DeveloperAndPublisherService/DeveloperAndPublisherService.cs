@@ -102,7 +102,7 @@ public class DeveloperAndPublisherService(
             return ServiceResponse.NotFoundResponse($"Country with id '{model.CountryId}' not found");
         }
 
-        if (!await developerAndPublisherRepository.IsUniqueNameAsync(model.Name, cancellationToken))
+        if (!await developerAndPublisherRepository.IsUniqueNameAsync(model.Name, id, cancellationToken))
         {
             return ServiceResponse.BadRequestResponse(
                 $"Developer Or Publisher with name '{model.Name}' already exists");

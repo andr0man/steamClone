@@ -7,7 +7,7 @@ import ForgotPassword from "../pages/auth/login/ForgotPassword.jsx";
 import Login from "../pages/auth/login/Login.jsx";
 import Register from "../pages/auth/register/Register.jsx";
 import Chat from "../pages/chat/Chat.jsx";
-import { GamePage } from "../pages/game/GamePage.jsx";
+import GamePage from "../pages/game/GamePage.jsx";
 import Home from "../pages/home/home.jsx";
 import Search from "../pages/home/search/Search.jsx";
 import Collections from "../pages/library/collections/Collections.jsx";

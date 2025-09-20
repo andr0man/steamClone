@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import UserAssociateRow from "./components/UserAssociateRow";
 import { useGetAssociatedUsersQuery, useAssociateUserMutation } from "../../../../services/game/gameApi";
 import UserAssociateInput from "../../common/associatedUsers/UserAssociateInput";
 import { toast } from "react-toastify";
+import { useSearchFilter } from "../../../../components/Search/useSearchFilter";
 
 const ManageGameAssociatedUsers = () => {
   const navigate = useNavigate();
@@ -11,6 +12,14 @@ const ManageGameAssociatedUsers = () => {
   const { data: { payload: associatedUsers } = { payload: [] }, isLoading } =
     useGetAssociatedUsersQuery(gameId);
   const [associateUser] = useAssociateUserMutation();
+
+  const {
+    query,
+    filteredList: filteredUsers,
+    handleSearch,
+  } = useSearchFilter(associatedUsers, (item, query) =>
+    item.email.toLowerCase().includes(query.toLowerCase())
+  );
 
   const handleAddUser = async (userId) => {
     try {
@@ -35,20 +44,28 @@ const ManageGameAssociatedUsers = () => {
         </div>
         <UserAssociateInput handleAddUser={handleAddUser} />
       </div>
+      <div className="manage-search-bar">
+        <input
+          type="text"
+          placeholder="Search users by email..."
+          onChange={handleSearch}
+          value={query}
+        />
+      </div>
       <table
         className="manage-table"
       >
         <thead>
           <tr>
-            <th style={{ textAlign: "left", padding: "8px" }}>Name</th>
+            <th style={{ textAlign: "left", padding: "8px" }}>Email</th>
             <th style={{ textAlign: "center", padding: "8px", width: "140px" }}>
               Actions
             </th>
           </tr>
         </thead>
         <tbody>
-          {associatedUsers.length > 0 ? (
-            associatedUsers.map((user) => (
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((user) => (
               <UserAssociateRow key={user.id} user={user} />
             ))
           ) : (

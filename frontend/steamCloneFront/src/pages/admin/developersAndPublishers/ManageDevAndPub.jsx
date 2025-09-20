@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import {
-    useCreateDeveloperAndPublisherMutation,
-    useGetAllDevelopersAndPublishersQuery,
+  useCreateDeveloperAndPublisherMutation,
+  useGetAllDevelopersAndPublishersQuery,
 } from "../../../services/developerAndPublisher/developerAndPublisherApi";
 import "./ManageDevAndPub.scss";
 import DevPubRow from "./components/DevPubRow";
 import { DevPubModal } from "./components/modal/DevPubModal";
 import { useNavigate } from "react-router-dom";
+import { useSearchFilter } from "../../../components/Search/useSearchFilter";
 
 const ManageDevAndPub = () => {
   const navigate = useNavigate();
@@ -21,6 +22,14 @@ const ManageDevAndPub = () => {
     useCreateDeveloperAndPublisherMutation();
   const [modalReset, setModalReset] = useState(() => () => {});
 
+  const {
+    query,
+    filteredList: filteredDevAndPubList,
+    handleSearch,
+  } = useSearchFilter(devAndPubList, (item, query) =>
+    item.name.toLowerCase().includes(query.toLowerCase())
+  );
+
   if (isLoading)
     return <div className="loading-overlay visible">Loading data...</div>;
   if (error) return <div>Error loading developers and publishers</div>;
@@ -28,7 +37,7 @@ const ManageDevAndPub = () => {
   const handleClose = () => {
     setCreateModalOpen(false);
     modalReset();
-  }
+  };
 
   const handleCreateDevPub = async (data) => {
     try {
@@ -53,7 +62,12 @@ const ManageDevAndPub = () => {
       >
         <h2 style={{ margin: 0 }}>Manage Developers & Publishers</h2>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button className="approve-game-btn" onClick={() => navigate("approve")}>To approve</button>
+          <button
+            className="approve-game-btn"
+            onClick={() => navigate("approve")}
+          >
+            To approve
+          </button>
           <button
             className="create-manage-btn"
             onClick={() => setCreateModalOpen(true)}
@@ -63,9 +77,15 @@ const ManageDevAndPub = () => {
           </button>
         </div>
       </div>
-      <table
-        className="manage-table"
-      >
+      <div className="manage-search-bar">
+        <input
+          type="text"
+          placeholder="Search developers & publishers by name..."
+          value={query}
+          onChange={handleSearch}
+        />
+      </div>
+      <table className="manage-table">
         <thead>
           <tr>
             <th style={{ textAlign: "left", padding: "8px" }}>Name</th>
@@ -75,9 +95,11 @@ const ManageDevAndPub = () => {
           </tr>
         </thead>
         <tbody>
-          {devAndPubList.length > 0 ? devAndPubList.map((item) => (
-            <DevPubRow key={item.id} devpub={item} />
-          )) : (
+          {filteredDevAndPubList.length > 0 ? (
+            filteredDevAndPubList.map((item) => (
+              <DevPubRow key={item.id} devpub={item} />
+            ))
+          ) : (
             <tr>
               <td colSpan={2} style={{ textAlign: "center", padding: "8px" }}>
                 No developers or publishers available

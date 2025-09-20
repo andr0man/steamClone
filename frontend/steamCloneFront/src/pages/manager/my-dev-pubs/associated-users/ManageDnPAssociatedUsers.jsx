@@ -7,6 +7,7 @@ import {
 } from "../../../../services/developerAndPublisher/developerAndPublisherApi";
 import UserAssociateInput from "../../../admin/common/associatedUsers/UserAssociateInput";
 import { toast } from "react-toastify";
+import { useSearchFilter } from "../../../../components/Search/useSearchFilter";
 
 const ManageDevAndPubAssociatedUsers = () => {
   const navigate = useNavigate();
@@ -15,9 +16,17 @@ const ManageDevAndPubAssociatedUsers = () => {
     useGetAssociatedUsersQuery(devpubId);
   const [associateUser] = useAssociateUserMutation();
 
+  const { query, filteredList, handleSearch } = useSearchFilter(
+    associatedUsers,
+    (item, query) => item.email.toLowerCase().includes(query.toLowerCase())
+  );
+
   const handleAddUser = async (userId) => {
     try {
-      await associateUser({ developerAndPublisherId: devpubId, userId }).unwrap();
+      await associateUser({
+        developerAndPublisherId: devpubId,
+        userId,
+      }).unwrap();
       toast.success("User added successfully");
     } catch (error) {
       toast.error(error?.data?.message || "Failed to add user");
@@ -30,15 +39,30 @@ const ManageDevAndPubAssociatedUsers = () => {
   return (
     <div className="manage-container flux-border" style={{ maxWidth: 600 }}>
       <div className="associated-users-header">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
           <h2 style={{ margin: 0 }}>Manage Associated Users</h2>
-          <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+          <button className="back-button" onClick={() => navigate(-1)}>
+            Back
+          </button>
         </div>
         <UserAssociateInput handleAddUser={handleAddUser} />
       </div>
-      <table
-        className="manage-table"
-      >
+      <div className="manage-search-bar">
+        <input
+          type="text"
+          placeholder="Search users by email..."
+          value={query}
+          onChange={handleSearch}
+        />
+      </div>
+      <table className="manage-table">
         <thead>
           <tr>
             <th style={{ textAlign: "left", padding: "8px" }}>Name</th>
@@ -48,8 +72,8 @@ const ManageDevAndPubAssociatedUsers = () => {
           </tr>
         </thead>
         <tbody>
-          {associatedUsers.length > 0 ? (
-            associatedUsers.map((user) => (
+          {filteredList.length > 0 ? (
+            filteredList.map((user) => (
               <UserAssociateRow key={user.id} user={user} />
             ))
           ) : (

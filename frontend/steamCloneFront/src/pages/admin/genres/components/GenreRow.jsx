@@ -42,19 +42,21 @@ const GenreRow = ({ genre }) => {
       <tr key={genre.id}>
         <td style={{ padding: "8px" }}>{genre.name}</td>
         <td style={{ padding: "8px", textAlign: "center" }}>
-          <button
-            className="edit-manage-btn"
-            style={{ marginRight: 8 }}
-            onClick={() => setEditModalOpen(true)}
-          >
-            Edit
-          </button>
-          <button
-            className="delete-manage-btn"
-            onClick={() => setDeleteModalOpen(true)}
-          >
-            Delete
-          </button>
+          <div className="actions-td">
+            <button
+              className="edit-manage-btn"
+              style={{ marginRight: 8 }}
+              onClick={() => setEditModalOpen(true)}
+            >
+              Edit
+            </button>
+            <button
+              className="delete-manage-btn"
+              onClick={() => setDeleteModalOpen(true)}
+            >
+              Delete
+            </button>
+          </div>
         </td>
       </tr>
       <ConfirmModal

@@ -11,7 +11,6 @@ import { useGetIsOwnerQuery } from "../../../../services/developerAndPublisher/d
 
 
 const DevPubRow = ({ devpub, user }) => {
-  console.log(devpub);
   const navigate = useNavigate();
   const { data: { payload: isOwner } = {}, isLoading: isOwnerLoading } =
       useGetIsOwnerQuery(devpub.id);

@@ -1,9 +1,13 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import UserAssociateRow from "./components/UserAssociateRow";
-import { useGetAssociatedUsersQuery, useAssociateUserMutation } from "../../../../services/game/gameApi";
+import {
+  useGetAssociatedUsersQuery,
+  useAssociateUserMutation,
+} from "../../../../services/game/gameApi";
 import UserAssociateInput from "../../../admin/common/associatedUsers/UserAssociateInput";
 import { toast } from "react-toastify";
+import { useSearchFilter } from "../../../../components/Search/useSearchFilter";
 
 const ManageMyGameAssociatedUsers = () => {
   const navigate = useNavigate();
@@ -11,6 +15,14 @@ const ManageMyGameAssociatedUsers = () => {
   const { data: { payload: associatedUsers } = { payload: [] }, isLoading } =
     useGetAssociatedUsersQuery(gameId);
   const [associateUser] = useAssociateUserMutation();
+
+  const {
+    query,
+    filteredList: filteredUsers,
+    handleSearch,
+  } = useSearchFilter(associatedUsers, (item, query) =>
+    item.email.toLowerCase().includes(query.toLowerCase())
+  );
 
   const handleAddUser = async (userId) => {
     try {
@@ -26,18 +38,31 @@ const ManageMyGameAssociatedUsers = () => {
 
   return (
     <div className="manage-container flux-border" style={{ maxWidth: 600 }}>
-      <div
-        className="associated-users-header"
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+      <div className="associated-users-header">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
           <h2 style={{ margin: 0 }}>Manage Associated Users</h2>
-          <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+          <button className="back-button" onClick={() => navigate(-1)}>
+            Back
+          </button>
         </div>
         <UserAssociateInput handleAddUser={handleAddUser} />
       </div>
-      <table
-        className="manage-table"
-      >
+      <div className="manage-search-bar">
+        <input
+          type="text"
+          placeholder="Search users by email..."
+          onChange={handleSearch}
+          value={query}
+        />
+      </div>
+      <table className="manage-table">
         <thead>
           <tr>
             <th style={{ textAlign: "left", padding: "8px" }}>Name</th>
@@ -47,8 +72,8 @@ const ManageMyGameAssociatedUsers = () => {
           </tr>
         </thead>
         <tbody>
-          {associatedUsers.length > 0 ? (
-            associatedUsers.map((user) => (
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((user) => (
               <UserAssociateRow key={user.id} user={user} />
             ))
           ) : (

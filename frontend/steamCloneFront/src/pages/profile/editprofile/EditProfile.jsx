@@ -306,8 +306,6 @@ const EditProfile = () => {
   const countryNameById = (id) =>
     countries.find((c) => String(c.id) === String(id))?.name || "—";
 
-  console.log(avatarUrl);
-
   return (
     <div className="profile-page-container edit-mode">
       <div className="notification-global-top">
