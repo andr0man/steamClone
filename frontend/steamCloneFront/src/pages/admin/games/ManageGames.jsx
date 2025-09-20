@@ -41,7 +41,7 @@ const ManageGames = () => {
       <div className="search-bar-games">
         <input
           type="text"
-          placeholder="Search game items by name..."
+          placeholder="Search games by name..."
           onChange={handleSearch}
           value={query}
         />
