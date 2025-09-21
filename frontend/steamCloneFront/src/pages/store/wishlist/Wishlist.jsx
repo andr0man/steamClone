@@ -25,7 +25,7 @@ const mapFromApi = (resp) => {
   if (!Array.isArray(list)) return [];
 
   return list.map((row) => {
-    const g = row.game ?? row; 
+    const g = row.game ?? row;
     const gameId = g?.id ?? row?.gameId ?? row?.id;
 
     const price = Number(g?.price ?? 0);
@@ -34,7 +34,7 @@ const mapFromApi = (resp) => {
       discountPercent > 0 ? Math.round(price - (price * discountPercent) / 100) : price;
 
     return {
-      id: gameId, 
+      id: gameId,
       title: g?.name ?? g?.title ?? "Game",
       year: g?.releaseDate ? new Date(g.releaseDate).getFullYear() : "—",
       added: row?.addedAt ?? row?.createdAt ?? null,
@@ -54,7 +54,7 @@ const Wishlist = () => {
   const items = useMemo(() => mapFromApi(data), [data]);
 
   const [q, setQ] = useState("");
-  const [sortBy, setSortBy] = useState("personal"); // personal/date/price_asc/price_desc/name_asc
+  const [sortBy, setSortBy] = useState("personal");
 
   const filteredSorted = useMemo(() => {
     let list = items.slice();
@@ -144,22 +144,15 @@ const Wishlist = () => {
           </div>
         ) : filteredSorted.length ? (
           <div className="wl-list" role="list">
-            {filteredSorted.map((g, idx) => {
-              const rank = idx + 1;
+            {filteredSorted.map((g) => {
               const hasDiscount = Number.isFinite(g.discountPercent) && g.discountPercent > 0;
               const pct = hasDiscount ? Math.round(g.discountPercent) : 0;
 
               return (
                 <div className="wl-row" key={g.id} role="listitem" aria-label={g.title}>
-                  <div className="rank-badge" role="img" aria-label={`Rank ${rank}`}>
-                    <span>{rank}</span>
-                    <i className="chev up" />
-                    <i className="chev down" />
-                  </div>
-
                   <img
                     className="thumb"
-                    src={g.imageUrl || "https://via.placeholder.com/158x74/1e252e/c7d5e0?text=Game"}
+                    src={g.imageUrl || "/common/gameNoImage.png"}
                     alt={g.title || "Game cover"}
                     loading="lazy"
                     onClick={() => goToGame(g.id)}

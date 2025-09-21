@@ -226,7 +226,7 @@ const GameLocalizations = ({ game, gameId, onRefetch }) => {
                       }
                     />
                   </div>
-                  <div className="td actions">
+                  <div className="localizations-table-actions">
                     <button
                       disabled={busy}
                       onClick={() => handleUpdate(langId)}

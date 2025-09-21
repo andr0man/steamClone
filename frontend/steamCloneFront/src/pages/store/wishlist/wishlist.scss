@@ -17,7 +17,6 @@ $accent: #A178EB;
 :root { --navbar-h: 64px; }
 
 *, *::before, *::after { box-sizing: border-box; }
-
 html, body, #root { min-height: 100%; height: auto; }
 
 body {
@@ -153,26 +152,10 @@ body {
 
 .wl-row {
   display: grid;
-  grid-template-columns: 38px 158px 1fr auto;
+  grid-template-columns: 158px 1fr auto;
   align-items: center;
   gap: 14px;
 }
-
-.rank-badge {
-  position: relative;
-  width: 38px; height: 74px;
-  border: 1px solid rgba(146,119,197,.55);
-  border-radius: 8px;
-  display: grid; place-items: center;
-  color: #A178EB; font-weight: 800; background: rgba(146,119,197,.10);
-}
-.rank-badge span { font-size: 14px; line-height: 1; }
-.rank-badge .chev {
-  position: absolute; left: 6px; right: 6px; height: 8px;
-  border-top: 1px solid rgba(146,119,197,.55);
-}
-.rank-badge .chev.up { top: 8px; }
-.rank-badge .chev.down { bottom: 8px; }
 
 .thumb {
   width: 158px; height: 74px;
@@ -241,6 +224,6 @@ body {
   .wl-head { grid-template-columns: 1fr; gap: 10px; }
   .wl-head-controls { justify-content: space-between; }
   .wl-input { width: 100%; }
-  .wl-row { grid-template-columns: 34px 140px 1fr; gap: 10px; }
-  .price-side { grid-column: 1 / -1; justify-self: start; margin-left: 44px; }
+  .wl-row { grid-template-columns: 140px 1fr; gap: 10px; }
+  .price-side { grid-column: 1 / -1; justify-self: start; margin-left: 0; }
 }

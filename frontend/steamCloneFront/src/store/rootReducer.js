@@ -21,6 +21,7 @@ import { marketSellApi } from "../services/market/marketSellApi";
 import { marketHistoryApi } from "../services/market/marketHistoryApi";
 import { homeApi } from "../services/home/homeApi";
 import { gameItemApi } from "../services/gameItem/gameItemApi";
+import { searchmarketApi } from "../services/market/searchmarketApi";
 
 export const rootReducer = combineReducers({
   user: userReducer,
@@ -45,4 +46,5 @@ export const rootReducer = combineReducers({
   [marketHistoryApi.reducerPath]: marketHistoryApi.reducer,
   [homeApi.reducerPath]: homeApi.reducer,
   [gameItemApi.reducerPath]: gameItemApi.reducer,
+  [searchmarketApi.reducerPath]: searchmarketApi.reducer,   
 });

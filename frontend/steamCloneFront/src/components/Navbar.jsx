@@ -63,13 +63,7 @@ const Navbar = ({ onLogout }) => {
       label: "STORE",
       path: "/store",
       subItems: [
-        { id: "store-discover", label: "DISCOVER", path: "/store/discover" },
         { id: "store-wishlist", label: "WISHLIST", path: "/store/wishlist" },
-        {
-          id: "store-points-shop",
-          label: "POINTS SHOP",
-          path: "/store/points-shop",
-        },
       ],
     },
     {
@@ -87,8 +81,8 @@ const Navbar = ({ onLogout }) => {
     },
     {
       id: "community",
-      label: "COMMUNITY",
-      path: "/community",
+      label: "Market",
+      path: "/market",
       subItems: [{ id: "community-market", label: "MARKET", path: "/market" }],
     },
     {

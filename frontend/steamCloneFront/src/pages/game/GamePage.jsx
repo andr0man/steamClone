@@ -222,6 +222,7 @@ const GamePage = () => {
                       addToWishlist(gameId);
                     }
                   }}
+                  style={{fontSize: "1.3rem"}}
                 >
                   <div>
                     {isInWishlistData.payload

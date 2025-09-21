@@ -8,7 +8,7 @@ export const marketBuyApi = createApi({
   endpoints: (builder) => ({
     buy: builder.mutation({
       query: (marketItemId) => ({
-        url: `buy?marketItemId=${marketItemId}`,
+        url: `buy?marketItemId=${encodeURIComponent(marketItemId)}`,
         method: "PUT",
       }),
       invalidatesTags: [
