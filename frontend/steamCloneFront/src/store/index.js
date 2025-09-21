@@ -22,6 +22,7 @@ import { marketSellApi } from "../services/market/marketSellApi";
 import { marketHistoryApi } from "../services/market/marketHistoryApi";
 import { homeApi } from "../services/home/homeApi";
 import { gameItemApi } from "../services/gameItem/gameItemApi";
+import { searchmarketApi } from "../services/market/searchmarketApi";
 
 const middlewares = [
   authApi.middleware,
@@ -45,6 +46,7 @@ const middlewares = [
   marketHistoryApi.middleware,
   homeApi.middleware,
   gameItemApi.middleware,
+  searchmarketApi.middleware,
 ];
 
 export const store = configureStore({

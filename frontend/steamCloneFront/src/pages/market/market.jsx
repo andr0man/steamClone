@@ -5,10 +5,9 @@ import Notification from "../../components/Notification";
 import { Search as SearchIcon, ChevronDown, X } from "lucide-react";
 import {
   useGetMarketItemsQuery,
-  useBuyMarketItemMutation,
+  useGetUserItemsQuery,
 } from "../../services/market/marketApi";
 import { useGetAllGamesQuery } from "../../services/game/gameApi";
-import { useGetAllGenresQuery } from "../../services/genre/genreApi";
 
 const mapMarketItems = (resp) => {
   const list = resp?.payload ?? resp ?? [];
@@ -18,7 +17,21 @@ const mapMarketItems = (resp) => {
     const i = row?.item ?? row?.marketItem?.item ?? row?.itemDto ?? {};
     const price = Number(row?.price ?? i?.price ?? i?.priceUAH ?? 0);
     const gameObj = i?.game ?? i?.gameDto ?? {};
-    const gameName = gameObj?.name ?? i?.game?.name ?? i?.gameName ?? i?.game ?? "Unknown";
+    const gameId = i?.gameId ?? gameObj?.id ?? row?.gameId ?? null;
+    const userItemId = row?.userItemId ?? row?.userItem?.id ?? null;
+    const gameName =
+      gameObj?.name ??
+      i?.game?.name ??
+      i?.gameName ??
+      i?.game ??
+      row?.gameName ??
+      "Unknown";
+    const baseName =
+      i?.name ??
+      i?.title ??
+      row?.itemName ??
+      row?.name ??
+      "Item";
     const genres = Array.isArray(gameObj?.genres)
       ? gameObj.genres.map((g) => g?.name).filter(Boolean)
       : Array.isArray(i?.genres)
@@ -26,12 +39,16 @@ const mapMarketItems = (resp) => {
       : Array.isArray(i?.tags)
       ? i.tags.map((t) => (typeof t === "string" ? t : t?.name)).filter(Boolean)
       : [];
+    const tags = Array.from(new Set([...(genres || []), baseName].filter(Boolean)));
     const status = String(row?.status ?? i?.status ?? "available").toLowerCase();
     return {
       id: marketId,
-      name: i?.name ?? i?.title ?? "Item",
+      itemId: i?.id ?? row?.itemId ?? null,
+      userItemId,
+      gameId,
+      name: baseName,
       game: gameName,
-      tags: genres,
+      tags,
       priceUAH: price,
       imageUrl: i?.imageUrl ?? i?.iconUrl ?? "/common/itemNoImage.png",
       available: status !== "sold" && status !== "inactive",
@@ -47,9 +64,7 @@ const formatUAH = (n) => {
   })}₴`;
 };
 
-const DEFAULT_CATEGORIES = ["Action", "Adventure", "Indie", "RPG", "Shooter", "Casual"];
-
-const MarketItemModal = ({ open, item, onClose, onBuy, buying = false }) => {
+const MarketItemModal = ({ open, item, onClose, onGoToBuy }) => {
   if (!open || !item) return null;
   return (
     <div className="market-modal" role="dialog" aria-modal="true">
@@ -82,11 +97,11 @@ const MarketItemModal = ({ open, item, onClose, onBuy, buying = false }) => {
               <button className="ghost" onClick={onClose}>Close</button>
               <button
                 className="price-badge"
-                disabled={!item.available || buying}
-                onClick={onBuy}
-                title={item.available ? "Buy now" : "Sold"}
+                disabled={!item.available}
+                onClick={onGoToBuy}
+                title={item.available ? "Go to checkout" : "Sold"}
               >
-                {buying ? "Buying…" : `Buy for ${formatUAH(item.priceUAH)}`}
+                Go to checkout
               </button>
             </div>
           </div>
@@ -99,11 +114,14 @@ const MarketItemModal = ({ open, item, onClose, onBuy, buying = false }) => {
 const Market = () => {
   const navigate = useNavigate();
   const { data, isFetching, isError, error, refetch } = useGetMarketItemsQuery();
-  const [buyMarketItem, { isLoading: buying }] = useBuyMarketItemMutation();
-  const { data: gamesRes, isFetching: gamesLoading } = useGetAllGamesQuery();
-  const { data: genresRes } = useGetAllGenresQuery();
-
-  const items = useMemo(() => mapMarketItems(data), [data]);
+  const { data: gamesRes } = useGetAllGamesQuery();
+  const {
+    data: userItemsRes,
+    isFetching: userItemsLoading,
+    isError: userItemsIsError,
+    error: userItemsError,
+    refetch: refetchUserItems,
+  } = useGetUserItemsQuery();
 
   const gamesFromApi = useMemo(() => {
     const list = gamesRes?.payload ?? gamesRes ?? [];
@@ -112,52 +130,77 @@ const Market = () => {
     return Array.from(new Set(names));
   }, [gamesRes]);
 
-  const gamesForFilter = useMemo(() => {
-    const derived = Array.from(new Set(items.map((i) => i.game).filter(Boolean)));
-    return gamesFromApi.length ? gamesFromApi : derived;
-  }, [gamesFromApi, items]);
-
-  const genresFromApi = useMemo(() => {
-    const list = genresRes?.payload ?? genresRes ?? [];
-    if (!Array.isArray(list)) return [];
-    return list.map((g) => g?.name ?? g?.title ?? null).filter(Boolean);
-  }, [genresRes]);
-
-  const tagsFromItems = useMemo(() => {
-    const bag = new Set();
-    for (const it of items) {
-      for (const t of it.tags || []) if (t) bag.add(t);
+  const gameNameById = useMemo(() => {
+    const list = gamesRes?.payload ?? gamesRes ?? [];
+    const map = new Map();
+    if (Array.isArray(list)) {
+      list.forEach((g) => {
+        const id = g?.id;
+        const nm = g?.name ?? g?.title ?? g?.gameName ?? null;
+        if (id && nm) map.set(id, nm);
+      });
     }
-    return Array.from(bag);
-  }, [items]);
+    return map;
+  }, [gamesRes]);
 
-  const categoriesForFilter = useMemo(() => {
-    if (genresFromApi.length) return genresFromApi;
-    if (tagsFromItems.length) return tagsFromItems;
-    return DEFAULT_CATEGORIES;
-  }, [genresFromApi, tagsFromItems]);
+  const userItemByUserItemId = useMemo(() => {
+    const list = userItemsRes?.payload ?? userItemsRes ?? [];
+    const map = new Map();
+    if (Array.isArray(list)) {
+      list.forEach((row) => {
+        if (row?.id && row?.item) {
+          map.set(row.id, {
+            itemId: row.item.id,
+            name: row.item.name,
+            imageUrl: row.item.imageUrl,
+            gameId: row.item.gameId,
+          });
+        }
+      });
+    }
+    return map;
+  }, [userItemsRes]);
 
   const [q, setQ] = useState("");
   const [sortBy, setSortBy] = useState("relevance");
   const [selectedGame, setSelectedGame] = useState("All Games");
   const [gameSearch, setGameSearch] = useState("");
-  const [tagFilters, setTagFilters] = useState(new Set());
-  const [customTag, setCustomTag] = useState("");
   const [apiError, setApiError] = useState(null);
-  const [apiSuccess, setApiSuccess] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  const filteredGames = useMemo(() => {
+  const itemsBase = useMemo(() => mapMarketItems(data), [data]);
+
+  const items = useMemo(() => {
+    const enriched = itemsBase.map((it) => {
+      const extra = it.userItemId ? userItemByUserItemId.get(it.userItemId) : null;
+      const nextGameId = extra?.gameId ?? it.gameId;
+      const nextGameName = nextGameId ? gameNameById.get(nextGameId) ?? it.game : it.game;
+      return {
+        ...it,
+        itemId: extra?.itemId ?? it.itemId,
+        name: extra?.name ?? it.name,
+        imageUrl: extra?.imageUrl ?? it.imageUrl,
+        gameId: nextGameId,
+        game: nextGameName,
+      };
+    });
+    return enriched;
+  }, [itemsBase, userItemByUserItemId, gameNameById]);
+
+  const gamesDerivedFromItems = useMemo(() => {
+    return Array.from(new Set(items.map((i) => i.game).filter(Boolean)));
+  }, [items]);
+
+  const gamesForFilter = useMemo(() => {
+    if (gamesFromApi.length) return gamesFromApi;
+    return gamesDerivedFromItems;
+  }, [gamesFromApi, gamesDerivedFromItems]);
+
+  const dynamicGameList = useMemo(() => {
     const base = gamesForFilter.slice();
     const s = gameSearch.trim().toLowerCase();
     return s ? base.filter((n) => n.toLowerCase().includes(s)) : base;
-  }, [gamesForFilter, gameSearch]);
-
-  const toggleSet = (s, v) => {
-    const next = new Set(s);
-    next.has(v) ? next.delete(v) : next.add(v);
-    return next;
-  };
+  }, [gameSearch, gamesForFilter]);
 
   const processed = useMemo(() => {
     let list = items.slice();
@@ -170,13 +213,8 @@ const Market = () => {
           (i.tags || []).some((t) => (t || "").toLowerCase().includes(s))
       );
     }
-    if (selectedGame !== "All Games") list = list.filter((i) => i.game === selectedGame);
-    if (tagFilters.size) {
-      list = list.filter((i) => {
-        const tags = (i.tags || []).map((t) => (t || "").toLowerCase());
-        for (const sel of tagFilters) if (tags.includes(String(sel).toLowerCase())) return true;
-        return false;
-      });
+    if (selectedGame !== "All Games") {
+      list = list.filter((i) => (i.game || "").toLowerCase() === selectedGame.toLowerCase());
     }
     if (sortBy === "price_asc") list.sort((a, b) => (a.priceUAH || 0) - (b.priceUAH || 0));
     if (sortBy === "price_desc") list.sort((a, b) => (b.priceUAH || 0) - (a.priceUAH || 0));
@@ -190,19 +228,11 @@ const Market = () => {
       });
     }
     return list;
-  }, [items, q, selectedGame, tagFilters, sortBy]);
+  }, [items, q, selectedGame, sortBy]);
 
-  const onBuy = async (marketItemId, displayName, price) => {
-    setApiError(null);
-    setApiSuccess(null);
-    try {
-      await buyMarketItem({ marketItemId }).unwrap();
-      setApiSuccess(`Purchased "${displayName}" for ${formatUAH(price)}`);
-      setPreview(null);
-      refetch();
-    } catch (e) {
-      setApiError(e?.data?.message || e?.error || "Purchase failed");
-    }
+  const goToCheckout = (it) => {
+    try { sessionStorage.setItem("BUY_ITEM_CACHE", JSON.stringify(it)); } catch {}
+    navigate("/market/buy", { state: { item: it } });
   };
 
   return (
@@ -210,12 +240,12 @@ const Market = () => {
       <Notification
         message={
           apiError ||
-          (isError ? error?.data?.message || "Failed to load market items" : null)
+          (userItemsIsError ? userItemsError?.data?.message || userItemsError?.error || "Failed to load user items" : null) ||
+          (isError ? error?.data?.message || error?.error || "Failed to load market items" : null)
         }
         type="error"
         onClose={() => setApiError(null)}
       />
-      <Notification message={apiSuccess} type="success" onClose={() => setApiSuccess(null)} />
 
       <aside className="market-left">
         <div className="mk-panel mk-search">
@@ -236,7 +266,7 @@ const Market = () => {
           <div className="mk-title">Filter by game</div>
           <span className="mk-underline" />
           <div className="game-list">
-            {(gamesLoading ? [] : filteredGames).slice(0, 20).map((name) => (
+            {dynamicGameList.slice(0, 20).map((name) => (
               <button
                 type="button"
                 key={name}
@@ -272,46 +302,8 @@ const Market = () => {
                 onChange={(e) => setGameSearch(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    const found = filteredGames[0];
+                    const found = dynamicGameList[0];
                     if (found) setSelectedGame(found);
-                    e.currentTarget.blur();
-                  }
-                }}
-              />
-              <SearchIcon size={16} className="ico" />
-            </div>
-            <span className="mk-underline small" />
-          </div>
-        </div>
-
-        <div className="mk-panel mk-tags-panel">
-          <div className="mk-title">Filter by category</div>
-          <span className="mk-underline" />
-          <div className="mk-checks">
-            {categoriesForFilter.slice(0, 15).map((t) => (
-              <label key={t} className="mk-check">
-                <input
-                  type="checkbox"
-                  checked={tagFilters.has(t)}
-                  onChange={() => setTagFilters((prev) => toggleSet(prev, t))}
-                />
-                <span>{t}</span>
-              </label>
-            ))}
-          </div>
-
-          <div className="mk-enter-game" style={{ marginTop: 10 }}>
-            <div className="mk-input small">
-              <input
-                type="text"
-                placeholder="Enter category name"
-                value={customTag}
-                onChange={(e) => setCustomTag(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    const val = e.currentTarget.value.trim();
-                    if (val) setTagFilters((prev) => toggleSet(prev, val));
-                    setCustomTag("");
                     e.currentTarget.blur();
                   }
                 }}
@@ -325,18 +317,8 @@ const Market = () => {
         <div className="mk-panel mk-records">
           <ul className="records">
             <li>
-              <button type="button" onClick={() => navigate("/market/history?tab=sell")}>
-                My sell records
-              </button>
-            </li>
-            <li>
-              <button type="button" onClick={() => navigate("/market/history?tab=buy")}>
+              <button type="button" onClick={() => navigate("/market/history")}>
                 My buy records
-              </button>
-            </li>
-            <li>
-              <button type="button" onClick={() => navigate("/market/history?tab=hold")}>
-                My items on hold
               </button>
             </li>
             <li className="accent">
@@ -366,7 +348,14 @@ const Market = () => {
                 </select>
                 <ChevronDown size={16} className="chev" />
               </div>
-              <button className="price-badge" style={{ padding: "8px 10px" }} onClick={() => refetch()}>
+              <button
+                className="price-badge"
+                style={{ padding: "8px 10px" }}
+                onClick={() => {
+                  refetch();
+                  refetchUserItems();
+                }}
+              >
                 Refresh
               </button>
             </div>
@@ -376,7 +365,7 @@ const Market = () => {
             Trade, buy and sell unique in-game items with the Flux community
           </div>
 
-          {isFetching ? (
+          {isFetching || userItemsLoading ? (
             <div className="market-inline-loader">
               <div className="spinner-small" />
               Loading…
@@ -393,10 +382,7 @@ const Market = () => {
                   >
                     <div className="icon-wrap">
                       <img
-                        src={
-                          item.imageUrl ||
-                          "https://via.placeholder.com/64/1c232c/ffffff?text=?"
-                        }
+                        src={item.imageUrl || "/common/itemNoImage.png"}
                         alt={item.name}
                       />
                     </div>
@@ -410,12 +396,12 @@ const Market = () => {
                     <button
                       type="button"
                       className="price-badge"
-                      disabled={!item.available || buying}
+                      disabled={!item.available}
                       onClick={(e) => {
                         e.stopPropagation();
-                        onBuy(item.id, item.name, item.priceUAH);
+                        goToCheckout(item);
                       }}
-                      title={item.available ? "Buy now" : "Sold"}
+                      title={item.available ? "Go to checkout" : "Sold"}
                     >
                       {formatUAH(item.priceUAH)}
                     </button>
@@ -433,8 +419,11 @@ const Market = () => {
         open={!!preview}
         item={preview}
         onClose={() => setPreview(null)}
-        buying={buying}
-        onBuy={() => preview && onBuy(preview.id, preview.name, preview.priceUAH)}
+        onGoToBuy={() => {
+          if (preview) {
+            goToCheckout(preview);
+          }
+        }}
       />
     </div>
   );
