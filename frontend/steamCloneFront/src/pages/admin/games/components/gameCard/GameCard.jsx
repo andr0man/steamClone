@@ -1,6 +1,6 @@
 // GameCard.jsx
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./GameCard.scss";
 import { ConfirmModal } from "../../../../../components/Modals/ConfirmModal";
 import {
@@ -82,7 +82,7 @@ const GameCard = ({ game }) => {
           />
         </div>
         <div className="game-card-content">
-          <h3 className="game-card-title">{game.name}</h3>
+          <h3 className="game-card-title"><Link to={`/store/game/${game.id}`}>{game.name}</Link></h3>
           <div className="game-card-genres">
             {(game.genres?.length > 3
               ? game.genres.slice(0, 3)

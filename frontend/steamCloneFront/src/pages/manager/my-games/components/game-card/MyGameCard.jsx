@@ -1,6 +1,6 @@
 // GameCard.jsx
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./MyGameCard.scss";
 import { ConfirmModal } from "../../../../../components/Modals/ConfirmModal";
 import {
@@ -9,15 +9,20 @@ import {
   useGetIsOwnerQuery,
 } from "../../../../../services/game/gameApi";
 import { toast } from "react-toastify";
+import { useGetIsApprovedQuery } from "../../../../../services/game/gameApi";
 
 const MyGameCard = ({ game, user }) => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteGame] = useDeleteGameMutation();
   const { data: { payload: isBought } = {} } = useIsGameBoughtQuery(game.id);
-  const { data: { payload: isOwner } = {}, isLoading: isOwnerLoading, refetch: refetchIsOwner } =
-    useGetIsOwnerQuery(game.id);
+  const {
+    data: { payload: isOwner } = {},
+    isLoading: isOwnerLoading,
+    refetch: refetchIsOwner,
+  } = useGetIsOwnerQuery(game.id);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const { data: { payload: isApproved } = {} } = useGetIsApprovedQuery(game.id);
 
   const handleDeleteGame = async (gameId) => {
     try {
@@ -104,7 +109,13 @@ const MyGameCard = ({ game, user }) => {
           />
         </div>
         <div className="game-card-content">
-          <h3 className="game-card-title">{game.name}</h3>
+          <h3 className="game-card-title">
+            {isApproved ? (
+              <Link to={`/store/game/${game.id}`}>{game.name}</Link>
+            ) : (
+              game.name
+            )}
+          </h3>
           <div className="game-card-genres">
             {(game.genres?.length > 3
               ? game.genres.slice(0, 3)

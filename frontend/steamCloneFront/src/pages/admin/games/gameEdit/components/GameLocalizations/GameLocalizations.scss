@@ -56,3 +56,10 @@
 .localizations-table button.danger {
   background: linear-gradient(90deg, #ff9584 0%, #ffcf73 100%);
 }
+
+.localizations-table-actions {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  gap: 8px;
+}
