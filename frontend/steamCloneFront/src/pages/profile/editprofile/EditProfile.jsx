@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import "./EditProfile.scss";
 import Notification from "../../../components/Notification";
 import {
@@ -27,8 +28,11 @@ const USERNAME_MAX = 32;
 
 const EditProfile = () => {
   const navigate = useNavigate();
-
-  const { data, isLoading, error } = useGetProfileQuery();
+  const { user } = useSelector((state) => state.user);
+  const { data, isLoading, error } = useGetProfileQuery(user?.id, {
+      skip: !user?.id,
+      refetchOnMountOrArgChange: true,
+    });
   const [updateUser, { isLoading: isSaving }] = useUpdateUserMutation();
   const [uploadAvatar, { isLoading: isUploadingAvatar }] = useUploadAvatarMutation();
   const { data: countriesRes } = useGetAllCountrysQuery();

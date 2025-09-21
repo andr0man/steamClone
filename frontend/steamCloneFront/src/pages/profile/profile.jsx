@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import "./profile.scss";
 import Notification from "../../components/Notification";
+import { useSelector } from "react-redux";
 import { User, Shield, BarChart3, Users, Gift, Wallet } from "lucide-react";
 // import { useGetProfileQuery, useGetBalanceQuery } from "../../services/profileApi";
 import {
@@ -34,8 +35,12 @@ const Profile = ({ userData }) => {
   const [apiError, setApiError] = useState(null);
   const navigate = useNavigate();
   const { data: friendsCountData } = useGetFriendsCountQuery();
+  const { user } = useSelector((state) => state.user);
 
-  const { data, isLoading, error } = useGetProfileQuery();
+  const { data, isLoading, error } = useGetProfileQuery(user?.id, {
+    skip: !user?.id,
+    refetchOnMountOrArgChange: true,
+  });
   const {
     data: balRes,
     isLoading: balLoading,

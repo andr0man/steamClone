@@ -12,6 +12,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Notification from "../../../components/Notification";
 
 import {
@@ -119,9 +120,12 @@ const mapUsers = (res) => {
 
 const Friends = () => {
   const navigate = useNavigate();
-
+  const { user } = useSelector((state) => state.user);
   // me
-  const { data: meRes } = useGetMyProfileQuery();
+  const { data: meRes } = useGetMyProfileQuery(user?.id, {
+      skip: !user?.id,
+      refetchOnMountOrArgChange: true,
+    });
   const myId = meRes?.payload?.id ?? meRes?.id ?? null;
 
   // API
@@ -131,26 +135,38 @@ const Friends = () => {
     isError: friendsErr,
     error: friendsErrObj,
     refetch: refetchFriends,
-  } = useGetFriendsQuery();
+  } = useGetFriendsQuery(myId, {
+  skip: !myId,
+  refetchOnMountOrArgChange: true,
+});
   const {
     data: cntRes,
     isError: cntErr,
     error: cntErrObj,
-  } = useGetFriendsCountQuery();
+  } = useGetFriendsCountQuery(myId, {
+  skip: !myId,
+  refetchOnMountOrArgChange: true,
+});
   const {
     data: recRes,
     isFetching: recLoading,
     isError: recErr,
     error: recErrObj,
     refetch: refetchRec,
-  } = useGetRequestsReceivedQuery();
+  } = useGetRequestsReceivedQuery(myId, {
+  skip: !myId,
+  refetchOnMountOrArgChange: true,
+});
   const {
     data: sentRes,
     isFetching: sentLoading,
     isError: sentErr,
     error: sentErrObj,
     refetch: refetchSent,
-  } = useGetRequestsSentQuery();
+  } = useGetRequestsSentQuery(myId, {
+  skip: !myId,
+  refetchOnMountOrArgChange: true,
+});
 
   const [acceptFriend] = useAcceptFriendRequestMutation();
   const [rejectFriend] = useRejectFriendRequestMutation();

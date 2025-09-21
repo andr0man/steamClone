@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { BarChart3, Shield, Users, Gift, Wallet } from 'lucide-react';
 import Notification from '../../../components/Notification';
+import { useSelector } from "react-redux";
 import { useGetProfileQuery, useGetBalanceQuery } from '../../../services/profile/profileApi';
 import { useGetFriendsCountQuery } from '../../../services/friends/friendsApi';
 import { formatDateForInput } from '../../admin/common/formatDateForInput';
@@ -12,8 +13,11 @@ const fmtUAH = (n) => `${Number(n || 0).toLocaleString('uk-UA', { maximumFractio
 
 const ProfileLayout = ({ children }) => {
   const navigate = useNavigate();
-
-  const { data: profileRes, isLoading: loadingProfile, error: profileErr } = useGetProfileQuery();
+  const { user } = useSelector((state) => state.user);
+  const { data: profileRes, isLoading: loadingProfile, error: profileErr } = useGetProfileQuery(user?.id, {
+      skip: !user?.id,
+      refetchOnMountOrArgChange: true,
+    });
   const { data: balRes, isLoading: loadingBal, error: balErr } = useGetBalanceQuery();
   const { data: friendsCountData } = useGetFriendsCountQuery();
 
