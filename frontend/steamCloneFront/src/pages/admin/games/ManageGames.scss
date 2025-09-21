@@ -1,0 +1,67 @@
+.create-genre-btn {
+  background: linear-gradient(90deg, #a178eb 0%, #66c0f4 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(161, 120, 235, 0.12);
+  transition: filter 0.2s, transform 0.2s;
+}
+.create-genre-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.04);
+}
+
+.approve-game-btn {
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #477764, #74bff7 40%, #7c72db);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:hover {
+    filter: brightness(1.1);
+    transform: scale(1.04);
+  }
+}
+
+.manage-games-container {
+  input,
+  textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #353545;
+    background: #23232a65;
+    backdrop-filter: blur(2px);
+    color: #fff;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: none;
+    max-width: 40vw;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #a178eb;
+  }
+
+  .search-bar-games {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+}

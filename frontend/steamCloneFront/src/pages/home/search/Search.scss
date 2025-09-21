@@ -1,0 +1,242 @@
+$flux-bg-main: #120d1c;
+$flux-border-color: #9277C5;
+$flux-text-primary: #e0ddeb;
+$flux-text-secondary: #a099c2;
+$flux-text-muted: #6a6391;
+$shadow: 0px 10px 24px 0px #7C72DB33;
+$panel-bg: #121218;
+$panel-radius: 5px;
+
+:root { --navbar-h: 64px; }
+
+html, body, #root { min-height: 100%; height: auto; }
+body { margin: 0; background-color: $flux-bg-main; overflow-x: hidden; color-scheme: dark; }
+
+.store-search-page {
+  min-height: 100svh;
+  padding-top: calc(var(--navbar-h) + 16px);
+  color: $flux-text-primary;
+  background: transparent; 
+  position: relative;
+  isolation: isolate;
+}
+.store-search-page::before {
+  content: '';
+  position: fixed;
+  left: 0; top: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  height: 100lvh;
+  height: 100dvh;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url('/authbc/BG_grey.svg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+}
+
+.page-inset {
+  width: min(1760px, calc(100% - clamp(16px, 3vw, 32px) * 2));
+  margin-inline: auto;
+  padding-inline: clamp(16px, 3vw, 32px);
+  position: relative;
+  z-index: 1;
+}
+
+.search-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 22px;
+  margin: 16px 0 40px;
+}
+
+.panel {
+  background: $panel-bg;
+  border: 1px solid $flux-border-color;
+  border-radius: $panel-radius;
+  box-shadow: $shadow;
+  padding: 25px 50px 40px 50px;
+}
+
+.filters-col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.filters-col .panel-title {
+  color: #fff;
+  font: 700 16px/1.2 'Inter', system-ui, sans-serif;
+  margin-bottom: 12px;
+}
+
+.filters-col .price-range .range-row { margin: 8px 0 10px; }
+
+.filters-col input[type="range"] {
+  width: 100%;
+  appearance: none;
+  height: 4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 4px;
+  outline: none;
+}
+.filters-col input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: $flux-border-color;
+  border: 1px solid rgba(255,255,255,.35);
+  cursor: pointer;
+}
+.filters-col .price-info { color: $flux-text-secondary; font-size: 14px; }
+
+.check-list { display: flex; flex-direction: column; gap: 10px; }
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  color: $flux-text-secondary;
+}
+.check input[type="checkbox"] {
+  appearance: none;
+  width: 18px; height: 18px;
+  border: 1px solid $flux-text-secondary;
+  position: relative;
+  border-radius: 2px;
+}
+.check input[type="checkbox"]:checked {
+  background: $flux-border-color;
+  border-color: $flux-border-color;
+}
+.check input[type="checkbox"]:checked::before {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #121218;
+  font-weight: 800;
+  font-size: 13px;
+}
+.check span { font-weight: 600; }
+
+.results-col { display: flex; flex-direction: column; gap: 18px; }
+
+.results-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 22px;
+}
+
+.search-bar { position: relative; display: flex; align-items: center; }
+.search-bar input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,.2);
+  color: $flux-text-primary;
+  padding: 8px 36px 8px 0;
+  outline: none;
+}
+.search-bar input::placeholder { color: #565558; }
+.search-bar button {
+  position: absolute; right: 0;
+  width: 24px; height: 24px;
+  border: 0; background: transparent; cursor: pointer;
+}
+.search-bar img { width: 20px; height: 20px; }
+
+.sort-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: $flux-text-primary;
+}
+.sort-box span { color: #fff; font-weight: 600; }
+.sort-box select {
+  background-color: #20172e;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 6px;
+  padding: 8px 28px 8px 10px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #b9b9c7 50%), linear-gradient(135deg, #b9b9c7 50%, transparent 50%);
+  background-position: calc(100% - 14px) 55%, calc(100% - 8px) 55%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+.sort-box select:focus {
+  border-color: rgba(146,119,197,.6);
+  box-shadow: 0 0 0 3px rgba(146,119,197,.22);
+}
+.sort-box select option {
+  background-color: #1a1426;
+  color: #fff;
+}
+.sort-box select option:checked {
+  background-color: #33244a;
+  color: #fff;
+}
+
+.results-list { padding-top: 18px; }
+
+.result-row {
+  display: grid;
+  grid-template-columns: 158px auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(146,119,197,.35);
+}
+.result-row:last-child { border-bottom: none; }
+
+.thumb {
+  width: 158px; height: 74px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+.meta { display: flex; flex-direction: column; gap: 6px; }
+.meta .title { color: #fff; font: 800 22px/1.1 'Inter'; }
+.meta .year { color: #A4A4A4; font-size: 14px; }
+
+.price { display: inline-flex; align-items: center; gap: 10px; }
+.price .now {
+  display: inline-block;
+  background: #292035; color: #fff;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 5px; padding: 10px 12px; font: 800 16px/1 'Inter';
+}
+
+.price-discount .off {
+  display: inline-block;
+  padding: 8px 10px;
+  font: 900 14px/1 'Inter';
+  background: linear-gradient(270deg,#FFFFFF 0.54%,#8C8C8C 18.71%,#FF9584 28.28%,#DFED43 40.23%,#A0F885 49.79%,#74BFF7 59.18%,#7C72DB 67.24%,#8681A8 75.3%,#FFFFFF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  border: 1px solid rgba(161,120,235,.55);
+  border-radius: 8px;
+}
+.price-discount .nums {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: #292035; border: 1px solid rgba(255,255,255,.16); border-radius: 8px; padding: 8px 12px;
+}
+.price-discount .from { color: #9aa0a8; text-decoration: line-through; font: 800 16px/1 'Inter'; }
+.price-discount .now { color: #fff; font: 900 16px/1 'Inter'; }
+
+.empty { color: $flux-text-secondary; text-align: center; padding: 24px 0; }
+
+@media (max-width: 1100px) {
+  .search-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,49 @@
+﻿using Microsoft.AspNetCore.Http;
+using SteamClone.BLL.Services.Common;
+using SteamClone.Domain.ViewModels.Games;
+using SteamClone.Domain.ViewModels.Games.Localizations;
+using SteamClone.Domain.ViewModels.Games.SystemReq;
+
+namespace SteamClone.BLL.Services.GameService;
+
+public interface IGameService : IServiceCRUD<string, CreateGameVM, UpdateGameVM>
+{
+    Task<ServiceResponse> AddSystemRequirementsAsync(CreateUpdateSystemReqVm model,
+        CancellationToken cancellationToken);
+
+    Task<ServiceResponse> DeleteSystemRequirementsAsync(string systemRequirementId,
+        CancellationToken cancellationToken);
+
+    Task<ServiceResponse> UpdateSystemRequirementsAsync(string systemRequirementId,
+        UpdateSystemReqVM model, CancellationToken cancellationToken);
+
+    Task<ServiceResponse> UpdateCoverImageAsync(string gameId, IFormFile coverImage,
+        CancellationToken cancellationToken);
+
+    Task<ServiceResponse> UpdateScreenshotsImagesAsync(string gameId, IFormFileCollection newScreenshots,
+        List<string> screenshotsToDelete, CancellationToken cancellationToken);
+
+    Task<ServiceResponse> AddLocalizationAsync(CreateLocalizationVM model,
+        CancellationToken cancellationToken);
+
+    Task<ServiceResponse> UpdateLocalizationAsync(string localizationId, UpdateLocalizationVM model,
+        CancellationToken cancellationToken);
+
+    Task<ServiceResponse> DeleteLocalizationAsync(string localizationId,
+        CancellationToken cancellationToken);
+    
+    Task<ServiceResponse> AssociateUserAsync(string gameId, string userId, CancellationToken token);
+    
+    Task<ServiceResponse> RemoveAssociatedUserAsync(string gameId, string userId, CancellationToken token);
+    
+    Task<ServiceResponse> GetByAssociatedUserAsync(bool? isApproved = true, CancellationToken token = default);
+    
+    Task<ServiceResponse> ApproveAsync(string id, bool isApproved, CancellationToken token);
+    
+    Task<ServiceResponse> GetWithoutApprovalAsync(CancellationToken token);
+    Task<ServiceResponse> BuyGameAsync(string id, CancellationToken token);
+    Task<ServiceResponse> IsGameBoughtAsync(string gameId, CancellationToken token);
+    Task<ServiceResponse> GetAssociatedUsersAsync(string gameId, CancellationToken token);
+    Task<ServiceResponse> IsGameOwnerAsync(string gameId, CancellationToken token);
+    Task<ServiceResponse> IsGameApprovedAsync(string gameId, CancellationToken token);
+}

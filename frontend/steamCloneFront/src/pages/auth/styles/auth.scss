@@ -1,0 +1,433 @@
+$flux-bg-main: #120d1c;
+$flux-bg-form-gradient: linear-gradient(180deg, #2F243E 0%, #1F1829 100%);
+$flux-border-color: #9277C5;
+$flux-shadow-color: rgba(124, 114, 219, 0.2);
+$flux-text-primary: #e0ddeb;
+$flux-text-secondary: #a099c2;
+$flux-text-placeholder: #6a6391;
+$flux-clip-path: polygon(25px 0, calc(100% - 25px) 0, 100% 25px, 100% calc(100% - 25px), calc(100% - 25px) 100%, 25px 100%, 0 calc(100% - 25px), 0 25px);
+$flux-transition: 0.3s ease;
+$flux-blur: 24px;
+
+.flux-auth-container {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background-color: $flux-bg-main;
+  background-image: url('/authbc/BG_grey.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.flux-auth-box {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 45px;
+  background: $flux-bg-form-gradient;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  clip-path: $flux-clip-path;
+  color: $flux-text-primary;
+  box-shadow: 0px 10px $flux-blur $flux-shadow-color;
+  animation: fadeInFromBottom 0.6s ease forwards;
+  
+  &.register {
+    max-width: 520px;
+    padding: 45px 55px;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: $flux-border-color;
+    clip-path: $flux-clip-path;
+    z-index: -1;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}
+
+.flux-header {
+  text-align: center;
+  margin-bottom: 35px;
+  h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: $flux-text-primary;
+  }
+}
+
+.flux-form-group {
+  margin-bottom: 30px;
+  position: relative;
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+    color: $flux-text-secondary;
+    font-size: 0.9rem;
+  }
+}
+
+.flux-input-wrapper {
+  position: relative;
+  input {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid $flux-text-placeholder;
+    padding: 10px 5px;
+    font-size: 1rem;
+    color: $flux-text-primary;
+    transition: $flux-transition;
+    &::placeholder {
+      color: $flux-text-secondary;
+      opacity: 0.8;
+    }
+    &:focus {
+      outline: none;
+      border-bottom-color: $flux-border-color;
+    }
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+      -webkit-text-fill-color: $flux-text-primary !important;
+      -webkit-box-shadow: 0 0 0 30px #1F1829 inset !important;
+      transition: background-color 5000s ease-in-out 0s;
+      background-clip: content-box !important;
+  }
+  .toggle-password-visibility {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $flux-text-secondary;
+    transition: $flux-transition;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      width: 20px;
+      height: 20px;
+      transition: opacity 0.2s ease;
+    }
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.flux-options-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-bottom: 30px;
+}
+
+.flux-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid $flux-text-secondary;
+    position: relative;
+    cursor: pointer;
+    transition: $flux-transition;
+    flex-shrink: 0;
+    &:checked {
+      border-color: $flux-border-color;
+      background: $flux-border-color;
+      &::before {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: $flux-bg-main;
+        font-size: 14px;
+        font-weight: bold;
+      }
+    }
+  }
+  label {
+    color: $flux-text-secondary;
+    cursor: pointer;
+    user-select: none;
+  }
+}
+
+.flux-link {
+  color: $flux-text-secondary;
+  text-decoration: none;
+  transition: $flux-transition;
+  &:hover {
+    color: $flux-text-primary;
+  }
+}
+
+.flux-forgot-password-box {
+  border: 1px dashed $flux-text-placeholder;
+  padding: 8px 12px;
+  transition: $flux-transition;
+  &:hover {
+    border-color: $flux-border-color;
+    background-color: rgba($flux-border-color, 0.1);
+    .flux-link {
+      color: $flux-text-primary;
+    }
+  }
+}
+
+.flux-captcha-box {
+  border: 1px solid $flux-text-placeholder;
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: $flux-transition;
+  margin-bottom: 20px;
+
+  &:hover {
+    border-color: $flux-border-color;
+    background-color: rgba($flux-border-color, 0.1);
+  }
+
+  .flux-captcha-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 1px solid $flux-text-secondary;
+    flex-shrink: 0;
+    position: relative;
+  }
+  
+  .flux-captcha-label {
+    color: $flux-text-primary;
+    font-size: 1rem;
+  }
+
+  &.verified {
+    border-color: #3dffb3;
+    background-color: rgba(#3dffb3, 0.1);
+    cursor: default;
+    .flux-captcha-checkbox {
+      border-color: #3dffb3;
+      background-color: #3dffb3;
+      &::before {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: $flux-bg-main;
+        font-size: 16px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.flux-legal-text {
+  font-size: 0.8rem;
+  color: $flux-text-secondary;
+  line-height: 1.5;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  a {
+    color: $flux-border-color;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.flux-continue-button {
+  width: 100%;
+  height: 58px;
+  padding: 0;
+  border: none;
+  background: url('/authbc/Continue.svg') no-repeat center;
+  background-size: 100% 100%;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  color: transparent;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+  &:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.7);
+    opacity: 0.6;
+  }
+}
+
+.flux-switch-form {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.9rem;
+  color: $flux-text-secondary;
+  a {
+    color: $flux-border-color;
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: 5px;
+    transition: $flux-transition;
+    &:hover {
+      filter: brightness(1.2);
+    }
+  }
+}
+
+.flux-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba($flux-bg-main, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  &.modal-enter { animation: fadeInOverlay 0.3s forwards; }
+  &.modal-exit { animation: fadeOutOverlay 0.3s forwards; }
+}
+
+.flux-modal-content {
+  background: $flux-bg-form-gradient;
+  padding: 2.5rem;
+  clip-path: $flux-clip-path;
+  box-shadow: 0 10px $flux-blur $flux-shadow-color;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: $flux-border-color;
+    clip-path: $flux-clip-path;
+    z-index: -1;
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  &.modal-enter { animation: scaleInModal 0.5s cubic-bezier(0.16, 1.36, 0.45, 1) forwards; }
+  &.modal-exit { animation: scaleOutModal 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards; }
+
+  h3 {
+    color: $flux-text-primary;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+  
+  p {
+    color: $flux-text-secondary;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+
+  .flux-modal-input {
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid $flux-text-placeholder;
+    color: $flux-text-primary;
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 500;
+    transition: $flux-transition;
+    &:focus {
+      outline: none;
+      border-color: $flux-border-color;
+    }
+  }
+
+  .flux-modal-actions {
+    display: flex;
+    gap: 1rem;
+    .flux-modal-verify-button {
+      flex: 1;
+      height: 50px;
+      padding: 0;
+      border: none;
+      background: url('/authbc/Verify.svg') no-repeat center;
+      background-size: 100% 100%;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      color: transparent;
+      &:hover {
+        transform: scale(1.02);
+      }
+    }
+    .flux-cancel-button {
+      flex: 1;
+      padding: 14px;
+      background: rgba($flux-text-placeholder, 0.2);
+      border: 1px solid $flux-text-placeholder;
+      color: $flux-text-secondary;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: $flux-transition;
+      &:hover {
+        background: rgba($flux-border-color, 0.2);
+        border-color: $flux-border-color;
+        color: $flux-text-primary;
+      }
+    }
+  }
+}
+
+@keyframes fadeInFromBottom {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOutOverlay { from { opacity: 1; } to { opacity: 0; } }
+@keyframes scaleInModal {
+  from { transform: scale(0.9) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes scaleOutModal {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.9); opacity: 0; }
+}

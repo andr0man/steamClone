@@ -1,0 +1,115 @@
+.game-form-container {
+  padding: 0 24px;
+  padding-bottom: 24px;
+  width: 100%;
+}
+
+.game-form-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.game-form-inputs {
+  display: flex;
+  flex-direction: row;
+  gap: 18px;
+}
+
+.game-form-inputs-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 1rem;
+  color: #a178eb;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #353545;
+  background: #23232a;
+  color: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #a178eb;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.submit-game-btn {
+  background: linear-gradient(90deg, #a178eb 0%, #66c0f4 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(161, 120, 235, 0.12);
+  transition: filter 0.2s, transform 0.2s;
+
+  &:hover {
+    filter: brightness(1.1);
+    transform: scale(1.04);
+  }
+}
+
+.create-game-btn {
+  background: linear-gradient(90deg, #a178eb 0%, #66c0f4 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(161, 120, 235, 0.12);
+  transition: filter 0.2s, transform 0.2s;
+}
+.create-game-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.04);
+}
+.cancel-game-btn {
+  background: #353545;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px 0 rgba(53, 53, 69, 0.12);
+  transition: filter 0.2s, transform 0.2s;
+  
+  &:hover {
+    filter: brightness(1.1);
+    transform: scale(1.04);
+  }
+}

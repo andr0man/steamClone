@@ -1,0 +1,386 @@
+@use "./variables";
+
+// border styles
+.flux-border {
+  background: variables.$panel-bg;
+  border: 1px solid variables.$panel-border;
+  border-radius: variables.$card-radius;
+  box-shadow: variables.$panel-shadow;
+  color: variables.$ink;
+}
+
+// tilted button styles
+
+.tilted-component {
+  transform: skewX(-(variables.$button-rotation-degree));
+  color: #fff;
+  font-family: inherit;
+  position: relative;
+  // z-index: 1;
+  text-align: center;
+  text-transform: none;
+  outline: none;
+
+  // make inner content counter-skew so text appears upright
+  * {
+    transform: skewX(variables.$button-rotation-degree);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -2;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    padding: 3px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: background-position 0.6s cubic-bezier(0.4, 0.2, 0.2, 1),
+      opacity 0.25s;
+    z-index: -1;
+    opacity: 0;
+  }
+}
+
+.tilted-button {
+  @extend .tilted-component;
+
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.02) skewX(-(variables.$button-rotation-degree));
+    filter: brightness(1.1);
+  }
+
+  &:hover::before {
+    background-position: 100% 0;
+    opacity: 1;
+  }
+
+  &:hover::after {
+    animation-duration: 1s;
+  }
+
+  &:active {
+    transform: scale(0.99) skewX(-(variables.$button-rotation-degree));
+  }
+}
+
+.white-button {
+  @extend .tilted-button;
+
+  color: #fff;
+  font-family: inherit;
+  background: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 10px 30px;
+  margin: 20px;
+  border: none;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+  margin-top: 18px;
+  border-radius: 6px;
+  overflow: visible;
+
+  &::after {
+    background: white;
+    background-size: 200% 200%;
+    padding: 3px;
+  }
+}
+
+.rainbow-button {
+  @extend .tilted-button;
+
+  background: linear-gradient(90deg, #121218 0%, #474350 100%);
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 10px 30px;
+  margin: 20px;
+  border: none;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+  margin-top: 18px;
+  border-radius: 6px;
+  overflow: visible;
+
+  /* градієнтна основа (підкладка) */
+  &::after {
+    /* Градієнтна рамка замість білої */
+    background: variables.rainbow(270deg);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+    /* Створюємо рамку через padding і mask */
+    padding: 3px;
+  }
+
+  /* райдужний шар при ховері */
+  &::before {
+    background: variables.rainbow(45deg);
+    background-size: 200% 100%;
+    background-position: 0 0;
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.white-outline-for-text {
+  @extend .tilted-component;
+
+  color: #fff;
+  font-family: inherit;
+  background: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 10px 30px;
+  margin: 20px;
+  border: none;
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.18);
+  letter-spacing: 0.01em;
+  margin-top: 18px;
+  border-radius: 6px;
+  overflow: visible;
+
+  &::after {
+    background: white;
+    background-size: 200% 200%;
+    padding: 3px;
+  }
+
+  &::before {
+    background: white;
+    background-size: 200% 100%;
+    background-position: 0 0;
+  }
+}
+
+// loading overlay styles
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 13, 28, 0.9);
+  display: grid;
+  place-items: center;
+  z-index: 1500;
+  color: #e0ddeb;
+  font-size: 1.4rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.loading-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.loading-overlay::after {
+  content: " .";
+  animation: dots 1.4s steps(3, end) infinite;
+}
+
+// modal styles
+.modal-with-border-container {
+  position: relative;
+  display: inline-block;
+  max-width: 70vw;
+  min-width: 600px;
+  margin-top: 70px;
+  filter: drop-shadow(0 10px 20px rgba(124, 114, 219, 0.2));
+}
+
+.modal-border {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; // щоб не заважати клікам
+  background-color: #725a9e;
+  padding: 1px;
+  z-index: -1;
+  clip-path: variables.$polygon-shape;
+  box-sizing: content-box;
+}
+
+@media (max-width: 500px) {
+  .modal-with-border-content {
+    padding: 18px 8px 12px 8px;
+  }
+
+  .modal-border {
+    font-size: 1.2rem;
+  }
+}
+
+// manage table styles
+
+.manage-container {
+  background: #181a20;
+  padding: 32px 24px;
+  max-width: 800px;
+  margin: 32px auto;
+
+  .manage-table {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #23232a;
+    box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.08);
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .manage-table th {
+    background: #23232a;
+    color: #a178eb;
+    font-weight: 500;
+    padding: 12px 8px;
+    border-bottom: 2px solid #353545;
+  }
+
+  .manage-table td {
+    background: #23232a;
+    color: #fff;
+    padding: 10px 8px;
+    border-bottom: 1px solid #353545;
+  }
+
+  .create-manage-btn {
+    background: linear-gradient(90deg, #a178eb 0%, #66c0f4 100%);
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px 0 rgba(161, 120, 235, 0.12);
+    transition: filter 0.2s, transform 0.2s;
+  }
+  .create-manage-btn:hover {
+    filter: brightness(1.1);
+    transform: scale(1.04);
+  }
+
+  .preview-manage-btn {
+    background: linear-gradient(90deg, #5c54a1 0%, #dba7f7 100%);
+    color: #23232a;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 1px 6px 0 rgba(102, 192, 244, 0.1);
+    transition: filter 0.2s, transform 0.2s;
+
+    &:hover {
+      filter: brightness(1.08);
+      transform: scale(1.04);
+    }
+  }
+
+  .edit-manage-btn {
+    background: linear-gradient(90deg, #74bff7 0%, #a0f885 100%);
+    color: #23232a;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 1px 6px 0 rgba(116, 191, 247, 0.1);
+    transition: filter 0.2s, transform 0.2s;
+  }
+  .edit-manage-btn:hover {
+    filter: brightness(1.08);
+    transform: scale(1.04);
+  }
+
+  .delete-manage-btn {
+    background: linear-gradient(90deg, #ff9584 0%, #dfed43 100%);
+    color: #23232a;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 1px 6px 0 rgba(255, 149, 132, 0.1);
+    transition: filter 0.2s, transform 0.2s;
+  }
+  .delete-manage-btn:hover {
+    filter: brightness(1.08);
+    transform: scale(1.04);
+  }
+
+  .actions-td {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #353545;
+    background: #23232a;
+    color: #fff;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: none;
+    max-width: 40vw;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #a178eb;
+  }
+
+  .manage-search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+}
+
+input,
+textarea {
+  transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}

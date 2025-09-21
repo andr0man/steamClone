@@ -1,0 +1,123 @@
+import { useState } from "react";
+import { toast } from "react-toastify";
+import {
+  useCreateDeveloperAndPublisherMutation,
+  useGetAllDevelopersAndPublishersQuery,
+} from "../../../services/developerAndPublisher/developerAndPublisherApi";
+import "./ManageDevAndPub.scss";
+import DevPubRow from "./components/DevPubRow";
+import { DevPubModal } from "./components/modal/DevPubModal";
+import { useNavigate } from "react-router-dom";
+import { useSearchFilter } from "../../../components/Search/useSearchFilter";
+
+const ManageDevAndPub = () => {
+  const navigate = useNavigate();
+  const {
+    data: { payload: devAndPubList } = { payload: [] },
+    error,
+    isLoading,
+  } = useGetAllDevelopersAndPublishersQuery();
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [createDevPub, { isLoading: isCreating }] =
+    useCreateDeveloperAndPublisherMutation();
+  const [modalReset, setModalReset] = useState(() => () => {});
+
+  const {
+    query,
+    filteredList: filteredDevAndPubList,
+    handleSearch,
+  } = useSearchFilter(devAndPubList, (item, query) =>
+    item.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  if (isLoading)
+    return <div className="loading-overlay visible">Loading data...</div>;
+  if (error) return <div>Error loading developers and publishers</div>;
+
+  const handleClose = () => {
+    setCreateModalOpen(false);
+    modalReset();
+  };
+
+  const handleCreateDevPub = async (data) => {
+    try {
+      await createDevPub(data).unwrap();
+      setCreateModalOpen(false);
+      toast.success("Created successfully");
+      modalReset();
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to create");
+    }
+  };
+
+  return (
+    <div className="manage-container flux-border">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: 24,
+        }}
+      >
+        <h2 style={{ margin: 0 }}>Manage Developers & Publishers</h2>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            className="approve-game-btn"
+            onClick={() => navigate("approve")}
+          >
+            To approve
+          </button>
+          <button
+            className="create-manage-btn"
+            onClick={() => setCreateModalOpen(true)}
+            disabled={isCreating}
+          >
+            {isCreating ? "Creating..." : "Create"}
+          </button>
+        </div>
+      </div>
+      <div className="manage-search-bar">
+        <input
+          type="text"
+          placeholder="Search developers & publishers by name..."
+          value={query}
+          onChange={handleSearch}
+        />
+      </div>
+      <table className="manage-table">
+        <thead>
+          <tr>
+            <th style={{ textAlign: "left", padding: "8px" }}>Name</th>
+            <th style={{ textAlign: "center", padding: "8px", width: "340px" }}>
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredDevAndPubList.length > 0 ? (
+            filteredDevAndPubList.map((item) => (
+              <DevPubRow key={item.id} devpub={item} />
+            ))
+          ) : (
+            <tr>
+              <td colSpan={2} style={{ textAlign: "center", padding: "8px" }}>
+                No developers or publishers available
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+      <DevPubModal
+        isOpen={isCreateModalOpen}
+        onClose={handleClose}
+        onSubmit={handleCreateDevPub}
+        titleText="Create Developer/Publisher"
+        confirmText="Create"
+        setModalReset={setModalReset}
+      />
+    </div>
+  );
+};
+
+export default ManageDevAndPub;

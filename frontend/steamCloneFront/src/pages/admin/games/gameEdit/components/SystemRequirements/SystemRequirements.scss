@@ -1,0 +1,68 @@
+.system-requirements-panel {
+  padding: 18px 0;
+}
+
+.requirements-section {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+.requirement-section {
+  flex: 1;
+}
+
+.req-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.req-row {
+  display: flex;
+  flex-direction: column;
+}
+.req-row label {
+  font-size: 1rem;
+  color: #a178eb;
+  font-weight: 500;
+  padding: 0;
+  margin: 0;
+}
+.req-row input,
+.req-row textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #353545;
+  background: #23232a;
+  color: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: none;
+}
+
+.req-row input:focus,
+.req-row textarea:focus {
+  outline: none;
+  border-color: #a178eb;
+}
+
+.req-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+.req-actions button {
+  background: linear-gradient(90deg, #8ee7ff 0%, #80ffa6 100%);
+  color: #23232a;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.req-actions button.danger {
+  background: linear-gradient(90deg, #ff9584 0%, #ffcf73 100%);
+}
