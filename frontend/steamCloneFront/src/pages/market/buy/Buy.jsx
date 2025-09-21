@@ -2,16 +2,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./buy.scss";
 import Notification from "../../../components/Notification";
-import { useBuyMarketItemMutation } from "../../../services/market/marketApi";
+import { useBuyMarketMutation } from "../../../services/market/marketBuyApi";
 import { useGetBalanceQuery } from "../../../services/profile/profileApi";
+import { Wallet } from "lucide-react";
 
 const ITEM_SKEY = "BUY_ITEM_CACHE";
 
-const fmtUAH = (n) => {
-  const num = Number(n) || 0;
-  const digits = Number.isInteger(num) ? 0 : 2;
-  return `${num.toLocaleString("uk-UA", { minimumFractionDigits: digits, maximumFractionDigits: digits })}₴`;
-};
+const fmtUAH = (n) =>
+  `${Number(n || 0).toLocaleString("uk-UA", { maximumFractionDigits: 0 })}₴`;
 
 export default function Buy() {
   const { state } = useLocation();
@@ -29,57 +27,71 @@ export default function Buy() {
   });
 
   const { data: balRes, refetch: refetchBalance } = useGetBalanceQuery();
+
   const balance =
-    balRes?.payload?.balance ??
-    balRes?.payload?.amount ??
-    balRes?.balance ??
-    balRes?.amount ?? 0;
+    typeof balRes?.payload === "number"
+      ? balRes.payload
+      : balRes?.payload?.balance ??
+        balRes?.payload?.amount ??
+        balRes?.balance ??
+        balRes?.amount ??
+        0;
 
-  const [buyMarketItem, { isLoading: buying }] = useBuyMarketItemMutation();
+  const [buy, { isLoading: buying }] = useBuyMarketMutation();
 
-  const [price, setPrice] = useState(() => Number(item?.priceUAH || 0));
-  const [qty, setQty] = useState(1);
   const [error, setError] = useState("");
   const [notif, setNotif] = useState(null);
+  const [agree, setAgree] = useState(false);
 
-  useEffect(() => { setPrice(Number(item?.priceUAH || 0)); }, [item]);
+  useEffect(() => {
+    if (state?.item) setItem(state.item);
+  }, [state?.item]);
 
-  const total = useMemo(() => {
-    const p = Math.max(0, Number(price) || 0);
-    const q = Math.max(1, parseInt(qty, 10) || 1);
-    return Math.round(p * q * 100) / 100;
-  }, [price, qty]);
+  const price = Number(item?.priceUAH ?? item?.price ?? 0);
+  const quantity = 1;
+  const total = price * quantity;
 
   const insufficient = Number(balance) < total;
-  const valid = !!item && total > 0 && qty >= 1;
+  const valid = !!item?.id && total > 0 && agree;
 
   const placeOrder = async () => {
     setError(""); setNotif(null);
-    if (!valid) return setError("Fill price and quantity correctly.");
-    if (insufficient) return setError("Insufficient balance. Please top up.");
-    if (!item?.id) return setError("No market item id.");
-
+    if (!item?.id) return setError("No selected item.");
+    if (!agree) return setError("Please confirm you agree with the purchase terms.");
+    if (insufficient) return setError("Insufficient funds. Please top up your balance.");
     try {
-      await buyMarketItem({ marketItemId: item.id }).unwrap();
+      await buy(item.id).unwrap();
       await refetchBalance();
+      try { sessionStorage.removeItem(ITEM_SKEY); } catch {}
       setNotif({ type: "success", msg: `Purchased "${item.name}" for ${fmtUAH(total)}` });
       setTimeout(() => navigate("/market", { replace: true }), 700);
     } catch (e) {
-      setError(e?.data?.message || e?.error || "Purchase failed");
+      setError(e?.data?.message || e?.error || "Failed to place the order");
     }
   };
+
+  const breakdown = useMemo(() => {
+    const pay = total;
+    return { pay };
+  }, [total]);
 
   if (!item) {
     return (
       <div className="buyx-page">
         <div className="buyx-top">
-          <Link className="nav-link" to="/inventory">Inventory</Link>
-          <Link className="nav-link" to="/market/history">Market History</Link>
-          <span className="balance">Balance: {fmtUAH(balance)}</span>
+          <button className="back-button" onClick={() => navigate("/market")}>Back to Market</button>
+          <div className="spacer" />
+          <button className="nav-link" onClick={() => navigate("/profile/inventory")}>Inventory</button>
+          <button className="nav-link" onClick={() => navigate("/market/history")}>Market History</button>
+          <div className="wallet-chip" title="Wallet balance">
+            <Wallet size={16} />
+            <span>{fmtUAH(balance)}</span>
+          </div>
         </div>
-        <div className="checkout missing">
+
+        <div className="checkout missing flux-border">
           <div className="title">Checkout</div>
-          <div className="msg">No item selected. Go back to Market.</div>
+          <div className="msg">No selected item. Go back to Market.</div>
           <Link className="btn-back" to="/market">Back to market</Link>
         </div>
       </div>
@@ -95,73 +107,83 @@ export default function Buy() {
       />
 
       <div className="buyx-top">
-        <button className="nav-link" onClick={() => navigate("/inventory")}>Inventory</button>
+        <button className="back-button" onClick={() => navigate("/market")}>Back to Market</button>
+        <div className="spacer" />
+        <button className="nav-link" onClick={() => navigate("/profile/inventory")}>Inventory</button>
         <button className="nav-link" onClick={() => navigate("/market/history")}>Market History</button>
-        <span className="balance">Balance: {fmtUAH(balance)}</span>
+        <div className={`wallet-chip ${insufficient ? "low" : ""}`} title="Wallet balance">
+          <Wallet size={16} />
+          <span>{fmtUAH(balance)}</span>
+        </div>
       </div>
 
       <div className="checkout">
-        <div className="panel">
+        <div className="panel flux-border">
           <div className="left">
             <div className="title">Checkout</div>
 
-            <label className="field">
-              <span className="label">Price per item (market: {fmtUAH(item.priceUAH)})</span>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                onBlur={(e) => {
-                  const n = Math.max(0, Number(e.target.value) || 0);
-                  setPrice(Math.round(n * 100) / 100);
-                }}
-              />
+            <div className="field readonly">
+              <span className="label">Price</span>
+              <div className="value">{fmtUAH(price)}</div>
               <span className="underline" />
-            </label>
+            </div>
 
-            <label className="field">
-              <span className="label">Quantity of items</span>
-              <input
-                type="number"
-                min="1"
-                step="1"
-                value={qty}
-                onChange={(e) => setQty(Math.max(1, parseInt(e.target.value, 10) || 1))}
-              />
+            <div className="field readonly">
+              <span className="label">Quantity</span>
+              <div className="value">×{quantity}</div>
               <span className="underline" />
-            </label>
+            </div>
+
+            <div className="pp-breakdown alt">
+              <div className="kv total">
+                <span>Total to pay</span>
+                <span className="pill">{fmtUAH(breakdown.pay)}</span>
+              </div>
+            </div>
+
+            <div className="agree-row">
+              <label className="agree-check">
+                <input
+                  type="checkbox"
+                  checked={agree}
+                  onChange={(e) => setAgree(e.target.checked)}
+                />
+                <span>
+                  I agree to the purchase terms and the Flux Subscriber Agreement. By continuing I confirm the purchase is final.
+                </span>
+              </label>
+              {insufficient && (
+                <div className="warn">
+                  Insufficient funds for {fmtUAH(total)}. Please top up your balance.
+                </div>
+              )}
+            </div>
 
             <div className="place-row">
               <button
-                className={`svg-btn big ${!valid || insufficient || buying ? "disabled" : ""}`}
+                className="rainbow-button"
                 onClick={placeOrder}
-                disabled={!valid || insufficient || buying}
-                title={insufficient ? "Insufficient balance" : "Place order"}
+                disabled={!valid || buying || insufficient}
+                title={insufficient ? "Insufficient funds" : "Place order"}
               >
-                <img src="/authbc/placeorder.svg" alt="Place order" />
+                {buying ? "Processing…" : "Place order"}
               </button>
-
-              {insufficient && (
-                <div className="hint warn">
-                  Not enough balance for {fmtUAH(total)}. Top up to proceed.
-                </div>
-              )}
-              {buying && <div className="hint">Processing…</div>}
             </div>
           </div>
 
           <div className="right">
             <div className="right-head">Order Summary</div>
 
-            <div className="summary">
+            <div className="summary flux-border">
               <div className="thumb">
-                <img src={item.imageUrl} alt="" />
+                <div className="thumb-ratio">
+                  <img src={item.imageUrl || "/common/itemNoImage.png"} alt={item.name} />
+                </div>
               </div>
               <div className="meta">
                 <div className="name" title={item.name}>{item.name}</div>
                 <div className="game">{item.game}</div>
+                <div className="pill">{fmtUAH(total)}</div>
               </div>
             </div>
 
@@ -169,24 +191,22 @@ export default function Buy() {
 
             <div className="kv">
               <span>Price</span>
-              <span>{fmtUAH(price)}</span>
+              <span className="pill small">{fmtUAH(price)}</span>
             </div>
             <div className="kv">
               <span>Quantity</span>
-              <span>×{qty}</span>
+              <span className="pill small">×{quantity}</span>
             </div>
 
             <div className="line" />
 
             <div className="kv total">
               <span>Total</span>
-              <span>{fmtUAH(total)}</span>
+              <span className="pill">{fmtUAH(total)}</span>
             </div>
 
             <p className="legal">
-              You are placing an order for a digital license for this product.
-              For full terms, see purchase policy. By selecting ‘Place Order’ below,
-              you agree to the Flux Subscriber Agreement.
+              You are placing an order for a digital product. All sales are final. By confirming this order, you agree to the service terms.
             </p>
           </div>
         </div>
