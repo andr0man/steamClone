@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import "./wishlist.scss";
 import Notification from "../../../components/Notification";
 import { Search as SearchIcon } from "lucide-react";
@@ -48,13 +48,17 @@ const mapFromApi = (resp) => {
 
 const Wishlist = () => {
   const navigate = useNavigate();
-  const { data, isFetching, isError, error } = useGetWishlistByUserQuery();
-  const [removeFromWishlist, { isLoading: removing }] = useRemoveFromWishlistMutation();
+  const { data, isFetching, isError, error, refetch } = useGetWishlistByUserQuery();
+  const [removeFromWishlist, { isLoading: removing, isSuccess: removeSuccess }] = useRemoveFromWishlistMutation();
 
   const items = useMemo(() => mapFromApi(data), [data]);
 
   const [q, setQ] = useState("");
   const [sortBy, setSortBy] = useState("personal");
+
+  useEffect(() => {
+    if (removeSuccess) refetch();
+  }, [removeSuccess, refetch]);
 
   const filteredSorted = useMemo(() => {
     let list = items.slice();
