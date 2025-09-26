@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import './Home.scss';
+import './home.scss';
 import ArrowLeft from "../../../src/assets/ArrowLeft.svg";
 import ArrowRight from "../../../src/assets/ArrowRight.svg";
 import { useGetAllGamesQuery } from "../../services/game/gameApi";

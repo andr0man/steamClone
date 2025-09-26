@@ -18,6 +18,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Common", "tests\Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Data", "tests\Tests.Data\Tests.Data.csproj", "{0DEAB834-AC75-4E2E-AAD9-9B0F6C2CA7E9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{F9B87514-098C-49FC-81C0-EBD25EA4FB7B}"
+	ProjectSection(SolutionItems) = preProject
+		src\.dockerignore = src\.dockerignore
+		src\docker-compose.yml = src\docker-compose.yml
+		src\Dockerfile = src\Dockerfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

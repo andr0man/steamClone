@@ -1,5 +1,6 @@
 import React from "react";
 import "./Footer.scss";
+import toThePageStart from "../../assets/To-the-page-start.svg";
 
 const ToThePageStart = ({ className }) => {
   return (
@@ -7,7 +8,7 @@ const ToThePageStart = ({ className }) => {
       className={`to-the-page-start ${className}`}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
     >
-      <img src="/src/assets/To-the-page-start.svg" alt="arrow up" className="footer-arrow" />
+      <img src={toThePageStart} alt="arrow up" className="footer-arrow" />
     </div>
   );
 };

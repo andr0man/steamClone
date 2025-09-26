@@ -22,10 +22,15 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
+            policy.WithOrigins(
+                    "http://localhost:5173",
+                    "http://localhost:3000",
+                    "http://localhost",
+                    "http://20.238.27.31",
+                    "http://flux-games.pp.ua")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 
