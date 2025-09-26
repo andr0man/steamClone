@@ -97,6 +97,7 @@ $green: #3dffb3;
 .inv-list { padding: 14px; }
 .inv-grid { display: grid; grid-template-columns: repeat(3, minmax(220px, 1fr)); gap: 14px; }
 @media (max-width: 1200px) {.inv-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 1600px) { .head-right {display: flex; flex-wrap: wrap; align-items: center; gap: 10px;} }
 @media (max-width: 600px) {.inventory-content { grid-template-columns: 1fr; } .inv-grid { grid-template-columns: 1fr; } }
 
 .inv-card { border: 1px solid rgba(255,255,255,.12); border-radius: 10px; overflow: hidden; background: #0f1016; cursor: pointer; transition: .15s ease; display: grid; gap: 8px; }

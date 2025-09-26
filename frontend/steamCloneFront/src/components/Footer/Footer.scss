@@ -2,7 +2,7 @@
 
 .footer-container {
   width: 100%;
-  max-width: 1611px;
+  max-width: 1599px;
   height: 353px;
   margin: 0 auto;
   padding-left: 50px;
@@ -100,23 +100,26 @@
 }
 
 .page-start-button {
-  margin-top: -1.5px;
-  margin-bottom: -1.5px;
   width: 53.67px;
+  height: 75px;
   background-color: var(--bg, rgba(18, 18, 24, 1));
+  display: flex;
+  align-items: center;
 }
 
 .to-the-page-start {
   position: relative;
-  aspect-ratio: 0.73;
+  left: 43px;
+  bottom: 20px;
 }
 
+$asset-flux-size: 275px;
 .asset-flux-image {
   position: absolute;
-  width: 303px;
-  height: 250px;
-  top: 75px;
-  right: 100px;
+  width: $asset-flux-size;
+  height: $asset-flux-size;
+  top: 65px;
+  right: 240px;
   left: auto;
 }
 

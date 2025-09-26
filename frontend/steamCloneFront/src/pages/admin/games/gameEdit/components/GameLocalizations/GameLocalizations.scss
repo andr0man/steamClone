@@ -1,5 +1,14 @@
+$checkbox-size: 20px;
+
 .localizations-panel {
   padding: 18px 0;
+
+  input[type="checkbox"] {
+    width: $checkbox-size;
+    height: $checkbox-size;
+    accent-color: #a178eb;
+    cursor: pointer;
+  }
 }
 
 .localizations-table {
