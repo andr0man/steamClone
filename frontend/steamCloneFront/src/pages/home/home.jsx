@@ -1,9 +1,10 @@
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import './Home.scss';
 import ArrowLeft from "../../../src/assets/ArrowLeft.svg";
 import ArrowRight from "../../../src/assets/ArrowRight.svg";
 import { useGetAllGamesQuery } from "../../services/game/gameApi";
+import { useGetAllForSearchQuery } from "../../services/search/searchApi";
 
 const FALLBACK_IMG = "https://via.placeholder.com/640x360/1c232c/ffffff.png?text=Game";
 
@@ -95,8 +96,8 @@ const normalizeGames = (resp) => {
 };
 
 const calculateDiscountedPrice = (price, discount) => {
-    return (price - (price * discount) / 100).toFixed(0);
-  };
+  return (price - (price * discount) / 100).toFixed(0);
+};
 
 const discountOf = (g) => {
   return nnum(g?.discount) || 0;
@@ -124,10 +125,65 @@ const toCard = (g) => ({
 const StoreRail = () => {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef(null);
+  const { data: searchRaw, refetch: refetchSearch } = useGetAllForSearchQuery();
+
+  useEffect(() => {
+    refetchSearch();
+    const id = setInterval(() => refetchSearch(), 60000);
+    return () => clearInterval(id);
+  }, [refetchSearch]);
+
+  const normalizeLite = useMemo(() => {
+    const list = searchRaw?.payload ?? searchRaw ?? [];
+    if (!Array.isArray(list)) return [];
+    return list.map((row) => {
+      const g = row?.game ?? row?.gameDto ?? row?.gameDetails ?? row;
+      const idRaw = g?.slug ?? g?.id ?? row?.gameId ?? row?.id ?? g?.name ?? g?.title;
+      const id = String(idRaw ?? "").trim() || slugify(g?.name ?? g?.title ?? crypto.randomUUID());
+      const imageUrl =
+        g?.coverImageUrl ??
+        g?.coverImage ??
+        (Array.isArray(g?.screenshots) ? g.screenshots[0] : null) ??
+        null;
+      return {
+        id,
+        title: g?.name ?? g?.title ?? "Game",
+        imageUrl: imageUrl || FALLBACK_IMG,
+        popularity: nnum(g?.percentageOfPositiveReviews) ?? 0,
+      };
+    });
+  }, [searchRaw]);
+
+  const norm = (s) => slugify(s || '').replace(/-/g, '');
+  const suggestions = useMemo(() => {
+    const all = normalizeLite.slice();
+    const key = norm(q);
+    let list = key ? all.filter((g) => norm(g.title).includes(key)) : all;
+    list.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+    return list.slice(0, 10);
+  }, [normalizeLite, q]);
+
   const doSearch = () => {
     if (!q.trim()) return;
     navigate(`/store/search?q=${encodeURIComponent(q.trim())}`);
+    setOpen(false);
   };
+  const openGame = (slug) => {
+    navigate(`/store/game/${slug}`, { state: { slug, from: 'home-rail' } });
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (!rootRef.current) return;
+      if (!rootRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, []);
+
   return (
     <div className="store-rail">
       <svg className="store-rail-bg" width="100%" height="80" viewBox="0 0 500 80" preserveAspectRatio="none">
@@ -143,18 +199,37 @@ const StoreRail = () => {
           <div className="rail-right">
             <NavLink to="/home/search" className="filtered">Filtered Search</NavLink>
             <span className="slash">/</span>
-            <div className="search" role="search">
+            <div className="search" role="search" ref={rootRef}>
               <input
                 type="text"
                 placeholder="Search"
                 value={q}
+                onFocus={() => setOpen(true)}
                 onChange={(e) => setQ(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && doSearch()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') doSearch();
+                }}
                 aria-label="Search games"
               />
               <button className="search-btn" type="button" onClick={doSearch} aria-label="Run search">
                 <img src="https://c.animaapp.com/tF1DKM3X/img/fluent-search-sparkle-48-regular.svg" alt="" />
               </button>
+
+              {open && suggestions.length > 0 && (
+                <div className="search-suggest" role="listbox" aria-label="Game suggestions">
+                  {suggestions.map((g) => (
+                    <button
+                      type="button"
+                      key={g.id}
+                      className="suggest-item"
+                      onClick={() => openGame(g.id)}
+                    >
+                      <img className="thumb" src={g.imageUrl} alt="" />
+                      <span className="title">{g.title}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -314,8 +389,14 @@ const splitTopBottom = (items) => {
 };
 
 const Home = () => {
-  const { data } = useGetAllGamesQuery();
+  const { data, refetch } = useGetAllGamesQuery();
   const games = useMemo(() => normalizeGames(data), [data]);
+
+  useEffect(() => {
+    refetch();
+    const id = setInterval(() => refetch(), 30000);
+    return () => clearInterval(id);
+  }, [refetch]);
 
   const heroItems = useMemo(() => {
     return [...games].sort((a, b) => discountOf(b) - discountOf(a)).slice(0, 3);

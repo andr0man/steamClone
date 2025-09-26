@@ -18,7 +18,8 @@ const GamePreviewForApprove = () => {
   const { gameId } = useParams();
   const navigate = useNavigate();
 
-  const { data: {payload: gameById} = {}, isLoading } = useGetGameByIdQuery(gameId);
+  const { data: { payload: gameById } = {}, isLoading } =
+    useGetGameByIdQuery(gameId);
   const {
     data: { payload: languages } = { payload: [] },
     isLoading: languagesLoading,
@@ -52,9 +53,11 @@ const GamePreviewForApprove = () => {
     }
   };
 
-  const { data: { payload: user } = {} } = useGetUserByIdQuery(gameById?.createdBy);
+  const { data: { payload: user } = {} } = useGetUserByIdQuery(
+    gameById?.createdBy
+  );
 
-   if (isLoading && languagesLoading) {
+  if (isLoading && languagesLoading) {
     return <div className="loading-overlay visible">Loading data...</div>;
   }
 
@@ -84,6 +87,18 @@ const GamePreviewForApprove = () => {
           req.requirementType === "Recommended" && req.platform === "Windows"
       )
     : null;
+
+  const localizationsSorted = Array.isArray(gameById.localizations)
+    ? [...gameById.localizations].sort((a, b) => {
+        const aCount = [a.fullAudio, a.interface, a.subtitles].filter(
+          Boolean
+        ).length;
+        const bCount = [b.fullAudio, b.interface, b.subtitles].filter(
+          Boolean
+        ).length;
+        return bCount - aCount;
+      })
+    : [];
 
   const renderSystemRequirements = (title, form) => (
     <>
@@ -198,13 +213,17 @@ const GamePreviewForApprove = () => {
             <div style={{ display: "flex", justifyContent: "center" }}>
               <button
                 className="rainbow-button"
-                onClick={() => {setApproveModalOpen(true)}}
+                onClick={() => {
+                  setApproveModalOpen(true);
+                }}
               >
                 <div>Approve</div>
               </button>
               <button
                 className="white-button"
-                onClick={() => {setRejectModalOpen(true)}}
+                onClick={() => {
+                  setRejectModalOpen(true);
+                }}
               >
                 <div>Reject</div>
               </button>
@@ -240,7 +259,7 @@ const GamePreviewForApprove = () => {
               style={{ display: "flex", flexDirection: "column", gap: "10px" }}
             >
               <h3 className="h3-with-bottom-border">Game Localizations</h3>
-              {gameById.localizations.length !== 0 ? (
+              {localizationsSorted.length !== 0 ? (
                 <div className="localizations-list">
                   <div className="thead">
                     <div className="tr">
@@ -250,7 +269,7 @@ const GamePreviewForApprove = () => {
                       <div className="th">Subtitles</div>
                     </div>
                   </div>
-                  {gameById.localizations.map((loc) => (
+                  {localizationsSorted.map((loc) => (
                     <div className="tr" key={loc.id}>
                       <div className="td lang-name">
                         {

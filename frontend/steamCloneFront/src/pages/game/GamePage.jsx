@@ -76,6 +76,18 @@ const GamePage = () => {
       )
     : null;
 
+  const localizationsSorted = Array.isArray(gameById.localizations)
+    ? [...gameById.localizations].sort((a, b) => {
+        const aCount = [a.fullAudio, a.interface, a.subtitles].filter(
+          Boolean
+        ).length;
+        const bCount = [b.fullAudio, b.interface, b.subtitles].filter(
+          Boolean
+        ).length;
+        return bCount - aCount;
+      })
+    : [];
+
   const handleBuyingGame = async (gameId) => {
     try {
       await buyGame(gameId).unwrap();
@@ -181,13 +193,25 @@ const GamePage = () => {
               <div className="game-release-info">
                 <span>
                   Publisher:{" "}
-                  <a href={gameById.publisher.website === "" ? null : gameById.publisher.website}>
+                  <a
+                    href={
+                      gameById.publisher.website === ""
+                        ? null
+                        : gameById.publisher.website
+                    }
+                  >
                     {gameById.publisher.name}
                   </a>
                 </span>
                 <span>
                   Developer:{" "}
-                  <a href={gameById.developer.website === "" ? null : gameById.developer.website}>
+                  <a
+                    href={
+                      gameById.developer.website === ""
+                        ? null
+                        : gameById.developer.website
+                    }
+                  >
                     {gameById.developer.name}
                   </a>
                 </span>
@@ -222,7 +246,7 @@ const GamePage = () => {
                       addToWishlist(gameId);
                     }
                   }}
-                  style={{fontSize: "1.3rem"}}
+                  style={{ fontSize: "1.3rem" }}
                 >
                   <div>
                     {isInWishlistData.payload
@@ -304,7 +328,7 @@ const GamePage = () => {
               style={{ display: "flex", flexDirection: "column", gap: "10px" }}
             >
               <h3 className="h3-with-bottom-border">Game Localizations</h3>
-              {gameById.localizations.length !== 0 ? (
+              {localizationsSorted.length !== 0 ? (
                 <div className="localizations-list">
                   <div className="thead">
                     <div className="tr">
@@ -314,7 +338,7 @@ const GamePage = () => {
                       <div className="th">Subtitles</div>
                     </div>
                   </div>
-                  {gameById.localizations.map((loc) => (
+                  {localizationsSorted.map((loc) => (
                     <div className="tr" key={loc.id}>
                       <div className="td lang-name">
                         {

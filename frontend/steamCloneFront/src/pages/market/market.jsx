@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./market.scss";
 import Notification from "../../components/Notification";
@@ -122,6 +122,16 @@ const Market = () => {
     error: userItemsError,
     refetch: refetchUserItems,
   } = useGetUserItemsQuery();
+
+  useEffect(() => {
+    refetch();
+    refetchUserItems();
+    const id = setInterval(() => {
+      refetch();
+      refetchUserItems();
+    }, 30000);
+    return () => clearInterval(id);
+  }, [refetch, refetchUserItems]);
 
   const gamesFromApi = useMemo(() => {
     const list = gamesRes?.payload ?? gamesRes ?? [];
