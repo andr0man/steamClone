@@ -5,6 +5,12 @@
   margin-top: 8px;
 }
 
+.modal-with-border-container {
+  input[type="file"] {
+    max-width: 350px;
+  }
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
